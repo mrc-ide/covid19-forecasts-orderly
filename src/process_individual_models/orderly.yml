@@ -31,7 +31,7 @@ data: ~
 # will be a single string and the filename must exist when orderly is
 # run
 script: 
-  - script.R
+  - process_individual_models.R
   
 # You must list at least one artefact that your report will generate.
 # Each artefact consists of one or more files.  The format is to list
@@ -151,6 +151,6 @@ resources:
 depends:
   prepare_ecdc_data:
     id: "latest"
-    draft: true
+    draft: false
     use:
       model_input.rds: data_2020-04-05.rds

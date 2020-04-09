@@ -26,7 +26,7 @@
 # will be a single string and the filename must exist when orderly is
 # run
 script:
-  - script.R
+  - format_model_outputs.R
   
 # You must list at least one artefact that your report will generate.
 # Each artefact consists of one or more files.  The format is to list
@@ -44,8 +44,14 @@ script:
 #             - report.html
 #             - figures/fig1.png
 #             - figures/fig2.png
-artefacts: ~
-
+artefacts:
+  - data:
+      description: Formatted model outputs to be plugged into the report
+      filenames:
+        - formatted_weekly_predictions_qntls.rds
+        - model_1_formatted_output.rds
+        - model_2_formatted_output.rds
+        - model_3_formatted_output.rds
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
 # "description" (which can be as long as you want).  Must be a string.
@@ -82,15 +88,18 @@ artefacts: ~
 # will make it easier to provision containers to run the orderly
 # reports.
 #
-# packages:
-
+packages:
+  - dplyr
+  - purrr
+  - readr  
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading
 # any packages, and before running your script.  Use this in
 # preference to explicit source() calls in your script because
 # otherwise you will have to add them to "resources" (see below)
 #
-# sources:
+sources:
+  - R/utils.R
 
 # Resources that the script needs to run; this is an array of strings
 # representing filenames *relative to, and below, this directory*.
@@ -131,7 +140,7 @@ artefacts: ~
 #
 depends:
   process_individual_models:
-    id: latest
+    id: "latest"
     draft: false
     use:
       RtI0_Std_daily_predictions_qntls_2020-03-08.rds: RtI0_Std_daily_predictions_qntls_2020-03-08.rds

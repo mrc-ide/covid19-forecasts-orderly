@@ -1,7 +1,7 @@
 output_files <- list(
   `RtI0_Std_results_week_end_2020-03-08` =
     "RtI0_Std_results_week_end_2020-03-08.rds",
-  `model_outputs/sbkp_Std_results_week_end_2020-03-08` =
+  `sbkp_Std_results_week_end_2020-03-08` =
     "sbkp_Std_results_week_end_2020-03-08.rds"
 )
 
@@ -57,7 +57,10 @@ weekly_predictions_qntls <- purrr::map_dfr(
   .id = "model"
 )
 
-readr::write_rds(weekly_predictions_qntls, "weekly_predictions_qntls.rds")
+readr::write_rds(
+    x = weekly_predictions_qntls,
+    path = "weekly_predictions_qntls.rds"
+)
 
 
 model_rt_qntls <- purrr::map(
