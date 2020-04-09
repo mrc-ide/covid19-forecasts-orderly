@@ -66,6 +66,68 @@ model_3_formatted_output <- purrr::map(
   }
 )
 
+## Formatting Ensemble Model Outputs
+ensemble_weekly_qntls <- readr::read_rds("ensemble_weekly_qntls.rds")
+ensemble_model_rt <- readr::read_rds("ensemble_model_rt.rds")
+ensemble_model_rt <- tidyr::spread(
+  data = ensemble_model_rt,
+  key = quantile,
+  value = out2
+)
+
+fmtd_ensemble_weekly_qntls <- split(
+  ensemble_weekly_qntls,
+  ensemble_weekly_qntls$si
+) %>% purrr::map(function(x) {
+  this_si <- x$si[1]
+  ## Get observed number of deaths calculated earlier.
+  y <- dplyr::select(
+    weekly_predictions_qntls,
+    week_ending,
+    country,
+    Observed = observed
+  )
+  y <- dplyr::distinct(y)
+  x <- format_weekly_pred(x)
+  x$`Week Ending` <- as.Date(x$`Week Ending`)
+  y$week_ending <- as.Date(y$week_ending)
+  x <- dplyr::left_join(
+    x,
+    y,
+    by = c(
+      "Country" = "country",
+      "Week Ending" = "week_ending"
+    )
+  )
+  x <- dplyr::arrange(x, Country)
+
+  ## Get R_t estimates for this country and this
+  ## Week.
+  rt <- dplyr::filter(ensemble_model_rt, si == this_si)
+  rt <- format_last_rt(rt)
+  rt$model <- as.Date(rt$model)
+  x <- dplyr::left_join(
+    x,
+    rt,
+    by = c(
+      "Week Ending" = "model",
+      "Country" = "Country"
+    )
+  )
+  x$Country <- snakecase::to_any_case(
+    as.character(x$Country),
+    case = "title"
+  )
+
+  x
+})
+
+readr::write_rds(
+  x = fmtd_ensemble_weekly_qntls,
+  path = "fmtd_ensemble_weekly_qntls.rds"
+)
+
+
 readr::write_rds(
   x = formatted_weekly_predictions_qntls,
   path = "formatted_weekly_predictions_qntls.rds"
