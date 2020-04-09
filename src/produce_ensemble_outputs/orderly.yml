@@ -1,5 +1,5 @@
 # This is an example orderly configuration file - edit it to suit your
-# needs.  The fields "data", "script" and "artefacts" are the only
+# needs.  The fields "script" and "artefacts" are the only
 # ones required (plus whatever your project lists in the root
 # configuration) so they are listed first here.  After that optional
 # fields are listed.  The order does not matter so reorder to suit
@@ -20,19 +20,13 @@
 #       another: from_file.sql
 #
 # If you are writing a report that uses only artefacts from other
-# reports, the data field can be empty, as:
-#
-#     data: ~
-#
-# but it must still exist.
-data: ~
+# reports, you can omit this field.
 
 # You must have a script that does something with the data.  This
 # will be a single string and the filename must exist when orderly is
 # run
-script: 
-  - process_individual_models.R
-  
+script: produce_ensemble_outputs.R
+
 # You must list at least one artefact that your report will generate.
 # Each artefact consists of one or more files.  The format is to list
 # the "type" of an artefact (staticgraph, interactivegraph, data,
@@ -51,15 +45,11 @@ script:
 #             - figures/fig2.png
 artefacts:
   - data:
-      description: Daily and weekly predictions and Rt
+      description: Ensemble Model Outputs
       filenames:
-        - RtI0_Std_daily_predictions_qntls_2020-03-08.rds
-        - sbkp_Std_daily_predictions_qntls_2020-03-08.rds
-        - weekly_predictions_qntls.rds
-        - RtI0_Std_rt_qntls_2020-03-08.rds
-        - sbkp_Std_rt_qntls_2020-03-08.rds
-        - model_outputs/RtI0_Std_results_week_end_2020-03-08.rds
-        - model_outputs/sbkp_Std_results_week_end_2020-03-08.rds	
+        - ensemble_model_rt.rds
+        - ensemble_daily_qntls.rds
+        - ensemble_weekly_qntls.rds
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
 # "description" (which can be as long as you want).  Must be a string.
@@ -98,9 +88,7 @@ artefacts:
 #
 packages:
   - purrr
-  - stringr
-  - tibble
-  - tidyr  
+  - dplyr
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading
 # any packages, and before running your script.  Use this in
@@ -119,9 +107,7 @@ sources:
 # to list files already listed in "sources" here, or any .sql files
 # referenced in "views" or "data"
 #
-resources:
-  - model_outputs/RtI0_Std_results_week_end_2020-03-08.rds
-  - model_outputs/sbkp_Std_results_week_end_2020-03-08.rds
+# resources:
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that
@@ -138,7 +124,6 @@ resources:
 #       other_report_name:
 #         id: (identifier, possibly "latest")
 #         use: (mapping of filenames in the format dest: from)
-#         draft: (true, if you want to use a draft report)
 
 # For example, to depend on the latest version of report
 # 'other-report', pulling in 'data.csv' as 'other-data.csv' you might
@@ -151,8 +136,8 @@ resources:
 #           other-data.csv: data.csv
 #
 depends:
-  prepare_ecdc_data:
-    id: "latest"
-    draft: false
+  process_individual_models:
+    id: latest
     use:
-      model_input.rds: data_2020-04-05.rds
+      RtI0_Std_results_week_end_2020-03-08.rds: model_outputs/RtI0_Std_results_week_end_2020-03-08.rds
+      sbkp_Std_results_week_end_2020-03-08.rds: model_outputs/sbkp_Std_results_week_end_2020-03-08.rds
