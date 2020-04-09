@@ -1,15 +1,15 @@
 output_files <- list(
-    `RtI0_Std_results_week_end_2020-03-08` =
-        "RtI0_Std_results_week_end_2020-03-08.rds",
-    `model_outputs/sbkp_Std_results_week_end_2020-03-08`=
-        "sbkp_Std_results_week_end_2020-03-08.rds"
+  `RtI0_Std_results_week_end_2020-03-08` =
+    "RtI0_Std_results_week_end_2020-03-08.rds",
+  `model_outputs/sbkp_Std_results_week_end_2020-03-08` =
+    "sbkp_Std_results_week_end_2020-03-08.rds"
 )
 
 model_input <- readRDS("model_input.rds")
 
 model_outputs <- purrr::map(
-    output_files,
-    ~ readRDS(paste0("model_outputs/", .))
+  output_files,
+  ~ readRDS(paste0("model_outputs/", .))
 )
 
 model_predictions_qntls <- purrr::map(
@@ -24,10 +24,10 @@ model_predictions_qntls <- purrr::map(
 )
 
 outfiles <- stringr::str_replace(
-                         string = output_files,
-                         pattern = "results_week_end",
-                         replacement = "daily_predictions_qntls"
-    )
+  string = output_files,
+  pattern = "results_week_end",
+  replacement = "daily_predictions_qntls"
+)
 
 purrr::walk2(model_predictions_qntls, outfiles, ~ readr::write_rds(.x, .y))
 
@@ -53,13 +53,12 @@ weekly_predictions_qntls <- purrr::map_dfr(
       weekly_df$observed <- obs_deaths
       weekly_df
     }, .id = "country")
-  }, .id = "model"
+  },
+  .id = "model"
 )
 
-outfiles <- "weekly_predictions_qntls.rds"
+readr::write_rds(weekly_predictions_qntls, "weekly_predictions_qntls.rds")
 
-purrr::walk2(weekly_predictions_qntls,
-             outfiles, ~ readr::write_rds(.x, .y))
 
 model_rt_qntls <- purrr::map(
   model_outputs,
@@ -88,10 +87,12 @@ model_rt_qntls <- purrr::map(
 )
 
 outfiles <- stringr::str_replace(
-                         string = output_files,
-                         pattern = "results_week_end",
-                         replacement = "rt_qntls"
+  string = output_files,
+  pattern = "results_week_end",
+  replacement = "rt_qntls"
 )
 
-purrr::walk2(model_rt_qntls,
-             outfiles, ~ readr::write_rds(.x, .y))
+purrr::walk2(
+  model_rt_qntls,
+  outfiles, ~ readr::write_rds(.x, .y)
+)
