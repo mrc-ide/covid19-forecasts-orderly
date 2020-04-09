@@ -1,0 +1,15 @@
+.Renviron
+orderly.sqlite
+data/
+archive/
+draft/
+.Rproj.user
+scratch.R
+.Rhistory
+.Rdata
+*~
+.orderly_go
+*.rds
+orderly_envir.yml
+*.sqlite
+.DS_Store
