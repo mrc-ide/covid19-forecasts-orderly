@@ -1,0 +1,100 @@
+---
+output: 
+html_fragmen:
+citation_package: natbib
+keep_tex: false
+fig_caption: true
+latex_engine: pdflatex
+title: Short-term forecasts of COVID-19 deaths in multiple countries
+author:
+- name: Sangeeta Bhatia
+affiliation: Imperial College London
+abstract: 
+keywords: 
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+spacing: double
+bibliography: 
+biblio-style: apsr
+endnote: no
+---
+
+```{r}
+knitr::opts_chunk$set(
+    echo = FALSE, 
+    fig.width = 21, 
+    fig.height = 15,
+    warning = FALSE,
+    messages = FALSE
+)
+
+```
+
+```{r}
+week_ending <- as.Date(week_ending)
+ens_rt_both <- readr::read_rds("ensemble_model_rt.rds")
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
+ens_rt$model <- as.Date(ens_rt$model)
+ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
+x <- tidyr::spread(ens_rt, quantile, out2)
+x$country <- snakecase::to_title_case(x$country)
+stable <- x[x$`2.5%` < 1 & x$`97.5%` > 1, ]
+declining <- x[x$`97.5%` < 1, ]
+growing_slow <- x[x$`2.5%` > 1 & x$`97.5%` < 2, ]
+growing_fast <- x[x$`2.5%` > 1 & x$`97.5%` > 2, ]
+
+#### Deaths
+ensemble_weekly_qntls <- readr::read_rds("ensemble_weekly_qntls.rds")
+ensemble_weekly_qntls$country <- snakecase::to_title_case(ensemble_weekly_qntls$country)
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "si_2", ]
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$proj == week_ending, ]
+small <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$`50%` < 100, ]
+rel_large <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$`50%` > 100 &
+                                       ensemble_weekly_qntls_si1$`50%` < 1000, ]
+large <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$`50%` > 1000 &
+                                   ensemble_weekly_qntls_si1$`50%` < 5000, ]
+
+very_large <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$`50%` > 5000, ]
+
+                                       
+```
+
+
+*Forecasts and Transmissibility Estimates*
+
+Based on our best estimates of transmissibility, the COVID-19 epidemic
+is:
+
+-	likely stabilising^1^  in `r nrow(stable)` countries <br/>
+(`r stable$country`);
+-	growing slowly^2^ in `r nrow(growing_slow)` countries <br/>
+(`r growing_slow$country`);
+-	growing rapidly^3^ in `r nrow(growing_fast)` countries <br/>
+(`r growing_fast$country`).
+	 
+
+Based on the central trends in the forecasts, the total number of
+reported deaths in the coming week is expected to be:
+
+-	relatively small in `r nrow(small)` countries (<100 deaths) <br/>
+(`r small$country`);
+-	relatively large in `r nrow(rel_large)` countries (100 to 1000 deaths) <br/>
+(`r rel_large$country`),
+-	large in `r nrow(large)` countries (1,000 to 5,000 deaths) <br/>
+(`r large$country`),
+-	very large in `r nrow(very_large)` countries (> 5,000 deaths) <br/>
+(`r very_large$country`).
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+1. if the 95% Credible Interval (CrI) of $R_t$ contains 1.
+2. if the 2.5^th^ percentile of $R_t$ is greater than 1 and the
+97.5^th^ percentile is less than 2. 
+3. if the 97.5^th^ percentile of $R_t$ is greater than 2.
