@@ -1,16 +1,31 @@
 weeks_ending <- list(
-  "2020-03-08" = "2020-03-08"
-  ## "2020-03-15" = "2020-03-15",
-  ## "2020-03-22" = "2020-03-22",
-  ## "2020-03-29" = "2020-03-29",
-  ## "2020-04-05" = "2020-04-05"
+  "2020-03-08" = "2020-03-08",
+  "2020-03-15" = "2020-03-15",
+  "2020-03-22" = "2020-03-22",
+  "2020-03-29" = "2020-03-29",
+  "2020-04-05" = "2020-04-05"
 )
 
 output_files <- list(
-  `RtI0_Std_results_week_end_2020-03-08` =
-    "RtI0_Std_results_week_end_2020-03-08.rds",
-  `sbkp_Std_results_week_end_2020-03-08` =
-    "sbkp_Std_results_week_end_2020-03-08.rds"
+  "DeCa_Std_results_week_end_2020-03-08.rds",
+  "DeCa_Std_results_week_end_2020-03-15.rds",
+  "DeCa_Std_results_week_end_2020-03-22.rds",
+  "DeCa_Std_results_week_end_2020-03-29.rds",
+  "DeCa_Std_results_week_end_2020-04-05.rds",
+  "RtI0_Std_results_week_end_2020-03-08.rds",
+  "RtI0_Std_results_week_end_2020-03-15.rds",
+  "RtI0_Std_results_week_end_2020-03-22.rds",
+  "RtI0_Std_results_week_end_2020-03-29.rds",
+  "RtI0_Std_results_week_end_2020-04-05.rds",
+  "sbkp_Std_results_week_end_2020-03-08.rds",
+  "sbkp_Std_results_week_end_2020-03-15.rds",
+  "sbkp_Std_results_week_end_2020-03-22.rds",
+  "sbkp_Std_results_week_end_2020-03-29.rds",
+  "sbkp_Std_results_week_end_2020-04-05.rds"
+)
+
+names(output_files) <- gsub(
+  pattern = ".rds", replacement = "", x = output_files
 )
 
 model_outputs <- purrr::map(output_files, readRDS)

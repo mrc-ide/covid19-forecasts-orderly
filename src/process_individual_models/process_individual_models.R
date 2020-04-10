@@ -25,11 +25,35 @@ names(output_files) <- gsub(
 model_outputs <- purrr::map(
   output_files,
   ~ readRDS(paste0("model_outputs/", .))
-)
+  )
+
+## Filter model outputs from DeCa models to reflect the new
+## threshold. Needed to be done only once.
+## outdated <- output_files <- list(
+##   "DeCa_Std_results_week_end_2020-03-08",
+##   "DeCa_Std_results_week_end_2020-03-15",
+##   "DeCa_Std_results_week_end_2020-03-22",
+##   "DeCa_Std_results_week_end_2020-03-29",
+##   "DeCa_Std_results_week_end_2020-04-05"
+##   )
+
+## purrr::walk(
+##   outdated,
+##   function(x) {
+##     right <- gsub(pattern = "DeCa", replacement = "RtI0", x = x)
+##     countries <- names(model_outputs[[right]][["Predictions"]])
+##     message(x)
+##     message(countries)
+##     model_outputs[[x]][["Predictions"]] <-
+##       model_outputs[[x]][["Predictions"]][countries]
+##     model_outputs[[x]][["Country"]] <- countries
+##     readr::write_rds(x = model_outputs[[x]], path = glue::glue("model_outputs/{x}.rds"))
+##   }
+## )
 
 model_input <- readRDS("model_input.rds")
 
-model_predictions_qntls <- purrr::map(
+daily_predictions_qntls <- purrr::map_dfr(
   model_outputs,
   function(x) {
     pred <- x[["Predictions"]]
@@ -37,16 +61,16 @@ model_predictions_qntls <- purrr::map(
       pred, extract_predictions_qntls,
       .id = "country"
     )
-  }
+  }, .id = "model"
 )
 
-outfiles <- stringr::str_replace(
-  string = output_files,
-  pattern = "results_week_end",
-  replacement = "daily_predictions_qntls"
+readr::write_rds(
+    x = daily_predictions_qntls,
+    path = "daily_predictions_qntls.rds"
 )
 
-purrr::walk2(model_predictions_qntls, outfiles, ~ readr::write_rds(.x, .y))
+
+##purrr::walk2(model_predictions_qntls, outfiles, ~ readr::write_rds(.x, .y))
 
 weekly_predictions_qntls <- purrr::map_dfr(
   model_outputs,
@@ -80,7 +104,7 @@ readr::write_rds(
 )
 
 
-model_rt_qntls <- purrr::map(
+model_rt_qntls <- purrr::map_dfr(
   model_outputs,
   function(x) {
     pred <- x[["R_last"]]
@@ -103,16 +127,10 @@ model_rt_qntls <- purrr::map(
         .id = "si"
       )
     }, .id = "country")
-  }
+  }, .id = "model"
 )
 
-outfiles <- stringr::str_replace(
-  string = output_files,
-  pattern = "results_week_end",
-  replacement = "rt_qntls"
-)
-
-purrr::walk2(
-  model_rt_qntls,
-  outfiles, ~ readr::write_rds(.x, .y)
+readr::write_rds(
+    x = model_rt_qntls,
+    path = "model_rt_qntls.rds"
 )

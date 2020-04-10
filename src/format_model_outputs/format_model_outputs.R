@@ -1,16 +1,5 @@
 ## Model 1 Rt Estimates
-model_rt_files <- list(
-  `RtI0_Std_results_week_end_2020-03-08` = "RtI0_Std_rt_qntls_2020-03-08.rds",
-  `sbkp_Std_results_week_end_2020-03-08` = "sbkp_Std_rt_qntls_2020-03-08.rds"
-)
-
-
-model_rt_qntls <- purrr::map(model_rt_files, readRDS)
-model_rt_qntls <- purrr::map_dfr(
-  model_rt_qntls,
-  ~ dplyr::bind_rows(., .id = "si"),
-  .id = "model"
-)
+model_rt_qntls <- readRDS("model_rt_qntls.rds")
 
 model_rt_qntls <- tidyr::spread(model_rt_qntls,
   key = quantile,

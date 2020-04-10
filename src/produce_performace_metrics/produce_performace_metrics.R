@@ -62,7 +62,8 @@ model_predictions_error <- purrr::imap_dfr(
     )
   },
   .id = "model"
-)
+  )
+
 readr::write_csv(
   x = model_predictions_error, path = "model_predictions_error.csv"
 )

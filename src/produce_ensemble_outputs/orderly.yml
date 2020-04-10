@@ -141,3 +141,16 @@ depends:
     use:
       RtI0_Std_results_week_end_2020-03-08.rds: model_outputs/RtI0_Std_results_week_end_2020-03-08.rds
       sbkp_Std_results_week_end_2020-03-08.rds: model_outputs/sbkp_Std_results_week_end_2020-03-08.rds
+      DeCa_Std_results_week_end_2020-03-08.rds: model_outputs/DeCa_Std_results_week_end_2020-03-08.rds
+      sbkp_Std_results_week_end_2020-03-15.rds: model_outputs/sbkp_Std_results_week_end_2020-03-15.rds
+      RtI0_Std_results_week_end_2020-03-15.rds: model_outputs/RtI0_Std_results_week_end_2020-03-15.rds
+      DeCa_Std_results_week_end_2020-03-15.rds: model_outputs/DeCa_Std_results_week_end_2020-03-15.rds
+      RtI0_Std_results_week_end_2020-03-22.rds: model_outputs/RtI0_Std_results_week_end_2020-03-22.rds
+      sbkp_Std_results_week_end_2020-03-22.rds: model_outputs/sbkp_Std_results_week_end_2020-03-22.rds
+      DeCa_Std_results_week_end_2020-03-22.rds: model_outputs/DeCa_Std_results_week_end_2020-03-22.rds
+      sbkp_Std_results_week_end_2020-03-29.rds: model_outputs/sbkp_Std_results_week_end_2020-03-29.rds
+      RtI0_Std_results_week_end_2020-03-29.rds: model_outputs/RtI0_Std_results_week_end_2020-03-29.rds
+      DeCa_Std_results_week_end_2020-03-29.rds: model_outputs/DeCa_Std_results_week_end_2020-03-29.rds
+      sbkp_Std_results_week_end_2020-04-05.rds: model_outputs/sbkp_Std_results_week_end_2020-04-05.rds
+      RtI0_Std_results_week_end_2020-04-05.rds: model_outputs/RtI0_Std_results_week_end_2020-04-05.rds
+      DeCa_Std_results_week_end_2020-04-05.rds: model_outputs/DeCa_Std_results_week_end_2020-04-05.rds
