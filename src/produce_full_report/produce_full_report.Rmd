@@ -266,7 +266,7 @@ dashed lines show the start and end of each week (Monday to Sunday).
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 
-knitr::include_graphics("figs/rt_ensemble_si_2_2020-04-05.png")
+knitr::include_graphics("figs/ensemble_rt_2020-04-05_si_2.png")
 
 
 ```
@@ -774,7 +774,7 @@ dashed lines show the start and end of each week (Monday to Sunday).
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-knitr::include_graphics("figs/rt_ensemble_si_1_2020-04-05.png")
+knitr::include_graphics("figs/ensemble_rt_2020-04-05_si_1.png")
 
 ```
 *Figure 10*: Latest estimates of effective reproduction numbers by country

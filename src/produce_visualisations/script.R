@@ -163,13 +163,13 @@ purrr::iwalk(
 
 plots <- split(
   rt_both,
-  rt_both$date,
+  list(rt_both$date, rt_both$si), sep = "_"
 ) %>% purrr::map(rt_plot)
 
 purrr::iwalk(
   plots,
-  function(p, date) {
-    outfile <- glue::glue("ensemble_rt_{date}.png")
+  function(p, date_si) {
+    outfile <- glue::glue("ensemble_rt_{date_si}.png")
     ggsave(
       filename = outfile,
       plot = p,

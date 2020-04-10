@@ -107,6 +107,7 @@ resources:
   - produce_full_report.Rmd
   - bibliography.bib
   - annual-review-of-statistics-and-its-application.csl
+  - case_ascertainment_methods.Rmd
   - figs/DeCa_si_1_page_1.png
   - figs/DeCa_si_1_page_2.png
   - figs/DeCa_si_1_page_3.png
@@ -135,7 +136,8 @@ resources:
   - figs/RtI0_si_2_page_5.png
   - figs/RtI0_si_2_page_6.png
   - figs/RtI0_si_2_page_7.png
-  - figs/ensemble_rt_2020-04-05.png
+  - figs/ensemble_rt_2020-04-05_si_1.png
+  - figs/ensemble_rt_2020-04-05_si_2.png  
   - figs/ensmbl_pred_si_1_page_1.png
   - figs/ensmbl_pred_si_1_page_2.png
   - figs/ensmbl_pred_si_1_page_3.png
