@@ -1,0 +1,103 @@
+---
+output: 
+html_fragment:
+citation_package: natbib
+keep_tex: false
+fig_caption: true
+latex_engine: pdflatex
+title: Short-term forecasts of COVID-19 deaths in multiple countries
+author:
+- name: Sangeeta Bhatia
+affiliation: Imperial College London
+abstract: 
+keywords: 
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+spacing: double
+bibliography: 
+biblio-style: apsr
+endnote: no
+---
+
+```{r setup, eval = TRUE}
+
+knitr::opts_chunk$set(
+    echo = FALSE, 
+    fig.width = 21, 
+    fig.height = 15,
+    warning = FALSE,
+    messages = FALSE
+)
+```
+
+
+### Key results on transmissibility and forecasting
+
+
+```{r}
+
+ens_rt_both <- readr::read_rds("ensemble_model_rt.rds")
+ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
+ens_rt$model <- as.Date(ens_rt$model)
+ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
+date_week_finishing <- max(ens_rt$model)
+ens_rt_tall <- tidyr::spread(ens_rt, quantile, out2)
+ens_rt_tall$country <- snakecase::to_title_case(ens_rt_tall$country)
+top2_rt <- dplyr::top_n(ens_rt_tall, n = 2, wt = `50%`) %>%
+    dplyr::mutate_if(is.numeric, ~ format(round(., 2), nsmall = 1))
+bottom2_rt <- dplyr::top_n(ens_rt_tall, n = -2, wt = `50%`) %>%
+        dplyr::mutate_if(is.numeric, ~ format(round(., 2), nsmall = 1))
+
+
+ensemble_weekly_qntls <- readr::read_rds("ensemble_weekly_qntls.rds")
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls[ensemble_weekly_qntls$si == "si_2", ]
+ensemble_weekly_qntls_si1 <- ensemble_weekly_qntls_si1[ensemble_weekly_qntls_si1$proj == date_week_finishing, ]
+top2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = 2, wt = `50%`) %>%
+    dplyr::mutate_if(is.numeric, ~signif(., 3)) %>%
+    dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ",")) %>%
+    dplyr::mutate_at(vars("country"), ~ snakecase::to_any_case(., case = "title"))
+
+bottom2_deaths <- dplyr::top_n(x = ensemble_weekly_qntls_si1, n = -2, wt = `50%`) %>%
+    dplyr::mutate_if(is.numeric, ~signif(., 3)) %>%
+    dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ",")) %>%
+    dplyr::mutate_at(vars("country"), ~ snakecase::to_any_case(., case = "title"))
+
+```
+Key results below are based on an ensemble forecast of two models.
+
+Transmissibility is characterised by the reproduction number R~t~, i.e., the 
+average number of cases that one infected individual is likely to
+infect. Analysis of transmissibility indicates that the reproduction 
+numbers last week (week starting 
+`r format(as.Date(date_week_finishing, format = "%d-%m-%Y"), format = "%d-%m-%Y")`) were highest in:
+  
+* `r top2_rt$country[1]` with an estimated median R~t~ of 
+`r top2_rt[["50%"]][1]` (95% CrI - `r top2_rt[["2.5%"]][1]` - `r top2_rt[["97.5%"]][1]`), and
+* `r top2_rt$country[2]` with an estimated median R~t~ of 
+`r top2_rt[["50%"]][2]` (95% CrI `r top2_rt[["2.5%"]][2]` - `r top2_rt[["97.5%"]][2]`).
+
+and were lowest in:
+  
+* `r bottom2_rt$country[1]` with an estimated median R~t~ of 
+`r bottom2_rt[["50%"]][1]` (95% CrI `r bottom2_rt[["2.5%"]][1]` - `r bottom2_rt[["97.5%"]][1]`), and
+* `r bottom2_rt$country[2]` with an estimated median R~t~ of 
+`r bottom2_rt[["50%"]][2]` (95% CrI `r bottom2_rt[["2.5%"]][2]` - `r bottom2_rt[["97.5%"]][2]`).
+
+Forecasts of predicted deaths in the coming week (week starting `r format(as.Date(date_week_finishing, format = "%d-%m-%Y"), format = "%d-%m-%Y")`) are highest in:
+  
+* `r top2_deaths$country[1]` with an estimated median
+`r top2_deaths[["50%"]][1]` deaths 
+ (95% CrI `r top2_deaths[["2.5%"]][1]` - 
+ `r top2_deaths[["97.5%"]][1]`), and
+* the `r top2_deaths$country[2]` with an estimated median 
+`r top2_deaths[["50%"]][2]` deaths
+(95% CrI `r top2_deaths[["2.5%"]][2]` - `r top2_deaths[["97.5%"]][2]`).
+
+and are lowest in:
+  
+* `r bottom2_deaths$country[1]` with an estimated median
+`r bottom2_deaths[["50%"]][1]` deaths (95% CrI `r bottom2_deaths[["2.5%"]][1]` - `r bottom2_deaths[["97.5%"]][1]`), and
+* `r bottom2_deaths$country[2]` with an estimated median 
+`r bottom2_deaths[["50%"]][2]` deaths (95% CrI `r bottom2_deaths[["2.5%"]][2]` - `r bottom2_deaths[["97.5%"]][2]`).
