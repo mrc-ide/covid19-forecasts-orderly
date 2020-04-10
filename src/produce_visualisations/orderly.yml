@@ -43,7 +43,11 @@ script: script.R
 #             - report.html
 #             - figures/fig1.png
 #             - figures/fig2.png
-artefacts: ~
+artefacts:
+  - staticgraph:
+      description: Various graphs
+      filenames:
+        - rt_ensemble_si_1_2020-03-08.png
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -91,7 +95,9 @@ packages:
 # preference to explicit source() calls in your script because
 # otherwise you will have to add them to "resources" (see below)
 #
-sources: R/utils.R
+sources:
+  - R/utils.R
+  - R/common_plot_properties.R
 
 # Resources that the script needs to run; this is an array of strings
 # representing filenames *relative to, and below, this directory*.
@@ -139,4 +145,9 @@ depends:
   prepare_ecdc_data:
     id: "latest"
     use:
-      model_input.rds: data_2020-04-05.rds
+      model_input.rds: latest_model_input.rds
+  process_individual_models:
+    id: "latest"
+    use:
+      daily_predictions_qntls.rds: daily_predictions_qntls.rds
+      model_rt_qntls.rds: model_rt_qntls.rds

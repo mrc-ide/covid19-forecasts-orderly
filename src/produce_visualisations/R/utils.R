@@ -1,14 +1,18 @@
 projection_plot <- function(obs, pred) {
 
     ## Number of projections
-    nprojs <- length(unique(pred$proj))
+    nprojs <- length(unique(pred$week_ending))
 
-    ## Latest projections get a different color
+  ## Latest projections get a different color
+  if (nprojs == 1) {
+        palette <- c("#b3669e")
+  } else {
     palette <- c(
         rep("#98984d", nprojs - 1),
         "#b3669e"
     )
-    names(palette) <- unique(pred$proj)
+  }
+    names(palette) <- unique(pred$week_ending)
 
     date_min <- as.Date("2020-03-01")
     date_max <- max(pred$date) + 2
@@ -41,21 +45,21 @@ projection_plot <- function(obs, pred) {
     geom_point(data = obs, aes(dates, deaths)) +
         geom_line(
             data = pred,
-            aes(date, `50%`, col = proj, group = proj)
+            aes(date, `50%`, col = week_ending, group = week_ending)
         ) +
         geom_ribbon(
             data = pred,
             aes(x = date,
                 ymin = `2.5%`,
                 ymax = `97.5%`,
-                fill = proj,
-                group = proj),
+                fill = week_ending,
+                group = week_ending),
             alpha = 0.4) +
     scale_color_manual(
         values = palette,
         aesthetics = c("color", "fill")
     ) +
-    theme_pubr() +
+      theme_project() +
     theme(legend.position = "none") +
         scale_x_date(breaks = dates_to_mark, limits = c(date_min, date_max)) +
         scale_y_continuous(breaks = integer_breaks()) +
@@ -65,24 +69,13 @@ projection_plot <- function(obs, pred) {
         ),
         linetype = "dashed"
     ) + xlab("") +
-        ylab("Deaths") +
-        theme(
-            axis.title.y = element_text(size = 20),
-            axis.text.y = element_text(size = 20),
-            axis.text.x =
-                element_text(angle = -90, hjust = 0, size = 20),
-            strip.text.x = element_text(
-                margin = margin(2,0,2,0, "pt"),
-                size = 20
-            )
-          )
+      ylab("Deaths")
 
     p
 }
 
 
 rt_plot <- function(rt) {
-
 
     nice_names <- snakecase::to_any_case(
         rt$country,
@@ -106,22 +99,14 @@ rt_plot <- function(rt) {
             position = position_dodge(width = 0.5),
             size = 4
             ) +
-        theme_pubr() +
+      ##theme_pubr() +
         xlab("") +
         ylab("Effective Reproduction Number") +
         scale_x_discrete(labels = nice_names) +
-        theme(
-            axis.title.y = element_text(size = 20),
-            axis.text.y = element_text(size = 20),
-            axis.text.x =
-                element_text(angle = -90, hjust = 0, size = 20),
-            legend.position = "none"
-        ) +
         geom_hline(
             yintercept = 1,
             linetype = "dashed"
-        )
-
+        ) + theme_project()
     p
 }
 
