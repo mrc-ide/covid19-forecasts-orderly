@@ -1,0 +1,93 @@
+### Methods
+
+*Objectives*
+
+* Estimate trends in case ascertainment and the ratio of deaths to
+  reported cases.
+* Use these to estimate the true size of the epidemic.
+* Use these to forecast the number of deaths in the coming week.
+
+*Assumptions*
+
+We assume 
+
+* that deaths due to COVID-19 are perfectly reported;
+* a known distribution for delay from report to death (gamma
+  distribution with mean 10 days and standard deviation 2 days); and,
+* a known distribution for CFR [@verity2020].
+
+
+Let $D_{i, t}$ be the number of deaths in location $i$ at time $t$.
+Let $I_{i, t}^r$ be the reported number of cases in location $i$ at
+time $t$ and $I_{i, t}^{true}$ be the true number of cases.
+We assume that the reporting to death delay $\delta$ is distributed
+according to a Gamma distribution with mean $\mu$ and standard
+deviation $\sigma$. That is,
+
+\[\delta \sim \Gamma(\mu, \sigma).\]
+
+Let $r_{i, t}$ be the ratio of deaths to reported cases in location
+$i$ at time $t$. We assume that deaths are distributed according to
+a Binomial distribution thus:
+\[
+D_{i, t} \sim Binom\left( \int\limits_0^{\infty}{\Gamma(x \mid \mu,
+\sigma)I_{i, t - x}^{r}dx} , r_{i, \mu}\right).
+\]
+
+This allows us to obtain a posterior distribution for $r_{i, t}$.
+
+Case ascertainment is defined as:
+
+\[ \rho_{i, t} = \frac{CFR}{r_{i, t}}.\]
+
+Thus a posterior distribution for $\rho_{i, t}$ can be obtained using
+the posterior distribution for $r_{i, t}$ and the posterior distribution
+for CFR.
+
+Combining the CFR and the case ascertainment, we can estimate the true
+number of cases in the epidemic at any point. 
+
+For the period over which we have information on deaths i.e., up to
+time $t - \mu$, we use the posterior distribution of
+CFR to obtain $I_{i, t}^{true}$. The true number of cases in a
+location $i$ at time $t$ is the sum cases that did not die and the
+number of deaths. 
+\[
+I_{i, t}^{true} \sim D_{i, t - \mu} + NBin(D_{i, t - \mu}, CFR).
+\]
+
+In this formulation, the negative binomial is parameterised as $NBin(n, p)$ where
+$n$ is the number of failure (i.e. death), and $p$ is the probability of observing a failure.
+
+For the period over which we do not have information on deaths i.e.,
+after time $t - \mu$, we use
+the posterior distribution of case ascertainment to obtain
+
+\[
+I_{i, t}^{true} \sim I_{i, t}^{r} + NBin(I_{i, t}^{r}, \rho_{i,
+t}).
+\]
+
+To obtain forecast of deaths, we rely on reported cases to obtain
+$\int\limits_0^{\infty}{\Gamma(x \mid \mu,\sigma)I_{i, t - x}^{r}dx}$.
+As cases reported in the coming week may die within the same week (
+i.e. for $x \in \{0,7\}$, $\Gamma(x \mid \mu,\sigma) > 0$), we estimate
+new reporting cases in the coming week by sampling from a Gamma
+distribution with mean and standard deviation estimated from
+the number of observed cases in the last week. 
+
+While this assumes no growth or decline in the coming week, this baseline assumtpion
+is justfiable as a null-hypthesis scenario as it does not influence 
+our results dramatically given the contribution to deaths due to those being
+very small (i.e. less than 2%).
+
+We therefore obtain the forecasted number of deaths as:
+\[
+D_{i, t} \sim Binom\left( \int\limits_0^{\infty}{\Gamma(x \mid \mu,
+\sigma)I_{i, t - x}^{r}dx} , r_{i, \mu}\right).
+\]
+
+where $r_{i, \mu}$ is the estimated ratio of deaths to reported cases for the last week 
+of data, and $\int\limits_0^{\infty}{\Gamma(x \mid \mu,\sigma)I_{i, t - x}^{r}dx}$
+relies on observed reported cases up to the last day with available and 
+estimated reported cases as described above.

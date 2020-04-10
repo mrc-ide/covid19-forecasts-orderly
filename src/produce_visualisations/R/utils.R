@@ -77,6 +77,10 @@ projection_plot <- function(obs, pred) {
 
 rt_plot <- function(rt) {
 
+    palette <- c("#E69F00", "#0072B2", "#D55E00")
+    names(palette) <- unique(rt$model)
+
+
     nice_names <- snakecase::to_any_case(
         rt$country,
         "title"
@@ -106,7 +110,15 @@ rt_plot <- function(rt) {
         geom_hline(
             yintercept = 1,
             linetype = "dashed"
-        ) + theme_project()
+        ) + theme_project() +
+          scale_color_manual(
+            values = palette,
+            labels = c("Ensemble", "Model 1", "Model 2")
+          ) + theme(
+                legend.position = "bottom",
+                legend.title = element_blank()
+              )
+
     p
 }
 
