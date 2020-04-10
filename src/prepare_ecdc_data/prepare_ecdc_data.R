@@ -46,8 +46,7 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
-out <- saveRDS(
-  object = list(
+x <- list(
     date_week_finishing = week_finishing,
     Threshold_criterion_4weeks = params$Threshold_criterion_4weeks,
     Threshold_criterion_7days = params$Threshold_criterion_7days,
@@ -56,6 +55,17 @@ out <- saveRDS(
     Country = Country,
     si_mean = params$si_mean,
     si_std = params$si_std
-  ),
+)
+
+out <- saveRDS(
+  object = x,
   file = params$outfile
+)
+
+## Also save it with a generic name to avoid having to configure the
+## downstream tasks
+
+out <- saveRDS(
+  object = x,
+  file = "latest_model_input.rds"
 )
