@@ -50,6 +50,7 @@ artefacts:
         - ensemble_model_rt.rds
         - ensemble_daily_qntls.rds
         - ensemble_weekly_qntls.rds
+        - ensemble_model_rt_samples.rds
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
 # "description" (which can be as long as you want).  Must be a string.

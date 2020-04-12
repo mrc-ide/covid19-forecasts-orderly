@@ -142,6 +142,7 @@ depends:
     use:
       ensemble_daily_qntls.rds: ensemble_daily_qntls.rds
       ensemble_model_rt.rds: ensemble_model_rt.rds
+      ensemble_model_rt_samples.rds: ensemble_model_rt_samples.rds
   prepare_ecdc_data:
     id: "latest"
     use:

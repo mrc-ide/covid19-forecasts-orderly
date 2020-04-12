@@ -117,7 +117,7 @@ purrr::iwalk(
       }
     )
   }
-  )
+ )
 
 ## Model Rt quantiles
 ensemble_rt <- readRDS("ensemble_model_rt.rds")
@@ -170,6 +170,28 @@ purrr::iwalk(
   plots,
   function(p, date_si) {
     outfile <- glue::glue("ensemble_rt_{date_si}.png")
+    ggsave(
+      filename = outfile,
+      plot = p,
+      width = fig_size$fig.width,
+      height = fig_size$fig.height,
+      unit = fig_size$units
+    )
+  }
+)
+
+
+#### Boxplots
+ensemble_model_rt_samples <- readRDS("ensemble_model_rt_samples.rds")
+
+plots <- split(
+  ensemble_model_rt_samples, ensemble_model_rt_samples$model
+) %>% purrr::map(rt_boxplot)
+
+purrr::iwalk(
+  plots,
+  function(p, date) {
+    outfile <- glue::glue("ensemble_rt_{date}_boxplot.png")
     ggsave(
       filename = outfile,
       plot = p,

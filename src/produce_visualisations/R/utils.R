@@ -1,77 +1,82 @@
 projection_plot <- function(obs, pred) {
 
     ## Number of projections
-    nprojs <- length(unique(pred$week_ending))
+  nprojs <- length(unique(pred$week_ending))
 
   ## Latest projections get a different color
   if (nprojs == 1) {
-        palette <- c("#b3669e")
+    palette <- c("#b3669e")
   } else {
     palette <- c(
-        rep("#98984d", nprojs - 1),
-        "#b3669e"
+      rep("#98984d", nprojs - 1),
+      "#b3669e"
     )
   }
-    names(palette) <- unique(pred$week_ending)
+  names(palette) <- unique(pred$week_ending)
 
-    date_min <- as.Date("2020-03-01")
-    date_max <- max(pred$date) + 2
-    dates_to_mark <- seq(
-        from = date_min,
-        to = date_max,
-        by = "1 day"
-    )
-    dates_to_mark <- dates_to_mark[weekdays(dates_to_mark) == "Monday"]
-    ## Get dates of adding vlines.
-    window_eps <- dplyr::group_by(pred, proj) %>%
-        dplyr::summarise(date = min(date)) %>%
-        dplyr::ungroup()
+  ## Plot only the latest projections.
+  pred <- pred[pred$week_ending == max(as.Date(pred$week_ending)), ]
 
-    window_eps$xintercepts <- as.numeric(
-        window_eps$date - 1
-    ) + 0.5
-    ## To get nice labels
-    ## https://joshuacook.netlify.com/post/integer-values-ggplot-axis/
-    integer_breaks <- function(n = 5, ...) {
-        fxn <- function(x) {
-            breaks <- floor(pretty(x, n, ...))
-            names(breaks) <- attr(breaks, "labels")
-            breaks
-        }
-        return(fxn)
+  date_min <- max(
+    as.Date(pred$week_ending) - 28, as.Date("2020-03-01")
+  )
+  date_max <- max(pred$date) + 2
+  dates_to_mark <- seq(
+    from = date_min,
+    to = date_max,
+    by = "1 day"
+  )
+  dates_to_mark <- dates_to_mark[weekdays(dates_to_mark) == "Monday"]
+  ## Get dates of adding vlines.
+  window_eps <- dplyr::group_by(pred, proj) %>%
+    dplyr::summarise(date = min(date)) %>%
+    dplyr::ungroup()
+
+  window_eps$xintercepts <- as.numeric(
+    window_eps$date - 1
+  ) + 0.5
+  ## To get nice labels
+  ## https://joshuacook.netlify.com/post/integer-values-ggplot-axis/
+  integer_breaks <- function(n = 5, ...) {
+    fxn <- function(x) {
+      breaks <- floor(pretty(x, n, ...))
+      names(breaks) <- attr(breaks, "labels")
+      breaks
     }
+    return(fxn)
+  }
 
-    p <- ggplot() +
+  p <- ggplot() +
     geom_point(data = obs, aes(dates, deaths)) +
-        geom_line(
-            data = pred,
-            aes(date, `50%`, col = week_ending, group = week_ending)
-        ) +
-        geom_ribbon(
-            data = pred,
-            aes(x = date,
-                ymin = `2.5%`,
-                ymax = `97.5%`,
-                fill = week_ending,
-                group = week_ending),
-            alpha = 0.4) +
-    scale_color_manual(
-        values = palette,
-        aesthetics = c("color", "fill")
+    geom_line(
+      data = pred,
+      aes(date, `50%`, col = week_ending, group = week_ending)
     ) +
-      theme_project() +
+    geom_ribbon(
+      data = pred,
+      aes(x = date,
+          ymin = `2.5%`,
+          ymax = `97.5%`,
+          fill = week_ending,
+          group = week_ending),
+      alpha = 0.4) +
+    scale_color_manual(
+      values = palette,
+      aesthetics = c("color", "fill")
+    ) +
+    theme_project() +
     theme(legend.position = "none") +
-        scale_x_date(breaks = dates_to_mark, limits = c(date_min, date_max)) +
-        scale_y_continuous(breaks = integer_breaks()) +
+    scale_x_date(breaks = dates_to_mark, limits = c(date_min, date_max)) +
+    scale_y_continuous(breaks = integer_breaks()) +
     geom_vline(
-        xintercept = c(
-           window_eps$xintercepts
-        ),
-        linetype = "dashed"
+      xintercept = c(
+        window_eps$xintercepts
+      ),
+      linetype = "dashed"
     ) + xlab("") +
-      ylab("Deaths")
+    ylab("Deaths")
 
-    p
+  p
 }
 
 
@@ -122,4 +127,30 @@ rt_plot <- function(rt) {
     p
 }
 
+
+rt_boxplot <- function(rt, si_to_plot = "si_2") {
+
+  nice_names <- snakecase::to_title_case(rt$country)
+  names(nice_names) <- rt$country
+  ##rt$country <- reorder(rt$country, -rt$`50%`)
+  if (length(unique(rt$model)) == 1) width <- 0.1
+  else width <- 0.7
+
+  p <- ggplot(rt, aes(y = country, x = si_2)) +
+    geom_boxplot() +
+    ##theme_pubr() +
+    xlab("Effective Reproduction Number") +
+    ylab("") +
+    scale_y_discrete(labels = nice_names) +
+    geom_vline(
+      xintercept = 1,
+      linetype = "dashed"
+    ) + theme_project() +
+    theme(
+      legend.position = "bottom",
+      legend.title = element_blank()
+    )
+
+  p
+}
 

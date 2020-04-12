@@ -56,6 +56,7 @@ artefacts:
         - daily_predictions_qntls.rds
         - weekly_predictions_qntls.rds
         - model_rt_qntls.rds
+        - model_rt_samples.rds
         - model_outputs/RtI0_Std_results_week_end_2020-03-08.rds
         - model_outputs/sbkp_Std_results_week_end_2020-03-08.rds
         - model_outputs/DeCa_Std_results_week_end_2020-03-08.rds

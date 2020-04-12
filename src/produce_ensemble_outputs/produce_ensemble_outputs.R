@@ -143,3 +143,39 @@ readr::write_rds(
   x = ensemble_weekly_qntls,
   path = "ensemble_weekly_qntls.rds"
 )
+
+ensemble_model_rt_samples <- purrr::map_dfr(
+  weeks_ending,
+  function(week) {
+    message("Week is ", week)
+    idx <- grep(x = names(model_outputs), pattern = week)
+    message("Working on models ", names(model_outputs)[idx])
+    outputs <- purrr::map(model_outputs[idx], ~ .[["R_last"]])
+    ## First Level is model, 2nd is country, 3rd is SI.
+    ## TODO pick countries from inout
+    countries <- names(outputs[[2]])
+    names(countries) <- countries
+    purrr::map_dfr(
+      countries,
+      function(country) {
+        ## y is country specific output
+        y <- purrr::map(outputs, ~ .[[country]])
+        ## y has 2 components, one for each SI.
+        ## Determine quantiles
+        y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
+        y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
+        data.frame(
+          si_1 = unlist(y_1),
+          si_2 = unlist(y_2)
+        )
+      },
+      .id = "country"
+    )
+  },
+  .id = "model" ## this is really week ending, but to be able to resue prev code, i am calling it model
+)
+
+readr::write_rds(
+  x = ensemble_model_rt_samples,
+  path = "ensemble_model_rt_samples.rds"
+)

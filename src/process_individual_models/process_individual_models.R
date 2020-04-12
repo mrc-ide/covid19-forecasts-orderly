@@ -115,7 +115,7 @@ model_rt_qntls <- purrr::map_dfr(
         function(y_si) {
           out2 <- quantile(
             y_si,
-            prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
+            prob = c(0.025, 0.1, 0.25, 0.5, 0.75, 0.9, 0.975)
           )
           out2 <- as.data.frame(out2)
           out2 <- tibble::rownames_to_column(
@@ -133,4 +133,26 @@ model_rt_qntls <- purrr::map_dfr(
 readr::write_rds(
     x = model_rt_qntls,
     path = "model_rt_qntls.rds"
+)
+
+
+model_rt_samples <- purrr::map_dfr(
+  model_outputs,
+  function(x) {
+    rt <- x[["R_last"]]
+    purrr::map_dfr(
+      rt,
+      function(cntry) {
+        data.frame(
+          si_1 = cntry[[1]],
+          si_2 = cntry[[2]]
+        )
+     }, .id = "country"
+  )
+  }, .id = "model"
+)
+
+readr::write_rds(
+    x = model_rt_samples,
+    path = "model_rt_samples.rds"
 )
