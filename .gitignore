@@ -13,3 +13,5 @@ scratch.R
 orderly_envir.yml
 *.sqlite
 .DS_Store
+*.png
+*gadm36*
