@@ -128,17 +128,25 @@ rt_plot <- function(rt) {
 }
 
 
-rt_boxplot <- function(rt, si_to_plot = "si_2") {
+rt_boxplot <- function(rt) {
 
   nice_names <- snakecase::to_title_case(rt$country)
   names(nice_names) <- rt$country
   ##rt$country <- reorder(rt$country, -rt$`50%`)
-  if (length(unique(rt$model)) == 1) width <- 0.1
-  else width <- 0.7
 
-  p <- ggplot(rt, aes(y = country, x = si_2)) +
-    geom_boxplot() +
-    ##theme_pubr() +
+  rt$country <- reorder(rt$country, -rt$`50%`)
+  p <- ggplot(rt) +
+  geom_boxplot(
+    aes(
+      y = country,
+      xmin = `2.5%`,
+      xmax = `97.5%`,
+      xmiddle = `50%`,
+      xlower = `25%`,
+      xupper = `75%`
+    ),
+    stat = "identity"
+  ) +
     xlab("Effective Reproduction Number") +
     ylab("") +
     scale_y_discrete(labels = nice_names) +

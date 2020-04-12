@@ -1,3 +1,4 @@
+probs <- c(0.025, 0.25, 0.5, 0.75, 0.975)
 weeks_ending <- list(
   "2020-03-08" = "2020-03-08",
   "2020-03-15" = "2020-03-15",
@@ -77,10 +78,12 @@ ensemble_model_rt <- purrr::map_dfr(
         y <- purrr::map(outputs, ~ .[[country]])
         ## y has 2 components, one for each SI.
         ## Determine quantiles
-        probs <- c(0.025, 0.5, 0.975)
+
         y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
+        ## smallest observation greater than or equal to lower hinge - 1.5 * IQR
+        y_1_all <- unlist(y_1)
         y_1 <- quantile(
-          unlist(y_1),
+          y_1_all,
           probs = probs
         )
         y_1 <- tibble::rownames_to_column(
@@ -90,8 +93,9 @@ ensemble_model_rt <- purrr::map_dfr(
         y_1$si <- "si_1"
 
         y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
+        y_2_all <- unlist(y_2)
         y_2 <- quantile(
-          unlist(y_2),
+          y_2_all,
           probs = probs
         )
         y_2 <- tibble::rownames_to_column(

@@ -26,7 +26,7 @@ extract_predictions_qntls <- function(y) {
                 apply(y_si,
                       2,
                       quantile,
-                      prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
+                      prob = c(0.025, 0.25, 0.5, 0.75, 0.975)
                       )
             )
             out2 <- as.data.frame(out2)
@@ -48,7 +48,7 @@ daily_to_weekly <- function(y) {
             weekly <- rowSums(y_si)
             weekly <- quantile(
                 weekly,
-                prob = c(0.025, 0.1, 0.4, 0.5, 0.6, 0.9, 0.975)
+                prob = c(0.025, 0.25, 0.5, 0.75, 0.975)
             )
             weekly_df <- as.data.frame(weekly)
             ## This is not the last date for which predictions are

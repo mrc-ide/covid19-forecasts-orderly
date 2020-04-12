@@ -121,6 +121,37 @@ purrr::iwalk(
 
 ## Model Rt quantiles
 ensemble_rt <- readRDS("ensemble_model_rt.rds")
+### For ensemble plots, need to split by date
+###
+ensemble_rt_wide <- tidyr::spread(
+  ensemble_rt, quantile, out2
+  )
+
+
+
+plots <- split(
+  ensemble_rt_wide,
+  list(ensemble_rt_wide$model, ensemble_rt_wide$si), sep = "_"
+) %>% purrr::map(rt_boxplot)
+
+purrr::iwalk(
+  plots,
+  function(p, date_si) {
+    outfile <- glue::glue("ensemble_rt_{date_si}_boxplot.png")
+    message(outfile)
+    ggsave(
+      filename = outfile,
+      plot = p,
+      width = fig_size$fig.width,
+      height = fig_size$fig.height,
+      unit = fig_size$units
+    )
+  }
+)
+
+
+
+
 ensemble_rt$model <- paste0("ensemble_", ensemble_rt$model)
 model_rt <- readRDS("model_rt_qntls.rds")
 model_rt$model <- gsub(
@@ -159,45 +190,3 @@ purrr::iwalk(
   }
 )
 
-### For ensemble plots, need to split by date
-
-plots <- split(
-  rt_both,
-  list(rt_both$date, rt_both$si), sep = "_"
-) %>% purrr::map(rt_plot)
-
-purrr::iwalk(
-  plots,
-  function(p, date_si) {
-    outfile <- glue::glue("ensemble_rt_{date_si}.png")
-    ggsave(
-      filename = outfile,
-      plot = p,
-      width = fig_size$fig.width,
-      height = fig_size$fig.height,
-      unit = fig_size$units
-    )
-  }
-)
-
-
-#### Boxplots
-ensemble_model_rt_samples <- readRDS("ensemble_model_rt_samples.rds")
-
-plots <- split(
-  ensemble_model_rt_samples, ensemble_model_rt_samples$model
-) %>% purrr::map(rt_boxplot)
-
-purrr::iwalk(
-  plots,
-  function(p, date) {
-    outfile <- glue::glue("ensemble_rt_{date}_boxplot.png")
-    ggsave(
-      filename = outfile,
-      plot = p,
-      width = fig_size$fig.width,
-      height = fig_size$fig.height,
-      unit = fig_size$units
-    )
-  }
-)
