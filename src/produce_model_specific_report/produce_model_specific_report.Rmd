@@ -1,0 +1,616 @@
+---
+output: 
+html_fragment:
+citation_package: natbib
+keep_tex: false
+fig_caption: true
+latex_engine: pdflatex
+title: 
+author:
+- name: Sangeeta Bhatia
+affiliation: Imperial College London
+abstract: 
+keywords: 
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+geometry: margin=1in
+fontfamily: mathpazo
+fontsize: 11pt
+spacing: double
+bibliography: 
+biblio-style: apsr
+endnote: no
+---
+
+```{r setup, eval = TRUE}
+library(dplyr)
+library(purrr)
+library(ggplot2)
+```
+
+## Detailed Summary
+
+### Objectives and caveats
+
+The **main** objective in this report is to produce forecasts of the 
+number of deaths in the week ahead for each country with active
+transmission.
+
+* We define a country as having active transmission if
+at least *ten* deaths were observed in the country in each of the past
+two weeks. In the analysis for week beginning 
+29-03-2020, 22 countries/regions were included in the
+analysis. For the week beginning 05-04-2020,
+the number of countries/regions included based on these thresholds is 42.
+
+
+* We forecast the number of potential deaths as the reporting of deaths
+is likely to be more reliable and stable over time than the reporting 
+of cases. 
+
+* As we are forecasting deaths, the latest estimates of
+transmissibility reflect the epidemiological situation at the time of
+the infection of COVID-19 fatalities. Therefore, the impact of
+controls on estimated transmissibility will be quantifiable with a
+delay between transmission and death.
+
+
+A **secondary** objective of this report is to analyse case
+ascertainment per country. As well as forecasting ahead, we use the number
+of reported deaths and of cases reported with a delay (delay from reporting to deaths,
+see Case Ascertainment method) to analyse the reporting trends per
+country. If the reporting of cases and deaths were perfect, and
+the delay between reporting and death is known, the ratio of
+deaths to delayed cases would equal the Case Fatality Ratio (CFR).
+
+In this analysis, key assumptions are:
+
+* The mean underlying CFR is 1.38% (95% Credible Interval (1.23 - 1.53)) [@verity2020],
+* The delay from a case being reported to death follows a gamma distribution with mean 10 days, and standard deviation 2 days.
+* All deaths due to COVID-19 have been reported in each country.
+
+```{r, results='asis'}
+
+cat(readLines('summary.html'))
+
+```
+
+## Methods
+
+We define a country to have active transmission if
+at least ten deaths were observed in the country in the last two
+consecutive weeks. We intend to produce forecasts every
+week, for the week ahead. Ensemble forecasts are produced from the
+outputs of three different models.
+
+Our main analysis assumes a gamma distributed serial interval with mean 6.48 days
+and standard deviation of 3.83 days following [@wang2020strongly].
+The serial interval estimates observed from various studies thus far
+may be biased toward lower values due to observation bias whereby, in
+contact tracing studies, long serial
+intervals tend to be under-represented. To account for this, as a
+sensitivity analysis, we also use a
+shorter serial interval of mean 4.80 days and standard deviation of
+2.70 days [@ferguson2020report]. Results using this shorter interval
+are presented in the section Sensitivity Analyses. While using  a
+longer serial interval has very little
+impact on the weekly forecasts produced, it results in much higher
+estimates of transmissibility.
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+short <- EpiEstim::discr_si(0:30, 4.8, 2.7)
+long <- EpiEstim::discr_si(0:30, 6.48, 3.83)
+df <- data.frame(
+    x = c(0:30, 0:30),
+    cat = c(rep("short", 31), rep("long", 31)),
+    val = c(short, long)
+)
+
+ggplot(df, aes(x, val, fill = cat)) +
+    geom_col(position = "dodge") +
+    theme_pubr() +
+    theme(
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 20),
+        axis.text = element_text(size = 20),
+        legend.text = element_text(size = 20)
+    ) +
+    xlab("Days") +
+    ylab("Probability") +
+    scale_fill_manual(
+        values = c(short = "#b067a3", long = "#9c954d"),
+        breaks = c("short", "long"),
+        labels = c("Short SI (mean 4.80, sd 2.70)",
+                   "Long SI (mean 6.48, sd 3.83)")
+        )
+    
+```
+*Figure 1* Serial Interval distributions used in the analysis. Here
+the serial interval relates to death and characterise the time between
+the deaths of an infector their infectee. Our main analysis assumes a gamma
+distribution with a mean of 6.48 days and a standard deviation of 3.83
+days (shown in green). The shorter serial interval, used for
+sensitivity analysis, with a mean of 4.80 days and a standard
+deviation of 2.70 days is shown in purple.
+
+<br><br>
+
+### Model 1 {.tabset .tabset-fade .tabset-pills} 
+
+#### Methods
+
+The approach, similar to model 2, was to estimate the current
+reproduction number (the average number of secondary cases generated
+by a typical infected individual, $R_t$) and to use that to forecast
+future incidence of death. The current reproduction number was
+estimated assuming constant transmissibility during a chosen
+time-window (i.e. one week).
+
+
+**Estimating current transmissibility**
+
+Here we relied on a well-established and simple method
+[@nouvellet2018simple] that assumed the daily incidence, I~t~ (here
+representing deaths), could be approximated with a Poisson process
+following the renewal equation [@fraser2007estimating]:
+
+$$I_t \sim Pois\left( R_t \sum_{s=0}^tI_{t-s}w_s\right)$$
+
+where $R_t$ is the instantaneous reproduction number and $w$ is the
+serial interval distribution. From this a likelihood of the data given
+a set of model parameters can be calculated, as well the posterior
+distribution of $R_t$ given previous observations of incidence and
+knowledge of the serial interval [@cori2013new]. 
+
+
+We used this approach to estimate $R_t$ over three alternative
+time-windows defined by assuming a constant $R_t$ for either the 2, 3
+or 4 weeks prior to the most recent data-point. We made no assumptions
+regarding the epidemiological situation and transmissibility prior to
+each time-window. Therefore, no data prior to the time-window were
+used to estimate $R_t$, and instead we jointly estimated $R_t$ as well as
+back-calculated the incidence before the time-window. Specifically, we
+jointly estimated the $R_t$ and the incidence level 100 days before the
+time-widow. Past incidence was then calculated using the known
+relationship between the serial interval, growth rate and reproduction
+number. The joint posterior distribution of $R_t$ and the early
+epidemic curve (from which forecasts will be generated) were inferred
+using Markov Chain Monte Carlo (MCMC) sampling.
+
+
+The model has
+the advantage of being robust to changes in reporting before the
+time-window used for inference.
+
+**Forward projections**
+
+We used the renewal equation [@fraser2007estimating] to project the incidence
+forward, given a back-calculated early incidence curve, an estimated
+reproduction number, and the observed incidence over the calibration
+period. We sampled sets of back-calculated early incidence curves
+and reproduction numbers from the posterior distribution obtained in
+the estimation process. For each of these sets, we simulated
+stochastic realisations of the renewal equation from the end of the
+calibration period leading to projected incidence trajectories. 
+
+
+Projections were made on a 7-day horizon. 
+The transmissibility is assumed to remain constant over this time
+period. 
+If transmissibility were to decrease as a result of control interventions
+and/or changes in behaviour over this time period, we would predict 
+fewer deaths; similarly, if transmissibility were to increase
+over this time period, we would predict more deaths We
+limited our projection to 7 days only as assuming constant
+transmissibility over longer time horizons seemed unrealistic in light
+of the different interventions implemented by different countries and
+potential voluntary behaviour changes.
+
+
+ 
+#### Projections 
+
+**Current and past forecasts**
+
+*Caution note*: We note that in France, a large increase 
+in deaths was reported towards the end of the week starting 30-03-2020. This 
+is largely due to back-reporting of deaths outside hospital settings, 
+and therefore, this is likely to have inflated the estimates
+$R_t$. The forecasts of deaths for the coming week are thefore likely
+to be over-estimated.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/RtI0_si_2_page_1.png")
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/RtI0_si_2_page_2.png")
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/RtI0_si_2_page_3.png")
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/RtI0_si_2_page_4.png")
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/RtI0_si_2_page_5.png")
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/RtI0_si_2_page_6.png")
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/RtI0_si_2_page_7.png")
+```
+*Figure 4*: Reported daily deaths, current and past forecasts based on model 1.
+For each country with active transmission (see Methods), we plot
+the observed incidence of deaths (black dots). 
+Past forecasts, where available, are shown in green (median and
+95% CrI), while latest forecasts are shown in red (median and
+95% CrI). Vertical
+dashed lines show the start and end of each week (Monday to Sunday).
+
+<br><br>
+
+#### Estimates of the Effective Reproduction Number 
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/rt_RtI0_si_2_2020-04-05.png")
+```
+*Figure 5*: Latest estimates of effective reproduction numbers by country
+(median and 95% CrI). We present the estimates of current
+transmissibility estimated from model 1.
+
+<br><br>
+
+#### Summary of results
+
+**Table 2**: Observed
+(where available) and forecasted weekly death counts, and estimated
+levels of transmissibility from Model 1 for each country with active transmission
+(see methods) and for each period for which forecasts were produced.
+The number of deaths has been rounded to 3 significant figures.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+model_1_formatted_output <- readRDS("model_1_formatted_output.rds")
+x <- model_1_formatted_output[[2]]
+x <- dplyr::select(x, -model)
+x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
+x <- dplyr::rename(x, `Week Starting` = "Week Ending")
+DT::datatable(x)
+
+```
+
+
+
+<br><br>
+
+
+### Model 2 {.tabset .tabset-fade .tabset-pills} 
+
+#### Methods
+
+**Estimating current transmissibility**
+
+The standard approach to inferring the effective reproduction number at
+$t$, $R_t$, from an incidence curve (with cases at t denoted I~t~) is
+provided by [@cori2013new]. This method assumes that
+$R_t$ is constant over a window back in time of size *k* units (e.g. days
+or weeks) and uses the part of the incidence curve contained in this
+window to estimate $R_t$. However, estimates of $R_t$ can depend strongly on
+the width of the time-window used for estimation. Thus
+mis-specified time-windows can bias our inference. In [@parag2019optimising]
+we use information theory to extend the approach of Cori et al. to optimise
+the choice of the time-window and refine estimates of $R_t$. 
+Specifically:
+
+-   We integrate over the entire posterior distribution of $R_t$, to
+    obtain the posterior predictive distribution of incidence at time
+    t+1 as P(I~t+1~ \| I~1~^t^) with I~1~^t^ as the incidence curve up
+    to t. For a gamma posterior distribution over $R_t$ this is analytic and negative
+    binomial ([see @parag2019optimising] for exact formulae). 
+	
+-   We compute this distribution sequentially and causally across the
+    existing incidence curve and then evaluate every observed case-count
+    according to this posterior predictive distribution. For example at
+    t = 5, we pick the true incidence value I~5~\* and evaluate the
+    probability of seeing this value under the predictive distribution
+    i.e. P(I~5~ = I~5~\* \| I~1~^4^).
+
+This allows us to construct the accumulated predictive error (APE) under
+some window length *k* and under a given generation time distribution
+as:
+
+$$\text{AP}E_{k} = \sum_{t = 0}^{T - 1}{- \log{P\left( I_{t + 1} = I_{t + 1}^{*}\  \right|\ I_{t - k + 1}^{t})\ \ }}$$
+
+The optimal window length *k\** is then
+$k^{*} = \arg{\min_{k}{\text{AP}E_{k}}}$.  Here
+*T* is the last time point in the existing incidence curve.
+
+**Forward Projections**
+
+Forward projections are made assuming that the transmissibility
+remains unchanged over the projection horizon and same as the transmissibility
+in the last time-window.  The projections are made using the standard
+branching process model using a Poisson offspring distribution. 
+
+
+
+
+#### Projections
+
+**Current and past forecasts**
+
+*Caution note*: We note that in France, a large increase 
+in deaths was reported towards the end of the week starting 30-03-2020. This 
+is largely due to back-reporting of deaths outside hospital settings, 
+and therefore, this is likely to have inflated the estimates
+$R_t$. The forecasts of deaths for the coming week are thefore likely
+to be over-estimated.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/sbkp_si_2_page_1.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/sbkp_si_2_page_2.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/sbkp_si_2_page_3.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/sbkp_si_2_page_4.png")
+
+```
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/sbkp_si_2_page_5.png")
+
+```
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/sbkp_si_2_page_6.png")
+
+```
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/sbkp_si_2_page_7.png")
+
+```
+*Figure 6*: Reported daily deaths, current and past forecasts based on model 2.
+For each country with active transmission (see Methods), we plot
+the observed incidence of deaths (black dots). 
+Past forecasts, where available, are shown in green (median and
+95% CrI), while latest forecasts are shown in red (median and
+95% CrI). Vertical
+dashed lines show the start and end of each week (Monday to Sunday).
+
+<br><br>
+
+#### Effective Reproduction Number Estimates
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/rt_sbkp_si_2_2020-04-05.png")
+
+```
+*Figure 7*: Latest estimates of effective reproduction numbers by country
+(median and 95% CrI). We present the estimates of current
+transmissibility from model 2.
+
+
+<br><br>
+
+#### Summary of results
+
+**Table 3**: Observed
+(where available) and forecasted weekly death counts and the estimated
+levels of transmissibility from Model 2 for each country with active transmission
+(see methods) and for each period for which forecasts were produced.
+The number of deaths has been rounded to 3 significant figures.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+model_2_formatted_output <- readRDS("model_2_formatted_output.rds")
+x <- model_2_formatted_output[[2]]
+x <- dplyr::select(x, -model)
+x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
+x <- dplyr::rename(x, `Week Starting` = "Week Ending")
+DT::datatable(x)
+
+```
+
+
+<br><br>
+
+
+### Model 3 {.tabset .tabset-fade .tabset-pills} 
+
+#### Methods
+
+The methods for this model are presented in detail in the section
+"Case Ascertainment". Please note that for this model, we do no
+estimate the effective reproduction number to forecast ahead.
+
+
+#### Projections
+
+*Current and Past Forecasts*
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/DeCa_si_2_page_1.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/DeCa_si_2_page_2.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/DeCa_si_2_page_3.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/DeCa_si_2_page_4.png")
+
+```
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/DeCa_si_2_page_5.png")
+
+```
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/DeCa_si_2_page_6.png")
+
+```
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/DeCa_si_2_page_7.png")
+
+```
+*Figure 8*: Reported daily deaths, current and past forecasts based on model 3.
+For each country with active transmission (see Methods), we plot
+the observed incidence of deaths (black dots). 
+Past forecasts, where available, are shown in green (median and
+95% CrI), while latest forecasts are shown in red (median and
+95% CrI). Vertical
+dashed lines show the start and end of each week (Monday to Sunday).
+
+<br><br>
+
+
+#### Summary of results
+
+**Table 3**: Observed
+(where available) and forecasted weekly death counts and the estimated
+levels of transmissibility from Model 2 for each country with active transmission
+(see methods) and for each period for which forecasts were produced.
+The number of deaths has been rounded to 3 significant figures.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+model_3_formatted_output <- readRDS("model_3_formatted_output.rds")
+x <- model_3_formatted_output[[2]]
+x <- dplyr::select(x, -model)
+x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
+x <- dplyr::rename(x, `Week Starting` = "Week Ending")
+DT::datatable(x[ ,-5])
+
+```
+
+
+<br><br>
+
+## Sensitivity Analyses {.tabset .tabset-fade .tabset-pills} 
+
+
+Results below use a shorter serial interval distribution (mean 4.80
+days, SD 2.70 days). Only results from the ensemble model are
+presented here.
+
+
+### Projections
+
+*Caution note*: We note that in France, a large increase 
+in deaths was reported towards the end of the week starting 30-03-2020. This 
+is largely due to back-reporting of deaths outside hospital settings, 
+and therefore, this is likely to have inflated the estimates
+$R_t$. The forecasts of deaths for the coming week are thefore likely
+to be over-estimated.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_si_1_page_1.png")
+
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_si_1_page_2.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_si_1_page_3.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_si_1_page_4.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_si_1_page_5.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_si_1_page_6.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_si_1_page_7.png")
+
+```
+*Figure 9*: Reported daily deaths, current and past forecasts based on the model ensemble.
+For each country with active transmission (see methods), we plot
+the observed incidence of deaths (black dots). 
+Past forecasts, where available, are shown in green (median and
+95% CrI), while latest forecasts are shown in red (median and
+95% CrI). Vertical
+dashed lines show the start and end of each week (Monday to Sunday).
+
+<br><br>
+
+
+### Effective Reproduction Number Estimates
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensemble_rt_2020-04-05_si_1.png")
+
+```
+*Figure 10*: Latest estimates of effective reproduction numbers by country
+(median and 95% CrI). We present the estimates of current
+transmissibility estimated from each method as well as the ensemble
+estimates.
+
+
+<br><br>

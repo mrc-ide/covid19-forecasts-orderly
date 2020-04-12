@@ -21,7 +21,7 @@ biblio-style: apsr
 endnote: no
 ---
 
-```{r}
+```{r echo = FALSE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(
     echo = FALSE, 
     fig.width = 21, 
