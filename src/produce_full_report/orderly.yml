@@ -108,43 +108,6 @@ resources:
   - bibliography.bib
   - annual-review-of-statistics-and-its-application.csl
   - case_ascertainment_methods.Rmd
-  - figs/DeCa_si_1_page_1.png
-  - figs/DeCa_si_1_page_2.png
-  - figs/DeCa_si_1_page_3.png
-  - figs/DeCa_si_1_page_4.png
-  - figs/DeCa_si_1_page_5.png
-  - figs/DeCa_si_1_page_6.png
-  - figs/DeCa_si_1_page_7.png
-  - figs/DeCa_si_2_page_1.png
-  - figs/DeCa_si_2_page_2.png
-  - figs/DeCa_si_2_page_3.png
-  - figs/DeCa_si_2_page_4.png
-  - figs/DeCa_si_2_page_5.png
-  - figs/DeCa_si_2_page_6.png
-  - figs/DeCa_si_2_page_7.png
-  - figs/RtI0_si_1_page_1.png
-  - figs/RtI0_si_1_page_2.png
-  - figs/RtI0_si_1_page_3.png
-  - figs/RtI0_si_1_page_4.png
-  - figs/RtI0_si_1_page_5.png
-  - figs/RtI0_si_1_page_6.png
-  - figs/RtI0_si_1_page_7.png
-  - figs/RtI0_si_2_page_1.png
-  - figs/RtI0_si_2_page_2.png
-  - figs/RtI0_si_2_page_3.png
-  - figs/RtI0_si_2_page_4.png
-  - figs/RtI0_si_2_page_5.png
-  - figs/RtI0_si_2_page_6.png
-  - figs/RtI0_si_2_page_7.png
-  - figs/ensemble_rt_2020-04-05_si_1.png
-  - figs/ensemble_rt_2020-04-05_si_2.png  
-  - figs/ensmbl_pred_si_1_page_1.png
-  - figs/ensmbl_pred_si_1_page_2.png
-  - figs/ensmbl_pred_si_1_page_3.png
-  - figs/ensmbl_pred_si_1_page_4.png
-  - figs/ensmbl_pred_si_1_page_5.png
-  - figs/ensmbl_pred_si_1_page_6.png
-  - figs/ensmbl_pred_si_1_page_7.png
   - figs/ensmbl_pred_si_2_page_1.png
   - figs/ensmbl_pred_si_2_page_2.png
   - figs/ensmbl_pred_si_2_page_3.png
@@ -152,25 +115,31 @@ resources:
   - figs/ensmbl_pred_si_2_page_5.png
   - figs/ensmbl_pred_si_2_page_6.png
   - figs/ensmbl_pred_si_2_page_7.png
-  - figs/rt_RtI0_si_2_2020-04-05.png
-  - figs/rt_ensemble_si_2_2020-04-05.png
-  - figs/rt_ensemble_si_1_2020-04-05.png
-  - figs/rt_sbkp_si_2_2020-04-05.png
-  - figs/sbkp_si_1_page_1.png
-  - figs/sbkp_si_1_page_2.png
-  - figs/sbkp_si_1_page_3.png
-  - figs/sbkp_si_1_page_4.png
-  - figs/sbkp_si_1_page_5.png
-  - figs/sbkp_si_1_page_6.png
-  - figs/sbkp_si_1_page_7.png
-  - figs/sbkp_si_2_page_1.png
-  - figs/sbkp_si_2_page_2.png
-  - figs/sbkp_si_2_page_3.png
-  - figs/sbkp_si_2_page_4.png
-  - figs/sbkp_si_2_page_5.png
-  - figs/sbkp_si_2_page_6.png
-  - figs/sbkp_si_2_page_7.png  
-
+  - figs/ensemble_rt_2020-04-05_si_2_boxplot.png
+  - figs/plotRatioCD-1.png
+  - figs/plotRatioCD-10.png
+  - figs/plotRatioCD-11.png
+  - figs/plotRatioCD-2.png
+  - figs/plotRatioCD-3.png
+  - figs/plotRatioCD-4.png
+  - figs/plotRatioCD-5.png
+  - figs/plotRatioCD-6.png
+  - figs/plotRatioCD-7.png
+  - figs/plotRatioCD-8.png
+  - figs/plotRatioCD-9.png
+  - figs/unnamed-chunk-4-1.png
+  - figs/unnamed-chunk-4-2.png
+  - figs/unnamed-chunk-4-3.png
+  - figs/unnamed-chunk-4-4.png
+  - figs/unnamed-chunk-4-5.png
+  - figs/unnamed-chunk-4-6.png
+  - figs/unnamed-chunk-4-7.png
+  - figs/unnamed-chunk-4-8.png
+  - figs/unformatted_summary_DeathToRepoted_14days_2020-04-05.csv
+  - figs/summary_DeathToRepoted_14days_2020-04-05.csv
+  - summary_DeathToRepoted_14days_2020-04-05.csv
+  - unformatted_summary_DeathToRepoted_14days_2020-04-05.csv
+  
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that
 # modify the database (i.e., use DBI::dbGetQuery with "SELECT" queries

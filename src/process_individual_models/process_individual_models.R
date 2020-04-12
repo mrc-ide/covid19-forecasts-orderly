@@ -79,7 +79,12 @@ weekly_predictions_qntls <- purrr::map_dfr(
     purrr::imap_dfr(pred, function(y, country) {
       dates <- as.Date(colnames(y[[1]]))
       obs_deaths <- model_input[["D_active_transmission"]][c("dates", country)]
-      obs_deaths <- obs_deaths[obs_deaths$dates %in% dates, ]
+      ## We now want deaths observed in the week preceding the one
+      ## for which we are forecasting.
+      dates_prev_week <- dates - 7
+      message("Dates of previous week")
+      message(paste(dates_prev_week, collapse = ""))
+      obs_deaths <- obs_deaths[obs_deaths$dates %in% dates_prev_week, ]
       if (nrow(obs_deaths) == 0) {
         message(
           "No observations for dates ", dates, " in ", country

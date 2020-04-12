@@ -76,14 +76,7 @@ cat(readLines('summary.html'))
 
 ## Methods
 
-We define a country to have active transmission if
-at least ten deaths were observed in the country in the last two
-consecutive weeks. We intend to produce forecasts every
-week, for the week ahead. Ensemble forecasts are produced from the
-outputs of three different models.
 
-Our main analysis assumes a gamma distributed serial interval with mean 6.48 days
-and standard deviation of 3.83 days following [@wang2020strongly].
 The serial interval estimates observed from various studies thus far
 may be biased toward lower values due to observation bias whereby, in
 contact tracing studies, long serial
@@ -140,72 +133,6 @@ deviation of 2.70 days is shown in purple.
 
 #### Methods
 
-The approach, similar to model 2, was to estimate the current
-reproduction number (the average number of secondary cases generated
-by a typical infected individual, $R_t$) and to use that to forecast
-future incidence of death. The current reproduction number was
-estimated assuming constant transmissibility during a chosen
-time-window (i.e. one week).
-
-
-**Estimating current transmissibility**
-
-Here we relied on a well-established and simple method
-[@nouvellet2018simple] that assumed the daily incidence, I~t~ (here
-representing deaths), could be approximated with a Poisson process
-following the renewal equation [@fraser2007estimating]:
-
-$$I_t \sim Pois\left( R_t \sum_{s=0}^tI_{t-s}w_s\right)$$
-
-where $R_t$ is the instantaneous reproduction number and $w$ is the
-serial interval distribution. From this a likelihood of the data given
-a set of model parameters can be calculated, as well the posterior
-distribution of $R_t$ given previous observations of incidence and
-knowledge of the serial interval [@cori2013new]. 
-
-
-We used this approach to estimate $R_t$ over three alternative
-time-windows defined by assuming a constant $R_t$ for either the 2, 3
-or 4 weeks prior to the most recent data-point. We made no assumptions
-regarding the epidemiological situation and transmissibility prior to
-each time-window. Therefore, no data prior to the time-window were
-used to estimate $R_t$, and instead we jointly estimated $R_t$ as well as
-back-calculated the incidence before the time-window. Specifically, we
-jointly estimated the $R_t$ and the incidence level 100 days before the
-time-widow. Past incidence was then calculated using the known
-relationship between the serial interval, growth rate and reproduction
-number. The joint posterior distribution of $R_t$ and the early
-epidemic curve (from which forecasts will be generated) were inferred
-using Markov Chain Monte Carlo (MCMC) sampling.
-
-
-The model has
-the advantage of being robust to changes in reporting before the
-time-window used for inference.
-
-**Forward projections**
-
-We used the renewal equation [@fraser2007estimating] to project the incidence
-forward, given a back-calculated early incidence curve, an estimated
-reproduction number, and the observed incidence over the calibration
-period. We sampled sets of back-calculated early incidence curves
-and reproduction numbers from the posterior distribution obtained in
-the estimation process. For each of these sets, we simulated
-stochastic realisations of the renewal equation from the end of the
-calibration period leading to projected incidence trajectories. 
-
-
-Projections were made on a 7-day horizon. 
-The transmissibility is assumed to remain constant over this time
-period. 
-If transmissibility were to decrease as a result of control interventions
-and/or changes in behaviour over this time period, we would predict 
-fewer deaths; similarly, if transmissibility were to increase
-over this time period, we would predict more deaths We
-limited our projection to 7 days only as assuming constant
-transmissibility over longer time horizons seemed unrealistic in light
-of the different interventions implemented by different countries and
-potential voluntary behaviour changes.
 
 
  
@@ -302,50 +229,6 @@ DT::datatable(x)
 ### Model 2 {.tabset .tabset-fade .tabset-pills} 
 
 #### Methods
-
-**Estimating current transmissibility**
-
-The standard approach to inferring the effective reproduction number at
-$t$, $R_t$, from an incidence curve (with cases at t denoted I~t~) is
-provided by [@cori2013new]. This method assumes that
-$R_t$ is constant over a window back in time of size *k* units (e.g. days
-or weeks) and uses the part of the incidence curve contained in this
-window to estimate $R_t$. However, estimates of $R_t$ can depend strongly on
-the width of the time-window used for estimation. Thus
-mis-specified time-windows can bias our inference. In [@parag2019optimising]
-we use information theory to extend the approach of Cori et al. to optimise
-the choice of the time-window and refine estimates of $R_t$. 
-Specifically:
-
--   We integrate over the entire posterior distribution of $R_t$, to
-    obtain the posterior predictive distribution of incidence at time
-    t+1 as P(I~t+1~ \| I~1~^t^) with I~1~^t^ as the incidence curve up
-    to t. For a gamma posterior distribution over $R_t$ this is analytic and negative
-    binomial ([see @parag2019optimising] for exact formulae). 
-	
--   We compute this distribution sequentially and causally across the
-    existing incidence curve and then evaluate every observed case-count
-    according to this posterior predictive distribution. For example at
-    t = 5, we pick the true incidence value I~5~\* and evaluate the
-    probability of seeing this value under the predictive distribution
-    i.e. P(I~5~ = I~5~\* \| I~1~^4^).
-
-This allows us to construct the accumulated predictive error (APE) under
-some window length *k* and under a given generation time distribution
-as:
-
-$$\text{AP}E_{k} = \sum_{t = 0}^{T - 1}{- \log{P\left( I_{t + 1} = I_{t + 1}^{*}\  \right|\ I_{t - k + 1}^{t})\ \ }}$$
-
-The optimal window length *k\** is then
-$k^{*} = \arg{\min_{k}{\text{AP}E_{k}}}$.  Here
-*T* is the last time point in the existing incidence curve.
-
-**Forward Projections**
-
-Forward projections are made assuming that the transmissibility
-remains unchanged over the projection horizon and same as the transmissibility
-in the last time-window.  The projections are made using the standard
-branching process model using a Poisson offspring distribution. 
 
 
 
