@@ -1,3 +1,19 @@
+add_continents <- function(df, mapping) {
+
+  df$iso3c <- countrycode::countrycode(
+    snakecase::to_title_case(df$country),
+      "country.name",
+      "iso3c"
+   )
+
+  df <- dplyr::left_join(
+    df,
+    mapping,
+    by = c("iso3c" = "three_letter_country_code")
+  )
+  df
+}
+
 ## Observations in tall format
 model_input <- readr::read_rds("model_input.rds")
 obs_deaths <- model_input [["D_active_transmission"]]
@@ -21,35 +37,15 @@ continents <- continents[ , c(
   "three_letter_country_code"
 )]
 
-obs_deaths$iso3c <- countrycode::countrycode(
-  snakecase::to_title_case(obs_deaths$country),
-  "country.name",
-  "iso3c"
-  )
-
-obs_deaths <- dplyr::left_join(
-  obs_deaths,
-  continents,
-  by = c("iso3c" = "three_letter_country_code")
-)
+obs_deaths <- add_continents(obs_deaths, continents)
 
 
 ensb_pred <- readr::read_rds("ensemble_daily_qntls.rds")
 ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 
-ensb_pred$iso3c <- countrycode::countrycode(
-  snakecase::to_title_case(ensb_pred$country),
-  "country.name",
-  "iso3c"
-  )
+ensb_pred <- add_continents(ensb_pred, continents)
 
-
-ensb_pred <- dplyr::left_join(
-  ensb_pred,
-  continents,
-  by = c("iso3c" = "three_letter_country_code")
-)
 by_continent_si <- split(
   ensb_pred, list(ensb_pred$continent_name, ensb_pred$si), sep = "_"
 )
@@ -109,33 +105,43 @@ daily_predictions_qntls <- tidyr::separate(
   col = "model",
   into = c("proj", NA, NA, NA, NA, "week_ending"),
   sep = "_"
-  )
+)
 
-
+daily_predictions_qntls <- add_continents(
+  daily_predictions_qntls, continents
+)
 
 by_model_si <- split(
   daily_predictions_qntls,
-  list(daily_predictions_qntls$proj, daily_predictions_qntls$si),
+  list(
+    daily_predictions_qntls$proj,
+    daily_predictions_qntls$continent_name,
+    daily_predictions_qntls$si),
   sep = "_"
 )
+
+by_model_si <- purrr::keep(by_model_si, ~ nrow(.) >= 1)
 
 plots <- purrr::map(
     by_model_si,
     function(pred) {
       pred$date <- as.Date(pred$date)
-      projection_plot(obs_deaths, pred)
+      obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
+      projection_plot(obs, pred)
     }
   )
 
 nice_names <- snakecase::to_title_case(unique(daily_predictions_qntls$country))
 names(nice_names) <- unique(daily_predictions_qntls$country)
 ## 6 pages in each plot so.
-n_pages <- ceiling(length(unique(daily_predictions_qntls$country)) / 6)
+n_cntrs <- purrr::map_int(by_model_si, ~ length(unique(.$country)))
+n_pages <- ceiling(n_cntrs / 6)
 purrr::iwalk(
   plots,
   function(p, model_si) {
+    here_pages <- n_pages[[model_si]]
     purrr::walk(
-      seq_len(n_pages),
+      seq_len(here_pages),
       function(page_num) {
         p <- p +
           ggforce::facet_wrap_paginate(
@@ -150,7 +156,7 @@ purrr::iwalk(
           )
 
         outfile <- glue::glue("{model_si}_page_{page_num}.png")
-
+        message("Saving ", outfile)
         ggsave(
           filename = outfile,
           plot = p,
@@ -169,13 +175,17 @@ ensemble_rt <- readRDS("ensemble_model_rt.rds")
 ###
 ensemble_rt_wide <- tidyr::spread(
   ensemble_rt, quantile, out2
-  )
-
+)
+ensemble_rt_wide <- add_continents(ensemble_rt_wide, continents)
 
 
 plots <- split(
   ensemble_rt_wide,
-  list(ensemble_rt_wide$model, ensemble_rt_wide$si), sep = "_"
+  list(
+    ensemble_rt_wide$model,
+    ensemble_rt_wide$continent_name,
+    ensemble_rt_wide$si
+  ), sep = "_"
 ) %>% purrr::map(rt_boxplot)
 
 purrr::iwalk(
@@ -192,8 +202,6 @@ purrr::iwalk(
     )
   }
 )
-
-
 
 
 ensemble_rt$model <- paste0("ensemble_", ensemble_rt$model)

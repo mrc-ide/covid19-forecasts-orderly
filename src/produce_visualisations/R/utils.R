@@ -15,7 +15,7 @@ projection_plot <- function(obs, pred) {
   names(palette) <- unique(pred$week_ending)
 
   ## Plot only the latest projections.
-  ##pred <- pred[pred$week_ending == max(as.Date(pred$week_ending)), ]
+  pred <- pred[pred$week_ending == max(as.Date(pred$week_ending)), ]
 
   date_min <- max(
     as.Date(pred$week_ending) - 28, as.Date("2020-03-01")
@@ -74,7 +74,10 @@ projection_plot <- function(obs, pred) {
       ),
       linetype = "dashed"
     ) + xlab("") +
-    ylab("Deaths")
+    ylab("Deaths") +
+    theme(
+      axis.text.x = element_text(angle = -90)
+    )
 
   p
 }
@@ -156,7 +159,8 @@ rt_boxplot <- function(rt) {
     ) + theme_project() +
     theme(
       legend.position = "bottom",
-      legend.title = element_blank()
+      legend.title = element_blank(),
+      axis.text.x =
     )
 
   p
