@@ -1,26 +1,36 @@
+## countries_to_keep <- c("Algeria", "Austria", "Belgium", "Brazil", "Canada", "China",
+## "Colombia", "Czechia", "Denmark", "Dominican_Republic", "Ecuador",
+## "Egypt", "France", "Germany", "India", "Indonesia", "Iran", "Ireland",
+## "Israel", "Italy", "Mexico", "Morocco", "Netherlands", "Peru",
+## "Philippines", "Poland", "Portugal", "Romania", "Russia", "South_Korea",
+## "Spain", "Sweden", "Switzerland", "Turkey", "United_Kingdom",
+## "United_States_of_America")
+
 output_files <- list(
   "DeCa_Std_results_week_end_2020-03-08.rds",
   "DeCa_Std_results_week_end_2020-03-15.rds",
   "DeCa_Std_results_week_end_2020-03-22.rds",
   "DeCa_Std_results_week_end_2020-03-29.rds",
   "DeCa_Std_results_week_end_2020-04-05.rds",
+  "DeCa_Std_results_week_end_2020-04-12.rds",
   "RtI0_Std_results_week_end_2020-03-08.rds",
   "RtI0_Std_results_week_end_2020-03-15.rds",
   "RtI0_Std_results_week_end_2020-03-22.rds",
   "RtI0_Std_results_week_end_2020-03-29.rds",
   "RtI0_Std_results_week_end_2020-04-05.rds",
+  "RtI0_Std_results_week_end_2020-04-12.rds",
   "sbkp_Std_results_week_end_2020-03-08.rds",
   "sbkp_Std_results_week_end_2020-03-15.rds",
   "sbkp_Std_results_week_end_2020-03-22.rds",
   "sbkp_Std_results_week_end_2020-03-29.rds",
-  "sbkp_Std_results_week_end_2020-04-05.rds"
+  "sbkp_Std_results_week_end_2020-04-05.rds",
+  "sbkp_Std_results_week_end_2020-04-12.rds",
+  "sbsm_Std_results_week_end_2020-04-12.rds"
 )
 
 names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
-
-
 
 model_outputs <- purrr::map(
   output_files,
@@ -37,17 +47,19 @@ model_outputs <- purrr::map(
 ##   "DeCa_Std_results_week_end_2020-04-05"
 ##   )
 
-## purrr::walk(
-##   outdated,
-##   function(x) {
-##     right <- gsub(pattern = "DeCa", replacement = "RtI0", x = x)
-##     countries <- names(model_outputs[[right]][["Predictions"]])
-##     message(x)
-##     message(countries)
-##     model_outputs[[x]][["Predictions"]] <-
-##       model_outputs[[x]][["Predictions"]][countries]
-##     model_outputs[[x]][["Country"]] <- countries
-##     readr::write_rds(x = model_outputs[[x]], path = glue::glue("model_outputs/{x}.rds"))
+## purrr::iwalk(
+##   model_outputs,
+##   function(x, outfile) {
+
+##     ##countries <- names(model_outputs[[right]][["Predictions"]])
+##     ##message(countries)
+##     idx <- which(
+##       names(x[["Predictions"]]) %in% countries_to_keep
+##     )
+##     message("Keeping ", paste0(idx, collapse = " "))
+##     x[["Predictions"]] <- x[["Predictions"]][idx]
+##     x[["Country"]] <- countries_to_keep[idx]
+##     readr::write_rds(x = x, path = glue::glue("model_outputs/{outfile}.rds"))
 ##   }
 ## )
 
@@ -161,3 +173,41 @@ readr::write_rds(
     x = model_rt_samples,
     path = "model_rt_samples.rds"
 )
+
+
+######## Re-organising Sam's Model Outputs #########################
+## x <- readr::read_rds("model_outputs/SBSM_Output_shortterm_12_04_2020.rds")
+## input <- readr::read_rds("~/GitWorkArea/covid19-forecasts-orderly/archive/prepare_ecdc_data/20200413-113115-b1f97002/latest_model_input.rds")
+## country <- purrr::map(x, ~.[["country"]])
+## predictions <- purrr::map(x, ~ .[["deaths"]])
+## predictions <- purrr::map(predictions, ~ .[, seq(to = ncol(.), length.out = 7, by = 1)])
+## dates_predicted <- purrr::map(x, ~ tail(.[["time"]], 7))
+## predictions_named <- purrr::map2(
+##   predictions,
+##   dates_predicted,
+##   function(pred, dates) {
+##     pred <- data.frame(pred)
+##     pred <- pred[rep(seq_len(nrow(pred)), each = 5), ]
+##     colnames(pred) <- dates
+##     pred
+##   }
+##   )
+
+## rlast <- purrr::map(x, ~ as.vector(tail(.[["rt"]] , 1)))
+## rlast <- purrr::map(rlast, ~ rep(. , each = 5))
+## names(rlast) <- country
+
+## rlast_list <- purrr::map(rlast, ~ list(., .))
+## pred_list  <- purrr::map(predictions_named, ~ list(., .))
+## names(pred_list) <- country
+## keep <- which(! country %in% c("Greece", "Norway"))
+## out <- list(
+##   Country = country[keep],
+##   R_last = rlast_list[keep],
+##   Predictions = pred_list[keep],
+##   D_active_transmission = input$D_active_transmission,
+##   I_active_transmission = input$I_active_transmission
+
+## )
+
+## readr::write_rds(out, "model_outputs/sbsm_Std_results_week_end_2020-04-12.rds")

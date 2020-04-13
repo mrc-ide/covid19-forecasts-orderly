@@ -15,7 +15,7 @@ projection_plot <- function(obs, pred) {
   names(palette) <- unique(pred$week_ending)
 
   ## Plot only the latest projections.
-  pred <- pred[pred$week_ending == max(as.Date(pred$week_ending)), ]
+  ##pred <- pred[pred$week_ending == max(as.Date(pred$week_ending)), ]
 
   date_min <- max(
     as.Date(pred$week_ending) - 28, as.Date("2020-03-01")

@@ -72,6 +72,10 @@ artefacts:
         - model_outputs/sbkp_Std_results_week_end_2020-04-05.rds
         - model_outputs/RtI0_Std_results_week_end_2020-04-05.rds
         - model_outputs/DeCa_Std_results_week_end_2020-04-05.rds
+        - model_outputs/sbkp_Std_results_week_end_2020-04-12.rds
+        - model_outputs/RtI0_Std_results_week_end_2020-04-12.rds
+        - model_outputs/DeCa_Std_results_week_end_2020-04-12.rds
+        - model_outputs/sbsm_Std_results_week_end_2020-04-12.rds        
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -148,6 +152,10 @@ resources:
   - model_outputs/sbkp_Std_results_week_end_2020-04-05.rds
   - model_outputs/RtI0_Std_results_week_end_2020-04-05.rds
   - model_outputs/DeCa_Std_results_week_end_2020-04-05.rds
+  - model_outputs/sbkp_Std_results_week_end_2020-04-12.rds
+  - model_outputs/RtI0_Std_results_week_end_2020-04-12.rds
+  - model_outputs/DeCa_Std_results_week_end_2020-04-12.rds
+  - model_outputs/sbsm_Std_results_week_end_2020-04-12.rds
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that

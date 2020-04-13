@@ -1,3 +1,16 @@
+rel_mse2 <- function(obs, pred) {
+  nsims <- ncol(pred)
+  log_l <- rowSums(
+    dpois(
+      x = matrix(obs, ncol = nsims,  byrow = FALSE),
+      lambda = pred + .5,
+      log = TRUE
+    )
+  )
+  log_l <- log_l / nsims# (nsims * (obs^2 + 1))
+  log_l
+}
+
 output_files <- list(
   "DeCa_Std_results_week_end_2020-03-08.rds",
   "DeCa_Std_results_week_end_2020-03-15.rds",
@@ -47,7 +60,7 @@ model_predictions_error <- purrr::imap_dfr(
             ) %>% pull(cntry)
 
             if (length(x) > 0) {
-              out <- assessr::rel_mse(obs = x, pred = y_si)
+              out <- rel_mse2(obs = x, pred = y_si)
               out <- as.data.frame(out)
               out <- tibble::rownames_to_column(out, var = "date")
             } else {

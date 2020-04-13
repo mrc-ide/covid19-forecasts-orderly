@@ -85,6 +85,7 @@ and therefore, this is likely to have inflated the estimates
 $R_t$. The forecasts of deaths for the coming week are thefore likely
 to be over-estimated.
 
+
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_si_2_page_1.png")
@@ -181,19 +182,15 @@ DT::datatable(x, rownames = FALSE)
 
 <br><br>
 
-# Case Ascertainment {.nav .nav-tabs}
 
-## Temporal trend in the ratio of deaths to reported cases
+
+# Case Ascertainment 
+
+## Temporal trend in the ratio of deaths to reported cases 
 
 Starting in March, we compute the average and 95% CI for the ratio of
 deaths  to reported cases (with a 10-day delay) using a moving window
 of 7 days.
-
-
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/plotRatioCD-1.png")
-```
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}

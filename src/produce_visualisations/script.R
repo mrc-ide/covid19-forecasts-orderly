@@ -8,27 +8,71 @@ obs_deaths <- tidyr::gather(
   -dates
 )
 
+## List of continents-coutnry mapping
+continents <- readr::read_csv(
+  "country-and-continent-codes-list-csv_csv.csv"
+  )
+continents <- janitor::clean_names(continents)
+## Some are dups, not that it matters..
+dups <- duplicated(continents$three_letter_country_code)
+continents <- continents[!dups, ]
+continents <- continents[ , c(
+  "continent_name",
+  "three_letter_country_code"
+)]
+
+obs_deaths$iso3c <- countrycode::countrycode(
+  snakecase::to_title_case(obs_deaths$country),
+  "country.name",
+  "iso3c"
+  )
+
+obs_deaths <- dplyr::left_join(
+  obs_deaths,
+  continents,
+  by = c("iso3c" = "three_letter_country_code")
+)
+
+
 ensb_pred <- readr::read_rds("ensemble_daily_qntls.rds")
 ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 
-plots <- split(ensb_pred, ensb_pred$si) %>%
-  purrr::map(
-    function(pred) {
+ensb_pred$iso3c <- countrycode::countrycode(
+  snakecase::to_title_case(ensb_pred$country),
+  "country.name",
+  "iso3c"
+  )
+
+
+ensb_pred <- dplyr::left_join(
+  ensb_pred,
+  continents,
+  by = c("iso3c" = "three_letter_country_code")
+)
+by_continent_si <- split(
+  ensb_pred, list(ensb_pred$continent_name, ensb_pred$si), sep = "_"
+)
+plots <-  purrr::map(
+  by_continent_si,
+  function(pred) {
       pred$date <- as.Date(pred$date)
-      projection_plot(obs_deaths, pred)
+      obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
+      projection_plot(obs, pred)
     }
   )
 
 nice_names <- snakecase::to_title_case(unique(ensb_pred$country))
 names(nice_names) <- unique(ensb_pred$country)
 ## 6 pages in each plot so.
-n_pages <- ceiling(length(unique(ensb_pred$country)) / 6)
+n_cntrs <- purrr::map_int(by_continent_si, ~ length(unique(.$country)))
+n_pages <- ceiling(n_cntrs / 6)
 purrr::iwalk(
   plots,
-  function(p, si) {
+  function(p, continent_si) {
+    here_pages <- n_pages[[continent_si]]
     purrr::walk(
-      seq_len(n_pages),
+      seq_len(here_pages),
       function(page_num) {
         p <- p +
           ggforce::facet_wrap_paginate(
@@ -42,8 +86,8 @@ purrr::iwalk(
             page = page_num
           )
 
-        outfile <- glue::glue("ensmbl_pred_{si}_page_{page_num}.png")
-
+        outfile <- glue::glue("ensmbl_pred_{continent_si}_page_{page_num}.png")
+        message("Saving ", outfile)
         ggsave(
           filename = outfile,
           plot = p,

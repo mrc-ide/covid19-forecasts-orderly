@@ -155,3 +155,7 @@ depends:
       sbkp_Std_results_week_end_2020-04-05.rds: model_outputs/sbkp_Std_results_week_end_2020-04-05.rds
       RtI0_Std_results_week_end_2020-04-05.rds: model_outputs/RtI0_Std_results_week_end_2020-04-05.rds
       DeCa_Std_results_week_end_2020-04-05.rds: model_outputs/DeCa_Std_results_week_end_2020-04-05.rds
+      sbkp_Std_results_week_end_2020-04-12.rds: model_outputs/sbkp_Std_results_week_end_2020-04-12.rds
+      RtI0_Std_results_week_end_2020-04-12.rds: model_outputs/RtI0_Std_results_week_end_2020-04-12.rds
+      DeCa_Std_results_week_end_2020-04-12.rds: model_outputs/DeCa_Std_results_week_end_2020-04-12.rds
+      sbsm_Std_results_week_end_2020-04-12.rds: model_outputs/sbsm_Std_results_week_end_2020-04-12.rds

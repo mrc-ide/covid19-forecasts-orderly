@@ -2,6 +2,7 @@ deaths_threshold <- function(ts,
                              Threshold_criterion_7days = 10,
                              Threshold_criterion_prev7days = 10) {
 
+
     th1 <- sum(
         ts$Deaths[ts$DateRep >= max(ts$DateRep) - 7], na.rm = TRUE
     ) >=
@@ -11,9 +12,11 @@ deaths_threshold <- function(ts,
         ts$Deaths[ts$DateRep >= max(ts$DateRep) - 14 &
                   ts$DateRep <= max(ts$DateRep) - 7]
         ) >=
-        Threshold_criterion_prev7days
+      Threshold_criterion_prev7days
 
-    th1 & th2
+   th3 <- sum(ts$Deaths) >= 100
+
+    th1 & th2 & th3
 
 }
 
