@@ -156,13 +156,7 @@ rt_boxplot <- function(rt) {
     geom_vline(
       xintercept = 1,
       linetype = "dashed"
-    ) + theme_project() +
-    theme(
-      legend.position = "bottom",
-      legend.title = element_blank(),
-      axis.text.x =
-    )
-
+    ) + theme_project()
   p
 }
 

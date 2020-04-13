@@ -26,8 +26,8 @@ output_files <- list(
   "sbkp_Std_results_week_end_2020-03-22.rds",
   "sbkp_Std_results_week_end_2020-03-29.rds",
   "sbkp_Std_results_week_end_2020-04-05.rds",
-  "sbkp_Std_results_week_end_2020-04-12.rds",
-  "sbsm_Std_results_week_end_2020-04-12.rds"
+  "sbkp_Std_results_week_end_2020-04-12.rds"
+ ,"sbsm_Std_results_week_end_2020-04-12.rds"
 
 )
 

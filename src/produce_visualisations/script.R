@@ -241,3 +241,54 @@ purrr::iwalk(
     )
   }
 )
+
+### Ensemble Produced without SBSM Model and
+### SBSM Model overlaid
+## ensb_pred <- dplyr::filter(ensb_pred, proj == "2020-04-12")
+## sbsm <- dplyr::filter(daily_predictions_qntls, model == "sbsm_Std_results_week_end_2020-04-12")
+## sbsm <- dplyr::filter(sbsm, si == "si_2")
+## ensb_pred <- dplyr::filter(ensb_pred, si == "si_2")
+## ensb_pred <- dplyr::filter(ensb_pred, country %in% sbsm$country)
+## obs <- dplyr::filter(obs_deaths, country %in% sbsm$country)
+
+## obs$dates <- as.Date(obs$dates)
+## ensb_pred$date <- as.Date(ensb_pred$date)
+## sbsm$date <- as.Date(sbsm$date)
+
+## p <- ggplot() +
+##   geom_point(data = obs, aes(dates, deaths)) +
+##   geom_ribbon(
+##     data = ensb_pred,
+##     aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+##     fill = "red", alpha = 0.3
+##   ) +
+##   geom_ribbon(
+##     data = sbsm,
+##     aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+##     fill = "blue",
+##     alpha = 0.3
+##   ) +
+##   geom_line(data = ensb_pred, aes(date, `50%`), color = "red") +
+##   geom_line(data = sbsm, aes(date, `50%`), color = "blue") +
+##   xlab("") +
+##   ylab("Deaths") +
+##   scale_x_date(
+##     limits = c(as.Date("2020-03-01"),
+##                as.Date("2020-04-20")
+##                )
+##   ) +
+##   theme_project(font_size = 18)
+
+## p1 <- p +
+##   ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 1)
+
+
+## p2 <- p +
+##   ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 2)
+
+## ggsave("comparison_sbsm_unwtd_ensm_with_sbsm_page_1.png", p1)
+## ggsave("comparison_sbsm_unwtd_ensm_with_sbsm_page_2.png", p2)
+
+
+
+
