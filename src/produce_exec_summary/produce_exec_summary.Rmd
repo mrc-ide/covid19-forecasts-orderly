@@ -71,9 +71,9 @@ is:
 (`r declining$country`);
 -	likely stabilising^2^  in `r nrow(stable)` countries <br/>
 (`r stable$country`);
--	growing slowly^3^ in `r nrow(growing_slow)` countries <br/>
+-	likely growing slowly^3^ in `r nrow(growing_slow)` countries <br/>
 (`r growing_slow$country`);
--	growing rapidly^4^ in `r nrow(growing_fast)` countries <br/>
+-	likely growing rapidly^4^ in `r nrow(growing_fast)` countries <br/>
 (`r growing_fast$country`).
 
 Based on the central trends in the forecasts, the total number of

@@ -506,9 +506,11 @@ DT::datatable(x, rownames = FALSE)
 # Methods
 
 We define a country to have active transmission if
-* at least 100 deaths have been observed in the country so far; and 
-* at least ten deaths were observed in the country in the last two
+
+-  at least 100 deaths have been observed in the country so far; and 
+-  at least ten deaths were observed in the country in the last two
 consecutive weeks. 
+
 We intend to produce forecasts every
 week, for the week ahead. Ensemble forecasts are produced from the
 outputs of three different models. We assume a gamma
@@ -655,8 +657,6 @@ Sweden, Switzerland and United Kingdom). Details for this model and
 models results can be
 found [here](https://imperialcollegelondon.github.io/covid19estimates/).
 
-
-
 ## Ensemble Model
 
 For the 12 European countries where we have results from Model 4 (Austria, Belgium,
@@ -664,6 +664,12 @@ Denmark, France, Germany, Italy, Netherlands, Portugal, Spain,
 Sweden, Switzerland and United Kingdom), the ensemble model is an
 unweighted ensemble of Models 1, 2, 3 and 4. For all other countries,
 the ensemble model is built from Models 1, 2 and 3.
+
+## Code 
+
+All code used for this analysis can be found at:
+https://github.com/mrc-ide/covid19-forecasts-orderly
+
 
 # Authors
 

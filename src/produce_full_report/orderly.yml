@@ -146,8 +146,6 @@ resources:
   - figs/ensmbl_pred_North America_si_2_page_1.png
   - figs/ensmbl_pred_South America_si_2_page_1.png
   - mystyle.css
-  - jquery-3.5.0.min.js
-  - jquery.easyPaginate.js
   - unformatted_summary_DeathToRepoted_14days_2020-04-12.csv
   - summary_DeathToRepoted_14days_2020-04-12.csv
   - footer.html
