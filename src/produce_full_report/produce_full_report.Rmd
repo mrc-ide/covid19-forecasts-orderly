@@ -38,7 +38,7 @@ knitr::opts_chunk$set(
     messages = FALSE
     )
 
-week_starting <- as.Date('05-04-2020', format = '%d-%m-%Y')
+week_starting <- as.Date('12-04-2020', format = '%d-%m-%Y')
 
 ```
 
@@ -70,7 +70,46 @@ transmission and death.
 cat(readLines('executive_summary.html'))
 ```
 
-# Projections and $R_t$ estimates {.nav .nav-tabs} 
+# Objectives and Caveats
+
+The **main** objective in this report is to produce forecasts of the 
+number of deaths in the week ahead for each country with active
+transmission.
+
+* We define a country as having active transmission if at least 100
+deaths have been reported in a country so far, and 
+at least *ten* deaths were observed in the country in each of the past
+two weeks. For the week beginning 12-04-2020,
+the number of countries/regions included based on these thresholds is 36.
+
+
+* We forecast the number of potential deaths as the reporting of deaths
+is likely to be more reliable and stable over time than the reporting 
+of cases. 
+
+* As we are forecasting deaths, the latest estimates of
+transmissibility reflect the epidemiological situation at the time of
+the infection of COVID-19 fatalities. Therefore, the impact of
+controls on estimated transmissibility will be quantifiable with a
+delay between transmission and death.
+
+
+A **secondary** objective of this report is to analyse case
+ascertainment per country. As well as forecasting ahead, we use the number
+of reported deaths and of cases reported with a delay (delay from reporting to deaths,
+see Case Ascertainment method) to analyse the reporting trends per
+country. If the reporting of cases and deaths were perfect, and
+the delay between reporting and death is known, the ratio of
+deaths to delayed cases would equal the Case Fatality Ratio (CFR).
+
+In this analysis, key assumptions are:
+
+* The mean underlying CFR is 1.38% (95% Credible Interval (1.23 - 1.53)) [@verity2020],
+* The delay from a case being reported to death follows a gamma distribution with mean 10 days, and standard deviation 2 days.
+* All deaths due to COVID-19 have been reported in each country.
+
+
+# Projections and Effective Reproduction Number Estimates {.nav .nav-tabs} 
 
 ## Projections
 
@@ -84,7 +123,7 @@ increase in the reported number of deaths towards the end of the week starting
 30-03-2020. This is largely due to back-reporting of deaths outside
 hospital settings, and therefore, this is likely to have inflated the
 estimates of $R_t$, leading to over-estimated forecasts in the following
-week.
+week [ECDC, personal communication].
 
 ### Europe
 
@@ -179,7 +218,7 @@ knitr::include_graphics("figs/ensmbl_pred_South America_si_2_page_1.png")
 
 ```
 
-*Figure 4.* Reported daily deaths and current forecasts based on the ensemble
+*Figure 5.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in South America with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
 for the week ahead are shown in red (median and 95% CrI). Vertical
@@ -192,28 +231,66 @@ are based on an unweighted ensemble of three models (see Methods).
 
 ## Estimates of the current Effective Reproduction Number
 
+### Europe
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-knitr::include_graphics("figs/ensemble_rt_2020-04-12_Europe_si_1_boxplot.png")
+knitr::include_graphics("figs/ensemble_rt_2020-04-12_Europe_si_2_boxplot.png")
 
 ```
-*Figure 5*: Latest estimates of effective reproduction numbers by country
+*Figure 6*: Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in Europe
 with sustained transmission. Estimates for 12 European countries are produced using an
 unweighted ensemble for 4 models (see Methods). For all other
 countries included in the analysis, estimates are produced using an
 unweighted enseble of 3 models.
 
-
+### Asia
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-knitr::include_graphics("figs/ensemble_rt_2020-04-12_Asia_si_1_boxplot.png")
+knitr::include_graphics("figs/ensemble_rt_2020-04-12_Asia_si_2_boxplot.png")
 
 ```
-*Figure 6*: Latest estimates of effective reproduction numbers by country
+*Figure 7*: Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in Asia
+with sustained transmission. Estimates presented here are from an 
+unweighted enseble of 3 models (see Methods).
+
+### Africa
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensemble_rt_2020-04-12_Africa_si_2_boxplot.png")
+
+```
+*Figure 8*: Latest estimates of effective reproduction numbers by country
+(median, inter-quartile range and 95% CrI) for each country in Africa
+with sustained transmission. Estimates presented here are from an 
+unweighted enseble of 3 models (see Methods).
+
+### North America
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensemble_rt_2020-04-12_North America_si_2_boxplot.png")
+
+```
+*Figure 9*: Latest estimates of effective reproduction numbers by country
+(median, inter-quartile range and 95% CrI) for each country in North America
+with sustained transmission. Estimates presented here are from an 
+unweighted enseble of 3 models (see Methods).
+
+
+### South America
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensemble_rt_2020-04-12_South America_si_2_boxplot.png")
+
+```
+*Figure 10*: Latest estimates of effective reproduction numbers by country
+(median, inter-quartile range and 95% CrI) for each country in South America
 with sustained transmission. Estimates presented here are from an 
 unweighted enseble of 3 models (see Methods).
 
@@ -224,7 +301,9 @@ unweighted enseble of 3 models (see Methods).
 **Table 1**: Forecasted weekly death counts for week starting 
 `r week_starting`, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
-for each country with active transmission (see Methods). 
+for each country with active transmission (see Methods). For the
+forecasted weekly deaths counts and estimates of $R_t$, the table
+shows the median estimate and the 95% CrI.
 The number of deaths has been rounded to 3 significant figures.
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -241,7 +320,12 @@ x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
 ##     digits = 2
 ## ) %>% kable_styling()
 x <- dplyr::select(
-  x, Country, `Predicted Deaths`, `Deaths Observed (last week)` = Observed
+  x,
+  Country,
+  `Deaths Observed (last week)` = Observed,
+  `Predicted Deaths (this week)` = `Predicted Deaths`,
+  R_t
+  
 )
 DT::datatable(x, rownames = FALSE)
 
@@ -251,19 +335,18 @@ DT::datatable(x, rownames = FALSE)
 
 
 
-# Case Ascertainment 
+# Analysis of Trends in Reporting
 
 ## Temporal trend in the ratio of deaths to reported cases 
 
 Starting in March, we compute the average and 95% CI for the ratio of
-deaths  to reported cases (with a 10-day delay) using a moving window
+deaths  to reported cases (with a mean 10-day delay) using a moving window
 of 7 days.
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figs/plotRatioCD-2.png")
 ```
-
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figs/plotRatioCD-3.png")
@@ -294,20 +377,8 @@ knitr::include_graphics("figs/plotRatioCD-7.png")
 knitr::include_graphics("figs/plotRatioCD-8.png")
 ```
 
-
-
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figs/plotRatioCD-9.png")
-```
-
-
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/plotRatioCD-10.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/plotRatioCD-11.png")
 ```
 *Figure 11*: Temporal trends in the ratio of reported
 deaths to reported cases 10 days prior (medians and 95% CIs, solid
@@ -316,7 +387,7 @@ Also plotted are the reported deaths (red dots) and reported cases
 (black dots). 
 The reported number of deaths and cases have
 been re-scaled so
-that the maximum recorded numbers of deaths or cases (with a 10-day
+that the maximum recorded numbers of deaths or cases (with a mean 10-day
 delay) reaches 1.
 
 *Note that if deaths exceed the number of reported cases 10 days
@@ -324,9 +395,88 @@ before, we set the ratio at 1 (95% CI 1-1)*
 
 <br><br>
 
-## Summary of Results
+## Case Ascertainment
 
-**Table 4**: Results summary for reporting and case ascertainment. We present 
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+case_at <- readr::read_csv(
+    "unformatted_summary_DeathToRepoted_14days_2020-04-12.csv"
+)
+case_at$country <- snakecase::to_any_case(case_at$country, case = "title")
+
+top2_case_at <- dplyr::top_n(
+    case_at, n = 2, wt = estimated_reporting_50
+    ) %>%
+dplyr::mutate_if(is.numeric, ~ scales::percent(round(., 3), accuracy = 0.1))
+
+bottom2_case_at <- dplyr::top_n(
+    case_at, n = -2, wt = estimated_reporting_50
+    ) %>%
+    dplyr::mutate_if(is.numeric, ~ scales::percent(round(., 3), accuracy = 0.1))
+
+
+top2_size <- dplyr::top_n(
+    case_at, n = 2, wt = Predicted_True_case_last_week_50
+    ) %>%
+    dplyr::mutate_if(is.numeric, ~signif(., 3)) %>%
+    dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ","))
+
+bottom2_size <- dplyr::top_n(
+    case_at, n = -2, wt = Predicted_True_case_last_week_50
+    ) %>%
+    dplyr::mutate_if(is.numeric, ~signif(., 3)) %>%
+    dplyr::mutate_if(is.numeric, ~prettyNum(., big.mark = ","))
+
+```
+Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
+reported cases in the 10 days prior to that period.  Estimates of case
+ascertainment were highly variable and, due to the underlying
+assumption of perfect reporting, are likely to be an underestimate. In
+particular, community deaths due to COVID-19 are likely under-reported
+[@onsreport]. 
+Results indicate that, assuming perfect reporting of deaths, the countries with the highest case ascertainment were:
+  
+* `r top2_case_at$country[2]` with an estimated median ascertainment
+  of `r top2_case_at$estimated_reporting_50[2]` 
+  (95% confidence interval (CI) `r top2_case_at$estimated_reporting_025[2]`  - `r top2_case_at$estimated_reporting_975[2]`), and
+* `r top2_case_at$country[1]` with an estimated median ascertainment
+  of `r top2_case_at$estimated_reporting_50[1]` 
+  (95% CI `r top2_case_at$estimated_reporting_025[1]`  - `r top2_case_at$estimated_reporting_975[1]`).
+
+and again assuming perfect reporting of deaths, the countries with the lowest case ascertainment were:
+
+* `r bottom2_case_at$country[2]` with an estimated median ascertainment
+  of `r bottom2_case_at$estimated_reporting_50[2]` 
+  (95% CI `r bottom2_case_at$estimated_reporting_025[2]`- `r bottom2_case_at$estimated_reporting_975[2]`), and
+* `r bottom2_case_at$country[1]` with an estimated median ascertainment
+  of `r bottom2_case_at$estimated_reporting_50[1]` 
+  (95% CI `r bottom2_case_at$estimated_reporting_025[1]`  - `r bottom2_case_at$estimated_reporting_975[1]`).
+
+
+Based on the estimated ascertainment, we estimated the true size of
+the epidemic in each country in the previous 7 days (week starting 22-03-2020). 
+Countries with the largest true epidemic size in this period were:
+  
+* the `r top2_size$country[2]` with an estimated median size of
+  `r top2_size$Predicted_True_case_last_week_50[2]` 
+  (95% CI `r top2_size$Predicted_True_case_last_week_025[2]`  - `r top2_size$Predicted_True_case_last_week_975[2]`), and
+* `r top2_size$country[1]` with an estimated median size 
+  of `r top2_size$Predicted_True_case_last_week_50[1]` 
+  (95% CI `r top2_size$Predicted_True_case_last_week_025[1]`  - `r top2_size$Predicted_True_case_last_week_975[1]`).
+
+and countries with the lowest true epidemic size in this period were:
+  
+* `r bottom2_size$country[2]` with an estimated median size of
+  of `r bottom2_size$Predicted_True_case_last_week_50[2]` 
+  (95% CI `r bottom2_size$Predicted_True_case_last_week_025[2]`  - `r bottom2_size$Predicted_True_case_last_week_975[2]`), and
+* `r bottom2_size$country[1]` with an estimated median size of
+  of `r bottom2_size$Predicted_True_case_last_week_50[1]` 
+  (95% CI `r bottom2_size$Predicted_True_case_last_week_025[1]`  - `r bottom2_size$Predicted_True_case_last_week_975[1]`).
+
+
+
+
+**Table 2**: Results summary for reporting and case ascertainment. We present 
 (**i**) the estimated ratio of deaths to reported cases 10 days prior
 for each country (mean and 95% CI) during the last *14 days*; (**ii**) the estimated
   case ascertainment per country (mean and 95% CI) during the last *14
@@ -356,11 +506,18 @@ DT::datatable(x, rownames = FALSE)
 # Methods
 
 We define a country to have active transmission if
-at least ten deaths were observed in the country in the last two
-consecutive weeks. We intend to produce forecasts every
+* at least 100 deaths have been observed in the country so far; and 
+* at least ten deaths were observed in the country in the last two
+consecutive weeks. 
+We intend to produce forecasts every
 week, for the week ahead. Ensemble forecasts are produced from the
 outputs of three different models. We assume a gamma
 distributed serial interval with mean 6.48 days
+and standard deviation of 3.83 days following [@wang2020strongly].
+
+## Serial Interval
+
+We assume a gamma distributed serial interval with mean 6.48 days
 and standard deviation of 3.83 days following [@wang2020strongly].
 
 
@@ -485,7 +642,28 @@ branching process model using a Poisson offspring distribution.
 
 ```{r child = "case_ascertainment_methods.Rmd"}
 ```
+
+## Model 4
+
+Model 4 is a Bayesian model that calculates backwards from the deaths
+observed over time to estimate transmission that occurred several
+weeks prior. This model estimates the number of infections, deaths and
+the changes in transmissibility due to the non-pharmaceutical
+interventions for 12 European countries (Austria, Belgium,
+Denmark, France, Germany, Italy, Netherlands, Portugal, Spain, 
+Sweden, Switzerland and United Kingdom). Details for this model and
+models results can be
+found [here](https://imperialcollegelondon.github.io/covid19estimates/).
+
+
+
 ## Ensemble Model
+
+For the 12 European countries where we have results from Model 4 (Austria, Belgium,
+Denmark, France, Germany, Italy, Netherlands, Portugal, Spain, 
+Sweden, Switzerland and United Kingdom), the ensemble model is an
+unweighted ensemble of Models 1, 2, 3 and 4. For all other countries,
+the ensemble model is built from Models 1, 2 and 3.
 
 # Authors
 

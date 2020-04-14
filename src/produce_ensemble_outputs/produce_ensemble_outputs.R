@@ -26,9 +26,8 @@ output_files <- list(
   "sbkp_Std_results_week_end_2020-03-22.rds",
   "sbkp_Std_results_week_end_2020-03-29.rds",
   "sbkp_Std_results_week_end_2020-04-05.rds",
-  "sbkp_Std_results_week_end_2020-04-12.rds"
- ,"sbsm_Std_results_week_end_2020-04-12.rds"
-
+  "sbkp_Std_results_week_end_2020-04-12.rds",
+  "sbsm_Std_results_week_end_2020-04-12.rds"
 )
 
 names(output_files) <- gsub(
@@ -64,7 +63,10 @@ ensemble_model_predictions <- purrr::map(
       }
     )
   }
-)
+  )
+
+
+
 
 ensemble_model_rt <- purrr::map_dfr(
   weeks_ending,
@@ -188,4 +190,59 @@ ensemble_model_rt_samples <- purrr::map_dfr(
 readr::write_rds(
   x = ensemble_model_rt_samples,
   path = "ensemble_model_rt_samples.rds"
+)
+
+
+
+
+### Ensemnle With SBSM Model.
+output_files <- list(
+  "DeCa_Std_results_week_end_2020-04-12.rds"
+ ,"sbsm_Std_results_week_end_2020-04-12.rds"
+ ,"RtI0_Std_results_week_end_2020-04-12.rds"
+ ,"sbkp_Std_results_week_end_2020-04-12.rds"
+)
+
+names(output_files) <- gsub(
+  pattern = ".rds", replacement = "", x = output_files
+)
+
+model_outputs <- purrr::map(output_files, readRDS)
+
+
+outputs <- purrr::map(model_outputs, ~ .[["Predictions"]])
+## First Level is model, 2nd is country, 3rd is SI.
+countries <- names(outputs[[1]])
+names(countries) <- countries
+ensemble_model_with_sbsm <- purrr::map(
+      countries,
+      function(country) {
+        ## y is country specific output
+        y <- purrr::map(outputs, ~ .[[country]])
+        ## y has 2 components, one for each SI.
+        y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
+        pool_predictions(y_2)
+      }
+    )
+
+readr::write_rds(
+  x = ensemble_model_with_sbsm, path = "ensemble_model_with_sbsm.rds"
+)
+
+ensemble_with_sbsm_qntls <- purrr::map_dfr(
+  ensemble_model_with_sbsm,
+  function(cntry) {
+
+    out <- apply(cntry, 2, quantile, probs)
+    out <- t(out)
+    out <- data.frame(out)
+    colnames(out) <- c("2.5%", "25%", "50%", "75%", "97.5%")
+    out <- tibble::rownames_to_column(out, var = "date")
+    out
+  }, .id = "country"
+)
+
+
+readr::write_rds(
+  x = ensemble_with_sbsm_qntls, path = "ensemble_with_sbsm_qntls.rds"
 )

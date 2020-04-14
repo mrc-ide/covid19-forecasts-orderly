@@ -110,6 +110,7 @@ sources:
 #
 resources:
   - country-and-continent-codes-list-csv_csv.csv
+  - unformatted_summary_DeathToRepoted_all_days_2020-04-12.csv
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that
@@ -144,6 +145,7 @@ depends:
       ensemble_daily_qntls.rds: ensemble_daily_qntls.rds
       ensemble_model_rt.rds: ensemble_model_rt.rds
       ensemble_model_rt_samples.rds: ensemble_model_rt_samples.rds
+      ensemble_with_sbsm_qntls.rds: ensemble_with_sbsm_qntls.rds
   prepare_ecdc_data:
     id: "latest"
     use:

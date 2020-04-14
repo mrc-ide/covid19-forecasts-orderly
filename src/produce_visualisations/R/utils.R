@@ -160,3 +160,18 @@ rt_boxplot <- function(rt) {
   p
 }
 
+add_continents <- function(df, mapping) {
+
+  df$iso3c <- countrycode::countrycode(
+    snakecase::to_title_case(df$country),
+      "country.name",
+      "iso3c"
+   )
+
+  df <- dplyr::left_join(
+    df,
+    mapping,
+    by = c("iso3c" = "three_letter_country_code")
+  )
+  df
+}

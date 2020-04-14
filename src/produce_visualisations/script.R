@@ -1,18 +1,3 @@
-add_continents <- function(df, mapping) {
-
-  df$iso3c <- countrycode::countrycode(
-    snakecase::to_title_case(df$country),
-      "country.name",
-      "iso3c"
-   )
-
-  df <- dplyr::left_join(
-    df,
-    mapping,
-    by = c("iso3c" = "three_letter_country_code")
-  )
-  df
-}
 
 ## Observations in tall format
 model_input <- readr::read_rds("model_input.rds")
@@ -43,7 +28,8 @@ obs_deaths <- add_continents(obs_deaths, continents)
 ensb_pred <- readr::read_rds("ensemble_daily_qntls.rds")
 ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
-
+## Make plots for only the latest week.
+ensb_pred <- ensb_pred[ensb_pred$week_ending == as.Date(ensb_pred$week_ending), ]
 ensb_pred <- add_continents(ensb_pred, continents)
 
 by_continent_si <- split(
@@ -242,53 +228,106 @@ purrr::iwalk(
   }
 )
 
+
 ### Ensemble Produced without SBSM Model and
 ### SBSM Model overlaid
-## ensb_pred <- dplyr::filter(ensb_pred, proj == "2020-04-12")
-## sbsm <- dplyr::filter(daily_predictions_qntls, model == "sbsm_Std_results_week_end_2020-04-12")
-## sbsm <- dplyr::filter(sbsm, si == "si_2")
-## ensb_pred <- dplyr::filter(ensb_pred, si == "si_2")
-## ensb_pred <- dplyr::filter(ensb_pred, country %in% sbsm$country)
-## obs <- dplyr::filter(obs_deaths, country %in% sbsm$country)
+sbsm <- daily_predictions_qntls[daily_predictions_qntls$proj == "sbsm", ]
+sbsm <- sbsm[sbsm$si == "si_2", ]
 
-## obs$dates <- as.Date(obs$dates)
-## ensb_pred$date <- as.Date(ensb_pred$date)
-## sbsm$date <- as.Date(sbsm$date)
+ensb_pred <- ensb_pred[ensb_pred$si == "si_2", ]
+ensb_pred <- ensb_pred[ensb_pred$proj == "2020-04-12", ]
+ensb_pred <- dplyr::filter(ensb_pred, country %in% sbsm$country)
+ensb_pred$proj <- paste0("ensemble_without_sbsm_", ensb_pred$proj)
 
-## p <- ggplot() +
-##   geom_point(data = obs, aes(dates, deaths)) +
-##   geom_ribbon(
-##     data = ensb_pred,
-##     aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
-##     fill = "red", alpha = 0.3
-##   ) +
-##   geom_ribbon(
-##     data = sbsm,
-##     aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
-##     fill = "blue",
-##     alpha = 0.3
-##   ) +
-##   geom_line(data = ensb_pred, aes(date, `50%`), color = "red") +
-##   geom_line(data = sbsm, aes(date, `50%`), color = "blue") +
-##   xlab("") +
-##   ylab("Deaths") +
-##   scale_x_date(
-##     limits = c(as.Date("2020-03-01"),
-##                as.Date("2020-04-20")
-##                )
-##   ) +
-##   theme_project(font_size = 18)
-
-## p1 <- p +
-##   ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 1)
+ensb_with_sbsm <- readr::read_rds("ensemble_with_sbsm_qntls.rds")
+ensb_with_sbsm$proj <- "ensemble_with_sbsm"
+ensb_with_sbsm <- dplyr::filter(ensb_with_sbsm, country %in% sbsm$country)
 
 
-## p2 <- p +
-##   ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 2)
+cols <- c("proj", "country", "date", "2.5%", "50%", "97.5%")
+sbsm <- sbsm[, cols]
+ensb_pred <- ensb_pred[, cols]
+ensb_with_sbsm <- ensb_with_sbsm [, cols]
 
-## ggsave("comparison_sbsm_unwtd_ensm_with_sbsm_page_1.png", p1)
-## ggsave("comparison_sbsm_unwtd_ensm_with_sbsm_page_2.png", p2)
+compare <- rbind(ensb_pred, sbsm, ensb_with_sbsm)
+
+obs <- dplyr::filter(obs_deaths, country %in% sbsm$country)
 
 
 
+obs$dates <- as.Date(obs$dates)
+compare$date <- as.Date(compare$date)
 
+p <- ggplot() +
+  geom_point(data = obs, aes(dates, deaths)) +
+  geom_ribbon(
+    data = compare,
+    aes(x = date, ymin = `2.5%`, ymax = `97.5%`, fill = proj),
+    alpha = 0.3
+  ) +
+  geom_line(data = compare, aes(date, `50%`, col = proj)) +
+  xlab("") +
+  ylab("Deaths") +
+  scale_x_date(
+    limits = c(as.Date("2020-03-01"),
+               as.Date("2020-04-20")
+               )
+  ) +
+  theme_project(font_size = 18) +
+  theme(legend.position = "top")
+
+p1 <- p +
+  ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 1)
+
+
+p2 <- p +
+  ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 2)
+
+ggsave("comparison_sbsm_unwtd_ensb_page_1.png", p1)
+ggsave("comparison_sbsm_unwtd_ensb_page_2.png", p2)
+
+
+
+###################
+##### Reporting Trends
+## x <- readr::read_csv("unformatted_summary_DeathToRepoted_all_days_2020-04-12.csv")
+## deaths <- model_input [["D_active_transmission"]]
+## max_deaths <- apply(deaths[ ,-1], 2, max)
+## countries <- names(max_deaths)
+## names(countries) <- countries
+## deaths_scaled <- purrr::map_dfc(
+##   countries,
+##   function(cntry) {
+##     deaths[[cntry]] / max_deaths[[cntry]]
+##   }
+##   )
+
+## deaths_scaled$date <- deaths$dates
+## deaths_tall <- tidyr::gather(
+##   deaths_scaled, country, value, -date
+## )
+## deaths_tall$id <- "deaths"
+## ## Scale Cases
+## cases <- model_input[["I_active_transmission"]]
+## max_cases <- apply(cases[ ,-1], 2, max)
+## countries <- names(max_cases)
+## names(countries) <- countries
+## cases_scaled <- purrr::map_dfc(
+##   countries,
+##   function(cntry) {
+##     cases[[cntry]] / max_cases[[cntry]]
+##   }
+##   )
+
+## cases_scaled$date <- cases$dates
+## cases_tall <- tidyr::gather(
+##   cases_scaled, country, value, -date
+##   )
+## cases_tall$id <- "cases"
+## obs_scaled <- rbind(cases_tall, deaths_tall)
+
+## obs_scaled$date <- as.Date(obs_scaled$date)
+
+## ggplot() +
+##   geom_point(data = obs_scaled, aes(date, value, col = id)) +
+##   facet_wrap(~country)
