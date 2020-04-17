@@ -6,4 +6,70 @@ This is an [`orderly`](https://github.com/vimc/orderly) project.  The directorie
 * `archive`: versioed results of running your report
 * `data`: copies of data used in the reports
 
-(you can delete or edit this file safely)
+Each step of the analysis is an orderly task and corresponds to a
+directory on the src directory.
+
+1. prepare_ecdc_data This task prepares the ECDC data in a format
+   required by the modeling teams. Download the latest data from ECDC
+   on Sunday evening and save it as a csv in the folder
+   prepare_ecdc_data. Update the resources section in orderly.yml to
+   reflect the name of the latest file. Then 
+   
+   ```
+   a <- orderly::orderly_run("prepare_ecdc_data")
+   orderly::orderly_commit(a)
+   ```
+   
+   This will generate two aretfacts (outputs of a task are called
+   artefacts in orderly). They are exactly the same files but one has
+   the date in the file name - this file will be shared with the
+   mdoeling groups, and the second file is called
+   latest_model_input.rds. This is so that the downstream tasks can
+   read the latest file without the need to manually update
+   orderly.yml.
+
+2. process_individual_models By Monday afternoon, all modelling teams
+   will produce outputs for the report in a prescribed format. These
+   could be shared via DropBox for example i.e. the generation of
+   model outputs is not part of the orderly workflow. Once these
+   outputs are recieved, save them in the directory
+   process_individual_models/model_outputs and add them to the
+   resources section in orderly.yml of this task. Then
+   
+   ```
+   a <- orderly::orderly_run("process_individual_models")
+   orderly::orderly_commit(a)
+   ```
+
+3. produce_ensemble_outputs This task creates an ensemble model. 
+
+   
+   ```
+   a <- orderly::orderly_run("produce_ensemble_outputs")
+   orderly::orderly_commit(a)
+   ```
+   
+4. format_model_outputs Pretty formatting of model outputs for
+   plugging into the final report.
+   
+   
+   ```
+   a <- orderly::orderly_run("format_model_outputs")
+   orderly::orderly_commit(a)
+   ```
+5. produce_visualisations As the name suggests, makes all the graphs
+   needed for the report.
+
+
+   ```
+   a <- orderly::orderly_run("produce_visualisations")
+   orderly::orderly_commit(a)
+   ```
+   
+6. produce_exec_summary Generates the summary that goes into the
+   report. Run as all other tasks. It is the execuive summary which is
+   the summary of the new report. produce_summary task is redundant
+   and can be ignored for now.
+
+7. produce_full_report Generate the full report.
+   
