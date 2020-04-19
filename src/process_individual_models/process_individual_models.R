@@ -6,36 +6,24 @@
 ## "Spain", "Sweden", "Switzerland", "Turkey", "United_Kingdom",
 ## "United_States_of_America")
 message(covid_19_path)
-output_files <- list(
-  "DeCa_Std_results_week_end_2020-03-08.rds",
-  "DeCa_Std_results_week_end_2020-03-15.rds",
-  "DeCa_Std_results_week_end_2020-03-22.rds",
-  "DeCa_Std_results_week_end_2020-03-29.rds",
-  "DeCa_Std_results_week_end_2020-04-05.rds",
-  "DeCa_Std_results_week_end_2020-04-12.rds",
-  "RtI0_Std_results_week_end_2020-03-08.rds",
-  "RtI0_Std_results_week_end_2020-03-15.rds",
-  "RtI0_Std_results_week_end_2020-03-22.rds",
-  "RtI0_Std_results_week_end_2020-03-29.rds",
-  "RtI0_Std_results_week_end_2020-04-05.rds",
-  "RtI0_Std_results_week_end_2020-04-12.rds",
-  "sbkp_Std_results_week_end_2020-03-08.rds",
-  "sbkp_Std_results_week_end_2020-03-15.rds",
-  "sbkp_Std_results_week_end_2020-03-22.rds",
-  "sbkp_Std_results_week_end_2020-03-29.rds",
-  "sbkp_Std_results_week_end_2020-04-05.rds",
-  "sbkp_Std_results_week_end_2020-04-12.rds",
-  "sbsm_Std_results_week_end_2020-04-12.rds"
-)
+output_files <- list.files(path = covid_19_path)
 
 names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
+## Round about way of getting at the latest week for which we have outputs.
+params <- strsplit(
+  names(output_files), "_"
+)
+params <- sapply(params, function(x2) x2[6])
+latest <- max(as.Date(params))
+
+output_files <- output_files[grepl(pattern = latest, x = names(output_files))]
 
 model_outputs <- purrr::map(
   output_files,
   ~ readRDS(paste0(covid_19_path, .))
-  )
+)
 
 ## Filter model outputs from DeCa models to reflect the new
 ## threshold. Needed to be done only once.
@@ -173,6 +161,12 @@ readr::write_rds(
     x = model_rt_samples,
     path = "model_rt_samples.rds"
 )
+
+readr::write_rds(
+    x = latest,
+    path = "latest_week_ending.rds"
+)
+
 
 
 ######## Re-organising Sam's Model Outputs #########################

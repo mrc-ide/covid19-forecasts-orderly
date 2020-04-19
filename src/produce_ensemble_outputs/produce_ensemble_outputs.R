@@ -1,38 +1,15 @@
 probs <- c(0.025, 0.25, 0.5, 0.75, 0.975)
-weeks_ending <- list(
-  ## "2020-03-08" = "2020-03-08",
-  ## "2020-03-15" = "2020-03-15",
-  ## "2020-03-22" = "2020-03-22",
-  ## "2020-03-29" = "2020-03-29",
-  ## "2020-04-05" = "2020-04-05",
-  "2020-04-12" = "2020-04-12"
-)
+weeks_ending <- readr::read_rds("latest_week_ending.rds")
 
-output_files <- list(
-  "DeCa_Std_results_week_end_2020-03-08.rds",
-  "DeCa_Std_results_week_end_2020-03-15.rds",
-  "DeCa_Std_results_week_end_2020-03-22.rds",
-  "DeCa_Std_results_week_end_2020-03-29.rds",
-  "DeCa_Std_results_week_end_2020-04-05.rds",
-  "DeCa_Std_results_week_end_2020-04-12.rds",
-  "RtI0_Std_results_week_end_2020-03-08.rds",
-  "RtI0_Std_results_week_end_2020-03-15.rds",
-  "RtI0_Std_results_week_end_2020-03-22.rds",
-  "RtI0_Std_results_week_end_2020-03-29.rds",
-  "RtI0_Std_results_week_end_2020-04-05.rds",
-  "RtI0_Std_results_week_end_2020-04-12.rds",
-  "sbkp_Std_results_week_end_2020-03-08.rds",
-  "sbkp_Std_results_week_end_2020-03-15.rds",
-  "sbkp_Std_results_week_end_2020-03-22.rds",
-  "sbkp_Std_results_week_end_2020-03-29.rds",
-  "sbkp_Std_results_week_end_2020-04-05.rds",
-  "sbkp_Std_results_week_end_2020-04-12.rds",
-  "sbsm_Std_results_week_end_2020-04-12.rds"
-)
+output_files <- list.files(covid_19_path)
+output_files <- output_files[grepl(x = output_files, pattern = weeks_ending)]
 
 names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
+names(weeks_ending) <- weeks_ending
+message("For week ending ", weeks_ending)
+message("Output Files ", output_files)
 
 model_outputs <- purrr::map(
   output_files, ~ readRDS(paste0(covid_19_path, .))

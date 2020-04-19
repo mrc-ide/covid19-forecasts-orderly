@@ -60,6 +60,7 @@ artefacts:
         - weekly_predictions_qntls.rds
         - model_rt_qntls.rds
         - model_rt_samples.rds
+        - latest_week_ending.rds
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
