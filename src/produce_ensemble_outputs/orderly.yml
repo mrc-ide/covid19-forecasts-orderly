@@ -27,6 +27,9 @@
 # run
 script: produce_ensemble_outputs.R
 
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
 # You must list at least one artefact that your report will generate.
 # Each artefact consists of one or more files.  The format is to list
 # the "type" of an artefact (staticgraph, interactivegraph, data,
@@ -48,6 +51,7 @@ artefacts:
       description: Ensemble Model Outputs
       filenames:
         - ensemble_model_rt.rds
+        - ensemble_model_predictions.rds
         - ensemble_daily_qntls.rds
         - ensemble_weekly_qntls.rds
         - ensemble_model_rt_samples.rds
@@ -138,26 +142,4 @@ sources:
 #         use:
 #           other-data.csv: data.csv
 #
-depends:
-  process_individual_models:
-    id: latest
-    use:
-      RtI0_Std_results_week_end_2020-03-08.rds: model_outputs/RtI0_Std_results_week_end_2020-03-08.rds
-      sbkp_Std_results_week_end_2020-03-08.rds: model_outputs/sbkp_Std_results_week_end_2020-03-08.rds
-      DeCa_Std_results_week_end_2020-03-08.rds: model_outputs/DeCa_Std_results_week_end_2020-03-08.rds
-      sbkp_Std_results_week_end_2020-03-15.rds: model_outputs/sbkp_Std_results_week_end_2020-03-15.rds
-      RtI0_Std_results_week_end_2020-03-15.rds: model_outputs/RtI0_Std_results_week_end_2020-03-15.rds
-      DeCa_Std_results_week_end_2020-03-15.rds: model_outputs/DeCa_Std_results_week_end_2020-03-15.rds
-      RtI0_Std_results_week_end_2020-03-22.rds: model_outputs/RtI0_Std_results_week_end_2020-03-22.rds
-      sbkp_Std_results_week_end_2020-03-22.rds: model_outputs/sbkp_Std_results_week_end_2020-03-22.rds
-      DeCa_Std_results_week_end_2020-03-22.rds: model_outputs/DeCa_Std_results_week_end_2020-03-22.rds
-      sbkp_Std_results_week_end_2020-03-29.rds: model_outputs/sbkp_Std_results_week_end_2020-03-29.rds
-      RtI0_Std_results_week_end_2020-03-29.rds: model_outputs/RtI0_Std_results_week_end_2020-03-29.rds
-      DeCa_Std_results_week_end_2020-03-29.rds: model_outputs/DeCa_Std_results_week_end_2020-03-29.rds
-      sbkp_Std_results_week_end_2020-04-05.rds: model_outputs/sbkp_Std_results_week_end_2020-04-05.rds
-      RtI0_Std_results_week_end_2020-04-05.rds: model_outputs/RtI0_Std_results_week_end_2020-04-05.rds
-      DeCa_Std_results_week_end_2020-04-05.rds: model_outputs/DeCa_Std_results_week_end_2020-04-05.rds
-      sbkp_Std_results_week_end_2020-04-12.rds: model_outputs/sbkp_Std_results_week_end_2020-04-12.rds
-      RtI0_Std_results_week_end_2020-04-12.rds: model_outputs/RtI0_Std_results_week_end_2020-04-12.rds
-      DeCa_Std_results_week_end_2020-04-12.rds: model_outputs/DeCa_Std_results_week_end_2020-04-12.rds
-      sbsm_Std_results_week_end_2020-04-12.rds: model_outputs/sbsm_Std_results_week_end_2020-04-12.rds
+# depends:

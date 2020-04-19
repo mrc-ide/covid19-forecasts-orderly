@@ -1,10 +1,10 @@
 probs <- c(0.025, 0.25, 0.5, 0.75, 0.975)
 weeks_ending <- list(
-  "2020-03-08" = "2020-03-08",
-  "2020-03-15" = "2020-03-15",
-  "2020-03-22" = "2020-03-22",
-  "2020-03-29" = "2020-03-29",
-  "2020-04-05" = "2020-04-05",
+  ## "2020-03-08" = "2020-03-08",
+  ## "2020-03-15" = "2020-03-15",
+  ## "2020-03-22" = "2020-03-22",
+  ## "2020-03-29" = "2020-03-29",
+  ## "2020-04-05" = "2020-04-05",
   "2020-04-12" = "2020-04-12"
 )
 
@@ -34,7 +34,9 @@ names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
 
-model_outputs <- purrr::map(output_files, readRDS)
+model_outputs <- purrr::map(
+  output_files, ~ readRDS(paste0(covid_19_path, .))
+)
 
 ## For each, for each country, pool projections from diff models
 ## In the output, the first level is week, 2nd is country and 3rd
@@ -50,6 +52,12 @@ ensemble_model_predictions <- purrr::map(
     purrr::map(
       countries,
       function(country) {
+        ## For UK, only include SBSM Model.
+        if (week == "2020-04-12" & country == "United_Kingdom") {
+          outputs <- outputs["sbsm_Std_results_week_end_2020-04-12"]
+        }
+        message(country)
+        message(names(outputs))
         ## y is country specific output
         y <- purrr::map(outputs, ~ .[[country]])
         ## y has 2 components, one for each SI.
@@ -63,10 +71,9 @@ ensemble_model_predictions <- purrr::map(
       }
     )
   }
-  )
+)
 
-
-
+readr::write_rds(x = ensemble_model_predictions, "ensemble_model_predictions.rds")
 
 ensemble_model_rt <- purrr::map_dfr(
   weeks_ending,
@@ -82,6 +89,10 @@ ensemble_model_rt <- purrr::map_dfr(
     purrr::map_dfr(
       countries,
       function(country) {
+        if (week == "2020-04-12" & country == "United_Kingdom") {
+          outputs <- outputs["sbsm_Std_results_week_end_2020-04-12"]
+        }
+
         ## y is country specific output
         y <- purrr::map(outputs, ~ .[[country]])
         ## y has 2 components, one for each SI.
@@ -134,7 +145,11 @@ ensemble_weekly_qntls <- purrr::map_dfr(
   ensemble_model_predictions,
   function(pred) {
     purrr::map_dfr(
-      pred, daily_to_weekly,
+      pred,
+      function(x) {
+        message(colnames(x))
+        daily_to_weekly(x)
+      },
       .id = "country"
     )
   },
@@ -207,7 +222,10 @@ names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
 
-model_outputs <- purrr::map(output_files, readRDS)
+model_outputs <- purrr::map(
+  output_files, ~ readRDS(paste0(covid_19_path, .))
+)
+
 
 
 outputs <- purrr::map(model_outputs, ~ .[["Predictions"]])

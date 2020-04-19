@@ -33,8 +33,9 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-week_ending <- as.Date(week_ending)
+
 ens_rt_both <- readr::read_rds("ensemble_model_rt.rds")
+week_ending <- max(as.Date(ens_rt_both$model))
 ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
 ens_rt$model <- as.Date(ens_rt$model)
 ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]

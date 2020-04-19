@@ -9,6 +9,8 @@ This is an [`orderly`](https://github.com/vimc/orderly) project.  The directorie
 Each step of the analysis is an orderly task and corresponds to a
 directory on the src directory.
 
+# Description of tasks
+
 1. prepare_ecdc_data This task prepares the ECDC data in a format
    required by the modeling teams. Download the latest data from ECDC
    on Sunday evening and save it as a csv in the folder
@@ -32,9 +34,15 @@ directory on the src directory.
    will produce outputs for the report in a prescribed format. These
    could be shared via DropBox for example i.e. the generation of
    model outputs is not part of the orderly workflow. Once these
-   outputs are recieved, save them in the directory
-   process_individual_models/model_outputs and add them to the
-   resources section in orderly.yml of this task. Then
+   outputs are recieved, save them in a directory on your machine, and
+   update the location in orderly_envir.yml. For example, this is the
+   file on my machine:
+   
+   ```
+   COVID19_INPUT_PATH: "/Users/sbhatia/OneDrive - Imperial College London/covid19-short-term-forecasts/model_outputs/"
+   ```
+   Note that the trailing slash in the directory name must be
+   included. You can run the task as: 
    
    ```
    a <- orderly::orderly_run("process_individual_models")

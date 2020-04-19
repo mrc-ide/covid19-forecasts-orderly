@@ -10,7 +10,10 @@ theme_project <- function(font_size = 22) {
       strip.text.x = element_text(
         margin = margin(2,0,2,0, "pt"),
         size = font_size
-      )
+      ),
+      legend.title = element_blank(),
+      legend.text = element_text(size = font_size),
+      legend.position = "top"
     )
 
 }

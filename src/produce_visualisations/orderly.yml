@@ -47,7 +47,7 @@ artefacts:
   - staticgraph:
       description: Various graphs
       filenames:
-        - rt_ensemble_si_1_2020-03-08.png
+        - reporting_ratio_Africa_page_1.png
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -111,6 +111,7 @@ sources:
 resources:
   - country-and-continent-codes-list-csv_csv.csv
   - unformatted_summary_DeathToRepoted_all_days_2020-04-12.csv
+  - DeCa_Std_Ratio_plot_2020-04-12.rds
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that

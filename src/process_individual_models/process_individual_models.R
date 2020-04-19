@@ -5,7 +5,7 @@
 ## "Philippines", "Poland", "Portugal", "Romania", "Russia", "South_Korea",
 ## "Spain", "Sweden", "Switzerland", "Turkey", "United_Kingdom",
 ## "United_States_of_America")
-
+message(covid_19_path)
 output_files <- list(
   "DeCa_Std_results_week_end_2020-03-08.rds",
   "DeCa_Std_results_week_end_2020-03-15.rds",
@@ -34,7 +34,7 @@ names(output_files) <- gsub(
 
 model_outputs <- purrr::map(
   output_files,
-  ~ readRDS(paste0("model_outputs/", .))
+  ~ readRDS(paste0(covid_19_path, .))
   )
 
 ## Filter model outputs from DeCa models to reflect the new
@@ -176,9 +176,9 @@ readr::write_rds(
 
 
 ######## Re-organising Sam's Model Outputs #########################
-## x <- readr::read_rds("model_outputs/SBSM_Output_shortterm_12_04_2020.rds")
+##  x <- readr::read_rds("model_outputs/SBSM_Output_shortterm_12_04_2020.rds")
 ## input <- readr::read_rds("~/GitWorkArea/covid19-forecasts-orderly/archive/prepare_ecdc_data/20200413-113115-b1f97002/latest_model_input.rds")
-## country <- purrr::map(x, ~.[["country"]])
+##  country <- purrr::map(x, ~.[["country"]])
 ## predictions <- purrr::map(x, ~ .[["deaths"]])
 ## predictions <- purrr::map(predictions, ~ .[, seq(to = ncol(.), length.out = 7, by = 1)])
 ## dates_predicted <- purrr::map(x, ~ tail(.[["time"]], 7))
@@ -193,7 +193,7 @@ readr::write_rds(
 ##   }
 ##   )
 
-## rlast <- purrr::map(x, ~ as.vector(tail(.[["rt"]] , 1)))
+## rlast <- purrr::map(x, ~ as.vector(.[["rt"]][, ncol(.[["rt"]])]))
 ## rlast <- purrr::map(rlast, ~ rep(. , each = 5))
 ## names(rlast) <- country
 
