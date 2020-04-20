@@ -60,7 +60,7 @@ artefacts:
         - weekly_predictions_qntls.rds
         - model_rt_qntls.rds
         - model_rt_samples.rds
-        - latest_week_ending.rds
+        - week_ending.rds
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -85,7 +85,8 @@ artefacts:
 # would declare a parameter called 'a' with a default value of 1, and
 # a parameter of b with no default.
 #
-# parameters:
+parameters:
+  week_ending: 2020-04-19
 
 # Similar to "data" but sets of temporary views before the data are
 # extracted.  Can be embedded SQL strings or filenames to actual

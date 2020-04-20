@@ -11,14 +11,11 @@ output_files <- list.files(path = covid_19_path)
 names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
-## Round about way of getting at the latest week for which we have outputs.
-params <- strsplit(
-  names(output_files), "_"
-)
-params <- sapply(params, function(x2) x2[6])
-latest <- max(as.Date(params))
 
-output_files <- output_files[grepl(pattern = latest, x = names(output_files))]
+##week_ending <- max(as.Date(params))
+
+output_files <- output_files[grepl(pattern = week_ending, x = names(output_files))]
+message("Processing ", output_files)
 
 model_outputs <- purrr::map(
   output_files,
@@ -163,45 +160,7 @@ readr::write_rds(
 )
 
 readr::write_rds(
-    x = latest,
-    path = "latest_week_ending.rds"
+    x = week_ending,
+    path = "week_ending.rds"
 )
 
-
-
-######## Re-organising Sam's Model Outputs #########################
-##  x <- readr::read_rds("model_outputs/SBSM_Output_shortterm_12_04_2020.rds")
-## input <- readr::read_rds("~/GitWorkArea/covid19-forecasts-orderly/archive/prepare_ecdc_data/20200413-113115-b1f97002/latest_model_input.rds")
-##  country <- purrr::map(x, ~.[["country"]])
-## predictions <- purrr::map(x, ~ .[["deaths"]])
-## predictions <- purrr::map(predictions, ~ .[, seq(to = ncol(.), length.out = 7, by = 1)])
-## dates_predicted <- purrr::map(x, ~ tail(.[["time"]], 7))
-## predictions_named <- purrr::map2(
-##   predictions,
-##   dates_predicted,
-##   function(pred, dates) {
-##     pred <- data.frame(pred)
-##     pred <- pred[rep(seq_len(nrow(pred)), each = 5), ]
-##     colnames(pred) <- dates
-##     pred
-##   }
-##   )
-
-## rlast <- purrr::map(x, ~ as.vector(.[["rt"]][, ncol(.[["rt"]])]))
-## rlast <- purrr::map(rlast, ~ rep(. , each = 5))
-## names(rlast) <- country
-
-## rlast_list <- purrr::map(rlast, ~ list(., .))
-## pred_list  <- purrr::map(predictions_named, ~ list(., .))
-## names(pred_list) <- country
-## keep <- which(! country %in% c("Greece", "Norway"))
-## out <- list(
-##   Country = country[keep],
-##   R_last = rlast_list[keep],
-##   Predictions = pred_list[keep],
-##   D_active_transmission = input$D_active_transmission,
-##   I_active_transmission = input$I_active_transmission
-
-## )
-
-## readr::write_rds(out, "model_outputs/sbsm_Std_results_week_end_2020-04-12.rds")

@@ -110,8 +110,7 @@ sources:
 #
 resources:
   - country-and-continent-codes-list-csv_csv.csv
-  - unformatted_summary_DeathToRepoted_all_days_2020-04-12.csv
-  - DeCa_Std_Ratio_plot_2020-04-12.rds
+  - DeCa_Std_Ratio_plot_2020-04-19.rds
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that

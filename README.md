@@ -45,7 +45,8 @@ directory on the src directory.
    included. You can run the task as: 
    
    ```
-   a <- orderly::orderly_run("process_individual_models")
+   a <- orderly::orderly_run("process_individual_models", parameter =
+   list(week_ending = "2020-04-19"))
    orderly::orderly_commit(a)
    ```
 

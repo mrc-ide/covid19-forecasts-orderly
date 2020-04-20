@@ -111,7 +111,7 @@ sources:
 # to list files already listed in "sources" here, or any .sql files
 # referenced in "views" or "data"
 #
-resources: COVID-19-geographic-disbtribution-worldwide-2020-04-12.csv
+resources: COVID-19-geographic-disbtribution-worldwide-2020-04-19.csv
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that

@@ -1,4 +1,4 @@
-week_finishing <- "2020-04-12"
+week_finishing <- "2020-04-19"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -13,8 +13,9 @@ raw_data <- read.csv(
   dplyr::filter(
     !(Countries.and.territories == "Somalia" &
       DateRep == "2020-03-17" & Cases == 0)
-  ) %>%
-  dplyr::filter(DateRep <= as.Date(week_finishing))
+  ) %>% dplyr::filter(
+    !(Countries.and.territories == "China") ## Excluding China which is included only because of the massive back-fill.
+  ) %>% dplyr::filter(DateRep <= as.Date(week_finishing))
 
 
 ## Apply thresholds

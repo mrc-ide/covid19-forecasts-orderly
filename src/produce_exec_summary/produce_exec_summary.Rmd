@@ -40,11 +40,31 @@ ens_rt <- ens_rt_both[ens_rt_both$si == "si_2", ]
 ens_rt$model <- as.Date(ens_rt$model)
 ens_rt <- ens_rt[ens_rt$model == max(ens_rt$model), ]
 x <- tidyr::spread(ens_rt, quantile, out2)
+
 x$country <- snakecase::to_title_case(x$country)
-stable <- x[x$`2.5%` < 1 & x$`97.5%` > 1, ]
-declining <- x[x$`97.5%` < 1, ]
-growing_slow <- x[x$`2.5%` > 1 & x$`97.5%` < 2, ]
-growing_fast <- x[x$`2.5%` > 1 & x$`97.5%` > 2, ]
+
+x$phase <- dplyr::case_when(
+  x$`97.5%` < 1 ~ "decline",
+  x$`2.5%` < 1 & x$`97.5%` > 1 & x$`97.5%` < 2 ~ "stable/growing slowly",
+  ##x$`97.5%` > 1 & x$`97.5%` < 2 & x$`2.5%` > 1 & x$`2.5%` < 2 ~ "slow",
+  x$`2.5%` < 1 & x$`97.5%` > 2   ~ "unclear",
+  ##x$`2.5%` > 2  ~ "fast",
+  x$`2.5%` > 1  ~ "growing"
+  
+)
+ 
+## 97.th percentile < 1 – likely declining
+## 2.5th percentile < 1 and 97.5th percentile between 1 and 2 –
+## likely stabilising or growing slowly
+## 2.5th percentile < 1 and 97.5th percentile > 2 – uncertain trend
+## 2.5th percentile > 1 and 97.5th percentile < 2 – likely growing slowly
+## 2.5th percentile > 2– likely growing fast
+
+declining <- x[x$phase == "decline", ]
+stable <- x[x$phase == "stable/growing slowly", ]
+unclear <- x[x$phase == "unclear", ]
+growing <- x[x$phase == "growing", ]
+
 
 #### Deaths
 ensemble_weekly_qntls <- readr::read_rds("ensemble_weekly_qntls.rds")
@@ -70,12 +90,12 @@ is:
 
 -   likely declining^1^ in `r nrow(declining)`	 countries <br/> 
 (`r declining$country`);
--	likely stabilising^2^  in `r nrow(stable)` countries <br/>
+-	likely stabilising or growing slowly^2^  in `r nrow(stable)` countries <br/>
 (`r stable$country`);
--	likely growing slowly^3^ in `r nrow(growing_slow)` countries <br/>
-(`r growing_slow$country`);
--	likely growing rapidly^4^ in `r nrow(growing_fast)` countries <br/>
-(`r growing_fast$country`).
+-	likely growing ^3^ in `r nrow(growing)` countries <br/>
+(`r growing$country`);
+
+The trend is uncertain^4^ in `r nrow(unclear)` countries (`r unclear$country`).
 
 Based on the central trends in the forecasts, the total number of
 reported deaths in the coming week is expected to be:
@@ -97,7 +117,7 @@ reported deaths in the coming week is expected to be:
 <br>
 
 1. if the 97.5^th^ percentile of $R_t$ is below 1.
-2. if the 95% Credible Interval (CrI) of $R_t$ contains 1.
-3. if the 2.5^th^ percentile of $R_t$ is greater than 1 and the
-97.5^th^ percentile is less than 2. 
-4. if the 97.5^th^ percentile of $R_t$ is greater than 2.
+2. if the 2.5^th^ percentile of $R_t$ is below 1 and the 97.5^th^
+   percentile of $R_t$ is between 1 and 2.
+3. if the 2.5^th^ percentile of $R_t$ is greater than 1.
+4. if the 2.5^th^ percentile of $R_t$ is below 1 and the 97.5^th^ percentile of $R_t$ is above 2.
