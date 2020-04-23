@@ -49,6 +49,9 @@ artefacts:
       filenames:
         - model_predictions_error.csv
 
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
 # "description" (which can be as long as you want).  Must be a string.
@@ -140,22 +143,4 @@ depends:
     id: "latest"
     draft: false
     use:
-      model_input.rds: latest_model_input.rds
-  process_individual_models:
-    id: "latest"
-    use:
-      RtI0_Std_results_week_end_2020-03-08.rds: model_outputs/RtI0_Std_results_week_end_2020-03-08.rds
-      sbkp_Std_results_week_end_2020-03-08.rds: model_outputs/sbkp_Std_results_week_end_2020-03-08.rds
-      DeCa_Std_results_week_end_2020-03-08.rds: model_outputs/DeCa_Std_results_week_end_2020-03-08.rds
-      sbkp_Std_results_week_end_2020-03-15.rds: model_outputs/sbkp_Std_results_week_end_2020-03-15.rds
-      RtI0_Std_results_week_end_2020-03-15.rds: model_outputs/RtI0_Std_results_week_end_2020-03-15.rds
-      DeCa_Std_results_week_end_2020-03-15.rds: model_outputs/DeCa_Std_results_week_end_2020-03-15.rds
-      RtI0_Std_results_week_end_2020-03-22.rds: model_outputs/RtI0_Std_results_week_end_2020-03-22.rds
-      sbkp_Std_results_week_end_2020-03-22.rds: model_outputs/sbkp_Std_results_week_end_2020-03-22.rds
-      DeCa_Std_results_week_end_2020-03-22.rds: model_outputs/DeCa_Std_results_week_end_2020-03-22.rds
-      sbkp_Std_results_week_end_2020-03-29.rds: model_outputs/sbkp_Std_results_week_end_2020-03-29.rds
-      RtI0_Std_results_week_end_2020-03-29.rds: model_outputs/RtI0_Std_results_week_end_2020-03-29.rds
-      DeCa_Std_results_week_end_2020-03-29.rds: model_outputs/DeCa_Std_results_week_end_2020-03-29.rds
-      sbkp_Std_results_week_end_2020-04-05.rds: model_outputs/sbkp_Std_results_week_end_2020-04-05.rds
-      RtI0_Std_results_week_end_2020-04-05.rds: model_outputs/RtI0_Std_results_week_end_2020-04-05.rds
-      DeCa_Std_results_week_end_2020-04-05.rds: model_outputs/DeCa_Std_results_week_end_2020-04-05.rds
+      model_input.rds: latest_deaths_wide_no_filter.rds

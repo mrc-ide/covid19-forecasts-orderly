@@ -51,7 +51,9 @@ script: prepare_ecdc_data.R
 artefacts:
   - data:
       description: Input data for modeling 
-      filenames: latest_model_input.rds
+      filenames:
+        - latest_model_input.rds
+        - latest_deaths_wide_no_filter.rds
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than

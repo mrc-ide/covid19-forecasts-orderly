@@ -29,6 +29,21 @@ ensb_pred <- readr::read_rds("ensemble_daily_qntls.rds")
 ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
+
+## Read in the model specific outputs here so that we can construct
+## nice names
+daily_predictions_qntls <- readRDS("daily_predictions_qntls.rds")
+
+daily_predictions_qntls <- tidyr::separate(
+  daily_predictions_qntls,
+  col = "model",
+  into = c("proj", NA, NA, NA, NA, "week_ending"),
+  sep = "_"
+)
+
+sbsm_countries <- dplyr::filter(
+  daily_predictions_qntls, proj == "sbsm"
+) %>% pull(country) %>% unique
 ##ensb_pred$proj[ensb_pred$country == "United_Kingdom"] <- "sbsm"
 
 ## Make plots for only the latest week.
@@ -50,45 +65,12 @@ plots <- purrr::map(
 
 nice_names <- snakecase::to_title_case(unique(ensb_pred$country))
 names(nice_names) <- unique(ensb_pred$country)
-## Footnotes to indicate what models go into what
-nice_names <- c(
-  Algeria = "Algeria *",
-  Austria = "Austria**",
-  Belgium = "Belgium*",
-  Brazil = "Brazil*",
-  Canada = "Canada*",
-  China = "China*",
-  Colombia = "Colombia*",
-  Czechia = "Czechia*",
-  Denmark = "Denmark**",
-  Dominican_Republic = "Dominican Republic*",
-  Ecuador = "Ecuador*",
-  Egypt = "Egypt*",
-  France = "France**",
-  Germany = "Germany**",
-  India = "India*",
-  Indonesia = "Indonesia*",
-  Iran = "Iran*",
-  Ireland = "Ireland*",
-  Israel = "Israel*",
-  Italy = "Italy**",
-  Mexico = "Mexico*",
-  Morocco = "Morocco*",
-  Netherlands = "Netherlands**",
-  Peru = "Peru*",
-  Philippines = "Philippines*",
-  Poland = "Poland*",
-  Portugal = "Portugal**",
-  Romania = "Romania*",
-  Russia = "Russia*",
-  South_Korea = "South Korea*",
-  Spain = "Spain**",
-  Sweden = "Sweden**",
-  Switzerland = "Switzerland**",
-  Turkey = "Turkey*",
-  United_Kingdom = "United Kingdom***",
-  United_States_of_America = "United States of America*"
-)
+nice_names[names(nice_names) %in% sbsm_countries] <-
+  glue::glue("{nice_names[names(nice_names) %in% sbsm_countries]}**")
+
+nice_names[! names(nice_names) %in% sbsm_countries] <-
+  glue::glue("{nice_names[! names(nice_names) %in% sbsm_countries]}*")
+
 
 ## 6 pages in each plot so.
 n_cntrs <- purrr::map_int(by_continent_si, ~ length(unique(.$country)))
@@ -132,54 +114,6 @@ purrr::iwalk(
 )
 
 ##### Individual Model Projection Plots
-daily_predictions_qntls <- readRDS("daily_predictions_qntls.rds")
-nice_names <- c(
-  Algeria = "Algeria *",
-  Austria = "Austria**",
-  Belgium = "Belgium*",
-  Brazil = "Brazil*",
-  Canada = "Canada*",
-  China = "China*",
-  Colombia = "Colombia*",
-  Czechia = "Czechia*",
-  Denmark = "Denmark**",
-  Dominican_Republic = "Dominican Republic*",
-  Ecuador = "Ecuador*",
-  Egypt = "Egypt*",
-  France = "France**",
-  Germany = "Germany**",
-  India = "India*",
-  Indonesia = "Indonesia*",
-  Iran = "Iran*",
-  Ireland = "Ireland*",
-  Israel = "Israel*",
-  Italy = "Italy**",
-  Mexico = "Mexico*",
-  Morocco = "Morocco*",
-  Netherlands = "Netherlands**",
-  Peru = "Peru*",
-  Philippines = "Philippines*",
-  Poland = "Poland*",
-  Portugal = "Portugal**",
-  Romania = "Romania*",
-  Russia = "Russia*",
-  South_Korea = "South Korea*",
-  Spain = "Spain**",
-  Sweden = "Sweden**",
-  Switzerland = "Switzerland**",
-  Turkey = "Turkey*",
-  United_Kingdom = "United Kingdom**",
-  United_States_of_America = "United States of America*"
-)
-
-
-
-daily_predictions_qntls <- tidyr::separate(
-  daily_predictions_qntls,
-  col = "model",
-  into = c("proj", NA, NA, NA, NA, "week_ending"),
-  sep = "_"
-)
 
 daily_predictions_qntls <- add_continents(
   daily_predictions_qntls, continents
@@ -269,44 +203,44 @@ ensemble_rt_wide <- tidyr::spread(
 ensemble_rt_wide <- add_continents(ensemble_rt_wide, continents)
 ensemble_rt_wide$proj <- "Ensemble"
 ##ensemble_rt_wide$proj[ensemble_rt_wide$country == "United_Kingdom"] <- "Model 4"
-nice_names <- c(
-  Algeria = "Algeria *",
-  Austria = "Austria**",
-  Belgium = "Belgium*",
-  Brazil = "Brazil*",
-  Canada = "Canada*",
-  China = "China*",
-  Colombia = "Colombia*",
-  Czechia = "Czechia*",
-  Denmark = "Denmark**",
-  Dominican_Republic = "Dominican Republic*",
-  Ecuador = "Ecuador*",
-  Egypt = "Egypt*",
-  France = "France**",
-  Germany = "Germany**",
-  India = "India*",
-  Indonesia = "Indonesia*",
-  Iran = "Iran*",
-  Ireland = "Ireland*",
-  Israel = "Israel*",
-  Italy = "Italy**",
-  Mexico = "Mexico*",
-  Morocco = "Morocco*",
-  Netherlands = "Netherlands**",
-  Peru = "Peru*",
-  Philippines = "Philippines*",
-  Poland = "Poland*",
-  Portugal = "Portugal**",
-  Romania = "Romania*",
-  Russia = "Russia*",
-  South_Korea = "South Korea*",
-  Spain = "Spain**",
-  Sweden = "Sweden**",
-  Switzerland = "Switzerland**",
-  Turkey = "Turkey*",
-  United_Kingdom = "United Kingdom***",
-  United_States_of_America = "United States of America*"
-)
+## nice_names <- c(
+##   Algeria = "Algeria *",
+##   Austria = "Austria**",
+##   Belgium = "Belgium*",
+##   Brazil = "Brazil*",
+##   Canada = "Canada*",
+##   China = "China*",
+##   Colombia = "Colombia*",
+##   Czechia = "Czechia*",
+##   Denmark = "Denmark**",
+##   Dominican_Republic = "Dominican Republic*",
+##   Ecuador = "Ecuador*",
+##   Egypt = "Egypt*",
+##   France = "France**",
+##   Germany = "Germany**",
+##   India = "India*",
+##   Indonesia = "Indonesia*",
+##   Iran = "Iran*",
+##   Ireland = "Ireland*",
+##   Israel = "Israel*",
+##   Italy = "Italy**",
+##   Mexico = "Mexico*",
+##   Morocco = "Morocco*",
+##   Netherlands = "Netherlands**",
+##   Peru = "Peru*",
+##   Philippines = "Philippines*",
+##   Poland = "Poland*",
+##   Portugal = "Portugal**",
+##   Romania = "Romania*",
+##   Russia = "Russia*",
+##   South_Korea = "South Korea*",
+##   Spain = "Spain**",
+##   Sweden = "Sweden**",
+##   Switzerland = "Switzerland**",
+##   Turkey = "Turkey*",
+##   United_Kingdom = "United Kingdom***",
+##   United_States_of_America = "United States of America*"
+## )
 
 plots <- split(
   ensemble_rt_wide,
@@ -332,44 +266,44 @@ purrr::iwalk(
   }
 )
 
-nice_names <- c(
-  Algeria = "Algeria *",
-  Austria = "Austria**",
-  Belgium = "Belgium*",
-  Brazil = "Brazil*",
-  Canada = "Canada*",
-  China = "China*",
-  Colombia = "Colombia*",
-  Czechia = "Czechia*",
-  Denmark = "Denmark**",
-  Dominican_Republic = "Dominican Republic*",
-  Ecuador = "Ecuador*",
-  Egypt = "Egypt*",
-  France = "France**",
-  Germany = "Germany**",
-  India = "India*",
-  Indonesia = "Indonesia*",
-  Iran = "Iran*",
-  Ireland = "Ireland*",
-  Israel = "Israel*",
-  Italy = "Italy**",
-  Mexico = "Mexico*",
-  Morocco = "Morocco*",
-  Netherlands = "Netherlands**",
-  Peru = "Peru*",
-  Philippines = "Philippines*",
-  Poland = "Poland*",
-  Portugal = "Portugal**",
-  Romania = "Romania*",
-  Russia = "Russia*",
-  South_Korea = "South Korea*",
-  Spain = "Spain**",
-  Sweden = "Sweden**",
-  Switzerland = "Switzerland**",
-  Turkey = "Turkey*",
-  United_Kingdom = "United Kingdom**",
-  United_States_of_America = "United States of America*"
-)
+## nice_names <- c(
+##   Algeria = "Algeria *",
+##   Austria = "Austria**",
+##   Belgium = "Belgium*",
+##   Brazil = "Brazil*",
+##   Canada = "Canada*",
+##   China = "China*",
+##   Colombia = "Colombia*",
+##   Czechia = "Czechia*",
+##   Denmark = "Denmark**",
+##   Dominican_Republic = "Dominican Republic*",
+##   Ecuador = "Ecuador*",
+##   Egypt = "Egypt*",
+##   France = "France**",
+##   Germany = "Germany**",
+##   India = "India*",
+##   Indonesia = "Indonesia*",
+##   Iran = "Iran*",
+##   Ireland = "Ireland*",
+##   Israel = "Israel*",
+##   Italy = "Italy**",
+##   Mexico = "Mexico*",
+##   Morocco = "Morocco*",
+##   Netherlands = "Netherlands**",
+##   Peru = "Peru*",
+##   Philippines = "Philippines*",
+##   Poland = "Poland*",
+##   Portugal = "Portugal**",
+##   Romania = "Romania*",
+##   Russia = "Russia*",
+##   South_Korea = "South Korea*",
+##   Spain = "Spain**",
+##   Sweden = "Sweden**",
+##   Switzerland = "Switzerland**",
+##   Turkey = "Turkey*",
+##   United_Kingdom = "United Kingdom**",
+##   United_States_of_America = "United States of America*"
+## )
 
 
 ##ensemble_rt$model <- paste0("Ensemble_", ensemble_rt$model)
@@ -486,7 +420,7 @@ purrr::iwalk(
 ###################
 ##### Reporting Trends
 ### col -> column to scale
-x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-04-12.rds")
+x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-04-19.rds")
 max_deaths <- purrr::map_dfr(x, ~ max(.[["D_t"]]), .id = "country")
 max_deaths <- tidyr::gather(max_deaths, country, max_deaths)
 

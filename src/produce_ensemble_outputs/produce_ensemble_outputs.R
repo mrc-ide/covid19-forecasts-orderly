@@ -1,4 +1,5 @@
-probs <- c(0.025, 0.25, 0.5, 0.75, 0.975)
+##probs <- c(0.025, 0.25, 0.5, 0.75, 0.975)
+probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 weeks_ending <- readr::read_rds("latest_week_ending.rds")
 
 output_files <- list.files(covid_19_path)
@@ -111,7 +112,7 @@ ensemble_daily_qntls <- purrr::map_dfr(
   ensemble_model_predictions,
   function(pred) {
     purrr::map_dfr(
-      pred, extract_predictions_qntls,
+      pred, ~ extract_predictions_qntls(., probs),
       .id = "country"
     )
   },

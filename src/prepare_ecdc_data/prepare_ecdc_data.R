@@ -13,11 +13,27 @@ raw_data <- read.csv(
   dplyr::filter(
     !(Countries.and.territories == "Somalia" &
       DateRep == "2020-03-17" & Cases == 0)
-  ) %>% dplyr::filter(
-    !(Countries.and.territories == "China") ## Excluding China which is included only because of the massive back-fill.
   ) %>% dplyr::filter(DateRep <= as.Date(week_finishing))
 
 
+## Save before applying theresholds as well so that we can compute
+## model performance metrics
+by_country_deaths_all <- dplyr::select(
+  raw_data, dates = DateRep, Deaths, Countries.and.territories
+) %>%
+  tidyr::spread(
+    key = Countries.and.territories, value = Deaths, fill = 0
+  )
+
+saveRDS(
+  object = by_country_deaths_all,
+  file = "latest_deaths_wide_no_filter.rds"
+)
+
+## Excluding China which is included only because of the massive back-fill.
+raw_data <- dplyr::filter(
+  raw_data, !(Countries.and.territories == "China")
+)
 ## Apply thresholds
 pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   purrr::keep(deaths_threshold) %>%

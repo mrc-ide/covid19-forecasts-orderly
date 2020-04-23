@@ -16,18 +16,14 @@ pool_predictions <- function(outputs, weights = 1) {
 ## to the 2 serial intervals being considered.
 ## it is this last list (country, 2 components) that is passed to
 ## this function.
-extract_predictions_qntls <- function(y) {
+extract_predictions_qntls <- function(y, prob = c(0.025, 0.25, 0.5, 0.75, 0.975)) {
 
     names(y) <- paste0("si_", seq_along(y))
     out <- purrr::map_dfr(
         y,
         function(y_si) {
             out2 <- t(
-                apply(y_si,
-                      2,
-                      quantile,
-                      prob = c(0.025, 0.25, 0.5, 0.75, 0.975)
-                      )
+              apply(y_si, 2, quantile, prob = prob)
             )
             out2 <- as.data.frame(out2)
             out2 <- tibble::rownames_to_column(out2, var = "date")
