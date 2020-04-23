@@ -25,7 +25,7 @@
 # You must have a script that does something with the data.  This
 # will be a single string and the filename must exist when orderly is
 # run
-script: ~
+script: compute_model_weights.R
 
 # You must list at least one artefact that your report will generate.
 # Each artefact consists of one or more files.  The format is to list
@@ -43,7 +43,12 @@ script: ~
 #             - report.html
 #             - figures/fig1.png
 #             - figures/fig2.png
-artefacts: ~
+artefacts:
+  - data:
+      description: Weights assigned to models by minimising error
+      filenames:
+        - mae_model_weights.csv
+        - mse_model_weights.csv
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
