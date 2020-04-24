@@ -1,4 +1,3 @@
-
 ## Observations in tall format
 model_input <- readr::read_rds("model_input.rds")
 obs_deaths <- model_input [["D_active_transmission"]]
@@ -30,6 +29,33 @@ ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
 
+
+## wtd_ensb_pred <- readr::read_rds("wtd_ensemble_daily_qntls.rds")
+## wtd_ensb_pred$proj <- "Weighted Ensemble"
+
+## common_cols <- intersect(
+##   colnames(wtd_ensb_pred), colnames(ensb_pred)
+## )
+
+## ensb <- rbind(
+##   wtd_ensb_pred[, common_cols],
+##   ensb_pred[, common_cols]
+## )
+
+## by_si_ensb <- split(
+##   ensb, ensb$si
+## )
+
+## plots <- purrr::map(
+##   by_si_ensb,
+##   function(pred) {
+##     pred$date <- as.Date(pred$date)
+##     pred$week_ending <- "2020-03-15"
+##     obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
+##     projection_plot(obs, pred) + facet_wrap(~country, ncol = 1, scales = "free_y")
+##   }
+## )
+
 ## Read in the model specific outputs here so that we can construct
 ## nice names
 daily_predictions_qntls <- readRDS("daily_predictions_qntls.rds")
@@ -47,7 +73,7 @@ sbsm_countries <- dplyr::filter(
 ##ensb_pred$proj[ensb_pred$country == "United_Kingdom"] <- "sbsm"
 
 ## Make plots for only the latest week.
-ensb_pred <- ensb_pred[ensb_pred$week_ending == as.Date(ensb_pred$week_ending), ]
+ensb_pred <- ensb_pred[ensb_pred$week_ending == max(as.Date(ensb_pred$week_ending)), ]
 ensb_pred <- add_continents(ensb_pred, continents)
 
 by_continent_si <- split(

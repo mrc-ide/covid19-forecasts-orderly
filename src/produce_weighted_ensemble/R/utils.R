@@ -15,6 +15,7 @@ pool_predictions <- function(outputs, weights = 1) {
 ## it is this last list (country, 2 components) that is passed to
 ## this function.
 extract_predictions_qntls <- function(y, prob = c(0.025, 0.25, 0.5, 0.75, 0.975)) {
+
   names(y) <- paste0("si_", seq_along(y))
   out <- purrr::map_dfr(
     y,
