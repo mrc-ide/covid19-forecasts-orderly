@@ -15,8 +15,10 @@ projection_plot <- function(obs, pred) {
   ## names(palette) <- unique(pred$proj)
 
   ## Plot only the latest projections.
-  palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7")
-  names(palette) <- c("Model 4", "Model 2", "Model 1", "Model 3", "Ensemble")
+  palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7", "#999999")
+  names(palette) <- c(
+    "Model 4", "Model 2", "Model 1", "Model 3", "Ensemble", "Weighted Ensemble"
+  )
   pred <- pred[pred$week_ending == max(as.Date(pred$week_ending)), ]
 
   date_min <- max(
