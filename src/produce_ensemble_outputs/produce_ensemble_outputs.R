@@ -41,8 +41,8 @@ ensemble_model_predictions <- purrr::map(
         y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
 
         out <- list(
-          pool_predictions(y_1),
-          pool_predictions(y_2)
+          si_1 = pool_predictions(y_1),
+          si_2 = pool_predictions(y_2)
         )
       }
     )
@@ -95,8 +95,8 @@ if (nrow(weights) > 0) {
           wts_1 <- normalised_wts[[1]][[country]][models]
           wts_2 <- normalised_wts[[2]][[country]][models]
           out <- list(
-            pool_predictions(y_1, wts_1),
-            pool_predictions(y_2, wts_2)
+            si_1 = pool_predictions(y_1, wts_1),
+            si_2 = pool_predictions(y_2, wts_2)
           )
         }
       )
