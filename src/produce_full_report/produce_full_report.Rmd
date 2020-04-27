@@ -37,18 +37,18 @@ knitr::opts_chunk$set(
     messages = FALSE
     )
 
-week_starting <- as.Date('19-04-2020', format = '%d-%m-%Y')
+week_starting <- as.Date('26-04-2020', format = '%d-%m-%Y')
 
 ```
 
 # Introduction 
 
-As of 19-04-2020,  more than
-2,200,000 cases of COVID-19 have been reported across the world, with more than 150,000
+As of 26-04-2020,  more than
+2,800,000 cases of COVID-19 have been reported across the world, with more than 190,000
 deaths [@whositrep]. This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 45 countries with active transmission.
+ascertainment) for 48 countries with active transmission.
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -77,8 +77,8 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week beginning 19-04-2020,
-the number of countries/regions included based on these thresholds is 45.
+two weeks. For the week beginning 26-04-2020,
+the number of countries/regions included based on these thresholds is 48.
 
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -429,7 +429,7 @@ before, we set the ratio at 1 (95% CI 1-1)*
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 case_at <- readr::read_csv(
-    "unformatted_summary_DeathToRepoted_14days_2020-04-19.csv"
+    "unformatted_summary_DeathToRepoted_14days_2020-04-26.csv"
 )
 case_at$country <- snakecase::to_any_case(case_at$country, case = "title")
 
@@ -475,7 +475,7 @@ for each country (mean and 95% CI) during the last *14 days*; (**ii**) the estim
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-x <- readr::read_csv("summary_DeathToRepoted_14days_2020-04-19.csv")
+x <- readr::read_csv("summary_DeathToRepoted_14days_2020-04-26.csv")
 x <- dplyr::select(
   x, country, deaths_to_reported_ratio, estimated_reporting
 )
@@ -748,7 +748,7 @@ CrI of the projections.
 #### Europe
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_2020-04-19_Europe.png")
+knitr::include_graphics("figs/rt_si_2_2020-04-26_Europe.png")
 ```
 *Figure 17.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
@@ -761,7 +761,7 @@ models are available (Models 1, 2, and 4). For countries marked with
 
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_2020-04-19_Asia.png")
+knitr::include_graphics("figs/rt_si_2_2020-04-26_Asia.png")
 ```
 
 *Figure 18.* Estimates of $R_t$ from individual models for each country in Asia with
@@ -774,7 +774,7 @@ models are available (Models 1 and 2).
 
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_2020-04-19_Africa.png")
+knitr::include_graphics("figs/rt_si_2_2020-04-26_Africa.png")
 ```
 
 *Figure 19.* Estimates of $R_t$ from individual models for each country in Africa with
@@ -787,7 +787,7 @@ models are available (Models 1 and 2).
 
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_2020-04-19_North America.png")
+knitr::include_graphics("figs/rt_si_2_2020-04-26_North America.png")
 ```
 *Figure 20.* Estimates of $R_t$ from individual models for each country in
 North America with
@@ -801,7 +801,7 @@ models are available (Models 1 and 2).
 
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_2020-04-19_South America.png")
+knitr::include_graphics("figs/rt_si_2_2020-04-26_South America.png")
 ```
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting

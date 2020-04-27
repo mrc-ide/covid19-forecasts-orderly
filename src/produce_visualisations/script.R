@@ -1,13 +1,3 @@
-## Observations in tall format
-model_input <- readr::read_rds("model_input.rds")
-obs_deaths <- model_input [["D_active_transmission"]]
-obs_deaths <- tidyr::gather(
-  obs_deaths,
-  country,
-  deaths,
-  -dates
-)
-
 ## List of continents-coutnry mapping
 continents <- readr::read_csv(
   "country-and-continent-codes-list-csv_csv.csv"
@@ -21,6 +11,17 @@ continents <- continents[, c(
   "three_letter_country_code"
 )]
 
+
+## Observations in tall format
+model_input <- readr::read_rds("model_input.rds")
+obs_deaths <- model_input [["D_active_transmission"]]
+obs_deaths <- tidyr::gather(
+  obs_deaths,
+  country,
+  deaths,
+  -dates
+)
+
 obs_deaths <- add_continents(obs_deaths, continents)
 
 
@@ -30,31 +31,32 @@ ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
 
 
-## wtd_ensb_pred <- readr::read_rds("wtd_ensemble_daily_qntls.rds")
-## wtd_ensb_pred$proj <- "Weighted Ensemble"
+wtd_ensb_pred <- readr::read_rds("wtd_ensemble_daily_qntls.rds")
+wtd_ensb_pred$proj <- "Weighted Ensemble"
 
-## common_cols <- intersect(
-##   colnames(wtd_ensb_pred), colnames(ensb_pred)
-## )
+common_cols <- intersect(
+  colnames(wtd_ensb_pred), colnames(ensb_pred)
+)
 
-## ensb <- rbind(
-##   wtd_ensb_pred[, common_cols],
-##   ensb_pred[, common_cols]
-## )
+ensb <- rbind(
+  wtd_ensb_pred[, common_cols],
+  ensb_pred[, common_cols]
+)
 
-## by_si_ensb <- split(
-##   ensb, ensb$si
-## )
+by_si_ensb <- split(
+  ensb, ensb$si
+)
 
-## plots <- purrr::map(
-##   by_si_ensb,
-##   function(pred) {
-##     pred$date <- as.Date(pred$date)
-##     pred$week_ending <- "2020-03-15"
-##     obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
-##     projection_plot(obs, pred) + facet_wrap(~country, ncol = 1, scales = "free_y")
-##   }
-## )
+plots <- purrr::map(
+  by_si_ensb,
+  function(pred) {
+    pred$date <- as.Date(pred$date)
+    pred$week_ending <- "2020-04-26"
+    obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
+    projection_plot(obs, pred) +
+      facet_wrap(~country, ncol = 1, scales = "free_y")
+  }
+)
 
 ## Read in the model specific outputs here so that we can construct
 ## nice names
@@ -446,7 +448,7 @@ purrr::iwalk(
 ###################
 ##### Reporting Trends
 ### col -> column to scale
-x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-04-19.rds")
+x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-04-26.rds")
 max_deaths <- purrr::map_dfr(x, ~ max(.[["D_t"]]), .id = "country")
 max_deaths <- tidyr::gather(max_deaths, country, max_deaths)
 

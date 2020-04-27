@@ -1,4 +1,4 @@
-week_finishing <- "2020-04-19"
+week_finishing <- "2020-04-26"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -15,6 +15,24 @@ raw_data <- read.csv(
       DateRep == "2020-03-17" & Cases == 0)
   ) %>% dplyr::filter(DateRep <= as.Date(week_finishing))
 
+spain_extra <- data.frame(
+  DateRep = "2020-04-26",
+  day = 26,
+  month = 4,
+  year = 2020,
+  Cases = 3995,
+  Deaths = 378,
+  `Countries.and.territories` = "Spain",
+  geoId = "ES",
+  countryterritoryCode = "ESP",
+  popData2018 = 46723749,
+  continent = "Europe"
+)
+raw_data <- rbind(raw_data, spain_extra)
+## 27th April: Ireland manually fixed in the csv.
+## ECDC Reported 234 deaths on 2020-04-26
+## which was a massive jump from 35 reported on 2020-04-25.
+## Fixed it to match numbers from Worldometer.
 
 ## Save before applying theresholds as well so that we can compute
 ## model performance metrics
@@ -31,9 +49,9 @@ saveRDS(
 )
 
 ## Excluding China which is included only because of the massive back-fill.
-raw_data <- dplyr::filter(
-  raw_data, !(Countries.and.territories == "China")
-)
+## raw_data <- dplyr::filter(
+##   raw_data, !(Countries.and.territories == "China")
+## )
 ## Apply thresholds
 pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   purrr::keep(deaths_threshold) %>%

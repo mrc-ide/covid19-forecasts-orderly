@@ -46,7 +46,7 @@ directory on the src directory.
    
    ```
    a <- orderly::orderly_run("process_individual_models", parameter =
-   list(week_ending = "2020-04-19"))
+   list(week_ending = "2020-04-26"))
    orderly::orderly_commit(a)
    ```
 
@@ -54,7 +54,7 @@ directory on the src directory.
 
    
    ```
-   a <- orderly::orderly_run("produce_ensemble_outputs")
+   a <- orderly::orderly_run("produce_ensemble_outputs", parameters = list(week_ending = "2020-04-26"))
    orderly::orderly_commit(a)
    ```
    

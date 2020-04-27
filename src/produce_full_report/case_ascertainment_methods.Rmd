@@ -19,7 +19,7 @@ Let $D_{i, t}$ be the number of deaths in location $i$ at time $t$.
 Let $I_{i, t}^r$ be the reported number of cases in location $i$ at
 time $t$ and $I_{i, t}^{true}$ be the true number of cases.
 We assume that the reporting to death delay $\delta$ is distributed
-according to a Gamma distribution with mean $\mu$ and standard
+according to a gamma distribution with mean $\mu$ and standard
 deviation $\sigma$. That is,
 
 \[\delta \sim \Gamma(\mu, \sigma).\]
