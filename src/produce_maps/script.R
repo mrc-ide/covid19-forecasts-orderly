@@ -1,12 +1,4 @@
 # Produce maps of deaths by continent
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(sp)
-library(sf)
-library(rnaturalearth)
-library(countrycode)
-library(ggrepel)
 
 # loading the map data (simple features format)
 world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
@@ -21,25 +13,24 @@ if(any(is.na(ens_week$iso_a3))) warning(print("Country names need matching to IS
 sis<-unique(ens_week$si)
 for(j in 1:length(sis)){
   si<-sis[j]
-world_df<-merge(world,ens_week[ens_week$si==si,])
-world_df_pts<-st_point_on_surface(world_df)
-coords <- as.data.frame(st_coordinates(world_df_pts))
-coords$label <- paste0(world_df$geounit,"\n",prettyNum(world_df$`50%`,big.mark=","))
-coords$continent<-world_df$continent
+  world_df<-merge(world,ens_week[ens_week$si==si,])
+  ##world_df_pts<-st_point_on_surface(world_df)
+  world_df_pts <- sf::st_centroid(world_df)
+  coords <- as.data.frame(st_coordinates(world_df_pts))
+  coords$label <- paste0(world_df$geounit,"\n",prettyNum(world_df$`50%`,big.mark=","))
+  ##coords$label <- paste0(world_df$geounit)
+  coords$continent<-world_df$continent
 
-continents<-unique(world_df$continent)
-for(i in 1:length(continents)){
-  c<-continents[i]
-dim<-st_bbox(world_df[world_df$continent==c,])
-p<-ggplot() +
-  geom_sf(data = world,fill="grey",col="white",size=0.1)+
-  geom_sf(data = world_df_pts[world_df_pts$continent==c,], aes(size=`50%`),alpha=0.2,col="red") + 
-  geom_sf(data = world_df_pts[world_df_pts$continent==c,], aes(size=`50%`),shape=1,col="red") + 
-  geom_text_repel(data = coords[coords$continent==c,], aes(x=X,y=Y,label=label)) + 
-  guides(size=F) + labs(x="",y="")+
-  theme(panel.background = element_rect("white"),panel.grid=element_blank()) +
-  coord_sf(xlim=dim[c(1,3)],ylim=dim[c(2,4)])
+  p <- ggplot() +
+      geom_sf(data = world,fill="grey",col="white",size=0.1)+
+      geom_sf(data = world_df_pts, aes(size=`50%`),alpha=0.2,col="red") +
+      geom_sf(data = world_df_pts, aes(size=`50%`),shape=1,col="red") +
+      geom_text_repel(data = coords, aes(x=X,y=Y,label=label)) +
+      guides(size=F) + labs(x="",y="")+
+      theme(panel.background = element_rect("white"),panel.grid=element_blank()) +
+      ##coord_sf(xlim=dim[c(1,3)],ylim=dim[c(2,4)])
+      coord_sf()
 
-ggsave(paste0("map_death_",gsub(" ","_",c,fixed=T),"_",si,".png"), p)
-}
+    ggsave(paste0("map_death_",gsub(" ","_",c,fixed=T),"_",si,".png"), p)
+  }
 }
