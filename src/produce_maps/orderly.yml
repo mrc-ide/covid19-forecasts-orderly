@@ -25,11 +25,7 @@
 # You must have a script that does something with the data.  This
 # will be a single string and the filename must exist when orderly is
 # run
-script: produce_weighted_ensemble.R
-
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-
+script: script.R
 
 # You must list at least one artefact that your report will generate.
 # Each artefact consists of one or more files.  The format is to list
@@ -48,12 +44,15 @@ environment:
 #             - figures/fig1.png
 #             - figures/fig2.png
 artefacts:
-  - data:
-      description: Weighted Ensemble Outputs
+  - staticgraph:
+      description: Maps of median projected deaths for the week of the report
       filenames:
-        - wtd_ensemble_model_predictions.rds
-        - wtd_ensemble_daily_qntls.rds
-        - wtd_ensemble_weekly_qntls.rds
+        - map_death_Asia_si_1.png
+        - map_death_Asia_si_2.png
+        - map_death_Africa_si_1.png
+        - map_death_Africa_si_2.png
+        - map_death_North_America_si_1.png
+        - map_death_North_America_si_2.png
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than
@@ -79,9 +78,6 @@ artefacts:
 # a parameter of b with no default.
 #
 # parameters:
-parameters:
-  week_ending: 2020-04-19
-
 
 # Similar to "data" but sets of temporary views before the data are
 # extracted.  Can be embedded SQL strings or filenames to actual
@@ -95,9 +91,17 @@ parameters:
 # reports.
 #
 packages:
-  - purrr
+  - ggplot2
+  - ggpubr
+  - ggforce
   - dplyr
-  
+  - tidyr
+  - sp
+  - sf
+  - rnaturalearth
+  - countrycode
+  - ggrepel
+ 
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading
 # any packages, and before running your script.  Use this in
@@ -105,7 +109,6 @@ packages:
 # otherwise you will have to add them to "resources" (see below)
 #
 sources:
-  - R/utils.R
 
 # Resources that the script needs to run; this is an array of strings
 # representing filenames *relative to, and below, this directory*.
@@ -116,7 +119,6 @@ sources:
 # to list files already listed in "sources" here, or any .sql files
 # referenced in "views" or "data"
 #
-# resources:
 
 # Optional name of a variable to make the SQL connection available to
 # the script.  Use this with care and avoid using any queries that
@@ -145,7 +147,8 @@ sources:
 #           other-data.csv: data.csv
 #
 depends:
-  compute_model_weights:
-    id: latest
+  produce_ensemble_outputs:
+    id: "latest"
     use:
-      model_weights.csv: mae_model_weights.csv
+      ensemble_weekly_qntls.rds: ensemble_weekly_qntls.rds
+ 
