@@ -84,7 +84,8 @@ artefacts:
 # will make it easier to provision containers to run the orderly
 # reports.
 #
-# packages:
+packages:
+  - tmap
 
 # Source files, in addition to the script.  Typically these will
 # contain function definitions.  These will be sourced after loading
@@ -110,8 +111,8 @@ resources:
   - case_ascertainment_methods.Rmd
   - figs/
   - mystyle.css
-  - unformatted_summary_DeathToRepoted_14days_2020-04-26.csv
-  - summary_DeathToRepoted_14days_2020-04-26.csv
+  - unformatted_summary_DeathToRepoted_14days_2020-05-03.csv
+  - summary_DeathToRepoted_14days_2020-05-03.csv
   - footer.html
   - header.html
   - MRC-GIDA-logo.png
@@ -158,4 +159,4 @@ depends:
       model_1_formatted_output.rds: model_1_formatted_output.rds
       model_2_formatted_output.rds: model_2_formatted_output.rds
       model_3_formatted_output.rds: model_3_formatted_output.rds
-      fmtd_ensemble_weekly_qntls.rds: fmtd_ensemble_weekly_qntls.rds
+      fmtd_ensemble_weekly_qntls.rds: fmtd_ensemble_weekly_qntls.rds  

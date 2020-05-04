@@ -1,0 +1,18 @@
+script: prepare_croatia_data.R
+
+artefacts:
+  - data:
+      description: Croatia Data
+      filenames:
+        - data_croatia_week_ending_2020-04-20.rds
+
+packages:
+  - readxl
+  - lubridate
+  - dplyr
+  - tidyr
+
+# sources:
+
+resources:
+  - croatia_regions.xlsx

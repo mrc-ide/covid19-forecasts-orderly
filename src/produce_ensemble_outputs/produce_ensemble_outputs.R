@@ -56,29 +56,38 @@ saveRDS(
 
 ## Model weights
 weights <- readRDS(file = "unnormalised_model_weights.rds")
-countries_grouped_by_models <- readRDS("countries_grouped_by_models.rds")
-
+n_predictions <- readRDS("number_predictions_per_model.rds")
 
 prev_week <- as.Date(week_ending) - 7
-weights <- dplyr::filter(weights, forecast_date == prev_week)
-models_this_week <- countries_grouped_by_models[[week_ending]]
-models_prev_week <- countries_grouped_by_models[[as.character(prev_week)]]
+weights <- weights[[as.character(prev_week)]]
 
-normalised_wts <- split(weights, weights$si) %>%
-  purrr::map(~ normalise_weights(., models_this_week, models_prev_week))
+n_predictions <- n_predictions[[as.character(prev_week)]]
+
+si <- unique(weights$si)
+names(si) <- si
+## If the number of observations for each model are different
+## Assume that the model with less number of observations (here sbsm)
+## would have performed the same at time points for which we do not
+## have its results. So that model weights are simply scaled.
+normalised_wts <- purrr::map(
+  si,
+  function(s) {
+    x <- weights[weights$si == s, ]
+    y <- n_predictions[n_predictions$si == s, ]
+    x$weight  <- x$weight * ( max(y$n) / y$n )
+    out <- x$weight / sum(x$weight)
+    names(out) <- x$model
+    out
+  }
+)
+
 
 ## Sanity check:  purrr::map(normalised_wts, ~ sum(unlist(.)))
-if (nrow(weights) > 0) {
+outputs <- purrr::map(model_outputs, ~ .[["Predictions"]])
+if (! is.null(weights)) {
   wtd_ensemble_model_predictions <- purrr::map(
     week_ending,
     function(week) {
-      idx <- grep(x = names(model_outputs), pattern = week)
-      outputs <- purrr::map(model_outputs[idx], ~ .[["Predictions"]])
-      models <- gsub(
-        x = names(outputs),
-        pattern = glue::glue("_Std_results_week_end_{week_ending}"),
-        replacement = ""
-      )
       ## First Level is model, 2nd is country, 3rd is SI.
       countries <- names(outputs[[1]])
       names(countries) <- countries
@@ -89,14 +98,49 @@ if (nrow(weights) > 0) {
           message(names(outputs))
           ## y is country specific output
           y <- purrr::map(outputs, ~ .[[country]])
+          y <- purrr::keep(y, ~ !is.null(.))
+          models <- gsub(
+            x = names(y),
+            pattern = glue::glue("_Std_results_week_end_{week_ending}"),
+            replacement = ""
+          )
+
           ## y has 2 components, one for each SI.
           y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
           y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
-          wts_1 <- normalised_wts[[1]][[country]][models]
-          wts_2 <- normalised_wts[[2]][[country]][models]
+          wts_1 <- normalised_wts[["si_1"]][models]
+          wts_2 <- normalised_wts[["si_2"]][models]
+
+          if (! all(models %in% names(normalised_wts[[1]]))) {
+            ## How many models are new.
+            idx <- which(! models %in% names(normalised_wts[[1]]))
+            ## How many new models do we have
+            new_models <- length(idx)
+            ## They each get weight 1 / number of models
+            wt_new_models <- 1 / length(models)
+            ## If the total weight is 1, unassigned weight is now
+            wt_remaining <- 1 - (wt_new_models * new_models)
+            wts_1 <- wts_1 * wt_remaining
+            wts_2 <- wts_2 * wt_remaining
+            ## Affix new models to the list
+            for (m in models[idx]) {
+              wts_1[[m]] <- wt_new_models
+              wts_2[[m]] <- wt_new_models
+            }
+            wts_1 <- wts_1[!is.na(wts_1)]
+            wts_2 <- wts_2[!is.na(wts_2)]
+
+          }
+          message(paste(wts_1, collapse = " "))
+          message(paste(wts_2, collapse = " "))
+          wts_1 <- rep(wts_1, each = nrow(y_1[[1]]))
+          wts_2 <- rep(wts_2, each = nrow(y_2[[1]]))
+          y_1 <- do.call(what = 'rbind', args = y_1)
+          y_2 <- do.call(what = 'rbind', args = y_2)
+
           out <- list(
-            si_1 = pool_predictions(y_1, wts_1),
-            si_2 = pool_predictions(y_2, wts_2)
+            si_1 = pool_predictions_wieghted(y_1, wts_1),
+            si_2 = pool_predictions_wieghted(y_2, wts_2)
           )
         }
       )
@@ -105,6 +149,7 @@ if (nrow(weights) > 0) {
 } else {
 
   wtd_ensemble_model_predictions <- ensemble_model_predictions
+
 }
 
 saveRDS(

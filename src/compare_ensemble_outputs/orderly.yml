@@ -9,37 +9,72 @@ artefacts:
 packages:
   - dplyr
   - tidyr
+  - ggplot2
+  - ggpubr
+  - ggforce
 
 depends:
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-04-26")
+      use:
+        wtd_2020-04-26.rds: weighted_ensemble_model_predictions.rds
+        unwtd_2020-04-26.rds: ensemble_model_predictions.rds
+        unwtd_2020-04-26_qntls.rds: ensemble_daily_qntls.rds
+        wtd_2020-04-26_qntls.rds: wtd_ensemble_daily_qntls.rds
+
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-04-19")
+      use:
+        wtd_2020-04-19.rds: weighted_ensemble_model_predictions.rds
+        unwtd_2020-04-19.rds: ensemble_model_predictions.rds
+        unwtd_2020-04-19_qntls.rds: ensemble_daily_qntls.rds
+        wtd_2020-04-19_qntls.rds: wtd_ensemble_daily_qntls.rds
+        
+
   - produce_ensemble_outputs:
       id: latest(parameter:week_ending == "2020-04-12")
       use:
         wtd_2020-04-12.rds: weighted_ensemble_model_predictions.rds
         unwtd_2020-04-12.rds: ensemble_model_predictions.rds
+        unwtd_2020-04-12_qntls.rds: ensemble_daily_qntls.rds
+        wtd_2020-04-12_qntls.rds: wtd_ensemble_daily_qntls.rds
+        
 
   - produce_ensemble_outputs:
       id: latest(parameter:week_ending == "2020-04-05")
       use:
         wtd_2020-04-05.rds: weighted_ensemble_model_predictions.rds
         unwtd_2020-04-05.rds: ensemble_model_predictions.rds
+        unwtd_2020-04-05_qntls.rds: ensemble_daily_qntls.rds
+        wtd_2020-04-05_qntls.rds: wtd_ensemble_daily_qntls.rds
+        
       
   - produce_ensemble_outputs:
       id: latest(parameter:week_ending == "2020-03-29")
       use:
         wtd_2020-03-29.rds: weighted_ensemble_model_predictions.rds
         unwtd_2020-03-29.rds: ensemble_model_predictions.rds
+        unwtd_2020-03-29_qntls.rds: ensemble_daily_qntls.rds
+        wtd_2020-03-29_qntls.rds: wtd_ensemble_daily_qntls.rds
+        
 
   - produce_ensemble_outputs:
       id: latest(parameter:week_ending == "2020-03-22")
       use:
         wtd_2020-03-22.rds: weighted_ensemble_model_predictions.rds
         unwtd_2020-03-22.rds: ensemble_model_predictions.rds
+        unwtd_2020-03-22_qntls.rds: ensemble_daily_qntls.rds
+        wtd_2020-03-22_qntls.rds: wtd_ensemble_daily_qntls.rds
+        
 
   - produce_ensemble_outputs:
       id: latest(parameter:week_ending == "2020-03-15")
       use:
         wtd_2020-03-15.rds: weighted_ensemble_model_predictions.rds
         unwtd_2020-03-15.rds: ensemble_model_predictions.rds
+        unwtd_2020-03-15_qntls.rds: ensemble_daily_qntls.rds
+        wtd_2020-03-15_qntls.rds: wtd_ensemble_daily_qntls.rds
+        
 
   - prepare_ecdc_data:
       id: latest

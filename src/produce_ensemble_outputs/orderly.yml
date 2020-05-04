@@ -28,8 +28,8 @@ sources:
   - R/normalise_weights.R
 
 depends:
-  compute_model_weights:
+  compute_model_weights2:
     id: latest
     use:
-      unnormalised_model_weights.rds: unnormalised_model_weights_per_group.rds
-      countries_grouped_by_models.rds: countries_grouped_by_models.rds
+      unnormalised_model_weights.rds: unnormalised_weights.rds
+      number_predictions_per_model.rds: number_predictions_per_model.rds

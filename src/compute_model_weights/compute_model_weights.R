@@ -1,7 +1,7 @@
 ## df is a data.frame that has for a forecast period, for each
 ## country, for each model, for each SI the rank of the model. Return
 ## unnormalised weights for each forecast period and for each model.
-## That is, weights summed aross acc countries.
+## That is, weights summed aross all countries.
 ## Normalise at the point at which they
 ## are used to create ensemble.
 ## rank is the column name that holds the rank - useful so that

@@ -1,0 +1,19 @@
+script: compute_model_weights2.R
+
+artefacts:
+  - data:
+      description: Weights assigned to models by minimising error
+      filenames:
+        - model_ranks.rds
+        - unnormalised_weights.rds
+        - number_predictions_per_model.rds
+
+packages:
+  - dplyr
+  - purrr
+
+depends:
+  produce_performace_metrics:
+    id: latest
+    use:
+      model_predictions_error.csv: model_predictions_error.csv

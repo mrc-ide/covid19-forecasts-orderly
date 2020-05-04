@@ -18,14 +18,9 @@ rel_mse2 <- function(obs, pred) {
 
 model_input <- readRDS("model_input.rds")
 
-infiles <- list(
-  "wtd_2020-04-12.rds",
-  "wtd_2020-04-05.rds",
-  "wtd_2020-03-29.rds",
-  "wtd_2020-03-22.rds",
-  "wtd_2020-03-15.rds"
-
-)
+run_info <- orderly::orderly_run_info()
+infiles <- run_info$depends$as
+infiles <- infiles[infiles != "model_input.rds"]
 
 names(infiles) <- gsub(
   pattern = ".rds",
@@ -34,23 +29,13 @@ names(infiles) <- gsub(
 )
 
 
-weighted <- purrr::map(infiles, readRDS)
+weighted <- infiles[grep("unwtd", infiles, invert = TRUE)] %>%
+  .[grep(pattern = "qntls", x = ., invert = TRUE)] %>%
+  purrr::map(readRDS)
 
-infiles <- list(
-  "unwtd_2020-04-12.rds",
-  "unwtd_2020-04-05.rds",
-  "unwtd_2020-03-29.rds",
-  "unwtd_2020-03-22.rds",
-  "unwtd_2020-03-15.rds"
-)
-
-names(infiles) <- gsub(
-  pattern = ".rds",
-  replacement = "",
-  x = infiles
-)
-
-unweighted <- purrr::map(infiles, readRDS)
+unweighted <- infiles[grep("unwtd", infiles)] %>%
+    .[grep("qntls", ., invert = TRUE)] %>%
+  purrr::map(readRDS)
 
 model_predictions_error <- purrr::map_dfr(
   weighted,
@@ -88,7 +73,7 @@ model_predictions_error <- purrr::map_dfr(
       },
       .id = "country"
     )
-  },   .id = "forecast_date"
+  }, .id = "forecast_date"
 )
 
 
@@ -131,8 +116,7 @@ unwtd_model_predictions_error <- purrr::map_dfr(
   },   .id = "forecast_date"
 )
 
-library(ggplot2)
-library(ggpubr)
+
 model_predictions_error$date <- as.Date(model_predictions_error$date)
 unwtd_model_predictions_error$date <- as.Date(unwtd_model_predictions_error$date)
 model_predictions_error <- model_predictions_error[model_predictions_error$si == "si_2", ]
@@ -168,4 +152,73 @@ purrr::iwalk(
 )
 
 
+
+###
+deaths_tall <- tidyr::gather(model_input, country, deaths, -dates)
+deaths_tall$dates <- as.Date(deaths_tall$dates)
+
+weighted_qntls <- infiles[grep("unwtd", infiles, invert = TRUE)] %>%
+  .[grep(pattern = "qntls", x = ., invert = FALSE)] %>%
+  purrr::map(readRDS)
+weighted_qntls <- dplyr::bind_rows(weighted_qntls)
+weighted_qntls$model <- "Weighted Ensemble"
+
+unweighted_qntls <- infiles[grep("unwtd", infiles)] %>%
+    .[grep("qntls", ., invert = FALSE)] %>%
+  purrr::map(readRDS)
+unweighted_qntls <- dplyr::bind_rows(unweighted_qntls)
+unweighted_qntls$model <- "Unweighted Ensemble"
+
+
+both <- rbind(unweighted_qntls, weighted_qntls)
+both <- both[both$si == "si_2", ]
+both$date <- as.Date(both$date)
+deaths_tall <- deaths_tall[deaths_tall$country %in% both$country, ]
+
+
+levels <- unique(interaction(both$proj, both$model))
+unwtd <- grep(pattern = "Unweighted", x = levels, value = TRUE)
+wtd <- grep(pattern = "Unweighted", x = levels, value = TRUE, invert = TRUE)
+palette <- c(rep("#b067a3", nlevels(levels) / 2),
+             rep("#9c954d", nlevels(levels) / 2))
+names(palette) <- c(unwtd, wtd)
+
+npages <- ceiling(length(unique(both$country)) /6)
+
+for (page in seq_len(npages)) {
+  p <- ggplot() +
+  geom_point(data = deaths_tall, aes(dates, deaths), col = "black") +
+  geom_ribbon(
+    data = both,
+    aes(
+      date,
+      ymin = `2.5%`,
+      ymax = `97.5%`,
+      group = interaction(proj, model),
+      fill = interaction(proj, model)
+    ), alpha = 0.3
+  ) +
+  geom_line(
+    data = both,
+    aes(
+      date, y = `50%`,
+      col = interaction(proj, model),
+      group = interaction(proj, model)
+    )
+  ) +
+    theme_classic() +
+    theme(legend.position = "top") +
+  scale_x_date(limits = c(as.Date("2020-03-01"), as.Date("2020-04-05"))) +
+    scale_fill_manual(
+      values = palette,
+      aesthetics=c("col", "fill"),
+      labels = c("Weighted", "Unweighted"),
+      breaks = c("Weighted", "Unweighted"),
+    ) +
+  ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 2, page = page, scales = "free_y") +
+  xlab("") + ylab("")
+
+  ggsave(glue::glue("ensemble_comparison_{page}.png"), p)
+
+}
 

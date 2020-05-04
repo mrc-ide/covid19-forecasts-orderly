@@ -1,4 +1,4 @@
-week_finishing <- "2020-04-26"
+week_finishing <- "2020-05-03"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -15,13 +15,22 @@ raw_data <- read.csv(
       DateRep == "2020-03-17" & Cases == 0)
   ) %>% dplyr::filter(DateRep <= as.Date(week_finishing))
 
+## 04th May 2020. Manual tweaks against worldometer
+raw_data$Deaths[raw_data$DateRep == "2020-05-01" & raw_data$`Countries.and.territories` == "Germany"] <- 156
+raw_data$Deaths[raw_data$DateRep == "2020-05-02" & raw_data$`Countries.and.territories` == "Germany"] <- 113
+raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Ireland"] <- 21
+raw_data$Deaths[raw_data$DateRep == "2020-04-27" & raw_data$`Countries.and.territories` == "Spain"] <- 331
+raw_data$Deaths[raw_data$DateRep == "2020-04-28" & raw_data$`Countries.and.territories` == "Spain"] <- 301
+##raw_data$Deaths[raw_data$DateRep == "2020-05-02" & raw_data$`Countries.and.territories` == "Spain"] <- 276
+raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Spain"] <- 164
+
 spain_extra <- data.frame(
-  DateRep = "2020-04-26",
-  day = 26,
-  month = 4,
+  DateRep = "2020-05-02",
+  day = 2,
+  month = 5,
   year = 2020,
-  Cases = 3995,
-  Deaths = 378,
+  Cases = 2610,
+  Deaths = 276,
   `Countries.and.territories` = "Spain",
   geoId = "ES",
   countryterritoryCode = "ESP",
@@ -29,6 +38,21 @@ spain_extra <- data.frame(
   continent = "Europe"
 )
 raw_data <- rbind(raw_data, spain_extra)
+
+## spain_extra <- data.frame(
+##   DateRep = "2020-04-26",
+##   day = 26,
+##   month = 4,
+##   year = 2020,
+##   Cases = 3995,
+##   Deaths = 378,
+##   `Countries.and.territories` = "Spain",
+##   geoId = "ES",
+##   countryterritoryCode = "ESP",
+##   popData2018 = 46723749,
+##   continent = "Europe"
+## )
+## raw_data <- rbind(raw_data, spain_extra)
 ## 27th April: Ireland manually fixed in the csv.
 ## ECDC Reported 234 deaths on 2020-04-26
 ## which was a massive jump from 35 reported on 2020-04-25.

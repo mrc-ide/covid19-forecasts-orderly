@@ -11,7 +11,7 @@ weights_for_country <- function(country, weights, models_this_week, models_prev_
     ## For our simple case this will suffice.
     ## We have M1, M2, M3 for some countries
     ## And for some countries we have M1, M2, M3, M4.
-    ## We want to use the model weights from last weekf or M1, M2, M3
+    ## We want to use the model weights from last week for M1, M2, M3
     ## and for M4 we want to assign 1/4.
     ## This will get complicated when we start having diff countries
     ## for diff models.

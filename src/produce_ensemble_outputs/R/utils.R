@@ -1,10 +1,26 @@
+
 pool_predictions <- function(outputs, weights = 1) {
 
-    wtd_outputs <- purrr::map2(outputs, weights, function(x, w) x * w)
-    out <- Reduce('rbind', wtd_outputs)
-    out
+  wtd_outputs <- purrr::map2(outputs, weights, function(x, w) x * w)
+  out <- Reduce('rbind', wtd_outputs)
+  out
+}
+
+## outouts is a matrix of size N X T.
+## weights should be a vector of the same length as the number of
+## samples in outputs. That is there is a probability associated with
+## each elemnt
+pool_predictions_wieghted <- function(outputs, weights, nsim = 10000) {
+
+  apply(
+    outputs,
+    2,
+    function(x) sample(x, size = nsim, replace = TRUE, prob = weights)
+  )
 
 }
+
+
 
 
 ######################################################################
