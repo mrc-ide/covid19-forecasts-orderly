@@ -31,33 +31,6 @@ ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
 
 
-wtd_ensb_pred <- readr::read_rds("wtd_ensemble_daily_qntls.rds")
-wtd_ensb_pred$proj <- "Weighted Ensemble"
-
-common_cols <- intersect(
-  colnames(wtd_ensb_pred), colnames(ensb_pred)
-)
-
-ensb <- rbind(
-  wtd_ensb_pred[, common_cols],
-  ensb_pred[, common_cols]
-)
-
-by_si_ensb <- split(
-  ensb, ensb$si
-)
-
-plots <- purrr::map(
-  by_si_ensb,
-  function(pred) {
-    pred$date <- as.Date(pred$date)
-    pred$week_ending <- "2020-04-26"
-    obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
-    projection_plot(obs, pred) +
-      facet_wrap(~country, ncol = 1, scales = "free_y")
-  }
-)
-
 ## Read in the model specific outputs here so that we can construct
 ## nice names
 daily_predictions_qntls <- readRDS("daily_predictions_qntls.rds")
@@ -82,6 +55,7 @@ by_continent_si <- split(
   ensb_pred, list(ensb_pred$continent_name, ensb_pred$si),
   sep = "_"
 )
+
 plots <- purrr::map(
   by_continent_si,
   function(pred) {
@@ -140,6 +114,7 @@ purrr::iwalk(
     )
   }
 )
+
 
 ##### Individual Model Projection Plots
 
@@ -229,46 +204,9 @@ ensemble_rt_wide <- tidyr::spread(
   ensemble_rt, quantile, out2
 )
 ensemble_rt_wide <- add_continents(ensemble_rt_wide, continents)
+ensemble_rt_wide <- ensemble_rt_wide[ensemble_rt_wide$model == max(as.Date(ensemble_rt_wide$model)), ]
 ensemble_rt_wide$proj <- "Ensemble"
-##ensemble_rt_wide$proj[ensemble_rt_wide$country == "United_Kingdom"] <- "Model 4"
-## nice_names <- c(
-##   Algeria = "Algeria *",
-##   Austria = "Austria**",
-##   Belgium = "Belgium*",
-##   Brazil = "Brazil*",
-##   Canada = "Canada*",
-##   China = "China*",
-##   Colombia = "Colombia*",
-##   Czechia = "Czechia*",
-##   Denmark = "Denmark**",
-##   Dominican_Republic = "Dominican Republic*",
-##   Ecuador = "Ecuador*",
-##   Egypt = "Egypt*",
-##   France = "France**",
-##   Germany = "Germany**",
-##   India = "India*",
-##   Indonesia = "Indonesia*",
-##   Iran = "Iran*",
-##   Ireland = "Ireland*",
-##   Israel = "Israel*",
-##   Italy = "Italy**",
-##   Mexico = "Mexico*",
-##   Morocco = "Morocco*",
-##   Netherlands = "Netherlands**",
-##   Peru = "Peru*",
-##   Philippines = "Philippines*",
-##   Poland = "Poland*",
-##   Portugal = "Portugal**",
-##   Romania = "Romania*",
-##   Russia = "Russia*",
-##   South_Korea = "South Korea*",
-##   Spain = "Spain**",
-##   Sweden = "Sweden**",
-##   Switzerland = "Switzerland**",
-##   Turkey = "Turkey*",
-##   United_Kingdom = "United Kingdom***",
-##   United_States_of_America = "United States of America*"
-## )
+
 
 plots <- split(
   ensemble_rt_wide,
@@ -294,47 +232,7 @@ purrr::iwalk(
   }
 )
 
-## nice_names <- c(
-##   Algeria = "Algeria *",
-##   Austria = "Austria**",
-##   Belgium = "Belgium*",
-##   Brazil = "Brazil*",
-##   Canada = "Canada*",
-##   China = "China*",
-##   Colombia = "Colombia*",
-##   Czechia = "Czechia*",
-##   Denmark = "Denmark**",
-##   Dominican_Republic = "Dominican Republic*",
-##   Ecuador = "Ecuador*",
-##   Egypt = "Egypt*",
-##   France = "France**",
-##   Germany = "Germany**",
-##   India = "India*",
-##   Indonesia = "Indonesia*",
-##   Iran = "Iran*",
-##   Ireland = "Ireland*",
-##   Israel = "Israel*",
-##   Italy = "Italy**",
-##   Mexico = "Mexico*",
-##   Morocco = "Morocco*",
-##   Netherlands = "Netherlands**",
-##   Peru = "Peru*",
-##   Philippines = "Philippines*",
-##   Poland = "Poland*",
-##   Portugal = "Portugal**",
-##   Romania = "Romania*",
-##   Russia = "Russia*",
-##   South_Korea = "South Korea*",
-##   Spain = "Spain**",
-##   Sweden = "Sweden**",
-##   Switzerland = "Switzerland**",
-##   Turkey = "Turkey*",
-##   United_Kingdom = "United Kingdom**",
-##   United_States_of_America = "United States of America*"
-## )
 
-
-##ensemble_rt$model <- paste0("Ensemble_", ensemble_rt$model)
 model_rt <- readRDS("model_rt_qntls.rds")
 model_rt$model <- gsub(
   x = model_rt$model,
@@ -366,7 +264,7 @@ rt_both <- add_continents(rt_both, continents)
 
 plots <- split(
   rt_both,
-  list(rt_both$si, rt_both$date, rt_both$continent_name),
+  list(rt_both$si, rt_both$continent_name),
   sep = "_"
 ) %>% purrr::map(~ rt_lineplot(., nice_names))
 
@@ -383,65 +281,6 @@ purrr::iwalk(
     )
   }
 )
-
-
-### Ensemble Produced without SBSM Model and
-### SBSM Model overlaid
-## sbsm <- daily_predictions_qntls[daily_predictions_qntls$proj == "sbsm", ]
-## sbsm <- sbsm[sbsm$si == "si_2", ]
-
-## ensb_pred <- ensb_pred[ensb_pred$si == "si_2", ]
-## ensb_pred <- ensb_pred[ensb_pred$proj == "2020-04-12", ]
-## ensb_pred <- dplyr::filter(ensb_pred, country %in% sbsm$country)
-## ensb_pred$proj <- paste0("ensemble_without_sbsm_", ensb_pred$proj)
-
-## ensb_with_sbsm <- readr::read_rds("ensemble_with_sbsm_qntls.rds")
-## ensb_with_sbsm$proj <- "ensemble_with_sbsm"
-## ensb_with_sbsm <- dplyr::filter(ensb_with_sbsm, country %in% sbsm$country)
-
-
-## cols <- c("proj", "country", "date", "2.5%", "50%", "97.5%")
-## sbsm <- sbsm[, cols]
-## ensb_pred <- ensb_pred[, cols]
-## ensb_with_sbsm <- ensb_with_sbsm [, cols]
-
-## compare <- rbind(ensb_pred, sbsm, ensb_with_sbsm)
-
-## obs <- dplyr::filter(obs_deaths, country %in% sbsm$country)
-
-
-
-## obs$dates <- as.Date(obs$dates)
-## compare$date <- as.Date(compare$date)
-
-## p <- ggplot() +
-##   geom_point(data = obs, aes(dates, deaths)) +
-##   geom_ribbon(
-##     data = compare,
-##     aes(x = date, ymin = `2.5%`, ymax = `97.5%`, fill = proj),
-##     alpha = 0.3
-##   ) +
-##   geom_line(data = compare, aes(date, `50%`, col = proj)) +
-##   xlab("") +
-##   ylab("Deaths") +
-##   scale_x_date(
-##     limits = c(
-##       as.Date("2020-03-01"),
-##       as.Date("2020-04-20")
-##     )
-##   ) +
-##   theme_project(font_size = 18) +
-##   theme(legend.position = "top")
-
-## p1 <- p +
-##   ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 1)
-
-
-## p2 <- p +
-##   ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 2)
-
-## ggsave("comparison_sbsm_unwtd_ensb_page_1.png", p1)
-## ggsave("comparison_sbsm_unwtd_ensb_page_2.png", p2)
 
 
 
@@ -543,3 +382,37 @@ plots <- split(x, x$continent_name) %>%
       }
     }
   )
+
+
+
+
+plots <- purrr::imap(
+  by_continent_si,
+  function(pred, y) {
+    pred$date <- as.Date(pred$date)
+    obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
+    obs <- dplyr::rename(obs, date = "dates")
+    df <- dplyr::left_join(pred, obs)
+    df <- dplyr::filter(df, date >= "2020-03-01")
+    p <- ggplot(df) +
+      geom_point(aes(date, deaths), col = "black") +
+      geom_ribbon(
+        aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3
+      ) +
+      geom_ribbon(
+        aes(x = date, ymin = `25%`, ymax = `75%`), alpha = 0.5
+      ) + geom_line(
+            aes(x = date, y = `50%`)
+          ) +
+      facet_wrap(~country, ncol = 2, scales = "free_y")
+    outfile <- glue::glue("ensemble_predictions_{y}.html")
+    widget <- ggplotly(p)
+    saveWidget(
+      widget = widget,
+      file = outfile,
+      selfcontained = FALSE,
+      libdir = "lib"
+    )
+
+  }
+)

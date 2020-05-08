@@ -84,8 +84,7 @@ normalised_wts <- purrr::map(
 
 ## Sanity check:  purrr::map(normalised_wts, ~ sum(unlist(.)))
 outputs <- purrr::map(model_outputs, ~ .[["Predictions"]])
-if (! is.null(weights)) {
-  wtd_ensemble_model_predictions <- purrr::map(
+wtd_ensemble_model_predictions <- purrr::map(
     week_ending,
     function(week) {
       ## First Level is model, 2nd is country, 3rd is SI.
@@ -95,7 +94,7 @@ if (! is.null(weights)) {
         countries,
         function(country) {
           message(country)
-          message(names(outputs))
+          message(paste(names(outputs), collapse = "\n"))
           ## y is country specific output
           y <- purrr::map(outputs, ~ .[[country]])
           y <- purrr::keep(y, ~ !is.null(.))
@@ -104,7 +103,7 @@ if (! is.null(weights)) {
             pattern = glue::glue("_Std_results_week_end_{week_ending}"),
             replacement = ""
           )
-
+          message(paste(models, collapse = "\n"))
           ## y has 2 components, one for each SI.
           y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
           y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
@@ -131,26 +130,22 @@ if (! is.null(weights)) {
             wts_2 <- wts_2[!is.na(wts_2)]
 
           }
-          message(paste(wts_1, collapse = " "))
-          message(paste(wts_2, collapse = " "))
-          wts_1 <- rep(wts_1, each = nrow(y_1[[1]]))
-          wts_2 <- rep(wts_2, each = nrow(y_2[[1]]))
-          y_1 <- do.call(what = 'rbind', args = y_1)
-          y_2 <- do.call(what = 'rbind', args = y_2)
+          message(paste(wts_1, collapse = "\n"))
+          message(paste(wts_2, collapse = "\n"))
+          ##wts_1 <- rep(wts_1, each = nrow(y_1[[1]]))
+          ##wts_2 <- rep(wts_2, each = nrow(y_2[[1]]))
+          ##y_1 <- do.call(what = 'rbind', args = y_1)
+          ##y_2 <- do.call(what = 'rbind', args = y_2)
 
           out <- list(
-            si_1 = pool_predictions_wieghted(y_1, wts_1),
-            si_2 = pool_predictions_wieghted(y_2, wts_2)
+            si_1 = pool_predictions_weighted(y_1, wts_1),
+            si_2 = pool_predictions_weighted(y_2, wts_2)
           )
         }
       )
     }
-  )
-} else {
+ )
 
-  wtd_ensemble_model_predictions <- ensemble_model_predictions
-
-}
 
 saveRDS(
   object = wtd_ensemble_model_predictions,

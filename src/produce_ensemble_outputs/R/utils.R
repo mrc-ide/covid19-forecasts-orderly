@@ -10,14 +10,28 @@ pool_predictions <- function(outputs, weights = 1) {
 ## weights should be a vector of the same length as the number of
 ## samples in outputs. That is there is a probability associated with
 ## each elemnt
-pool_predictions_wieghted <- function(outputs, weights, nsim = 10000) {
+pool_predictions_weighted <- function(outputs, weights, nsim = 10000) {
 
-  apply(
-    outputs,
-    2,
-    function(x) sample(x, size = nsim, replace = TRUE, prob = weights)
+  models <- names(weights)
+  ## Sample model with weights
+  n_1 <- sample(
+    x = names(weights), nsim, replace = TRUE, prob = weights
+  )
+  n_1 <- table(n_1)
+  message("Number of times models picked ")
+  message(paste(n_1, collapse = "\n"))
+  names(outputs) <- sapply(
+    strsplit(names(outputs), split = "_"), function(x) x[[1]][1]
   )
 
+  out <- purrr::imap(
+    outputs,
+    function(output, model) {
+      apply(output, 2, function(y) sample(y, size = n_1[[model]]))
+    }
+  )
+  out <- Reduce('rbind', out)
+  out
 }
 
 

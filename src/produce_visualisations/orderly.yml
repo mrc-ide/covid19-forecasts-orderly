@@ -10,6 +10,9 @@ packages:
   - ggplot2
   - ggpubr
   - ggforce
+  - plotly
+  - htmlwidgets
+  - dplyr
 
 sources:
   - R/utils.R

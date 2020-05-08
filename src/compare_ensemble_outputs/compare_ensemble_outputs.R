@@ -169,51 +169,94 @@ unweighted_qntls <- infiles[grep("unwtd", infiles)] %>%
 unweighted_qntls <- dplyr::bind_rows(unweighted_qntls)
 unweighted_qntls$model <- "Unweighted Ensemble"
 
+unweighted_qntls <- unweighted_qntls[unweighted_qntls$si == "si_2", ]
+weighted_qntls <- weighted_qntls[weighted_qntls$si == "si_1", ]
+unweighted_qntls$date <- as.Date(unweighted_qntls$date)
+weighted_qntls$date <- as.Date(weighted_qntls$date)
+#both <- rbind(unweighted_qntls, weighted_qntls)
+#both <- both[both$si == "si_2", ]
+#both$date <- as.Date(both$date)
+deaths_tall <- deaths_tall[deaths_tall$country %in% unweighted_qntls$country, ]
 
-both <- rbind(unweighted_qntls, weighted_qntls)
-both <- both[both$si == "si_2", ]
-both$date <- as.Date(both$date)
-deaths_tall <- deaths_tall[deaths_tall$country %in% both$country, ]
 
+## levels <- unique(interaction(both$proj, both$model))
+## unwtd <- grep(pattern = "Unweighted", x = levels, value = TRUE)
+## wtd <- grep(pattern = "Unweighted", x = levels, value = TRUE, invert = TRUE)
+## palette <- c(rep("#b067a3", nlevels(levels) / 2),
+##              rep("#9c954d", nlevels(levels) / 2))
+## names(palette) <- c(unwtd, wtd)
 
-levels <- unique(interaction(both$proj, both$model))
-unwtd <- grep(pattern = "Unweighted", x = levels, value = TRUE)
-wtd <- grep(pattern = "Unweighted", x = levels, value = TRUE, invert = TRUE)
-palette <- c(rep("#b067a3", nlevels(levels) / 2),
-             rep("#9c954d", nlevels(levels) / 2))
-names(palette) <- c(unwtd, wtd)
-
-npages <- ceiling(length(unique(both$country)) /6)
+npages <- ceiling(length(unique(unweighted_qntls$country)) /6)
 
 for (page in seq_len(npages)) {
   p <- ggplot() +
-  geom_point(data = deaths_tall, aes(dates, deaths), col = "black") +
+    geom_point(data = deaths_tall, aes(dates, deaths), col = "black") +
   geom_ribbon(
-    data = both,
+    data = unweighted_qntls,
+    aes(
+      date,
+      ymin = `25%`,
+      ymax = `75%`,
+      group = proj, ##interaction(proj, model),
+      fill =  "#b067a3"##interaction(proj, model)
+    ), alpha = 0.5
+  ) +
+  geom_ribbon(
+    data = unweighted_qntls,
     aes(
       date,
       ymin = `2.5%`,
       ymax = `97.5%`,
-      group = interaction(proj, model),
-      fill = interaction(proj, model)
+      group = proj, ##interaction(proj, model),
+      fill =  "#b067a3" ##interaction(proj, model)
+    ), alpha = 0.3
+  ) +
+  geom_ribbon(
+    data = weighted_qntls,
+    aes(
+      date,
+      ymin = `25%`,
+      ymax = `75%`,
+      group = proj, ##interaction(proj, model),
+      fill =  "#9c954d"##interaction(proj, model)
+    ), alpha = 0.5
+  ) +
+  geom_ribbon(
+    data = weighted_qntls,
+    aes(
+      date,
+      ymin = `2.5%`,
+      ymax = `97.5%`,
+      group = proj, ##interaction(proj, model),
+      fill = "#9c954d" ##interaction(proj, model)
     ), alpha = 0.3
   ) +
   geom_line(
-    data = both,
+    data = weighted_qntls,
     aes(
       date, y = `50%`,
-      col = interaction(proj, model),
-      group = interaction(proj, model)
-    )
+      col = "#9c954d", ##interaction(proj, model),
+      group = proj ##interaction(proj, model)
+    ),
+    size = 1.1
+  ) +
+  geom_line(
+    data = unweighted_qntls,
+    aes(
+      date, y = `50%`,
+      col = "#b067a3", ##interaction(proj, model),
+      group = proj ##interaction(proj, model)
+    ),
+    size = 1.1
   ) +
     theme_classic() +
     theme(legend.position = "top") +
   scale_x_date(limits = c(as.Date("2020-03-01"), as.Date("2020-04-05"))) +
-    scale_fill_manual(
-      values = palette,
-      aesthetics=c("col", "fill"),
+    scale_color_identity(
       labels = c("Weighted", "Unweighted"),
-      breaks = c("Weighted", "Unweighted"),
+      breaks = c("#9c954d", "#b067a3"),
+      guide = "legend",
+      aesthetics = c("colour", "fill")
     ) +
   ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 2, page = page, scales = "free_y") +
   xlab("") + ylab("")
