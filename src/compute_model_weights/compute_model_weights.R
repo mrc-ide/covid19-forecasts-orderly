@@ -1,17 +1,18 @@
 model_metrics <- readr::read_csv("model_predictions_error.csv")
 x <- split(model_metrics, model_metrics$forecast_date)
 
-forecast_dates <- names(x)[-1]
+forecast_dates <- names(x)
 names(forecast_dates) <- forecast_dates
 ### Strategy 1. For each week, use only the last week's foreecasts
 ### to compute weights
-wts_prev_week <- purrr::map(
+wts_curr_week <- purrr::map(
   forecast_dates,
   function(forecast_date) {
     message(forecast_date)
-    prev_week <- as.Date(forecast_date) - 7
-    message(prev_week)
-    df <- x[[as.character(prev_week)]]
+    ##prev_week <- as.Date(forecast_date) - 7
+    ##message(prev_week)
+    ##df <- x[[as.character(prev_week)]]
+    df <- x[[forecast_date]]
     split(
       df, df$si
     ) %>%
@@ -39,7 +40,7 @@ wts_all_prev_weeks <- purrr::map(
   function(forecast_date) {
     message(forecast_date)
     prev_weeks <- which(
-      as.Date(names(x)) < as.Date(forecast_date)
+      as.Date(names(x)) <= as.Date(forecast_date)
     )
     message(paste(names(x)[prev_weeks], collapse = " "))
     df <- dplyr::bind_rows(x[prev_weeks])
@@ -73,7 +74,7 @@ countries_per_model <- split(
 
 
 saveRDS(
-  object = wts_prev_week,
+  object = wts_curr_week,
   file = "unnormalised_model_weights_using_prev_week.rds"
 )
 

@@ -7,14 +7,15 @@ artefacts:
   - data:
       description: Ensemble Model Outputs
       filenames:
-        - ensemble_model_rt.rds
         - ensemble_model_predictions.rds
+        - wtd_ensb_prev_week.rds
+        - wtd_ensb_all_prev_weeks.rds
         - ensemble_daily_qntls.rds
         - ensemble_weekly_qntls.rds
-        - ensemble_model_rt_samples.rds
-        - weighted_ensemble_model_predictions.rds
-        - wtd_ensemble_daily_qntls.rds
-        - wtd_ensemble_weekly_qntls.rds
+        - wtd_ensb_prev_week_daily_qntls.rds
+        - wtd_ensb_prev_week_weekly_qntls.rds
+        - wtd_ensb_all_prev_weeks_daily_qntls.rds
+        - wtd_ensb_all_prev_weeks_weekly_qntls.rds
 
 parameters:
   week_ending: 2020-03-15
@@ -25,7 +26,6 @@ packages:
 
 sources:
   - R/utils.R
-  - R/normalise_weights.R
 
 depends:
   compute_model_weights:

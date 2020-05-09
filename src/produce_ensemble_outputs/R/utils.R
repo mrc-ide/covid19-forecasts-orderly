@@ -1,10 +1,62 @@
+df_to_list <- function(df) {
 
-pool_predictions <- function(outputs, weights = 1) {
+      out <- df$normalised_wt
+      names(out) <- df$model
+      out
+}
 
-  wtd_outputs <- purrr::map2(outputs, weights, function(x, w) x * w)
-  out <- Reduce('rbind', wtd_outputs)
+f <- function(outputs, country, weights) {
+
+  y <- purrr::map(outputs, ~ .[[country]])
+  y_1 <- purrr::map(y, ~ .[[1]])
+  y_2 <- purrr::map(y, ~ .[[2]])
+  weights <- purrr::map(weights, df_to_list)
+
+  out <-  list(
+    si_1 = pool_predictions_weighted(y_1, weights$si_1),
+    si_2 = pool_predictions_weighted(y_2, weights$si_2)
+  )
   out
 }
+
+normalise_weights <- function(weight) {
+
+  ngroups <- length(weight)
+  normalised <- purrr::map(
+    weight, function(x) {
+      x$normalised_wt <- round(x$weight / sum(x$weight), 2)
+      x
+    }
+  )
+  ## If there is more than one group assume that there are 2
+  ## {RtI0, DeCA, sbsm} and {RtI0, DeCA, sbsm, sbkp}
+  if (ngroups > 1) {
+    bigger <- which.max(sapply(weight, nrow, USE.NAMES = FALSE))
+    smaller <- which.min(sapply(weight, nrow, USE.NAMES = FALSE))
+    models <- sapply(weight, function(x) as.character(x$model))
+    new_models <- models[[bigger]][which(! models[[bigger]] %in%
+                                         models[[smaller]])]
+
+    ## Propagate the weight of this model back, in the same
+    ## proportion.
+    bigger <- normalised[[bigger]]
+    unassigned_wt <- 1 -
+      sum(bigger$normalised_wt[bigger$model %in% new_models])
+
+    smaller <- normalised[[smaller]]
+    smaller$normalised_wt <- smaller$normalised_wt * unassigned_wt
+
+    out <- rbind(
+      smaller,
+      bigger[bigger$model %in% new_models, ]
+    )
+  } else {
+    message("Only one model combination here")
+    out <- normalised[[1]]
+  }
+  out
+}
+
 
 ## outouts is a matrix of size N X T.
 ## weights should be a vector of the same length as the number of
