@@ -2,6 +2,7 @@ model_metrics <- readr::read_csv("model_predictions_error.csv")
 x <- split(model_metrics, model_metrics$forecast_date)
 
 forecast_dates <- names(x)[-1]
+names(forecast_dates) <- forecast_dates
 ### Strategy 1. For each week, use only the last week's foreecasts
 ### to compute weights
 wts_prev_week <- purrr::map(
