@@ -1,50 +1,64 @@
-## df is a data.frame that has for a forecast period, for each
-## country, for each model, for each SI the rank of the model. Return
-## unnormalised weights for each forecast period and for each model.
-## That is, weights summed aross all countries.
-## Normalise at the point at which they
-## are used to create ensemble.
-## rank is the column name that holds the rank - useful so that
-## we can switch rank to a different metric if needed.
-model_weights <- function(df) {
-  ## How many times was this model awarded each rank
-  out <- dplyr::count(df, model, rank_by_likelhd)
-  out$weight <- out$n * (1 / out$rank_by_likelhd)
-
-  dplyr::group_by(out, model) %>%
-    dplyr::summarise(weight = sum(weight)) %>%
-    dplyr::ungroup()
-}
-
 model_metrics <- readr::read_csv("model_predictions_error.csv")
+x <- split(model_metrics, model_metrics$forecast_date)
 
+forecast_dates <- names(x)[-1]
+### Strategy 1. For each week, use only the last week's foreecasts
+### to compute weights
+wts_prev_week <- purrr::map(
+  forecast_dates,
+  function(forecast_date) {
+    message(forecast_date)
+    prev_week <- as.Date(forecast_date) - 7
+    message(prev_week)
+    df <- x[[as.character(prev_week)]]
+    split(
+      df, df$si
+    ) %>%
+      purrr::map(
+        function(df_si) {
+          df_si <- dplyr::select(df_si, -forecast_date, -si)
+          ## Sum the errors across the whole projection horizon
+          df_si <- dplyr::group_by(
+            df_si, model, country
+            ) %>%
+            dplyr::summarise_if(is.numeric, sum) %>%
+            dplyr::ungroup()
 
-## For each country we have M models that have projections.
-## Rank these models according to a specified metric.
-x <- split(
-  model_metrics,
-  list(
-    model_metrics$forecast_date,
-    model_metrics$country,
-    model_metrics$si
-  )
+          df_si <- df_si[, c("model", "country", "avg_likelhd")]
+          df_si$avg_likelhd <- -df_si$avg_likelhd
+          weighter::model_weights(df_si, "country", "avg_likelhd")
+        }
+     )
+  }
 )
 
-x <- purrr::keep(x, ~ nrow(.) > 0)
+## Strategy 2: Use all previous forecasts to compute weights
+wts_all_prev_weeks <- purrr::map(
+  forecast_dates,
+  function(forecast_date) {
+    message(forecast_date)
+    prev_weeks <- which(
+      as.Date(names(x)) < as.Date(forecast_date)
+    )
+    message(paste(names(x)[prev_weeks], collapse = " "))
+    df <- dplyr::bind_rows(x[prev_weeks])
+    split(df, df$si) %>%
+      purrr::map(
+        function(df_si) {
+          df_si <- dplyr::select(df_si, -forecast_date, -si)
+          ## Sum the errors across the whole projection horizon
+          ## and across all forecast periods
+          df_si <- dplyr::group_by(
+            df_si, model, country
+            ) %>%
+            dplyr::summarise_if(is.numeric, sum) %>%
+            dplyr::ungroup()
 
-model_ranks <- purrr::map_dfr(
-  x,
-  function(df) {
-    df <- dplyr::group_by(df, forecast_date, model, country, si) %>%
-      dplyr::summarise_if(is.numeric, sum) %>%
-      dplyr::ungroup()
-
-    df$rank_by_relsq <- rank(df$rel_sq, )
-    df$rank_by_relabs <- rank(df$rel_abs)
-    ## The average likelihood is -ve, so flip the sign to get the
-    ## correct rank.
-    df$rank_by_likelhd <- rank(-df$avg_likelhd)
-    df
+          df_si <- df_si[, c("model", "country", "avg_likelhd")]
+          df_si$avg_likelhd <- -df_si$avg_likelhd
+          weighter::model_weights(df_si, "country", "avg_likelhd")
+        }
+     )
   }
 )
 
@@ -52,68 +66,22 @@ model_ranks <- purrr::map_dfr(
 ## Then group countries that have the same set of models
 ## The SI doesn't matter here, because presumably a model that was run
 ## using one serial interval was also run using the 2nd.
-model_ranks_by_period <- split(model_ranks, model_ranks$forecast_date)
+countries_per_model <- split(
+  model_metrics, model_metrics$forecast_date
+) %>% purrr::map(~ weighter::groupvar_to_model(., "country"))
 
-countries_for_model <- purrr::map(
-  model_ranks_by_period,
-  function(df) {
-    nmodels_per_country <- dplyr::count(df, model, country) %>%
-      tidyr::spread(country, n, fill = 0)
-    countries <- colnames(nmodels_per_country)[-1]
-    names(countries) <- countries
-    ## A non-zero entry in row i, column j
-    ## nmodels_per_country indicates that model i was run for country j.
-    models_for_country <- purrr::map(
-      countries,
-      function(cntry) {
-        idx <- which(nmodels_per_country[[cntry]] > 0)
-        nmodels_per_country$model[idx]
-      }
-    )
-    models <- unique(models_for_country)
-    models <- purrr::map(models, ~ paste(., sep = "-", collapse = "-"))
-    names(models) <- models
-    purrr::map(
-      models,
-      function(model) {
-        out <- purrr::keep(
-          models_for_country, function(x) model == paste(x, sep = "-", collapse = "-")
-        )
-        names(out)
-      }
-    )
-  }
-)
 
-### For each forecast period,
-### For each set of countries identified above, compute model
-### weights for each model.
-
-model_weights_per_group <- purrr::imap_dfr(
-  countries_for_model,
-  function(model_grp, period) {
-    purrr::map_dfr(
-      model_grp,
-      function(cntry_grp) {
-        df <- model_ranks[model_ranks$forecast_date == period, ]
-        df <- df[df$country %in% cntry_grp, ]
-        by_si <- split(df, df$si)
-        purrr::map_dfr(by_si, model_weights, .id = "si")
-      }, .id = "model_group"
-    )
-  }, .id = "forecast_date"
+saveRDS(
+  object = wts_prev_week,
+  file = "unnormalised_model_weights_using_prev_week.rds"
 )
 
 saveRDS(
-  object = model_weights_per_group,
-  file = "unnormalised_model_weights_per_group.rds"
+  object = wts_all_prev_weeks,
+  file = "unnormalised_model_weights_using_all_prev_week.rds"
 )
 
 saveRDS(
-  object = model_ranks,
-  file = "model_ranks.rds"
-)
-saveRDS(
-  object = countries_for_model,
+  object = countries_per_model,
   file = "countries_grouped_by_models.rds"
 )

@@ -4,15 +4,15 @@ artefacts:
   - data:
       description: Weights assigned to models by minimising error
       filenames:
-        - model_ranks.rds
+        - unnormalised_model_weights_using_prev_week.rds
         - countries_grouped_by_models.rds
-        - unnormalised_model_weights_per_group.rds
+        - unnormalised_model_weights_using_all_prev_week.rds
 
 packages:
   - dplyr
-  - tidyr
   - purrr
   - readr
+  - weighter
 
 depends:
   produce_performace_metrics:
