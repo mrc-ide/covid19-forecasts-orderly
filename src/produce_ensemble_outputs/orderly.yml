@@ -28,8 +28,8 @@ sources:
   - R/normalise_weights.R
 
 depends:
-  compute_model_weights2:
+  compute_model_weights:
     id: latest
     use:
-      unnormalised_model_weights.rds: unnormalised_weights.rds
-      number_predictions_per_model.rds: number_predictions_per_model.rds
+      weights_prev_week.rds: unnormalised_model_weights_using_prev_week.rds
+      weights_all_prev_weeks.rds: unnormalised_model_weights_using_all_prev_week.rds
