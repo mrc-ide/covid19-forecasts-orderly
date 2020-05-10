@@ -37,12 +37,7 @@ ensemble_model_predictions <- purrr::map(
       function(country) {
         message(country)
         message(paste(names(outputs), collapse = "\n"))
-        wts <- data.frame(
-          model = names(outputs),
-          normalised_wt = 1
-        )
-        wts <- list(si_1 = wts, si_2 = wts)
-        f(outputs, country, wts)
+        f(outputs, country, weights = NULL)
       }
     )
   }
@@ -343,34 +338,49 @@ saveRDS(
 
 
 ######################################################################
-x <- dplyr::bind_rows(
-  list(
-    unweighted = ensemble_daily_qntls,
-    wtd_ensb_prev_week = wtd_ensb_prev_week_daily_qntls,
-    wtd_ensb_all_prev_weeks = wtd_ensb_all_prev_weeks_daily_qntls
-  ), .id = "model"
-)
+countries <- names(ensemble_model_predictions[[1]])
+purrr::walk(
+  countries,
+  function(country) {
 
-x$date <- as.Date(x$date)
+    unwtd <- t(ensemble_model_predictions[[1]][[country]][[2]])
+    all_prev <- t(wtd_ensb_all_prev_weeks[[1]][[country]][[2]])
+    prev_week <- t(wtd_ensb_prev_week[[1]][[country]][[2]])
 
-p <- ggplot(x) +
-  geom_ribbon(
-    aes(x = date, ymin = `2.5%`, ymax = `97.5%`, fill = model),
-    alpha = 0.3
-  ) +
-  geom_line(
-    aes(x = date, y = `50%`, col = model)
-  ) +
-  ggforce::facet_wrap_paginate(
-    ~country, ncol = 1, nrow = 3, scales = "free_y", page = 1
-  )
+    unwtd <- data.frame(unwtd) %>%
+      tibble::rownames_to_column(var = "date") %>%
+      tidyr::gather("var", "val", -date)
 
-npages <- ggforce::n_pages(p)
+    all_prev <-  data.frame(all_prev) %>%
+      tibble::rownames_to_column(var = "date") %>%
+      tidyr::gather("var", "val", -date)
 
-for (page in seq_len(npages)) {
-  p <-  p +   ggforce::facet_wrap_paginate(
-    ~country, ncol = 1, nrow = 3, scales = "free_y", page = page
+    prev_week <- data.frame(prev_week) %>%
+      tibble::rownames_to_column(var = "date") %>%
+      tidyr::gather("var", "val", -date)
+
+    x <- bind_rows(
+      list(
+        unwtd = unwtd, all_prev = all_prev, prev_week = prev_week
+      ),
+      .id = "model"
     )
-  ggsave("{page}.png", p)
+    x$date <- as.Date(x$date)
 
-}
+    p <- ggplot(x) +
+      geom_density(
+        aes(x = val, color = model)
+      ) +
+      facet_wrap(~date, nrow = 7) +
+      theme_classic() +
+      theme(
+        legend.position = "top",
+        legend.title = element_blank()
+      ) + xlab("")
+
+    ggsave(
+      filename = glue::glue("{country}_density.png"),
+      plot = p
+    )
+  }
+)

@@ -10,6 +10,16 @@ f <- function(outputs, country, weights) {
   y <- purrr::map(outputs, ~ .[[country]])
   y <- purrr::keep(y, ~ ! is.null(.))
   models_this_week <- names(y)
+
+  if (is.null(weights)) {
+    message("Unweighted ensemble outputs")
+    wts <- data.frame(
+      model = models_this_week,
+      normalised_wt = 1
+    )
+    weights <- list(si_1 = wts, si_2 = wts)
+
+  }
   ## If not all models used for a country this week were used
   ## in the previous week, then assign it some weight (1/M)
   ## where M is the number of models run this week
