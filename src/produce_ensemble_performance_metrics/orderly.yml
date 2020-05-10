@@ -1,0 +1,76 @@
+script: produce_ensemble_performance_metrics.R
+
+artefacts:
+  data:
+    description: Model performance metrics
+    filenames:
+      - ensemble_comparison_1.png
+
+packages:
+  - dplyr
+  - tidyr
+  - ggplot2
+  - ggpubr
+  - ggforce
+
+depends:
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-04-26")
+      use:
+        wtd_prev_week_2020-04-26.rds: wtd_ensb_prev_week.rds
+        wtd_all_prev_weeks_2020-04-26.rds: wtd_ensb_all_prev_weeks.rds
+        unwtd_2020-04-26.rds: ensemble_model_predictions.rds
+
+
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-04-19")
+      use:
+        wtd_prev_week_2020-04-19.rds: wtd_ensb_prev_week.rds
+        wtd_all_prev_weeks_2020-04-19.rds: wtd_ensb_all_prev_weeks.rds
+        unwtd_2020-04-19.rds: ensemble_model_predictions.rds
+        
+
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-04-12")
+      use:
+        wtd_prev_week_2020-04-12.rds: wtd_ensb_prev_week.rds
+        wtd_all_prev_weeks_2020-04-12.rds: wtd_ensb_all_prev_weeks.rds
+        unwtd_2020-04-12.rds: ensemble_model_predictions.rds
+        
+
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-04-05")
+      use:
+        wtd_prev_week_2020-04-05.rds: wtd_ensb_prev_week.rds
+        wtd_all_prev_weeks_2020-04-05.rds: wtd_ensb_all_prev_weeks.rds
+        unwtd_2020-04-05.rds: ensemble_model_predictions.rds
+        
+      
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-03-29")
+      use:
+        wtd_prev_week_2020-03-29.rds: wtd_ensb_prev_week.rds
+        wtd_all_prev_weeks_2020-03-29.rds: wtd_ensb_all_prev_weeks.rds
+        unwtd_2020-03-29.rds: ensemble_model_predictions.rds
+        
+
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-03-22")
+      use:
+        wtd_prev_week_2020-03-22.rds: wtd_ensb_prev_week.rds
+        wtd_all_prev_weeks_2020-03-22.rds: wtd_ensb_all_prev_weeks.rds
+        unwtd_2020-03-22.rds: ensemble_model_predictions.rds
+        
+
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2020-03-15")
+      use:
+        wtd_prev_week_2020-03-15.rds: wtd_ensb_prev_week.rds
+        wtd_all_prev_weeks_2020-03-15.rds: wtd_ensb_all_prev_weeks.rds
+        unwtd_2020-03-15.rds: ensemble_model_predictions.rds
+        
+
+  - prepare_ecdc_data:
+      id: latest
+      use:
+        model_input.rds: latest_deaths_wide_no_filter.rds
