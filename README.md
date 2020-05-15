@@ -3,7 +3,7 @@
 This is an [`orderly`](https://github.com/vimc/orderly) project.  The directories are:
 
 * `src`: create new reports here
-* `archive`: versioed results of running your report
+* `archive`: versioned results of running your report
 * `data`: copies of data used in the reports
 
 Each step of the analysis is an orderly task and corresponds to a
@@ -22,10 +22,10 @@ directory on the src directory.
    orderly::orderly_commit(a)
    ```
    
-   This will generate two aretfacts (outputs of a task are called
+   This will generate two artefacts (outputs of a task are called
    artefacts in orderly). They are exactly the same files but one has
    the date in the file name - this file will be shared with the
-   mdoeling groups, and the second file is called
+   modeling groups, and the second file is called
    latest_model_input.rds. This is so that the downstream tasks can
    read the latest file without the need to manually update
    orderly.yml.
@@ -34,7 +34,7 @@ directory on the src directory.
    will produce outputs for the report in a prescribed format. These
    could be shared via DropBox for example i.e. the generation of
    model outputs is not part of the orderly workflow. Once these
-   outputs are recieved, save them in a directory on your machine, and
+   outputs are received, save them in a directory on your machine, and
    update the location in orderly_envir.yml. For example, this is the
    file on my machine:
    
@@ -76,7 +76,7 @@ directory on the src directory.
    ```
    
 6. produce_exec_summary Generates the summary that goes into the
-   report. Run as all other tasks. It is the execuive summary which is
+   report. Run as all other tasks. It is the executive summary which is
    the summary of the new report. produce_summary task is redundant
    and can be ignored for now.
 
