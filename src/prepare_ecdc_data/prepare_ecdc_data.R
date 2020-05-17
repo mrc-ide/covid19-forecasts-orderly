@@ -1,4 +1,4 @@
-week_finishing <- "2020-05-03"
+week_finishing <- "2020-05-10"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -22,15 +22,31 @@ raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2020-04-27" & raw_data$`Countries.and.territories` == "Spain"] <- 331
 raw_data$Deaths[raw_data$DateRep == "2020-04-28" & raw_data$`Countries.and.territories` == "Spain"] <- 301
 ##raw_data$Deaths[raw_data$DateRep == "2020-05-02" & raw_data$`Countries.and.territories` == "Spain"] <- 276
-raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Spain"] <- 164
+##raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Spain"] <- 164
+
+## Update 10th May - this row has been added in ECCDC data
+## spain_extra <- data.frame(
+##   DateRep = "2020-05-02",
+##   day = 2,
+##   month = 5,
+##   year = 2020,
+##   Cases = 2610,
+##   Deaths = 276,
+##   `Countries.and.territories` = "Spain",
+##   geoId = "ES",
+##   countryterritoryCode = "ESP",
+##   popData2018 = 46723749,
+##   continent = "Europe"
+## )
+## raw_data <- rbind(raw_data, spain_extra)
 
 spain_extra <- data.frame(
-  DateRep = "2020-05-02",
-  day = 2,
+  DateRep = "2020-05-10",
+  day = 10,
   month = 5,
   year = 2020,
-  Cases = 2610,
-  Deaths = 276,
+  Cases = 1880,
+  Deaths = 143,
   `Countries.and.territories` = "Spain",
   geoId = "ES",
   countryterritoryCode = "ESP",
@@ -38,6 +54,7 @@ spain_extra <- data.frame(
   continent = "Europe"
 )
 raw_data <- rbind(raw_data, spain_extra)
+
 
 ## spain_extra <- data.frame(
 ##   DateRep = "2020-04-26",

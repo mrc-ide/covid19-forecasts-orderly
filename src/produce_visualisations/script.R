@@ -287,7 +287,8 @@ purrr::iwalk(
 ###################
 ##### Reporting Trends
 ### col -> column to scale
-x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-04-26.rds")
+x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-05-10.rds")
+x <- x[! names(x) %in% c("Cameroon", "Ecuador")]
 max_deaths <- purrr::map_dfr(x, ~ max(.[["D_t"]]), .id = "country")
 max_deaths <- tidyr::gather(max_deaths, country, max_deaths)
 

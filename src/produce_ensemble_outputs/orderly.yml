@@ -8,14 +8,12 @@ artefacts:
       description: Ensemble Model Outputs
       filenames:
         - ensemble_model_predictions.rds
-        - wtd_ensb_prev_week.rds
-        - wtd_ensb_all_prev_weeks.rds
         - ensemble_daily_qntls.rds
         - ensemble_weekly_qntls.rds
-        - wtd_ensb_prev_week_daily_qntls.rds
-        - wtd_ensb_prev_week_weekly_qntls.rds
-        - wtd_ensb_all_prev_weeks_daily_qntls.rds
-        - wtd_ensb_all_prev_weeks_weekly_qntls.rds
+        # - wtd_ensb_prev_week_daily_qntls.rds
+        # - wtd_ensb_prev_week_weekly_qntls.rds
+        # - wtd_ensb_all_prev_weeks_daily_qntls.rds
+        # - wtd_ensb_all_prev_weeks_weekly_qntls.rds
         - ensemble_model_rt_samples.rds
         - ensemble_model_rt.rds
 
@@ -27,10 +25,11 @@ packages:
   - dplyr
   - ggplot2
   - ggforce
+  - rincewind
 
 sources:
   - R/utils.R
-
+  
 depends:
   compute_model_weights:
     id: latest

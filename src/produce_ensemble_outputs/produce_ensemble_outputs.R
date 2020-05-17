@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-04-12"))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-05-10"))
 ## probs <- c(0.025, 0.25, 0.5, 0.75, 0.975)
 probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 ## weeks_ending <- readr::read_rds("latest_week_ending.rds")
@@ -43,73 +43,6 @@ ensemble_model_predictions <- purrr::map(
   }
 )
 
-
-## Model weights derived from last week's forecasts only.
-weights_prev_week <- readRDS("weights_prev_week.rds")
-weights_all_prev_weeks <- readRDS("weights_all_prev_weeks.rds")
-
-prev_week <- as.Date(week_ending) - 7
-## This will be a list with two components corresponding to the two
-## serial intervals used.
-weights_prev_week <- weights_prev_week[[as.character(prev_week)]]
-weights_all_prev_weeks <- weights_all_prev_weeks[[as.character(prev_week)]]
-
-
-
-## weights_prev_week has a date associated with it
-## so that weights_prev_week[[1]] is what we really want
-weights_prev_week_normalised <- purrr::map(
-  weights_prev_week, normalise_weights
-)
-
-weights_all_prev_weeks_normalised <- purrr::map(
-  weights_all_prev_weeks, normalise_weights
-)
-
-## Sanity check:  purrr::map(normalised_wts, ~ sum(unlist(.)))
-wtd_ensb_prev_week <- purrr::map(
-  week_ending,
-  function(week) {
-    purrr::map(
-      countries,
-      function(country) {
-        message(country)
-        message(paste(names(outputs), collapse = "\n"))
-        f(outputs, country, weights_prev_week_normalised)
-      }
-    )
-  }
-)
-
-
-wtd_ensb_all_prev_weeks <- purrr::map(
-  week_ending,
-  function(week) {
-    purrr::map(
-      countries,
-      function(country) {
-        message(country)
-        message(paste(names(outputs), collapse = "\n"))
-        wts <- rep(1, length(outputs))
-        names(wts) <- names(outputs)
-        wts <- list(si_1 = wts, si_2 = wts)
-        f(outputs, country, weights_all_prev_weeks_normalised)
-      }
-    )
-  }
-)
-
-saveRDS(
-  object = wtd_ensb_prev_week,
-  "wtd_ensb_prev_week.rds"
-)
-
-saveRDS(
-  object = wtd_ensb_all_prev_weeks,
-  "wtd_ensb_all_prev_weeks.rds"
-)
-
-
 ensemble_daily_qntls <- purrr::map_dfr(
   ensemble_model_predictions,
   function(pred) {
@@ -128,7 +61,7 @@ ensemble_weekly_qntls <- purrr::map_dfr(
       pred,
       function(x) {
         message(colnames(x))
-        daily_to_weekly(x)
+        rincewind::daily_to_weekly(x)
       },
       .id = "country"
     )
@@ -137,72 +70,21 @@ ensemble_weekly_qntls <- purrr::map_dfr(
 )
 
 
-wtd_ensb_prev_week_daily_qntls <- purrr::map_dfr(
-  wtd_ensb_prev_week,
-  function(pred) {
-    purrr::map_dfr(
-      pred, ~ extract_predictions_qntls(., probs),
-      .id = "country"
-    )
-  },
-  .id = "proj"
-)
-
-wtd_ensb_prev_week_weekly_qntls <- purrr::map_dfr(
-  wtd_ensb_prev_week,
-  function(pred) {
-    purrr::map_dfr(
-      pred,
-      function(x) {
-        message(colnames(x))
-        daily_to_weekly(x)
-      },
-      .id = "country"
-    )
-  },
-  .id = "proj"
-)
-
-wtd_ensb_all_prev_weeks_daily_qntls <- purrr::map_dfr(
-  wtd_ensb_all_prev_weeks,
-  function(pred) {
-    purrr::map_dfr(
-      pred, ~ extract_predictions_qntls(., probs),
-      .id = "country"
-    )
-  },
-  .id = "proj"
-)
-
-wtd_ensb_all_prev_weeks_weekly_qntls <- purrr::map_dfr(
-  wtd_ensb_all_prev_weeks,
-  function(pred) {
-    purrr::map_dfr(
-      pred,
-      function(x) {
-        message(colnames(x))
-        daily_to_weekly(x)
-      },
-      .id = "country"
-    )
-  },
-  .id = "proj"
-)
 
 saveRDS(
   object = ensemble_model_predictions,
   file = "ensemble_model_predictions.rds"
 )
 
-saveRDS(
-  object = wtd_ensb_prev_week,
-  file = "wtd_ensb_prev_week.rds"
-)
+## saveRDS(
+##   object = wtd_ensb_prev_week,
+##   file = "wtd_ensb_prev_week.rds"
+## )
 
-saveRDS(
-  object = wtd_ensb_all_prev_weeks,
-  file = "wtd_ensb_all_prev_weeks.rds"
-)
+## saveRDS(
+##   object = wtd_ensb_all_prev_weeks,
+##   file = "wtd_ensb_all_prev_weeks.rds"
+## )
 
 
 saveRDS(
@@ -215,25 +97,6 @@ saveRDS(
   file = "ensemble_weekly_qntls.rds"
 )
 
-saveRDS(
-  object = wtd_ensb_prev_week_daily_qntls,
-  file = "wtd_ensb_prev_week_daily_qntls.rds"
-)
-
-saveRDS(
-  object = wtd_ensb_prev_week_weekly_qntls,
-  file = "wtd_ensb_prev_week_weekly_qntls.rds"
-)
-
-saveRDS(
-  object = wtd_ensb_all_prev_weeks_daily_qntls,
-  file = "wtd_ensb_all_prev_weeks_daily_qntls.rds"
-)
-
-saveRDS(
-  object = wtd_ensb_all_prev_weeks_weekly_qntls,
-  file = "wtd_ensb_all_prev_weeks_weekly_qntls.rds"
-)
 
 ######################################################################
 ########### Rt quantiles #############################################
@@ -338,49 +201,49 @@ saveRDS(
 
 
 ######################################################################
-countries <- names(ensemble_model_predictions[[1]])
-purrr::walk(
-  countries,
-  function(country) {
+## countries <- names(ensemble_model_predictions[[1]])
+## purrr::walk(
+##   countries,
+##   function(country) {
 
-    unwtd <- t(ensemble_model_predictions[[1]][[country]][[2]])
-    all_prev <- t(wtd_ensb_all_prev_weeks[[1]][[country]][[2]])
-    prev_week <- t(wtd_ensb_prev_week[[1]][[country]][[2]])
+##     unwtd <- t(ensemble_model_predictions[[1]][[country]][[2]])
+##     all_prev <- t(wtd_ensb_all_prev_weeks[[1]][[country]][[2]])
+##     prev_week <- t(wtd_ensb_prev_week[[1]][[country]][[2]])
 
-    unwtd <- data.frame(unwtd) %>%
-      tibble::rownames_to_column(var = "date") %>%
-      tidyr::gather("var", "val", -date)
+##     unwtd <- data.frame(unwtd) %>%
+##       tibble::rownames_to_column(var = "date") %>%
+##       tidyr::gather("var", "val", -date)
 
-    all_prev <-  data.frame(all_prev) %>%
-      tibble::rownames_to_column(var = "date") %>%
-      tidyr::gather("var", "val", -date)
+##     all_prev <-  data.frame(all_prev) %>%
+##       tibble::rownames_to_column(var = "date") %>%
+##       tidyr::gather("var", "val", -date)
 
-    prev_week <- data.frame(prev_week) %>%
-      tibble::rownames_to_column(var = "date") %>%
-      tidyr::gather("var", "val", -date)
+##     prev_week <- data.frame(prev_week) %>%
+##       tibble::rownames_to_column(var = "date") %>%
+##       tidyr::gather("var", "val", -date)
 
-    x <- bind_rows(
-      list(
-        unwtd = unwtd, all_prev = all_prev, prev_week = prev_week
-      ),
-      .id = "model"
-    )
-    x$date <- as.Date(x$date)
+##     x <- bind_rows(
+##       list(
+##         unwtd = unwtd, all_prev = all_prev, prev_week = prev_week
+##       ),
+##       .id = "model"
+##     )
+##     x$date <- as.Date(x$date)
 
-    p <- ggplot(x) +
-      geom_density(
-        aes(x = val, color = model)
-      ) +
-      facet_wrap(~date, nrow = 7) +
-      theme_classic() +
-      theme(
-        legend.position = "top",
-        legend.title = element_blank()
-      ) + xlab("")
+##     p <- ggplot(x) +
+##       geom_density(
+##         aes(x = val, color = model)
+##       ) +
+##       facet_wrap(~date, nrow = 7) +
+##       theme_classic() +
+##       theme(
+##         legend.position = "top",
+##         legend.title = element_blank()
+##       ) + xlab("")
 
-    ggsave(
-      filename = glue::glue("{country}_density.png"),
-      plot = p
-    )
-  }
-)
+##     ggsave(
+##       filename = glue::glue("{country}_density.png"),
+##       plot = p
+##     )
+##   }
+## )

@@ -46,18 +46,28 @@ directory on the src directory.
    
    ```
    a <- orderly::orderly_run("process_individual_models", parameter =
-   list(week_ending = "2020-04-26"))
+   list(week_ending = "2020-05-10"))
    orderly::orderly_commit(a)
    ```
 
+   produce_performace_metrics Computes various performance metrics 
+   for each model.
+   
+   ```
+   a <- orderly::orderly_run("produce_performace_metrics")
+   orderly::orderly_commit(a)
+   ```
+
+   compute_model_weights Computes model weights using the metrics
+   produced in the previous task.
 3. produce_ensemble_outputs This task creates an ensemble model. 
 
    
    ```
-   a <- orderly::orderly_run("produce_ensemble_outputs", parameters = list(week_ending = "2020-04-26"))
+   a <- orderly::orderly_run("produce_ensemble_outputs", parameters = list(week_ending = "2020-05-10"))
    orderly::orderly_commit(a)
    ```
-   
+
 4. format_model_outputs Pretty formatting of model outputs for
    plugging into the final report.
    
