@@ -1,21 +1,39 @@
 ## Expect a T X N matrix where N is the number
 ## of simulations
-rel_mse2 <- function(obs, pred) {
+poisson_probability <- function(obs, pred) {
   nsims <- ncol(pred)
   obs <- matrix(
     rep(obs, each = nsims),
     ncol = nsims,
     byrow = TRUE
   )
-  log_l <- rowSums(
+  p <- rowSums(
     dpois(
       x = obs,
-      lambda = pred + .5,
-      log = TRUE
+      lambda = pred + 0.5,
+      log = FALSE
     )
   )
-  log_l <- log_l / nsims# (nsims * (obs^2 + 1))
-  log_l
+  p / nsims# (nsims * (obs^2 + 1))
+}
+
+empirical_probability <- function(obs, pred) {
+
+  pred_rows <- lapply(
+    seq_len(nrow(pred)), function(idx) pred[idx, ]
+  )
+  probs <- mapply(
+    FUN = function(x, xhat) {
+      idx <- which(x == xhat)
+      message("Number of times obs in pred ", length(idx))
+      length(idx) / length(xhat)
+    },
+    x = obs,
+    xhat = pred_rows
+ )
+
+  probs
+
 }
 
 output_files <- list.files(covid_19_path)
@@ -49,12 +67,14 @@ model_predictions_error <- purrr::imap_dfr(
             if (length(x) > 0) {
               rel_mae <- assessr::rel_mae(obs = x, pred = y_si)
               rel_mse <- assessr::rel_mse(obs = x, pred = y_si)
-              avg_likelhd <- rel_mse2(obs = x, pred = y_si)
+              poisson_p <- poisson_probability(obs = x, pred = y_si)
               bias <- assessr::bias(obs = x, pred = y_si)
+              empirical_p <- empirical_probability(obs = x, pred = y_si)
               metrics <- data.frame(
                 rel_abs = rel_mae,
                 rel_sq = rel_mse,
-                avg_likelhd = avg_likelhd,
+                poisson_p = poisson_p,
+                empirical_p = empirical_p,
                 bias = bias
               )
               metrics <- tibble::rownames_to_column(metrics, var = "date")

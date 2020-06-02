@@ -1,0 +1,34 @@
+script: produce_weighted_ensemble.R
+
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
+artefacts:
+  - data:
+      description: Ensemble Model Outputs
+      filenames:
+        - wtd_ensb_prev_week_daily_qntls.rds
+        - wtd_ensb_prev_week_weekly_qntls.rds
+        - wtd_ensb_all_prev_weeks_daily_qntls.rds
+        - wtd_ensb_all_prev_weeks_weekly_qntls.rds
+
+
+parameters:
+  week_ending: 2020-03-15
+
+packages:
+  - purrr
+  - dplyr
+  - ggplot2
+  - ggforce
+  - rincewind
+
+sources:
+  - R/utils.R
+  
+depends:
+  compute_model_weights:
+    id: latest
+    use:
+      weights_prev_week.rds: unnormalised_model_weights_using_prev_week.rds
+      weights_all_prev_weeks.rds: unnormalised_model_weights_using_all_prev_week.rds

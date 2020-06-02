@@ -55,12 +55,12 @@ f <- function(outputs, country, weights) {
   out
 }
 
-normalise_weights <- function(weight) {
+normalise_weights <- function(weight, weight_col) {
 
   ngroups <- length(weight)
   normalised <- purrr::map(
     weight, function(x) {
-      x$normalised_wt <- round(x$weight / sum(x$weight), 2)
+      x$normalised_wt <- x[[weight_col]] / sum(x[[weight_col]])
       x
     }
   )

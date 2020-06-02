@@ -4,8 +4,33 @@ artefacts:
   - staticgraph:
       description: Various graphs
       filenames:
+        - ensmbl_pred_Europe_si_2_page_1.png
+        - ensmbl_pred_Europe_si_2_page_2.png
+        - ensmbl_pred_Europe_si_2_page_3.png
+        - ensmbl_pred_Europe_si_2_page_4.png
+        - ensmbl_pred_Europe_si_2_page_5.png
+        - ensmbl_pred_Asia_si_2_page_1.png
+        - ensmbl_pred_Asia_si_2_page_2.png
+        - ensmbl_pred_Africa_si_2_page_1.png
+        - ensmbl_pred_North America_si_2_page_1.png
+#        - ensmbl_pred_North America_si_2_page_2.png
+        - ensmbl_pred_South America_si_2_page_1.png
+        - ensemble_rt_Europe_si_2_boxplot.png
+        - ensemble_rt_Asia_si_2_boxplot.png
+        - ensemble_rt_Africa_si_2_boxplot.png
+        - ensemble_rt_North America_si_2_boxplot.png
+        - ensemble_rt_South America_si_2_boxplot.png
+        - reporting_ratio_Europe_page_1.png
+        - reporting_ratio_Europe_page_2.png
+        - reporting_ratio_Europe_page_3.png
+        - reporting_ratio_Europe_page_4.png
+        - reporting_ratio_Asia_page_1.png
+        - reporting_ratio_Asia_page_2.png
         - reporting_ratio_Africa_page_1.png
-        
+        - reporting_ratio_North America_page_1.png
+#        - reporting_ratio_North America_page_2.png
+        - reporting_ratio_South America_page_1.png      
+
 packages:
   - ggplot2
   - ggpubr
@@ -20,7 +45,7 @@ sources:
 
 resources:
   - country-and-continent-codes-list-csv_csv.csv
-  - DeCa_Std_Ratio_plot_2020-05-10.rds
+  - DeCa_Std_Ratio_plot_2020-05-31.rds
 
 depends:
   produce_ensemble_outputs:

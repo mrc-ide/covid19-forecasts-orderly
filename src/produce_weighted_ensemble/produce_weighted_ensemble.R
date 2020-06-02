@@ -1,13 +1,14 @@
+probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 output_files <- list.files(covid_19_path)
 output_files <- output_files[grepl(x = output_files, pattern = week_ending)]
-
+output_files <- output_files[!grepl(x = output_files, pattern = "sbsm")]
 names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
 names(week_ending) <- week_ending
 message("For week ending ", week_ending)
 
-message("Output Files ", output_files)
+message("Output Files \n", paste(output_files, collapse = "\n"))
 
 model_outputs <- purrr::map(
   output_files, ~ readRDS(paste0(covid_19_path, .))
@@ -36,14 +37,12 @@ weights_all_prev_weeks <- weights_all_prev_weeks[[as.character(prev_week)]]
 
 
 
-## ## weights_prev_week has a date associated with it
-## ## so that weights_prev_week[[1]] is what we really want
 weights_prev_week_normalised <- purrr::map(
-  weights_prev_week, normalise_weights
+  weights_prev_week, ~ normalise_weights(., "wt_empirical")
 )
 
 weights_all_prev_weeks_normalised <- purrr::map(
-  weights_all_prev_weeks, normalise_weights
+  weights_all_prev_weeks, ~ normalise_weights(., "wt_empirical")
 )
 
 ## ## Sanity check:  purrr::map(normalised_wts, ~ sum(unlist(.)))
@@ -70,9 +69,6 @@ wtd_ensb_all_prev_weeks <- purrr::map(
       function(country) {
         message(country)
         message(paste(names(outputs), collapse = "\n"))
-        wts <- rep(1, length(outputs))
-        names(wts) <- names(outputs)
-        wts <- list(si_1 = wts, si_2 = wts)
         f(outputs, country, weights_all_prev_weeks_normalised)
       }
     )
@@ -107,7 +103,7 @@ wtd_ensb_prev_week_weekly_qntls <- purrr::map_dfr(
       pred,
       function(x) {
         message(colnames(x))
-        daily_to_weekly(x)
+        daily_to_weekly(x, prob = probs)
       },
       .id = "country"
     )
@@ -133,7 +129,7 @@ wtd_ensb_all_prev_weeks_weekly_qntls <- purrr::map_dfr(
       pred,
       function(x) {
         message(colnames(x))
-        daily_to_weekly(x)
+        daily_to_weekly(x, probs)
       },
       .id = "country"
     )
