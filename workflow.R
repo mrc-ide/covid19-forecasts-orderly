@@ -25,10 +25,13 @@ weeks <- list(
   "2020-04-19",
   "2020-04-26",
   "2020-05-03",
-  "2020-05-10"
+  "2020-05-10",
+  "2020-05-17",
+  "2020-05-24"
 )
 
 for (week in weeks) {
+  message("################ ", week, " #############################")
   parameter <- list(week_ending = week)
   workflow(parameter)
 }

@@ -29,3 +29,11 @@ depends:
         unweighted_qntls.rds: unweighted_qntls.rds
         wtd_prev_week_qntls.rds: wtd_prev_week_qntls.rds
         wtd_all_prev_weeks_qntls.rds: wtd_all_prev_weeks_qntls.rds
+
+  - produce_performace_metrics:
+      id: latest
+      use:
+        model_predictions_error.csv: model_predictions_error.csv
+        wtd_all_prev_weeks_error.csv: wtd_all_prev_weeks_error.csv
+        wtd_prev_week_error.csv: wtd_prev_week_error.csv
+        unwtd_pred_error.csv: unwtd_pred_error.csv
