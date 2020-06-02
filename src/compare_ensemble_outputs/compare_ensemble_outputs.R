@@ -9,54 +9,26 @@
 main_text_countries <- c(
   "Brazil", "India", "Italy", "Mexico", "United_States_of_America"
 )
-model_input <- readRDS("model_input.rds")
-deaths_tall <- tidyr::gather(model_input, country, deaths, -dates)
-deaths_tall$dates <- as.Date(deaths_tall$dates)
 
-run_info <- orderly::orderly_run_info()
-infiles <- run_info$depends$as
-infiles <- infiles[infiles != "model_input.rds"]
-
-names(infiles) <- gsub(
-  pattern = ".rds",
-  replacement = "",
-  x = infiles
-)
-
-## All unweighted ensemble outputs
-unweighted_qntls <- purrr::map(
-  infiles[grep("unwtd", infiles)], readRDS
-)
-
-unweighted_qntls <- dplyr::bind_rows(unweighted_qntls) %>%
+unweighted_qntls <- readRDS("unweighted_qntls.rds") %>%
   dplyr::filter(si == use_si)
-unweighted_qntls$model <- "Unweighted Ensemble"
 
-## Weighted using weights from previous weeks forecasts only
-wtd_prev_week <- purrr::map(
-  grep("wtd_prev_week", infiles, value = TRUE), readRDS
-)
-wtd_prev_week <- dplyr::bind_rows(wtd_prev_week) %>%
+wtd_prev_week <- readRDS("wtd_prev_week_qntls.rds") %>%
   dplyr::filter(si == use_si)
-wtd_prev_week$model <- "Weighted Ensemble (weights previous week)"
 
-## Weighted using weights from all previous forecasts
-wtd_all_prev_weeks <- purrr::map(
-  grep("wtd_all_prev_weeks", infiles, value = TRUE), readRDS
-)
-wtd_all_prev_weeks <- dplyr::bind_rows(wtd_all_prev_weeks) %>%
-  dplyr::filter(si == use_si)
-wtd_all_prev_weeks$model <- "Weighted Ensemble (weights all weeks)"
+wtd_all_prev_weeks <- readRDS("wtd_all_prev_weeks_qntls.rds") %>%
+    dplyr::filter(si == use_si)
 
 unweighted_qntls$date <- as.Date(unweighted_qntls$date)
 wtd_prev_week$date <- as.Date(wtd_prev_week$date)
 wtd_all_prev_weeks$date <- as.Date(wtd_all_prev_weeks$date)
 
 
+## Performance Metrics
+
+
 
 ## deaths_tall <- deaths_tall[deaths_tall$country %in% unweighted_qntls$country, ]
-
-
 ## levels <- unique(interaction(both$proj, both$model))
 ## unwtd <- grep(pattern = "Unweighted", x = levels, value = TRUE)
 ## wtd <- grep(pattern = "Unweighted", x = levels, value = TRUE, invert TRUE)
@@ -75,13 +47,9 @@ countries <- append(x = countries, values = unlist(si_countries))
 purrr::iwalk(
   countries,
   function(country, name) {
-    obs <- deaths_tall[deaths_tall$country %in% country, ]
-
-    ymax <- 2 * ceiling(max(obs$deaths) / 10) * 10
+    obs <-  unweighted_qntls[unweighted_qntls$country %in% country, c("date", "country" ,"deaths")]
     pred <- unweighted_qntls[unweighted_qntls$country %in% country, ]
-    pred$`2.5%`[pred$`2.5%` > ymax] <- ymax
-    pred$`97.5%`[pred$`97.5%` > ymax] <- ymax
-    pred$`50%`[pred$`50%` > ymax] <- NA
+    pred <- cap_predictions(pred)
 
     p <- all_forecasts(obs, pred)
     outfile <- glue::glue("{name}_forecasts.tiff")
@@ -89,19 +57,12 @@ purrr::iwalk(
   }
 )
 
-
-
 purrr::iwalk(
   countries,
   function(country, name) {
-    obs <- deaths_tall[deaths_tall$country %in% country, ]
-
-    ymax <- 2 * ceiling(max(obs$deaths) / 10) * 10
+    obs <-  unweighted_qntls[unweighted_qntls$country %in% country, c("date", "country" ,"deaths")]
     pred <- wtd_prev_week[wtd_prev_week$country %in% country, ]
-    pred$`2.5%`[pred$`2.5%` > ymax] <- ymax
-    pred$`97.5%`[pred$`97.5%` > ymax] <- ymax
-    pred$`50%`[pred$`50%` > ymax] <- NA
-
+    pred <- cap_predictions(pred)
     p <- all_forecasts(obs, pred)
     outfile <- glue::glue("{name}_forecasts_wtd_prev_week.tiff")
     ggsave(outfile, p)
@@ -113,18 +74,12 @@ purrr::iwalk(
 purrr::iwalk(
   countries,
   function(country, name) {
-    obs <- deaths_tall[deaths_tall$country %in% country, ]
-
-    ymax <- 2 * ceiling(max(obs$deaths) / 10) * 10
+    obs <-  unweighted_qntls[unweighted_qntls$country %in% country, c("date", "country" ,"deaths")]
     pred <- wtd_all_prev_weeks[wtd_all_prev_weeks$country %in% country, ]
-    pred$`2.5%`[pred$`2.5%` > ymax] <- ymax
-    pred$`97.5%`[pred$`97.5%` > ymax] <- ymax
-    pred$`50%`[pred$`50%` > ymax] <- NA
-
+    pred <- cap_predictions(pred)
     p <- all_forecasts(obs, pred)
     outfile <- glue::glue("{name}_forecasts_wtd_all_prev_weeks.tiff")
     ggsave(outfile, p)
-
   }
 )
 
@@ -135,18 +90,14 @@ countries <- unique(wtd_prev_week$country)
 purrr::walk(
   countries,
   function(country) {
-    obs <- deaths_tall[deaths_tall$country %in% country, ]
-
-    ymax <- 2 * ceiling(max(obs$deaths) / 10) * 10
+    obs <-  unweighted_qntls[unweighted_qntls$country %in% country, c("date", "country" ,"deaths")]
     pred <- unweighted_qntls[unweighted_qntls$country %in% country, ]
-    pred$`2.5%`[pred$`2.5%` > ymax] <- ymax
-    pred$`97.5%`[pred$`97.5%` > ymax] <- ymax
-    pred$`50%`[pred$`50%` > ymax] <- NA
+    pred <- cap_predictions(pred)
 
     p <- ggplot() +
       geom_point(
         data = obs,
-        aes(dates, deaths),
+        aes(date, deaths),
         col = "black"
       ) +
       geom_line(
@@ -173,15 +124,11 @@ purrr::walk(
       facet_wrap(~country)
 
     ### Unweighted and weighted comparison
-    wtd1 <- wtd_prev_week[wtd_prev_week$country %in% country, ]
-    wtd2 <- wtd_all_prev_weeks[wtd_all_prev_weeks$country %in% country, ]
-    wtd1$`2.5%`[wtd1$`2.5%` > ymax] <- ymax
-    wtd1$`97.5%`[wtd1$`97.5%` > ymax] <- ymax
-    wtd1$`50%`[wtd1$`50%` > ymax] <- NA
+    wtd1 <- wtd_prev_week[wtd_prev_week$country %in% country, ] %>%
+      cap_predictions()
 
-    wtd2$`2.5%`[wtd2$`2.5%` > ymax] <- ymax
-    wtd2$`97.5%`[wtd2$`97.5%` > ymax] <- ymax
-    wtd2$`50%`[wtd2$`50%` > ymax] <- NA
+    wtd2 <- wtd_all_prev_weeks[wtd_all_prev_weeks$country %in% country, ] %>%
+      cap_predictions()
 
     message(country)
     p1 <- p +

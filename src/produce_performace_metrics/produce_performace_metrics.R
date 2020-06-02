@@ -1,20 +1,22 @@
 ## Expect a T X N matrix where N is the number
 ## of simulations
 poisson_probability <- function(obs, pred) {
-  nsims <- ncol(pred)
-  obs <- matrix(
-    rep(obs, each = nsims),
-    ncol = nsims,
-    byrow = TRUE
+
+  pred_rows <- lapply(
+    seq_len(nrow(pred)), function(idx) pred[idx, ]
   )
-  p <- rowSums(
-    dpois(
-      x = obs,
-      lambda = pred + 0.5,
-      log = FALSE
-    )
-  )
-  p / nsims# (nsims * (obs^2 + 1))
+  probs <- mapply(
+    FUN = function(x, xhat) {
+      lambda <- mean(xhat)
+      message("mean of predictions ", lambda)
+      dpois(x = x, lambda = lambda)
+    },
+    x = obs,
+    xhat = pred_rows
+ )
+  message("Poisson probability ", paste(probs, collapse = " "))
+  probs
+
 }
 
 empirical_probability <- function(obs, pred) {
@@ -31,7 +33,7 @@ empirical_probability <- function(obs, pred) {
     x = obs,
     xhat = pred_rows
  )
-
+  message("Empirical probability ", paste(probs, collapse = " "))
   probs
 
 }

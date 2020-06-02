@@ -114,3 +114,29 @@ saveRDS(
   object = countries_per_model,
   file = "countries_grouped_by_models.rds"
 )
+
+
+########### Compare weights ###################
+
+## wts_curr_week <- purrr::map_dfr(
+##   wts_curr_week, ~ .$si_2$DeCa_RtI0_sbkp, .id = "forecast_date"
+## )
+## wts_curr_week$strategy <- "Previous week"
+
+## wts_all_prev_weeks <- purrr::map_dfr(
+##   wts_all_prev_weeks, ~ .$si_2$DeCa_RtI0_sbkp, .id = "forecast_date"
+##   )
+## wts_all_prev_weeks$strategy <- "All previous weeks"
+
+## df <- rbind(wts_curr_week, wts_all_prev_weeks)
+## df <- tidyr::gather(df, key = var, value = val, wt_poisson:wt_empirical)
+
+
+## ggplot(
+##   df, aes(forecast_date, val, shape = var)
+## ) + geom_point() +
+##   facet_grid(strategy ~ model) +
+##   ggthemes::theme_base() +
+##   ylab("Weight") +
+##   xlab("Date of forecast") +
+##   theme(axis.text.x = element_text(angle = 90, vjust = 0.5))

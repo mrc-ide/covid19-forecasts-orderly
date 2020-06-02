@@ -50,12 +50,16 @@ model_outputs <- purrr::map(
 
 model_input <- readRDS("model_input.rds")
 
-daily_predictions_qntls <- purrr::map_dfr(
+daily_predictions_qntls <- purrr::imap_dfr(
   model_outputs,
-  function(x) {
+  function(x, model) {
+    message(model)
     pred <- x[["Predictions"]]
-    purrr::map_dfr(
-      pred, extract_predictions_qntls,
+    purrr::imap_dfr(
+             pred, function(y, country) {
+               message(country)
+               extract_predictions_qntls(y)
+             },
       .id = "country"
     )
   }, .id = "model"
