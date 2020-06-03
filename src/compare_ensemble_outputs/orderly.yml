@@ -4,7 +4,9 @@ artefacts:
   data:
     description: Model performance metrics
     filenames:
-      - India_forecasts.tiff
+      - unwtd_pred_metrics.tiff
+      - wtd_prev_week_metrics.tiff
+      - wtd_all_prev_weeks_metrics.tiff
   
 packages:
   - dplyr
@@ -14,6 +16,7 @@ packages:
   - ggforce
   - snakecase
   - glue
+  - cowplot
 
 ## use_si should be one of si_1 or si_2
 parameters:
