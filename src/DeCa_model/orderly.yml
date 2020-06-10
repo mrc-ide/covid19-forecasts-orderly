@@ -1,0 +1,14 @@
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
+script: ascertain.R
+
+parameters:
+  week_ending
+
+packages:
+  - Hmisc
+  - EpiEstim
+  - binom
+
+
