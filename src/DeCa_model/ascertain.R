@@ -334,19 +334,19 @@ predictions <- purrr::map(
 )
 
 t.window <- 10
-r_estim <- purrr::map(
-  countries,
-  function(country) {
-    message(country)
-    pred <- apply(predictions[[country]], 2, median, na.rm = TRUE)
-    obs <- c(abs(ascertainr_cases[[country]]), pred)
-    purrr::map2(
-      input_data$si_mean,
-      input_data$si_std,
-      function(s_mean, s_sd) {
-        si_distr <- gamma_dist_EpiEstim(
-          si_mu = s_mean, si_std = s_sd, SItrunc = 30
-        )
+r_estim <- map2(
+  input_data$si_mean,
+  input_data$si_std,
+  function(s_mean, s_sd) {
+    si_distr <- gamma_dist_EpiEstim(
+      si_mu = s_mean, si_std = s_sd, SItrunc = 30
+    )
+    purrr::map(
+      countries,
+      function(country){
+        message(country)
+        pred <- apply(predictions[[country]], 2, median, na.rm = TRUE)
+        obs <- c(abs(ascertainr_cases[[country]]), pred)
         res <- estimate_R(
           obs,
           method = 'non_parametric_si',
@@ -372,9 +372,7 @@ out <- list(
   I_active_transmission = input_data$I_active_transmission,
   D_active_transmission = input_data$D_active_transmission,
   Country = input_data$Country,
-  Rt_last = list(
-    si_1 = r_estim, si_2 = r_estim
-  ),
+  Rt_last = r_estim,
   Predictions = list(
     si_1 = predictions, si_2 = predictions
   )
