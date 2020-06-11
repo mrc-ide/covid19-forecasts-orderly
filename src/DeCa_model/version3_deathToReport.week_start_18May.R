@@ -277,68 +277,118 @@ hist(x)
 post_CFR <- x
 
 
-## -----------------------------------------------------------------------------
-
-# do inference
-rho_it<-array(NA, dim = c(nrow(I), N_geo,n_post))
-summary_rho <- list(median = temp,
-                    low = temp,
-                    high = temp)
-for (i in 1:nrow(I)){
-  for (j in 1:N_geo){
-
-    rho_it[i,j,] <- post_CFR/r_it[i,j,]
-    rho_it[i,j,which(rho_it[i,j,]>1)] <- 1
-    summary_rho$median[i,j+1] <- median(rho_it[i,j,],na.rm = TRUE)
-    summary_rho$low[i,j+1] <- quantile(rho_it[i,j,], 0.025,na.rm = TRUE)
-    summary_rho$high[i,j+1] <- quantile(rho_it[i,j,], 0.975,na.rm=TRUE)
-
+ascertainment <- purrr::map(
+  countries,
+  function(country) {
+    ascertainr::ascertainment(
+      cfr_distr = post_CFR,
+      death_to_case = deaths_to_cases[[country]]
+    )
   }
-}
+)
+## Same as above, results in the same ball park as Pierre',
+## Pierre's rho for Yemen:
+## 0.03438778 0.03465549 0.03694185 0.02719840 0.02697257 0.03408934
+## From tje packaged code
+## 0.03597449 0.03582383 0.03803099 0.02911610 0.02633064 0.03032737
+ascertainment_qntls <- purrr::map_dfr(
+  ascertainment,
+  function(rho) {
+    df <- quantiles_to_df(rho)
+    df <- cbind(
+      date = ascertainr_deaths[["dates"]],
+      df
+    )
+    df
+  }, .id = "country"
+  )
 
-
-
-## -----------------------------------------------------------------------------
-
-f <- seq(1,nrow(D)-round(mu_delta))
-
-I_true <- array(NA, dim = c(nrow(I), N_geo,n_post))
-summary_I_true <- list(median = temp,
-                    low = temp,
-                    high = temp)
-for (i in f){
-  for (j in 1:N_geo){
-    I_true[i,j,] <- D[i+round(mu_delta),j+1] + rnbinom(n = n_post, size = D[i+round(mu_delta),j+1] , prob = post_CFR)
-    summary_I_true$median[i,j+1] <- median(I_true[i,j,],na.rm = TRUE)
-    summary_I_true$low[i,j+1] <- quantile(I_true[i,j,],.025,na.rm = TRUE)
-    summary_I_true$high[i,j+1] <- quantile(I_true[i,j,],.975,na.rm=TRUE)
+episize_prev <- purrr::map(
+  countries,
+  function(country) {
+    idx <- seq(
+      1, length(ascertainr_deaths[[country]]) - round(mu_delta)
+    )
+    ascertainr::episize_before_mu(
+      deaths = matrix(
+        ascertainr_deaths[[country]][idx], ncol = 1
+      ),
+      mu_delta = mu_delta,
+      cfr_distr = post_CFR
+    )
   }
-}
+)
+## As abobe, results in the same ball park.
+## For Yemen, from Pierre's code:
+##          dates Yemen
+## 126 2020-05-04    51
+## 133 2020-05-11    52
+## 134 2020-05-12   266
+## 149 2020-05-27   555
+## For Yemen, from packaged code:
+##         date Yemen
+## 1 2020-05-04    51
+## 2 2020-05-11    50
+## 3 2020-05-12   268
 
+episize_prev_qntls <- purrr::imap_dfr(
+  episize_prev,
+  function(x, country) {
+    idx <- seq(
+      1, length(ascertainr_deaths[[country]]) - round(mu_delta))
+    df <- quantiles_to_df(x)
+    cbind(date = ascertainr_deaths[["dates"]][idx],df)
+  }, .id = "country"
+)
 
-
-
-## -----------------------------------------------------------------------------
-f <- seq(nrow(D)-round(mu_delta)+1,nrow(D))
-
-for (i in f){
-  for (j in 1:N_geo){
-    I_true[i,j,] <- I[i,j+1] + rnbinom(n = n_post, size = I[i,j+1] , prob = rho_it[i,j,])
-    summary_I_true$median[i,j+1] <- median(I_true[i,j,],na.rm = TRUE)
-    summary_I_true$low[i,j+1] <- quantile(I_true[i,j,],.025,na.rm = TRUE)
-    summary_I_true$high[i,j+1] <- quantile(I_true[i,j,],.975,na.rm=TRUE)
+episize_projected <- purrr::map(
+  countries,
+  function(country) {
+    idx <- seq(
+      from = length(
+        ascertainr_cases[[country]]) - round(mu_delta) + 1,
+      to = length(ascertainr_deaths[[country]])
+    )
+    ascertainr::episize_after_mu(
+      cases = matrix(ascertainr_cases[[country]][idx], ncol = 1),
+      rho = ascertainment[[country]][idx, ]
+    )
   }
-}
+)
+## same as abobe.
+## Pierre's code:
+##          dates Yemen
+## 155 2020-06-02   891
+## 156 2020-06-03  1280
+## 157 2020-06-04    99
+## 158 2020-06-05  1813
+## 159 2020-06-06   579
+## 160 2020-06-07   108
+## ascertainr code:
+##     country       date  50.0%
+## 535   Yemen 2020-06-02  845.5
+## 536   Yemen 2020-06-03 1244.0
+## 537   Yemen 2020-06-04   96.0
+## 538   Yemen 2020-06-05 1698.0
+## 539   Yemen 2020-06-06  592.0
+## 540   Yemen 2020-06-07  120.0
+
+episize_projected_qntls <- purrr::imap_dfr(
+  episize_projected,
+  function(x, country) {
+    idx <- seq(
+      from = length(
+        ascertainr_deaths[[country]]
+      ) - round(mu_delta) + 1,
+      to = length(ascertainr_deaths[[country]])
+    )
+    df <- quantiles_to_df(x)
+    cbind(date = ascertainr_deaths[["dates"]][idx], df)
+  }, .id = "country"
+)
 
 
-## -----------------------------------------------------------------------------
-sum(summary_I_true$median[,which(country %in% 'Spain')+1],na.rm=TRUE)/47e6
-sum(summary_I_true$low[,which(country %in% 'Spain')+1],na.rm=TRUE)/47e6
-sum(summary_I_true$high[,which(country %in% 'Spain')+1],na.rm=TRUE)/47e6
 
-
-
-## -----------------------------------------------------------------------------
 
 last_week <- data.frame(country = country,
                        median = rep(NA,N_geo),
