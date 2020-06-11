@@ -11,7 +11,7 @@ day.project <- 7
 t.window.range <- 7
 rep <- 2e4
 n_post <- 1e4
-
+SItrunc <- 30
 
 ## ------------------------------------------------------------------
 infile <- glue::glue(
@@ -24,13 +24,13 @@ ascertainr_cases <- input_data$I_active_transmission
 
 countries <- purrr::set_names(input_data$Country, input_data$Country)
 
-N_geo <- length(countries)
+
 # week_ending <- d$week_ending
 
 ## checked that this gives the same result as Pierre's function
 
 report_to_death <- report_to_death_distr(
-  mu = mu_delta, std = s_delta, trunc = trunc
+  mu = mu_delta, std = s_delta, trunc = SItrunc
 )
 
 ## -------------------------------------------------------------------
@@ -43,9 +43,10 @@ weighted_cases <- purrr::map(
     ascertainr::weighted_incid(
       incid = x, weights = report_to_death, trunc = SItrunc
    )
- }
+  }
 )
 
+saveRDS(weighted_cases, "weighted_cases.rds")
 
 deaths_to_cases <- purrr::map(
   countries,
@@ -58,6 +59,7 @@ deaths_to_cases <- purrr::map(
     )
   }
 )
+
 
 
 ## These are in the same ball-park, but not the same as Pierre's code
@@ -91,7 +93,7 @@ deaths_to_cases_qntls <- purrr::imap_dfr(
   }, .id = "country"
 )
 
-
+saveRDS(deaths_to_cases_qntls, "deaths_to_cases_qntls.rds")
 ## ------------------------------------------------------------------
 # # check parameters of beta dist
 # shape1 <- 2
@@ -138,7 +140,7 @@ c(shape[1]/(shape[1]+shape[2]),
            qbeta(.975, shape1 = shape[1], shape2 = shape[2])) - CFR_esti)*100
 
 # sum((c(mean(x),quantile(x,c(.025,.975)))*100-CFR_esti*100)^2)
-hist(x)
+
 
 post_CFR <- x
 
@@ -168,6 +170,8 @@ ascertainment_qntls <- purrr::map_dfr(
     df
   }, .id = "country"
 )
+
+saveRDS(ascertainment_qntls, "ascertainment_qntls.rds")
 
 episize_prev <- purrr::map(
   countries,
@@ -206,6 +210,8 @@ episize_prev_qntls <- purrr::imap_dfr(
     cbind(date = ascertainr_deaths[["dates"]][idx],df)
   }, .id = "country"
 )
+
+saveRDS(episize_prev_qntls, "episize_before_mu_qntls.rds")
 
 episize_projected <- purrr::map(
   countries,
@@ -253,85 +259,7 @@ episize_projected_qntls <- purrr::imap_dfr(
   }, .id = "country"
 )
 
-
-last_week <- data.frame(country = country,
-                       median = rep(NA,N_geo),
-                        low = rep(NA,N_geo),
-                        high = rep(NA,N_geo))
-for (i in 1:N_geo){
-  last_week[i,c(2,3,4)] <- quantile(colSums(I_true[(nrow(D)-7+1):nrow(D),i,],na.rm=TRUE),c(.5,.025,.975),na.rm=TRUE)
-}
-
-# summary
-summary_14days <- data.frame(
-    country = country,
-    deaths_to_reported_ratio = glue::glue(
-        "{round(summary_r$median[nrow(D),-1], 3) }",
-        " ({round(summary_r$low[nrow(D),-1],3)} - {round(summary_r$high[nrow(D),-1],3)})",
-    ),
-    estimated_reporting = glue::glue(
-        "{scales::percent(as.numeric(round(summary_rho$median[nrow(D),-1], 3)), accuracy = 0.1)}",
-        " ({scales::percent(as.numeric(round(summary_rho$low[nrow(D),-1],3)), accuracy = 0.1)} - {scales::percent(as.numeric(round(summary_rho$high[nrow(D),-1],3)), accuracy = 0.1)})",
-    ),
-    factor_to_real_size = glue::glue(
-        "{round(1/summary_rho$median[nrow(D),-1], 2)}",
-        " ({round(1/summary_rho$high[nrow(D),-1], 2)} - {round(1/summary_rho$low[nrow(D),-1], 2)})",
-    ),
-    Observed_case_last_week = colSums(tail(I[,-1],7)),
-    Predicted_True_case_last_week = glue::glue(
-        "{prettyNum(signif(last_week$median,digits = 3), big.mark = ",")} ",
-        "({prettyNum(signif(last_week$low,digits = 3), big.mark = ",")}",
-        " - {prettyNum(signif(last_week$high,digits = 3), big.mark = ",")})"
-        )
-)
-
-summary_14days <- summary_14days[order(temp[,1],decreasing = TRUE),]
-## TODO check why we have NAs
-summary_14days <- na.omit(summary_14days)
-readr::write_csv(
-    x = summary_14days,
-    path = paste0('../Team.output/summary_DeathToRepoted_14days_',week_ending,'.csv')
-)
-
-
-
-## -----------------------------------------------------------------------------
-## unformatted
-f <- function(df, col) {
-
-    df <- tidyr::gather(df, country, !!col)
-    df[[col]] <- round(df[[col]], 3)
-    out <- data.frame(df[[col]])
-    colnames(out) <- col
-    out
-}
-
-unformatted_summary_14days <- data.frame(
-    country = country,
-    Observed_case_last_week = colSums(tail(I[,-1],7)),
-    Predicted_True_case_last_week_50 = last_week$median,
-    Predicted_True_case_last_week_025 = last_week$low,
-    Predicted_True_case_last_week_975 = last_week$high
-    )
-
-tmp <- list(
-    f(summary_r$median[nrow(D),-1], "deaths_to_reported_ratio_50"),
-    f(summary_r$low[nrow(D),-1], "deaths_to_reported_ratio_025"),
-    f(summary_r$high[nrow(D),-1], "deaths_to_reported_ratio_975"),
-    f(summary_rho$median[nrow(D),-1], "estimated_reporting_50"),
-    f(summary_rho$low[nrow(D),-1], "estimated_reporting_025"),
-    f(summary_rho$high[nrow(D),-1], "estimated_reporting_975")
-)
-
-tmp <- do.call(what = 'cbind', args = tmp)
-unformatted_summary_14days <- cbind(unformatted_summary_14days, tmp)
-readr::write_csv(
-    x = unformatted_summary_14days,
-    path = paste0('../Team.output/unformatted_summary_DeathToRepoted_14days_',week_ending,'.csv')
-)
-
-
-## -----------------------------------------------------------------------------
+saveRDS(episize_projected_qntls, "episize_after_mu_qntls.rds")
 
 cases_augmented <- purrr::map(
   countries,
@@ -358,6 +286,7 @@ cases_augmented <- purrr::map(
   }
 )
 
+saveRDS(cases_augmented, "cases_augmented.rds")
 
 weighted_cases_augm <- purrr::map(
   countries,
@@ -376,6 +305,8 @@ weighted_cases_augm <- purrr::map(
     out <- out[ , seq(to = ncol(out), length.out = 7)]
   }
  )
+
+saveRDS(weighted_cases_augm, "weighted_cases_augm.rds")
 
 predictions <- purrr::map(
   countries,
@@ -437,21 +368,6 @@ r_estim <- purrr::map(
   }
 )
 
-
-
-
-
-
-
-## -----------------------------------------------------------------------------
-
-# temp <- list(rep(NA, n_post),rep(NA, n_post))
-# Rt_last <-list()
-# for (i in 1:N_geo){
-#   Rt_last[[as.character(country[i])]] <- temp
-# }
-
-
 out <- list(
   I_active_transmission = input_data$I_active_transmission,
   D_active_transmission = input_data$D_active_transmission,
@@ -471,9 +387,5 @@ saveRDS(
   object = out,
   file = paste0('DeCa_latest.rds' )
 )
-
-
-
-# save.image(file = paste0('RData/Full_results_week_end_',week_ending,'.RData'))
 
 
