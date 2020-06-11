@@ -1,10 +1,17 @@
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
 set.seed(1)
-library(knitr)
-library(Hmisc)
-library(EpiEstim)
 
+report_to_death_distr <- function(mu, std, trunc) {
+  out <- EpiEstim::discr_si(seq(0, trunc), mu, std)
+  out / sum(out)
+}
 
+quantiles_to_df <- function(mat, probs = c(0.025, 0.50, 0.975)) {
+  qntls <- t(apply(mat, 1, quantile, probs = probs, na.rm = TRUE))
+  out <- data.frame(qntls)
+  colnames(out) <- scales::percent(probs, accuracy = 0.1)
+  out
+}
 
 ## -----------------------------------------------------------------------------
 
@@ -12,12 +19,10 @@ week_ending <-  as.Date(week_ending)
 # delay_report_death <- 10 # need checking!!
 mu_delta <- 10
 s_delta <- 2
-
 day.project <- 7
 t.window.range <- 7
-
 rep <- 2e4
-
+n_post <- 1e4
 
 
 ## ------------------------------------------------------------------
@@ -34,32 +39,11 @@ countries <- purrr::set_names(input_data$Country, input_data$Country)
 N_geo <- length(countries)
 # week_ending <- d$week_ending
 
-
-
-## -----------------------------------------------------------------------------
-
-SI_gamma_dist_EpiEstim <- function(mu,si_std,SItrunc){
-  SI_Distr <- EpiEstim::discr_si(seq(0, SItrunc), mu, si_std) # sapply(0:SItrunc, function(e) EpiEstim::DiscrSI(e,mu,mu*cv) )
-  SI_Distr <- SI_Distr / sum(SI_Distr)
-  return(list(dist = SI_Distr, SItrunc = SItrunc))
-}
-
-
-trunc <- 30
-
 ## checked that this gives the same result as Pierre's function
-report_to_death_distr <- function(mu, std, trunc) {
-  out <- EpiEstim::discr_si(seq(0, trunc), mu, std)
-  out / sum(out)
-}
 
 report_to_death <- report_to_death_distr(
   mu = mu_delta, std = s_delta, trunc = trunc
 )
-
-ggplot() + geom_col(aes(x = 0:30, y = w_delta$dist))
-
-
 
 ## -------------------------------------------------------------------
 ## Checked that this gives exactly the same results as Pierre's code
@@ -70,48 +54,9 @@ weighted_cases <- purrr::map(
     x <- matrix(abs(ascertainr_cases[[country]]), ncol = 1)
     ascertainr::weighted_incid(
       incid = x, weights = report_to_death, trunc = SItrunc
-    )
-  }
+   )
+ }
 )
-
-## -------------------------------------------------------------------
-library(binom)
-n_post <- 1e4
-# check posterior
-# binconf(x = 5, n = 10, method = 'exact')
-# hpd <- binom.bayes(
-#   x = 5, n = 10.5, type = "central", conf.level = 0.95, tol = 1e-9)
-# x <- rbeta(n = 1e4, shape1 = hpd$shape1, shape2 = hpd$shape2)
-# c(mean(x), quantile(x,c(.025,.975)))
-temp <- D
-temp[,-1] <- NA
-# do inference
-r_it<-array(NA, dim = c(nrow(I), N_geo,n_post))
-summary_r <- list(median = temp, low = temp, high = temp)
-
-
-t.window <- 7
-
-for (i in 1:nrow(I)){
-  f <- seq(max(c(1,i-t.window+1)),i)
-
-  for (j in 1:N_geo){
-
-    if (sum(weighted_I[f,j]) > 0){
-
-      hpd <- binom.bayes( x = sum(D[f,j+1]), n = sum(weighted_I[f,j]),
-                          type = "central", conf.level = 0.95, tol = 1e-9)
-
-      r_it[i,j,] <- rbeta(n = n_post, shape1 = hpd$shape1, shape2 = hpd$shape2)
-      if (sum(D[f,j+1]) > sum(weighted_I[f,j])) r_it[i,j,] <- 1
-
-      summary_r$median[i,j+1] <- median(r_it[i,j,],na.rm = TRUE)
-      summary_r$low[i,j+1] <- quantile(r_it[i,j,],.025,na.rm = TRUE)
-      summary_r$high[i,j+1] <- quantile(r_it[i,j,],.975,na.rm=TRUE)
-    }
-    # c(mean(x), quantile(x,c(.025,.975)))
-  }
-}
 
 
 deaths_to_cases <- purrr::map(
@@ -126,12 +71,7 @@ deaths_to_cases <- purrr::map(
   }
 )
 
-quantiles_to_df <- function(mat, probs = c(0.025, 0.50, 0.975)) {
-  qntls <- t(apply(mat, 1, quantile, probs = probs, na.rm = TRUE))
-  out <- data.frame(qntls)
-  colnames(out) <- scales::percent(probs, accuracy = 0.1)
-  out
-}
+
 ## These are in the same ball-park, but not the same as Pierre's code
 ## for instance, last 6 median values from Pierre' code are:
 ## 0.4007925 0.3961255 0.3724869 0.5057754 0.5104002 0.4044060
@@ -226,7 +166,7 @@ saveRDS(
 )
 
 
-## -----------------------------------------------------------------------------
+## ------------------------------------------------------------------
 # # check parameters of beta dist
 # shape1 <- 2
 # shape2 <- 5
@@ -301,7 +241,7 @@ ascertainment_qntls <- purrr::map_dfr(
     )
     df
   }, .id = "country"
-  )
+)
 
 episize_prev <- purrr::map(
   countries,
@@ -318,7 +258,7 @@ episize_prev <- purrr::map(
     )
   }
 )
-## As abobe, results in the same ball park.
+## As above, results in the same ball park.
 ## For Yemen, from Pierre's code:
 ##          dates Yemen
 ## 126 2020-05-04    51
@@ -355,7 +295,7 @@ episize_projected <- purrr::map(
     )
   }
 )
-## same as abobe.
+## same as above.
 ## Pierre's code:
 ##          dates Yemen
 ## 155 2020-06-02   891
@@ -386,8 +326,6 @@ episize_projected_qntls <- purrr::imap_dfr(
     cbind(date = ascertainr_deaths[["dates"]][idx], df)
   }, .id = "country"
 )
-
-
 
 
 last_week <- data.frame(country = country,
@@ -469,49 +407,74 @@ readr::write_csv(
 
 ## -----------------------------------------------------------------------------
 
-
-I_lastweek <- colSums(tail(I[,-1],7))/7
-sd_lastweek <- (apply(tail(I[,-1],7),2,sd))
-
-cbind(I_lastweek,sd_lastweek)
-Predictions <- list()
-date_pre <- week_ending + seq(1,7,by=1)
-
-for( i in 1:length(country)){
-
-
-  repo <- matrix(sample(x = r_it[nrow(I),i,],size = 7*n_post,replace = TRUE),nrow = n_post, ncol = 7)
-  I_aug <- matrix(rpois(n = 7*n_post, lambda = I_lastweek[i]),nrow = n_post, ncol = 7)
-
-  param <- epitrix::gamma_mucv2shapescale(mu = I_lastweek[i], cv = sd_lastweek[i]/I_lastweek[i])
-  # I_aug <- matrix(rpois(n = 7*n_post, lambda = I_lastweek[i]),nrow = n_post, ncol = 7)
-  I_aug <- matrix(rgamma(n = 7*n_post, shape = param$shape, scale = param$scale),nrow = n_post, ncol = 7)
-
-
-  I_old <- matrix( tail(I[,i+1],w_delta$SItrunc), nrow = n_post, ncol = w_delta$SItrunc, byrow = TRUE )
-  I_augm <- cbind(I_old,I_aug)
-
-  weighted_I_augm <- matrix(NA, nrow = n_post, ncol = ncol(I_augm))
-  ws <- rev(w_delta$dist)
-
-  for (j in 2:ncol(I_augm)){
-    f <- max(c(1,(j-w_delta$SItrunc)))
-    weighted_I_augm[,j] <- ((I_augm[,f:j])%*%ws[((SItrunc+1)-(j-f)):(SItrunc+1)])
-
+cases_augmented <- purrr::map(
+  countries,
+  function(country) {
+    message(country)
+    incid <- abs(ascertainr_cases[[country]])
+    avg_last_week <- sum(tail(incid, 7)) / 7
+    sd_last_week <- sd(tail(incid, 7))
+    param <- epitrix::gamma_mucv2shapescale(
+      mu = avg_last_week, cv = sd_last_week/ avg_last_week
+    )
+    i_augm <- matrix(
+      rgamma(n = 7 * n_post, shape = param$shape, scale = param$scale),
+      nrow = n_post,
+      ncol = 7
+    )
+    i_old <- matrix(
+      tail(incid, SItrunc),
+      nrow = n_post,
+      ncol = SItrunc,
+      byrow = TRUE
+    )
+    cbind(i_old, i_augm)
   }
-  weighted_I_augm <- weighted_I_augm[,(ncol(weighted_I_augm)-7+1) : (ncol(weighted_I_augm))]
-  d_exp <- data.frame(matrix(NA,nrow = n_post,7))
-  for (k in 1:7){
-    d_exp[,k] <- rbinom(n = n_post, size = round(weighted_I_augm[,k]), prob = repo[,k])
+)
+
+
+weighted_cases_augm <- purrr::map(
+  countries,
+  function(country) {
+    message(country)
+    out <- apply(
+      cases_augmented[[country]],
+      2,
+      function(x) {
+        x <- matrix(x[2:length(x)], ncol = 1)
+        ascertainr::weighted_incid(
+          incid = x, weights = report_to_death, trunc = SItrunc
+       )
+     }
+    )
+    out <- out[ , seq(to = ncol(out), length.out = 7)]
   }
-  names(d_exp) <- as.character(date_pre)
-  Predictions[[as.character(country[i])]][[1]] <- d_exp
-  Predictions[[as.character(country[i])]][[2]] <- d_exp
+ )
 
-}
+predictions <- purrr::map(
+  countries,
+  function(country) {
+    reporting <- matrix(
+      sample(
+        x = tail(deaths_to_cases[[country]], 1),
+        size = 7 * n_post,
+        replace = TRUE
+      ),
+      nrow = n_post,
+      ncol = 7
+    )
+    weighted_i <- weighted_cases_augm[[country]]
+    d_exp <- data.frame(matrix(NA, nrow = n_post, 7))
+    for (k in 1:7){
+      d_exp[, k] <- rbinom(
+        n = n_post,
+        size = round(weighted_i[, k]),
+        prob = reporting[,k]
+      )
+    }
+  }
+)
 
-
-## -----------------------------------------------------------------------------
 
 t.window <- 10
 
