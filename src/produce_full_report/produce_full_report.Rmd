@@ -786,7 +786,7 @@ models are available (Models 1 and 2).
 ```{r}
 knitr::include_graphics("figs/rt_si_2_South America.png")
 ```
-*Figure 22.* Estimates of $R_t$ from individual models for each country in Africa with
+*Figure 22.* Estimates of $R_t$ from individual models for each country in South America with
 active transmission (see Methods) for the week starting
 31-05-2020. For countries marked with a *, $R_t$ estimates from two
 models are available (Models 1 and 2). 
