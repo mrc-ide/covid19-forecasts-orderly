@@ -1,18 +1,6 @@
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
 set.seed(1)
 
-report_to_death_distr <- function(mu, std, trunc) {
-  out <- EpiEstim::discr_si(seq(0, trunc), mu, std)
-  out / sum(out)
-}
-
-quantiles_to_df <- function(mat, probs = c(0.025, 0.50, 0.975)) {
-  qntls <- t(apply(mat, 1, quantile, probs = probs, na.rm = TRUE))
-  out <- data.frame(qntls)
-  colnames(out) <- scales::percent(probs, accuracy = 0.1)
-  out
-}
-
 ## -----------------------------------------------------------------------------
 
 week_ending <-  as.Date(week_ending)
@@ -101,68 +89,6 @@ deaths_to_cases_qntls <- purrr::imap_dfr(
     )
     df
   }, .id = "country"
-)
-
-## ---- plotRatioCD-------------------------------------------------------------
-
-f <- which(
-  summary_r$median$dates >= as.Date(c('01/03/2020'),format = '%d/%m/%Y')
-)
-
-results_plot_death_case <- list()
-
-layout(matrix(1:4,2,2))
-for (i in 1:N_geo){
-
-  plot(summary_r$median$dates,summary_r$median[,i+1],lwd = 2,
-       #ylim = c(0,max(a[f,2:4],na.rm=TRUE)),
-       ylim=c(0,1),
-       type='l',
-       xlim = c(as.Date(c('01/03/2020'),format = '%d/%m/%Y'),
-                week_ending+4),
-       bty ='n',
-       main = snakecase::to_any_case(country[i], case = "title"),
-       col = rgb(0,0,1),
-       xlab = '', ylab = 'ratio D to C',
-       xaxt="n")
-  axis(1, at=as.Date(c('2020-03-01','2020-03-15','2020-04-01','2020-04-15','2020-05-01'),format = '%Y-%m-%d'),
-       labels = c('2020-03-01','2020-03-15','2020-04-01','2020-04-15','2020-05-01'),las=1)
-
-  polygon(c(summary_r$median$dates,rev(summary_r$median$dates)),
-          c(summary_r$low[,i+1],rev(summary_r$high[,i+1])),
-          border = NA,
-          col = rgb(0,0,1,0.2))
-  f2 <- which( I$dates %in% summary_r$median$dates)
-
-  f2<-f2[f]
-  inc <- cbind(I[f2-round(mu_delta),i+1],D[f2,i+1])
-  lines(summary_r$median$dates[f],
-        inc[,1]/max(c(inc[,1],inc[,2])),
-        type = 'p', pch=16,col='black')
-
-  lines(summary_r$median$dates[f],
-        inc[,2]/max(c(inc[,1],inc[,2])),
-        type = 'p', pch=16,col='red')
-
-  if(country[i] == "Canada"){
-    legend('topleft',legend = c('ratio','death','reported cases'),bty='n',
-           lwd=c(3,NA,NA),pch=c(NA,16,16),col = c(rgb(0,0,1),rgb(1,0,0),rgb(0,0,0)))
-  }
-
-  temp1 <- data.frame(dates = summary_r$median$dates,
-                     median_ratio = summary_r$median[,i+1],
-                     low_ratio = summary_r$low[,i+1],
-                     up_ratio = summary_r$high[,i+1])
-  temp2 <- data.frame(dates = summary_r$median$dates[f],
-                     I_t_minus_meanDelay = inc[,1],
-                     D_t = inc[,2])
-  temp <- merge(temp1,temp2)
-  results_plot_death_case[[country[i]]] <- temp
-}
-
-saveRDS(
-  object = results_plot_death_case,
-  file =  paste0('DeCa_Std_Ratio_plot_', week_ending,'.rds' )
 )
 
 
@@ -472,37 +398,47 @@ predictions <- purrr::map(
         prob = reporting[,k]
       )
     }
+    d_exp
+  }
+)
+
+t.window <- 10
+r_estim <- purrr::map(
+  countries,
+  function(country) {
+    message(country)
+    pred <- apply(predictions[[country]], 2, median, na.rm = TRUE)
+    obs <- c(abs(ascertainr_cases[[country]]), pred)
+    purrr::map2(
+      input_data$si_mean,
+      input_data$si_std,
+      function(s_mean, s_sd) {
+        si_distr <- gamma_dist_EpiEstim(
+          si_mu = s_mean, si_std = s_sd, SItrunc = 30
+        )
+        res <- estimate_R(
+          obs,
+          method = 'non_parametric_si',
+          config = make_config(
+            list(
+              mean_prior = 1,
+              si_distr = si_distr$dist,
+              t_start = length(obs) - t.window + 1,
+              t_end = length(obs))
+          )
+        )
+        res <- res$R
+        param <- epitrix::gamma_mucv2shapescale(
+          mu = res$`Mean(R)`, cv = res$`Std(R)`/res$`Mean(R)`
+        )
+        rgamma(n = n_post, shape = param$shape, scale = param$scale)
+      }
+    )
   }
 )
 
 
-t.window <- 10
 
-Rt_last <-list()
-for (si in 1:2){
-
-  SI <- gamma_dist_EpiEstim(si_mu =  d$si_mean[si],
-                            si_std  = d$si_std[si],
-                            SItrunc = 30)
-
-
-  for (i in 1:N_geo){
-
-    new_D <- apply(Predictions[[i]][[si]],2,median,na.rm=TRUE)
-    obs <- c(D[,c(i+1)],new_D)
-
-    epi_res <- EpiEstim::estimate_R(obs,method = 'non_parametric_si',
-                                    config = EpiEstim::make_config(list(
-                                      mean_prior = 1,
-                                      si_distr = SI$dist,
-                                      t_start = length(obs)-t.window+1,
-                                      t_end = length(obs))))
-    epi_res <- epi_res$R
-    param <- epitrix::gamma_mucv2shapescale(mu = epi_res$`Mean(R)`,cv = epi_res$`Std(R)`/epi_res$`Mean(R)`)
-
-    Rt_last[[as.character(country[i])]][[si]] <- rgamma(n = n_post, shape = param$shape, scale = param$scale)
-  }
-}
 
 
 
@@ -516,16 +452,27 @@ for (si in 1:2){
 # }
 
 
-Std_results <- list(I_active_transmission = d$I_active_transmission,
-                    D_active_transmission = d$D_active_transmission,
-                    Country = d$Country,
-                    Rt_last = Rt_last,
-                    Predictions = Predictions)
+out <- list(
+  I_active_transmission = input_data$I_active_transmission,
+  D_active_transmission = input_data$D_active_transmission,
+  Country = input_data$Country,
+  Rt_last = r_estim,
+  Predictions = predictions
+)
 
 
 
-saveRDS(object = Std_results,
-        file = paste0('RData/DeCa_Std_results_week_end_',week_ending,'.rds' ))
+saveRDS(
+  object = out,
+  file = paste0('DeCa_Std_results_week_end_',week_ending,'.rds' )
+)
+
+saveRDS(
+  object = out,
+  file = paste0('DeCa_latest.rds' )
+)
+
+
 
 # save.image(file = paste0('RData/Full_results_week_end_',week_ending,'.RData'))
 

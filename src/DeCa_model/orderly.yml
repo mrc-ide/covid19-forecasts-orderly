@@ -4,11 +4,18 @@ environment:
 script: ascertain.R
 
 parameters:
-  week_ending
+  - week_ending
 
 packages:
   - Hmisc
   - EpiEstim
   - binom
+  - ascertainr
+  - purrr
+  - dplyr
+
+sources:
+  - R/utils.R
+  - R/gamma_dist_EpiEstim.R
 
 
