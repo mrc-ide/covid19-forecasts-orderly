@@ -372,11 +372,13 @@ out <- list(
   I_active_transmission = input_data$I_active_transmission,
   D_active_transmission = input_data$D_active_transmission,
   Country = input_data$Country,
-  Rt_last = r_estim,
-  Predictions = predictions
+  Rt_last = list(
+    si_1 = r_estim, si_2 = r_estim
+  ),
+  Predictions = list(
+    si_1 = predictions, si_2 = predictions
+  )
 )
-
-
 
 saveRDS(
   object = out,
