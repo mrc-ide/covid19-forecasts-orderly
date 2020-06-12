@@ -13,6 +13,8 @@ artefacts:
         - wtd_ensb_all_prev_weeks_weekly_qntls.rds
         - wtd_ensb_prev_week.rds
         - wtd_ensb_all_prev_weeks.rds
+        - wtd_rt_prev_week.rds
+        - wtd_rt_all_prev_week.rds
 
 parameters:
   week_ending: 2020-03-15

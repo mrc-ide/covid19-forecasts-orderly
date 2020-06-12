@@ -18,8 +18,12 @@ model_outputs <- purrr::map(
 ## First Level is model, 2nd is country, 3rd is SI.
 idx <- grep(x = names(model_outputs), pattern = week_ending)
 outputs <- purrr::map(model_outputs[idx], ~ .[["Predictions"]])
+rt <- purrr::map(model_outputs[idx], ~ .[["R_last"]])
 names(outputs) <-  sapply(
   names(outputs), function(x) strsplit(x, "_")[[1]][1]
+)
+names(rt) <-  sapply(
+  names(rt), function(x) strsplit(x, "_")[[1]][1]
 )
 
 countries <- names(outputs[[1]])
@@ -156,3 +160,118 @@ saveRDS(
   object = wtd_ensb_all_prev_weeks_weekly_qntls,
   file = "wtd_ensb_all_prev_weeks_weekly_qntls.rds"
 )
+
+
+
+ensemble_model_rt_samples <- purrr::map_dfr(
+  week_ending,
+  function(week) {
+    message("Week is ", week)
+    idx <- grep(x = names(model_outputs), pattern = week)
+    message("Working on models ", names(model_outputs)[idx])
+    outputs <- purrr::map(model_outputs[idx], ~ .[["R_last"]])
+    ## First Level is model, 2nd is country, 3rd is SI.
+    ## TODO pick countries from inout
+    countries <- names(outputs[[2]])
+    names(countries) <- countries
+    purrr::map_dfr(
+      countries,
+      function(country) {
+        ## y is country specific output
+        y <- purrr::map(outputs, ~ .[[country]])
+        ## y has 2 components, one for each SI.
+        ## Determine quantiles
+        y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
+        y_2 <- purrr::map(y, ~ .[[2]]) ## si_2
+        data.frame(
+          si_1 = unlist(y_1),
+          si_2 = unlist(y_2)
+        )
+      },
+      .id = "country"
+    )
+  },
+  .id = "model" ## this is really week ending, but to be able to resue
+  ## prev code, i am calling it model
+)
+
+## r is  a named list
+## weights is a named list
+pool_rt_weighted <- function(r, weights, nsim) {
+  models <- names(weights)
+  n_1 <- sample(
+    x = names(weights), nsim, replace = TRUE, prob = weights
+  )
+  n_1 <- table(n_1)
+  if (!all(models %in% names(n_1))) {
+    idx <- which(!models %in% names(n_1))
+    n_1[[models[idx]]] <- 0
+  }
+  message("Number of times models picked ")
+  message(paste(n_1, collapse = "\n"))
+  purrr::imap(
+    r,
+    function(output, model) {
+      idx <- sample(seq_along(output), size = n_1[[model]])
+      r[idx]
+    }
+  )
+}
+
+wtd_rt_prev_week <- purrr::map(
+  week_ending,
+  function(week) {
+    purrr::map(
+      countries,
+      function(country) {
+        message(country)
+
+        y <- purrr::map(rt, ~ .[[country]])
+
+        y_1 <- purrr::map(y, ~ .[[1]])
+        weights_1 <- weights_prev_week_normalised[[1]]$normalised_wt
+        names(weights_1) <- weights_prev_week_normalised[[1]]$model
+
+        y_2 <- purrr::map(y, ~ .[[2]])
+        weights_2 <- weights_prev_week_normalised[[2]]$normalised_wt
+        names(weights_2) <- weights_prev_week_normalised[[2]]$model
+
+        list(
+          si_1 = pool_rt_weighted(y_1, weights_1, 10000),
+          si_2 = pool_rt_weighted(y_2, weights_2, 10000)
+        )
+      }
+    )
+  }
+)
+
+wtd_rt_all_prev_week <- purrr::map(
+  week_ending,
+  function(week) {
+    purrr::map(
+      countries,
+      function(country) {
+        message(country)
+
+        y <- purrr::map(rt, ~ .[[country]])
+
+        y_1 <- purrr::map(y, ~ .[[1]])
+        weights_1 <- weights_all_prev_weeks_normalised[[1]]$normalised_wt
+        names(weights_1) <- weights_all_prev_weeks_normalised[[1]]$model
+
+        y_2 <- purrr::map(y, ~ .[[2]])
+        weights_2 <- weights_all_prev_weeks_normalised[[2]]$normalised_wt
+        names(weights_2) <- weights_all_prev_weeks_normalised[[2]]$model
+
+        list(
+          si_1 = pool_rt_weighted(y_1, weights_1, 10000),
+          si_2 = pool_rt_weighted(y_2, weights_2, 10000)
+        )
+      }
+    )
+  }
+  )
+
+saveRDS(wtd_rt_prev_week, "wtd_rt_prev_week.rds")
+saveRDS(wtd_rt_all_prev_week, "wtd_rt_all_prev_week.rds")
+
