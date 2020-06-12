@@ -15,13 +15,17 @@ names(output_files) <- gsub(
 ##week_ending <- max(as.Date(params))
 
 output_files <- output_files[grepl(pattern = week_ending, x = names(output_files))]
-message("Processing ", output_files)
+message("Processing ", paste(output_files, collapse = "\n"))
 
 model_outputs <- purrr::map(
   output_files,
   ~ readRDS(paste0(covid_19_path, .))
 )
-
+model_input <- readRDS(
+  glue::glue(
+    "{dirname(covid_19_path)}/model_inputs/data_{week_ending}.rds"
+  )
+)
 ## Filter model outputs from DeCa models to reflect the new
 ## threshold. Needed to be done only once.
 ## outdated <- output_files <- list(
@@ -48,7 +52,7 @@ model_outputs <- purrr::map(
 ##   }
 ## )
 
-model_input <- readRDS("model_input.rds")
+
 
 daily_predictions_qntls <- purrr::imap_dfr(
   model_outputs,
@@ -72,42 +76,42 @@ readr::write_rds(
 
 
 ##purrr::walk2(model_predictions_qntls, outfiles, ~ readr::write_rds(.x, .y))
+dates <-seq(from = as.Date(week_ending) + 1, length.out = 7, by = "1 day")
+## weekly_predictions_qntls <- purrr::map_dfr(
+##   model_outputs,
+##   function(x) {
+##     pred <- x[["Predictions"]]
+##     purrr::imap_dfr(pred, function(y, country) {
+##       message(country)
+##       obs_deaths <- model_input[["D_active_transmission"]][c("dates", country)]
+##       ## We now want deaths observed in the week preceding the one
+##       ## for which we are forecasting.
+##       dates_prev_week <- dates - 7
+##       message("Dates of previous week")
+##       message(paste(dates_prev_week, collapse = ""))
+##       obs_deaths <- obs_deaths[obs_deaths$dates %in% dates_prev_week, ]
+##       if (nrow(obs_deaths) == 0) {
+##         message(
+##           "No observations for dates ", dates, " in ", country
+##         )
+##         obs_deaths <- NA
+##       } else {
+##         obs_deaths <- sum(obs_deaths[[country]])
+##       }
 
-weekly_predictions_qntls <- purrr::map_dfr(
-  model_outputs,
-  function(x) {
-    pred <- x[["Predictions"]]
-    purrr::imap_dfr(pred, function(y, country) {
-      dates <- as.Date(colnames(y[[1]]))
-      obs_deaths <- model_input[["D_active_transmission"]][c("dates", country)]
-      ## We now want deaths observed in the week preceding the one
-      ## for which we are forecasting.
-      dates_prev_week <- dates - 7
-      message("Dates of previous week")
-      message(paste(dates_prev_week, collapse = ""))
-      obs_deaths <- obs_deaths[obs_deaths$dates %in% dates_prev_week, ]
-      if (nrow(obs_deaths) == 0) {
-        message(
-          "No observations for dates ", dates, " in ", country
-        )
-        obs_deaths <- NA
-      } else {
-        obs_deaths <- sum(obs_deaths[[country]])
-      }
+##       weekly_df <- daily_to_weekly(y)
 
-      weekly_df <- daily_to_weekly(y)
+##       weekly_df$observed <- obs_deaths
+##       weekly_df
+##     }, .id = "country")
+##   },
+##   .id = "model"
+## )
 
-      weekly_df$observed <- obs_deaths
-      weekly_df
-    }, .id = "country")
-  },
-  .id = "model"
-)
-
-readr::write_rds(
-    x = weekly_predictions_qntls,
-    path = "weekly_predictions_qntls.rds"
-)
+## readr::write_rds(
+##     x = weekly_predictions_qntls,
+##     path = "weekly_predictions_qntls.rds"
+## )
 
 
 model_rt_qntls <- purrr::map_dfr(

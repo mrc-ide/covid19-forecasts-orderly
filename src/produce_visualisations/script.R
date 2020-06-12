@@ -13,7 +13,11 @@ continents <- continents[, c(
 
 
 ## Observations in tall format
-model_input <- readr::read_rds("model_input.rds")
+model_input <- readRDS(
+  glue::glue(
+  "{dirname(covid_19_path)}/model_inputs/data_{week_ending_vis}.rds"
+  )
+)
 obs_deaths <- model_input [["D_active_transmission"]]
 obs_deaths <- tidyr::gather(
   obs_deaths,
@@ -29,7 +33,9 @@ ensb_pred <- readr::read_rds("ensemble_daily_qntls.rds")
 ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
-exclude <- c("Ecuador", "Cameroon", "United_States_of_America", "Honduras")
+exclude <- c(
+  "Ecuador", "Cameroon", "United_States_of_America", "Honduras", "Sudan", "Guatemala"
+)
 
 ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
 
@@ -291,7 +297,7 @@ purrr::iwalk(
 ###################
 ##### Reporting Trends
 ### col -> column to scale
-x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-05-31.rds")
+x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-06-07.rds")
 x <- x[! names(x) %in% exclude]
 max_deaths <- purrr::map_dfr(x, ~ max(.[["D_t"]]), .id = "country")
 max_deaths <- tidyr::gather(max_deaths, country, max_deaths)

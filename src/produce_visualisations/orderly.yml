@@ -8,7 +8,6 @@ artefacts:
         - ensmbl_pred_Europe_si_2_page_2.png
         - ensmbl_pred_Europe_si_2_page_3.png
         - ensmbl_pred_Europe_si_2_page_4.png
-        - ensmbl_pred_Europe_si_2_page_5.png
         - ensmbl_pred_Asia_si_2_page_1.png
         - ensmbl_pred_Asia_si_2_page_2.png
         - ensmbl_pred_Africa_si_2_page_1.png
@@ -31,6 +30,9 @@ artefacts:
 #        - reporting_ratio_North America_page_2.png
         - reporting_ratio_South America_page_1.png      
 
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
 packages:
   - ggplot2
   - ggpubr
@@ -45,20 +47,24 @@ sources:
 
 resources:
   - country-and-continent-codes-list-csv_csv.csv
-  - DeCa_Std_Ratio_plot_2020-05-31.rds
+  - DeCa_Std_Ratio_plot_2020-06-07.rds
+
+parameters:
+  - week_ending_vis
 
 depends:
   produce_ensemble_outputs:
-    id: "latest"
+    id: latest(parameter:week_ending == week_ending_vis)
     use:
-      ensemble_daily_qntls.rds: ensemble_daily_qntls.rds
       ensemble_model_rt.rds: ensemble_model_rt.rds
       ensemble_model_rt_samples.rds: ensemble_model_rt_samples.rds
+      ensemble_daily_qntls.rds: ensemble_daily_qntls.rds
 
   prepare_ecdc_data:
     id: "latest"
     use:
       model_input.rds: latest_model_input.rds
+      
   process_individual_models:
     id: "latest"
     use:
