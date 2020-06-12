@@ -19,3 +19,15 @@ sources:
   - R/gamma_dist_EpiEstim.R
 
 
+artefacts:
+  data:
+    description: Latest model outputs
+    filenames:
+      - DeCa_latest.rds
+      - weighted_cases.rds
+      - deaths_to_cases_qntls.rds
+      - ascertainment_qntls.rds
+      - episize_before_mu_qntls.rds
+      - episize_after_mu_qntls.rds
+      - cases_augmented.rds
+      - weighted_cases_augm.rds

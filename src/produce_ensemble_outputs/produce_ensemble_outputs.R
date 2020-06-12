@@ -47,27 +47,27 @@ ensemble_daily_qntls <- purrr::map_dfr(
   ensemble_model_predictions,
   function(pred) {
     purrr::map_dfr(
-      pred, ~ extract_predictions_qntls(., probs),
+      pred, function(x) rincewind::extract_predictions_qntls(x, probs),
       .id = "country"
     )
   },
   .id = "proj"
 )
 
-ensemble_weekly_qntls <- purrr::map_dfr(
-  ensemble_model_predictions,
-  function(pred) {
-    purrr::map_dfr(
-      pred,
-      function(x) {
-        message(colnames(x))
-        rincewind::daily_to_weekly(x)
-      },
-      .id = "country"
-    )
-  },
-  .id = "proj"
-)
+## ensemble_weekly_qntls <- purrr::map_dfr(
+##   ensemble_model_predictions,
+##   function(pred) {
+##     purrr::map_dfr(
+##       pred,
+##       function(x) {
+##         message(colnames(x))
+##         rincewind::daily_to_weekly(x)
+##       },
+##       .id = "country"
+##     )
+##   },
+##   .id = "proj"
+## )
 
 
 
@@ -92,10 +92,10 @@ saveRDS(
   file = "ensemble_daily_qntls.rds"
 )
 
-saveRDS(
-  object = ensemble_weekly_qntls,
-  file = "ensemble_weekly_qntls.rds"
-)
+## saveRDS(
+##   object = ensemble_weekly_qntls,
+##   file = "ensemble_weekly_qntls.rds"
+## )
 
 
 ######################################################################
@@ -115,9 +115,6 @@ ensemble_model_rt <- purrr::map_dfr(
     purrr::map_dfr(
       countries,
       function(country) {
-        if (week == "2020-04-12" & country == "United_Kingdom") {
-          outputs <- outputs["sbsm_Std_results_week_end_2020-04-12"]
-        }
 
         ## y is country specific output
         y <- purrr::map(outputs, ~ .[[country]])

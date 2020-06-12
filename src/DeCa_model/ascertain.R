@@ -55,7 +55,7 @@ deaths_to_cases <- purrr::map(
     x <- weighted_cases[[country]]
     deaths <- matrix(ascertainr_deaths[[country]], ncol = 1)
     ascertainr::ratio_deaths_cases(
-       wtd_incid = x, deaths = deaths, nsamples = 10000
+      wtd_incid = x, deaths = deaths, nsamples = 10000
     )
   }
 )
@@ -127,7 +127,7 @@ for (i in 1:(n*n)){
 f <- which(res == min(res))
 params <- c(Shape1[f],Shape2[f])
 
-params
+
 shape <- params
 
 x <- rbeta(n_post,shape1 = params[1],shape2 = params[2])
@@ -329,42 +329,47 @@ predictions <- purrr::map(
         prob = reporting[,k]
       )
     }
-    d_exp
+    colnames(d_exp) <- seq(
+      from = as.Date(week_ending) + 1, length.out = 7, by = "1 day"
+    )
+    list(si_1 = d_exp, si_2 = d_exp)
   }
 )
 
 t.window <- 10
-r_estim <- map2(
-  input_data$si_mean,
-  input_data$si_std,
-  function(s_mean, s_sd) {
-    si_distr <- gamma_dist_EpiEstim(
-      si_mu = s_mean, si_std = s_sd, SItrunc = 30
-    )
-    purrr::map(
+r_estim <- purrr::map(
       countries,
       function(country){
         message(country)
-        pred <- apply(predictions[[country]], 2, median, na.rm = TRUE)
+        pred <- apply(
+          predictions[[country]][[1]], 2, median, na.rm = TRUE
+        )
         obs <- c(abs(ascertainr_cases[[country]]), pred)
-        res <- estimate_R(
-          obs,
-          method = 'non_parametric_si',
-          config = make_config(
-            list(
-              mean_prior = 1,
-              si_distr = si_distr$dist,
-              t_start = length(obs) - t.window + 1,
-              t_end = length(obs))
-          )
-        )
-        res <- res$R
-        param <- epitrix::gamma_mucv2shapescale(
-          mu = res$`Mean(R)`, cv = res$`Std(R)`/res$`Mean(R)`
-        )
-        rgamma(n = n_post, shape = param$shape, scale = param$scale)
-      }
-    )
+        purrr::map2(
+          input_data$si_mean,
+          input_data$si_std,
+          function(s_mean, s_sd) {
+            si_distr <- gamma_dist_EpiEstim(
+              si_mu = s_mean, si_std = s_sd, SItrunc = 30
+            )
+            res <- EpiEstim::estimate_R(
+              obs,
+              method = 'non_parametric_si',
+              config = make_config(
+                list(
+                  mean_prior = 1,
+                  si_distr = si_distr$dist,
+                  t_start = length(obs) - t.window + 1,
+                  t_end = length(obs))
+              )
+            )
+            res <- res$R
+            param <- epitrix::gamma_mucv2shapescale(
+             mu = res$`Mean(R)`, cv = res$`Std(R)`/res$`Mean(R)`
+             )
+            stats::rgamma(n = n_post, shape = param$shape, scale = param$scale)
+         }
+      )
   }
 )
 
@@ -372,10 +377,8 @@ out <- list(
   I_active_transmission = input_data$I_active_transmission,
   D_active_transmission = input_data$D_active_transmission,
   Country = input_data$Country,
-  Rt_last = r_estim,
-  Predictions = list(
-    si_1 = predictions, si_2 = predictions
-  )
+  R_last = r_estim,
+  Predictions = predictions
 )
 
 saveRDS(
@@ -384,8 +387,7 @@ saveRDS(
 )
 
 saveRDS(
-  object = out,
-  file = paste0('DeCa_latest.rds' )
+  object = out, file = paste0('DeCa_latest.rds')
 )
 
 
