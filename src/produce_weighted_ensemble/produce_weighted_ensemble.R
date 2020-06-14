@@ -209,13 +209,14 @@ pool_rt_weighted <- function(r, weights, nsim) {
   }
   message("Number of times models picked ")
   message(paste(n_1, collapse = "\n"))
-  purrr::imap(
+  out <- purrr::imap(
     r,
     function(output, model) {
       idx <- sample(seq_along(output), size = n_1[[model]])
-      r[idx]
+      output[idx]
     }
   )
+  unname(unlist(out))
 }
 
 wtd_rt_prev_week <- purrr::map(
@@ -245,6 +246,26 @@ wtd_rt_prev_week <- purrr::map(
   }
 )
 
+wtd_rt_prev_week_qntl <- purrr::map_depth(
+  wtd_rt_prev_week,
+  3,
+  function(rsamples) {
+    qntls <- quantile(rsamples, probs = probs)
+    tibble::rownames_to_column(
+      data.frame(out2 = qntls), var = "quantile"
+    )
+  }
+)
+wtd_rt_prev_week_qntl <- purrr::map_depth(
+  wtd_rt_prev_week_qntl, 2, ~ dplyr::bind_rows(., .id = "si")
+)
+
+wtd_rt_prev_week_qntl <- purrr::map_dfr(
+  wtd_rt_prev_week_qntl,
+  ~ dplyr::bind_rows(., .id = "country"),
+  .id = "model"
+)
+
 wtd_rt_all_prev_week <- purrr::map(
   week_ending,
   function(week) {
@@ -270,8 +291,31 @@ wtd_rt_all_prev_week <- purrr::map(
       }
     )
   }
-  )
+)
 
+
+wtd_rt_all_prev_week_qntl <- purrr::map_depth(
+  wtd_rt_all_prev_week,
+  3,
+  function(rsamples) {
+    qntls <- quantile(rsamples, probs = probs)
+    tibble::rownames_to_column(
+      data.frame(out2 = qntls), var = "quantile"
+    )
+  }
+)
+wtd_rt_all_prev_week_qntl <- purrr::map_depth(
+  wtd_rt_all_prev_week_qntl, 2, ~ dplyr::bind_rows(., .id = "si")
+)
+
+wtd_rt_all_prev_week_qntl <- purrr::map_dfr(
+  wtd_rt_all_prev_week_qntl,
+  ~ dplyr::bind_rows(., .id = "country"),
+  .id = "model"
+)
+
+saveRDS(wtd_rt_all_prev_week_qntl, "wtd_rt_all_prev_week_qntls.rds")
+saveRDS(wtd_rt_prev_week_qntl, "wtd_rt_prev_week_qntls.rds")
 saveRDS(wtd_rt_prev_week, "wtd_rt_prev_week.rds")
 saveRDS(wtd_rt_all_prev_week, "wtd_rt_all_prev_week.rds")
 

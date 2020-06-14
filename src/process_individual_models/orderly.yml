@@ -57,7 +57,6 @@ artefacts:
       description: Daily and weekly predictions and Rt
       filenames:
         - daily_predictions_qntls.rds
-        - weekly_predictions_qntls.rds
         - model_rt_qntls.rds
         - model_rt_samples.rds
         - week_ending.rds

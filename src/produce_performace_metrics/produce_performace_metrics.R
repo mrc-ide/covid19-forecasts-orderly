@@ -11,6 +11,10 @@ names(output_files) <- gsub(
 model_outputs <- purrr::map(output_files, ~ readRDS(paste0(covid_19_path, .)))
 
 model_input <- readRDS("model_input.rds")
+## Czech_Republic is the same as Czechia
+model_input$Czech_Republic <- model_input$Czechia
+
+
 
 model_predictions_error <- purrr::imap_dfr(
   model_outputs,
@@ -84,11 +88,14 @@ wtd_all_prev_weeks <- purrr::map(
 unwtd_pred_error <- purrr::imap_dfr(
   unweighted,
   function(x, model) {
-    message(model)
+    message("########################################")
+    message("####################", model, "####################")
+    message("########################################")
     pred <- x[[1]]
     purrr::imap_dfr(
       pred,
       function(y, cntry) {
+        message(cntry)
         names(y) <- c("si_1", "si_2")
         out <- purrr::map_dfr(
           y,
@@ -130,8 +137,6 @@ wtd_prev_week_error <- purrr::imap_dfr(
             out <- all_metrics(obs, y_si)
             out$date <- dates2
             out
-
-
           }, .id = "si"
         )
       }, .id = "country"
@@ -159,15 +164,12 @@ wtd_all_prev_weeks_error <- purrr::imap_dfr(
             out <- all_metrics(obs, y_si)
             out$date <- dates2
             out
-
           }, .id = "si"
         )
       }, .id = "country"
     )
   }, .id = "model"
 )
-
-
 
 readr::write_csv(
   x = model_predictions_error, path = "model_predictions_error.csv"

@@ -173,7 +173,7 @@ ensemble_model_rt_samples <- purrr::map_dfr(
         ## y has 2 components, one for each SI.
         ## Determine quantiles
         y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
-        y_2 <- purrr::map(y, ~ .[[2]]) ## si_1
+        y_2 <- purrr::map(y, ~ .[[2]]) ## si_2
         data.frame(
           si_1 = unlist(y_1),
           si_2 = unlist(y_2)

@@ -1,4 +1,4 @@
-week_finishing <- "2020-05-31"
+week_finishing <- "2020-06-07"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -126,13 +126,28 @@ cases_avg <- round(
 raw_data$Cases[raw_data$DateRep == "2020-05-25" & raw_data$`Countries.and.territories` == "Spain"] <- cases_avg
 raw_data$Deaths[raw_data$DateRep == "2020-05-25" & raw_data$`Countries.and.territories` == "Spain"] <- deaths_avg
 
+## Update 07-06-2020: This is now present in ECDC data
+## spain_extra <- data.frame(
+##   DateRep = "2020-05-31",
+##   day = 31,
+##   month = 5,
+##   year = 2020,
+##   Cases = 201,
+##   Deaths = 2,
+##   `Countries.and.territories` = "Spain",
+##   geoId = "ES",
+##   countryterritoryCode = "ESP",
+##   popData2018 = 46723749,
+##   continent = "Europe"
+## )
+
 spain_extra <- data.frame(
-  DateRep = "2020-05-31",
-  day = 31,
-  month = 5,
+  DateRep = "2020-06-07",
+  day = 7,
+  month = 6,
   year = 2020,
-  Cases = 201,
-  Deaths = 2,
+  Cases = 240,
+  Deaths = 1,
   `Countries.and.territories` = "Spain",
   geoId = "ES",
   countryterritoryCode = "ESP",
@@ -151,6 +166,20 @@ raw_data$Deaths[raw_data$DateRep == "2020-05-28" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2020-05-29" & raw_data$`Countries.and.territories` == "Ukraine"] <- 11
 raw_data$Deaths[raw_data$DateRep == "2020-05-30" & raw_data$`Countries.and.territories` == "Ukraine"] <- 10
 raw_data$Deaths[raw_data$DateRep == "2020-05-31" & raw_data$`Countries.and.territories` == "Ukraine"] <- 17
+
+
+## Brazil: 06th and 07th from worldometers
+raw_data$Deaths[raw_data$DateRep == "2020-06-06" & raw_data$`Countries.and.territories` == "Brazil"] <- 910
+raw_data$Deaths[raw_data$DateRep == "2020-06-07" & raw_data$`Countries.and.territories` == "Brazil"] <- 542
+
+## Panama: ECDC has -ve deaths
+raw_data$Deaths[raw_data$DateRep == "2020-06-03" & raw_data$`Countries.and.territories` == "Panama"] <- 8
+raw_data$Deaths[raw_data$DateRep == "2020-06-04" & raw_data$`Countries.and.territories` == "Panama"] <- 5
+
+## Peru. 4th June has 260 deaths, which seems to be a sum of deaths on
+## 3rd and 4th
+raw_data$Deaths[raw_data$DateRep == "2020-06-03" & raw_data$`Countries.and.territories` == "Peru"] <- 127
+raw_data$Deaths[raw_data$DateRep == "2020-06-04" & raw_data$`Countries.and.territories` == "Peru"] <- 137
 
 ## uk_extra <- data.frame(
 ##   DateRep = "2020-05-24",
