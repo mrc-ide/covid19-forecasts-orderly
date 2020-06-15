@@ -2,6 +2,7 @@
 x <- list(
   script = "collate_model_outputs.R",
   artefacts = list(
+    data = list(
     description = "Collated model outputs (quantiles)",
     filenames = c(
       "unweighted_qntls.rds", "wtd_prev_week_qntls.rds",
@@ -10,8 +11,9 @@ x <- list(
       "wtd_prev_week_rt_samples.rds", "wtd_all_prev_week_rt_samples.rds",
       "unwtd_rt_samples.rds"
     )
-  ),
-  packages = c("dplyr", "tidyr")
+  )
+ ),
+ packages = c("dplyr", "tidyr")
 )
 
 wtd_weeks <- list(
@@ -26,42 +28,34 @@ unwtd_weeks <- list(
   "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07"
 )
 
-dependancies <- vector(
-  mode = "list", length = length(wtd_weeks) + length(unwtd_weeks)
-)
-
-for (idx in seq_along(wtd_weeks)) {
-  week <- wtd_weeks[[idx]]
+dependancies <- purrr::map(
+  wtd_weeks,
+  function(week) {
   y <- list(
     produce_weighted_ensemble = list(
       id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-      use = list(
-        "wtd_ensb_prev_week_daily_qntls.rds",
-        "wtd_ensb_all_prev_weeks_daily_qntls.rds",
-        "wtd_rt_prev_week.rds",
-        "wtd_rt_all_prev_week.rds",
-        "wtd_rt_prev_week_qntls.rds",
-        "wtd_rt_all_prev_week_qntls.rds"
+      use =  list(
+      "wtd_ensb_prev_week_daily_qntls.rds",
+      "wtd_ensb_all_prev_weeks_daily_qntls.rds",
+      "wtd_rt_prev_week.rds",
+      "wtd_rt_all_prev_week.rds",
+      "wtd_rt_prev_week_qntls.rds",
+      "wtd_rt_all_prev_week_qntls.rds"
       )
     )
-  )
-  infiles <- purrr::map(
-    y$produce_weighted_ensemble$use,
-    function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
-  )
+   )
+    infiles <- purrr::map(
+      y$produce_weighted_ensemble$use,
+      function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
+    )
+    names(y$produce_weighted_ensemble$use) <- glue::glue("{infiles}_{week}.rds")
+    y
+ }
+)
 
-  names(y$produce_weighted_ensemble$use) <- glue(
-    "{infiles}_{week}.rds"
-  )
-  dependancies[[idx]] <- y
-}
-
-indices <- seq_along(unwtd_weeks)
-
-
-for (idx in  indices) {
-  message(idx)
-  week <- unwtd_weeks[[idx]]
+dependancies2 <- purrr::map(
+  unwtd_weeks,
+  function(week) {
   y <- list(
     produce_ensemble_outputs = list(
       id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
@@ -76,12 +70,28 @@ for (idx in  indices) {
     y$produce_ensemble_outputs$use,
     function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
   )
-
-  names(y$produce_ensemble_outputs$use) <- glue(
+  names(y$produce_ensemble_outputs$use) <- glue::glue(
     "unwtd_{infiles}_{week}.rds"
   )
-  dependancies[[idx]] <- y
-}
+  y
+ }
+)
 
-x$depends <- dependancies
-yaml::write_yaml(x, "src/collate_model_outputs/orderly.yml")
+prepare_ecdc_data <- list(
+  prepare_ecdc_data = list(
+  id = "latest",
+  use = list(
+    `model_input.rds` = "model_input.rds"
+  )
+)
+)
+
+x$depends <- list(
+  dependancies,
+  dependancies2,
+  prepare_ecdc_data
+)
+
+con <- file("src/collate_model_outputs/orderly.yml", "w")
+yaml::write_yaml(x, con)
+close(con)
