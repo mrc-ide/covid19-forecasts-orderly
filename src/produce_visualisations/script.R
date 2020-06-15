@@ -13,7 +13,11 @@ continents <- continents[, c(
 
 
 ## Observations in tall format
-model_input <- readr::read_rds("model_input.rds")
+model_input <- readRDS(
+  glue::glue(
+  "{dirname(covid_19_path)}/model_inputs/data_{week_ending_vis}.rds"
+  )
+)
 obs_deaths <- model_input [["D_active_transmission"]]
 obs_deaths <- tidyr::gather(
   obs_deaths,
@@ -29,12 +33,16 @@ ensb_pred <- readr::read_rds("ensemble_daily_qntls.rds")
 ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
+exclude <- c(
+  "Ecuador", "Cameroon", "United_States_of_America", "Honduras", "Sudan", "Guatemala"
+)
 
+ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
 
 ## Read in the model specific outputs here so that we can construct
 ## nice names
 daily_predictions_qntls <- readRDS("daily_predictions_qntls.rds")
-
+daily_predictions_qntls <- daily_predictions_qntls[! daily_predictions_qntls$country %in% exclude, ]
 daily_predictions_qntls <- tidyr::separate(
   daily_predictions_qntls,
   col = "model",
@@ -198,6 +206,7 @@ purrr::iwalk(
 
 ## Model Rt quantiles
 ensemble_rt <- readRDS("ensemble_model_rt.rds")
+ensemble_rt <- ensemble_rt[! ensemble_rt$country %in% exclude,]
 ### For ensemble plots, need to split by date
 ###
 ensemble_rt_wide <- tidyr::spread(
@@ -234,6 +243,7 @@ purrr::iwalk(
 
 
 model_rt <- readRDS("model_rt_qntls.rds")
+model_rt <- model_rt[! model_rt$country %in% exclude,]
 model_rt$model <- gsub(
   x = model_rt$model,
   pattern = "Std_results_week_end_",
@@ -287,8 +297,8 @@ purrr::iwalk(
 ###################
 ##### Reporting Trends
 ### col -> column to scale
-x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-05-10.rds")
-x <- x[! names(x) %in% c("Cameroon", "Ecuador")]
+x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-06-07.rds")
+x <- x[! names(x) %in% exclude]
 max_deaths <- purrr::map_dfr(x, ~ max(.[["D_t"]]), .id = "country")
 max_deaths <- tidyr::gather(max_deaths, country, max_deaths)
 
@@ -387,33 +397,33 @@ plots <- split(x, x$continent_name) %>%
 
 
 
-plots <- purrr::imap(
-  by_continent_si,
-  function(pred, y) {
-    pred$date <- as.Date(pred$date)
-    obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
-    obs <- dplyr::rename(obs, date = "dates")
-    df <- dplyr::left_join(pred, obs)
-    df <- dplyr::filter(df, date >= "2020-03-01")
-    p <- ggplot(df) +
-      geom_point(aes(date, deaths), col = "black") +
-      geom_ribbon(
-        aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3
-      ) +
-      geom_ribbon(
-        aes(x = date, ymin = `25%`, ymax = `75%`), alpha = 0.5
-      ) + geom_line(
-            aes(x = date, y = `50%`)
-          ) +
-      facet_wrap(~country, ncol = 2, scales = "free_y")
-    outfile <- glue::glue("ensemble_predictions_{y}.html")
-    widget <- ggplotly(p)
-    saveWidget(
-      widget = widget,
-      file = outfile,
-      selfcontained = FALSE,
-      libdir = "lib"
-    )
+## plots <- purrr::imap(
+##   by_continent_si,
+##   function(pred, y) {
+##     pred$date <- as.Date(pred$date)
+##     obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
+##     obs <- dplyr::rename(obs, date = "dates")
+##     df <- dplyr::left_join(pred, obs)
+##     df <- dplyr::filter(df, date >= "2020-03-01")
+##     p <- ggplot(df) +
+##       geom_point(aes(date, deaths), col = "black") +
+##       geom_ribbon(
+##         aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3
+##       ) +
+##       geom_ribbon(
+##         aes(x = date, ymin = `25%`, ymax = `75%`), alpha = 0.5
+##       ) + geom_line(
+##             aes(x = date, y = `50%`)
+##           ) +
+##       facet_wrap(~country, ncol = 2, scales = "free_y")
+##     outfile <- glue::glue("ensemble_predictions_{y}.html")
+##     widget <- ggplotly(p)
+##     saveWidget(
+##       widget = widget,
+##       file = outfile,
+##       selfcontained = FALSE,
+##       libdir = "lib"
+##     )
 
-  }
-)
+##   }
+## )

@@ -5,7 +5,9 @@ artefacts:
       description: Maps of median projected deaths for the week of the report
       filenames:
         - median_deaths_si_1.png
-        - median_deaths_si_2.png        
+        - median_deaths_si_2.png
+        - rt_phase_si_2.png
+        
 sources:
   - R/utils.R
 

@@ -1,4 +1,4 @@
-week_finishing <- "2020-05-10"
+week_finishing <- "2020-06-07"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -21,6 +21,9 @@ raw_data$Deaths[raw_data$DateRep == "2020-05-02" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Ireland"] <- 21
 raw_data$Deaths[raw_data$DateRep == "2020-04-27" & raw_data$`Countries.and.territories` == "Spain"] <- 331
 raw_data$Deaths[raw_data$DateRep == "2020-04-28" & raw_data$`Countries.and.territories` == "Spain"] <- 301
+raw_data$Deaths[raw_data$DateRep == "2020-05-22" & raw_data$`Countries.and.territories` == "Spain"] <- 53
+raw_data$Deaths[raw_data$DateRep == "2020-05-16" & raw_data$`Countries.and.territories` == "Afghanistan"] <- 17
+raw_data$Deaths[raw_data$DateRep == "2020-05-17" & raw_data$`Countries.and.territories` == "Afghanistan"] <- 15
 ##raw_data$Deaths[raw_data$DateRep == "2020-05-02" & raw_data$`Countries.and.territories` == "Spain"] <- 276
 ##raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Spain"] <- 164
 
@@ -40,20 +43,20 @@ raw_data$Deaths[raw_data$DateRep == "2020-04-28" & raw_data$`Countries.and.terri
 ## )
 ## raw_data <- rbind(raw_data, spain_extra)
 
-spain_extra <- data.frame(
-  DateRep = "2020-05-10",
-  day = 10,
-  month = 5,
-  year = 2020,
-  Cases = 1880,
-  Deaths = 143,
-  `Countries.and.territories` = "Spain",
-  geoId = "ES",
-  countryterritoryCode = "ESP",
-  popData2018 = 46723749,
-  continent = "Europe"
-)
-raw_data <- rbind(raw_data, spain_extra)
+## spain_extra <- data.frame(
+##   DateRep = "2020-05-10",
+##   day = 10,
+##   month = 5,
+##   year = 2020,
+##   Cases = 1880,
+##   Deaths = 143,
+##   `Countries.and.territories` = "Spain",
+##   geoId = "ES",
+##   countryterritoryCode = "ESP",
+##   popData2018 = 46723749,
+##   continent = "Europe"
+## )
+## raw_data <- rbind(raw_data, spain_extra)
 
 
 ## spain_extra <- data.frame(
@@ -70,6 +73,130 @@ raw_data <- rbind(raw_data, spain_extra)
 ##   continent = "Europe"
 ## )
 ## raw_data <- rbind(raw_data, spain_extra)
+
+## spain_extra <- data.frame(
+##   DateRep = "2020-05-17",
+##   day = 17,
+##   month = 5,
+##   year = 2020,
+##   Cases = 1214,
+##   Deaths = 87,
+##   `Countries.and.territories` = "Spain",
+##   geoId = "ES",
+##   countryterritoryCode = "ESP",
+##   popData2018 = 46723749,
+##   continent = "Europe"
+## )
+
+## spain_extra <- data.frame(
+##   DateRep = "2020-05-24",
+##   day = 24,
+##   month = 5,
+##   year = 2020,
+##   Cases = 482,
+##   Deaths = 74,
+##   `Countries.and.territories` = "Spain",
+##   geoId = "ES",
+##   countryterritoryCode = "ESP",
+##   popData2018 = 46723749,
+##   continent = "Europe"
+## )
+
+## Spain reports -1918 deaths and -373 cases on 25th May.
+## Fixing it to a average of cases/deaths from 22nd to 24th May and
+## 26th to 28th.
+dates_of_interest <- as.Date(c(
+  "2020-05-22", "2020-05-23", "2020-05-24",
+  "2020-05-26", "2020-05-27", "2020-05-28"
+))
+
+deaths_avg <- round(
+  mean(
+    raw_data$Deaths[raw_data$DateRep %in% dates_of_interest &
+                    raw_data$`Countries.and.territories` == "Spain"]
+  )
+)
+
+cases_avg <- round(
+  mean(
+    raw_data$Cases[raw_data$DateRep %in% dates_of_interest &
+                    raw_data$`Countries.and.territories` == "Spain"]
+  )
+)
+raw_data$Cases[raw_data$DateRep == "2020-05-25" & raw_data$`Countries.and.territories` == "Spain"] <- cases_avg
+raw_data$Deaths[raw_data$DateRep == "2020-05-25" & raw_data$`Countries.and.territories` == "Spain"] <- deaths_avg
+
+## Update 07-06-2020: This is now present in ECDC data
+## spain_extra <- data.frame(
+##   DateRep = "2020-05-31",
+##   day = 31,
+##   month = 5,
+##   year = 2020,
+##   Cases = 201,
+##   Deaths = 2,
+##   `Countries.and.territories` = "Spain",
+##   geoId = "ES",
+##   countryterritoryCode = "ESP",
+##   popData2018 = 46723749,
+##   continent = "Europe"
+## )
+
+spain_extra <- data.frame(
+  DateRep = "2020-06-07",
+  day = 7,
+  month = 6,
+  year = 2020,
+  Cases = 240,
+  Deaths = 1,
+  `Countries.and.territories` = "Spain",
+  geoId = "ES",
+  countryterritoryCode = "ESP",
+  popData2018 = 46723749,
+  continent = "Europe"
+)
+
+raw_data <- rbind(raw_data, spain_extra)
+
+## Corrections for Turkey
+raw_data$Deaths[raw_data$DateRep == "2020-05-28" & raw_data$`Countries.and.territories` == "Turkey"] <- 34
+raw_data$Deaths[raw_data$DateRep == "2020-05-29" & raw_data$`Countries.and.territories` == "Turkey"] <- 30
+
+## Corrections for Ukraine
+raw_data$Deaths[raw_data$DateRep == "2020-05-28" & raw_data$`Countries.and.territories` == "Ukraine"] <- 14
+raw_data$Deaths[raw_data$DateRep == "2020-05-29" & raw_data$`Countries.and.territories` == "Ukraine"] <- 11
+raw_data$Deaths[raw_data$DateRep == "2020-05-30" & raw_data$`Countries.and.territories` == "Ukraine"] <- 10
+raw_data$Deaths[raw_data$DateRep == "2020-05-31" & raw_data$`Countries.and.territories` == "Ukraine"] <- 17
+
+
+## Brazil: 06th and 07th from worldometers
+raw_data$Deaths[raw_data$DateRep == "2020-06-06" & raw_data$`Countries.and.territories` == "Brazil"] <- 910
+raw_data$Deaths[raw_data$DateRep == "2020-06-07" & raw_data$`Countries.and.territories` == "Brazil"] <- 542
+
+## Panama: ECDC has -ve deaths
+raw_data$Deaths[raw_data$DateRep == "2020-06-03" & raw_data$`Countries.and.territories` == "Panama"] <- 8
+raw_data$Deaths[raw_data$DateRep == "2020-06-04" & raw_data$`Countries.and.territories` == "Panama"] <- 5
+
+## Peru. 4th June has 260 deaths, which seems to be a sum of deaths on
+## 3rd and 4th
+raw_data$Deaths[raw_data$DateRep == "2020-06-03" & raw_data$`Countries.and.territories` == "Peru"] <- 127
+raw_data$Deaths[raw_data$DateRep == "2020-06-04" & raw_data$`Countries.and.territories` == "Peru"] <- 137
+
+## uk_extra <- data.frame(
+##   DateRep = "2020-05-24",
+##   day = 24,
+##   month = 5,
+##   year = 2020,
+##   Cases = 0,
+##   Deaths = 282,
+##   `Countries.and.territories` = "United_Kingdom",
+##   geoId = "GB",
+##   countryterritoryCode = "GBR",
+##   popData2018 = 66488991,
+##   continent = "Europe"
+## )
+## raw_data <- rbind(raw_data, uk_extra)
+
+
 ## 27th April: Ireland manually fixed in the csv.
 ## ECDC Reported 234 deaths on 2020-04-26
 ## which was a massive jump from 35 reported on 2020-04-25.

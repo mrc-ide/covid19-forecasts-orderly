@@ -47,7 +47,6 @@ f <- function(outputs, country, weights) {
   y_1 <- purrr::map(y, ~ .[[1]])
   y_2 <- purrr::map(y, ~ .[[2]])
   weights <- purrr::map(weights, df_to_list)
-  saveRDS(weights, glue::glue("weights_{country}.rds"))
   out <-  list(
     si_1 = pool_predictions_weighted(y_1, weights$si_1),
     si_2 = pool_predictions_weighted(y_2, weights$si_2)
