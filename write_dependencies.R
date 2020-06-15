@@ -1,3 +1,4 @@
+## Generate orderly.yml for collate_model_outputs
 x <- list(
   script = "collate_model_outputs.R",
   artefacts = list(
