@@ -539,7 +539,7 @@ Combine results:
 Std_results <- list(I_active_transmission = d$I_active_transmission,
                     D_active_transmission = d$D_active_transmission,
                     Country = d$Country,
-                    Rt_last = Rt_last,
+                    R_last = Rt_last,
                     Predictions = Predictions)
 
 
