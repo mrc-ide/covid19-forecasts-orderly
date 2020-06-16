@@ -1,19 +1,21 @@
 ## Generate orderly.yml for collate_model_outputs
 x <- list(
-  script = "collate_model_outputs.R",
+  script = "produce_performace_metrics.R",
+  environment = list(covid_19_path = "COVID19_INPUT_PATH"),
+  sources = c("R/utils.R"),
+  parameters = "exclude",
   artefacts = list(
     data = list(
-    description = "Collated model outputs (quantiles)",
+    description = "Model performance metrics",
     filenames = c(
-      "unweighted_qntls.rds", "wtd_prev_week_qntls.rds",
-      "wtd_all_prev_weeks_qntls.rds", "unweighted_rt_qntls.rds",
-      "wtd_prev_week_rt_qntls.rds", "wtd_rt_all_prev_week_qntls.rds",
-      "wtd_prev_week_rt_samples.rds", "wtd_all_prev_week_rt_samples.rds",
-      "unwtd_rt_samples.rds"
+      "model_predictions_error.csv",
+      "wtd_all_prev_weeks_error.csv",
+      "wtd_prev_week_error.csv",
+      "unwtd_pred_error.csv"
     )
   )
  ),
- packages = c("dplyr", "tidyr")
+ packages = c("dplyr", "tidyr", "assessr")
 )
 
 wtd_weeks <- list(
@@ -35,12 +37,8 @@ dependancies <- purrr::map(
     produce_weighted_ensemble = list(
       id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
       use =  list(
-      "wtd_ensb_prev_week_daily_qntls.rds",
-      "wtd_ensb_all_prev_weeks_daily_qntls.rds",
-      "wtd_rt_prev_week.rds",
-      "wtd_rt_all_prev_week.rds",
-      "wtd_rt_prev_week_qntls.rds",
-      "wtd_rt_all_prev_week_qntls.rds"
+      "wtd_ensb_prev_week.rds",
+      "wtd_ensb_all_prev_weeks.rds"
       )
     )
    )
@@ -59,11 +57,7 @@ dependancies2 <- purrr::map(
   y <- list(
     produce_ensemble_outputs = list(
       id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-      use = list(
-        "ensemble_daily_qntls.rds",
-        "ensemble_model_rt.rds",
-        "ensemble_model_rt_samples.rds"
-      )
+      use = list("ensemble_model_predictions.rds")
     )
   )
   infiles <- purrr::map(
@@ -92,6 +86,6 @@ x$depends <- list(
   prepare_ecdc_data
 )
 
-con <- file("src/collate_model_outputs/orderly.yml", "w")
+con <- file("src/produce_performace_metrics/orderly.yml", "w")
 yaml::write_yaml(x, con)
 close(con)
