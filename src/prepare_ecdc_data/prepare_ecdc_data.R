@@ -1,4 +1,4 @@
-week_finishing <- "2020-06-07"
+week_finishing <- "2020-06-14"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -141,21 +141,21 @@ raw_data$Deaths[raw_data$DateRep == "2020-05-25" & raw_data$`Countries.and.terri
 ##   continent = "Europe"
 ## )
 
-spain_extra <- data.frame(
-  DateRep = "2020-06-07",
-  day = 7,
-  month = 6,
-  year = 2020,
-  Cases = 240,
-  Deaths = 1,
-  `Countries.and.territories` = "Spain",
-  geoId = "ES",
-  countryterritoryCode = "ESP",
-  popData2018 = 46723749,
-  continent = "Europe"
-)
+## spain_extra <- data.frame(
+##   DateRep = "2020-06-07",
+##   day = 7,
+##   month = 6,
+##   year = 2020,
+##   Cases = 240,
+##   Deaths = 1,
+##   `Countries.and.territories` = "Spain",
+##   geoId = "ES",
+##   countryterritoryCode = "ESP",
+##   popData2018 = 46723749,
+##   continent = "Europe"
+## )
 
-raw_data <- rbind(raw_data, spain_extra)
+## raw_data <- rbind(raw_data, spain_extra)
 
 ## Corrections for Turkey
 raw_data$Deaths[raw_data$DateRep == "2020-05-28" & raw_data$`Countries.and.territories` == "Turkey"] <- 34
@@ -180,6 +180,13 @@ raw_data$Deaths[raw_data$DateRep == "2020-06-04" & raw_data$`Countries.and.terri
 ## 3rd and 4th
 raw_data$Deaths[raw_data$DateRep == "2020-06-03" & raw_data$`Countries.and.territories` == "Peru"] <- 127
 raw_data$Deaths[raw_data$DateRep == "2020-06-04" & raw_data$`Countries.and.territories` == "Peru"] <- 137
+
+## 15th June 2020. Colombia mismatch
+raw_data$Deaths[raw_data$DateRep == "2020-06-12" & raw_data$`Countries.and.territories` == "Colombia"] <- 55
+raw_data$Deaths[raw_data$DateRep == "2020-06-13" & raw_data$`Countries.and.territories` == "Colombia"] <- 57
+raw_data$Cases[raw_data$DateRep == "2020-06-12" & raw_data$`Countries.and.territories` == "Colombia"] <- 1530
+raw_data$Cases[raw_data$DateRep == "2020-06-13" & raw_data$`Countries.and.territories` == "Colombia"] <- 1646
+
 
 ## uk_extra <- data.frame(
 ##   DateRep = "2020-05-24",

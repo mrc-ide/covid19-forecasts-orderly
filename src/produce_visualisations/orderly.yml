@@ -47,18 +47,18 @@ sources:
 
 resources:
   - country-and-continent-codes-list-csv_csv.csv
-  - DeCa_Std_Ratio_plot_2020-06-07.rds
+  - DeCa_Std_Ratio_plot_2020-06-14.rds
 
 parameters:
   - week_ending_vis
 
 depends:
-  produce_weighted_ensemble:
+  produce_ensemble_outputs:
     id: latest(parameter:week_ending == week_ending_vis)
     use:
-      ensemble_model_rt.rds: wtd_rt_prev_week_qntls.rds
-      ensemble_model_rt_samples.rds: wtd_rt_prev_week.rds
-      ensemble_daily_qntls.rds: wtd_ensb_prev_week_daily_qntls.rds
+      ensemble_model_rt.rds: ensemble_model_rt.rds
+      ensemble_model_rt_samples.rds: ensemble_model_rt_samples.rds
+      ensemble_daily_qntls.rds: ensemble_daily_qntls.rds
 
   prepare_ecdc_data:
     id: "latest"

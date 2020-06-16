@@ -11,9 +11,10 @@ artefacts:
         - ensemble_daily_qntls.rds
         - ensemble_model_rt_samples.rds
         - ensemble_model_rt.rds
+        - ensemble_weekly_qntls.rds
 
 parameters:
-  week_ending: 2020-03-15
+  week_ending
 
 packages:
   - purrr

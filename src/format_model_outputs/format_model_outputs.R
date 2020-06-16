@@ -1,4 +1,4 @@
-## Model 1 Rt Estimates
+##Model 1 Rt Estimates
 model_rt_qntls <- readRDS("model_rt_qntls.rds")
 
 model_rt_qntls <- tidyr::spread(model_rt_qntls,

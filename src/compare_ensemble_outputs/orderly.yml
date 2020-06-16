@@ -2,11 +2,9 @@ script: compare_ensemble_outputs.R
 
 artefacts:
   data:
-    description: Model performance metrics
+    description: Forecast comparisons
     filenames:
-      - unwtd_pred_metrics.tiff
-      - wtd_prev_week_metrics.tiff
-      - wtd_all_prev_weeks_metrics.tiff
+      - main_forecasts_comparison.tiff
   
 packages:
   - dplyr
@@ -32,11 +30,10 @@ depends:
         unweighted_qntls.rds: unweighted_qntls.rds
         wtd_prev_week_qntls.rds: wtd_prev_week_qntls.rds
         wtd_all_prev_weeks_qntls.rds: wtd_all_prev_weeks_qntls.rds
-
-  - produce_performace_metrics:
-      id: latest
-      use:
-        model_predictions_error.csv: model_predictions_error.csv
-        wtd_all_prev_weeks_error.csv: wtd_all_prev_weeks_error.csv
-        wtd_prev_week_error.csv: wtd_prev_week_error.csv
-        unwtd_pred_error.csv: unwtd_pred_error.csv
+        unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
+        wtd_prev_week_rt_qntls.rds: wtd_prev_week_rt_qntls.rds
+        wtd_rt_all_prev_week_qntls.rds: wtd_rt_all_prev_week_qntls.rds
+        unwtd_rt_samples.rds: unwtd_rt_samples.rds
+        wtd_all_prev_week_rt_samples.rds: wtd_all_prev_week_rt_samples.rds
+        wtd_prev_week_rt_samples.rds: wtd_prev_week_rt_samples.rds
+       

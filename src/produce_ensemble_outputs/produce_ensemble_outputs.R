@@ -54,20 +54,20 @@ ensemble_daily_qntls <- purrr::map_dfr(
   .id = "proj"
 )
 
-## ensemble_weekly_qntls <- purrr::map_dfr(
-##   ensemble_model_predictions,
-##   function(pred) {
-##     purrr::map_dfr(
-##       pred,
-##       function(x) {
-##         message(colnames(x))
-##         rincewind::daily_to_weekly(x)
-##       },
-##       .id = "country"
-##     )
-##   },
-##   .id = "proj"
-## )
+ensemble_weekly_qntls <- purrr::map_dfr(
+  ensemble_model_predictions,
+  function(pred) {
+    purrr::map_dfr(
+      pred,
+      function(x) {
+        message(colnames(x))
+        rincewind::daily_to_weekly(x)
+      },
+      .id = "country"
+    )
+  },
+  .id = "proj"
+)
 
 
 
@@ -92,10 +92,10 @@ saveRDS(
   file = "ensemble_daily_qntls.rds"
 )
 
-## saveRDS(
-##   object = ensemble_weekly_qntls,
-##   file = "ensemble_weekly_qntls.rds"
-## )
+saveRDS(
+  object = ensemble_weekly_qntls,
+  file = "ensemble_weekly_qntls.rds"
+)
 
 
 ######################################################################

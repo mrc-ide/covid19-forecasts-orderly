@@ -1,0 +1,41 @@
+script: perf_metrics_vis.R
+
+artefacts:
+  data:
+    description: Model performance metrics
+    filenames:
+      - unwtd_pred_metrics.tiff
+      - wtd_prev_week_metrics.tiff
+      - wtd_all_prev_weeks_metrics.tiff
+  
+packages:
+  - dplyr
+  - tidyr
+  - ggplot2
+  - ggpubr
+  - ggforce
+  - snakecase
+  - glue
+  - cowplot
+
+## use_si should be one of si_1 or si_2
+parameters:
+  - use_si
+
+sources:
+  - R/utils.R
+  
+depends:
+  - produce_performace_metrics:
+      id: latest
+      use:
+        model_predictions_error.csv: model_predictions_error.csv
+        wtd_all_prev_weeks_error.csv: wtd_all_prev_weeks_error.csv
+        wtd_prev_week_error.csv: wtd_prev_week_error.csv
+        unwtd_pred_error.csv: unwtd_pred_error.csv
+        
+  - prepare_ecdc_data:
+      id: latest
+      use:
+        model_input.rds: latest_deaths_wide_no_filter.rds        
+

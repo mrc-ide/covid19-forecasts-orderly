@@ -1,30 +1,3 @@
-# This is an example orderly configuration file - edit it to suit your
-# needs.  The fields "data", "script" and "artefacts" are the only
-# ones required (plus whatever your project lists in the root
-# configuration) so they are listed first here.  After that optional
-# fields are listed.  The order does not matter so reorder to suit
-# yourself.
-#
-# The "data" section will typically contain one or more fields with
-# the name corresponding to an R object you want and the value
-# corresponding to the SQL query to pull that data from the database.
-# You can use a filename instead of an inline query.  Run queries to
-# multiple lines using the `>-` yaml syntax.
-#
-#     data:
-#       dat: SELECT field1, field2 FROM table
-#       more: >-
-#         SELECT field1, field2
-#           FROM table1 JOIN table2
-#             ON table1.id = table2.fk
-#       another: from_file.sql
-#
-# If you are writing a report that uses only artefacts from other
-# reports, the data field can be empty, as:
-#
-#     data: ~
-#
-# but it must still exist.
 data: ~
 
 environment:
@@ -60,6 +33,7 @@ artefacts:
         - model_rt_qntls.rds
         - model_rt_samples.rds
         - week_ending.rds
+        - weekly_predictions_qntls.rds
 
 # An optional name to describe the report in more detail than its
 # directory name (which must be short) but less detail than

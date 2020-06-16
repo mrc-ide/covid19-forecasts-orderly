@@ -22,7 +22,7 @@ resources:
   - annual-review-of-statistics-and-its-application.csl
   - case_ascertainment_methods.Rmd
   - figs/
-  - summary_DeathToRepoted_14days_2020-06-07.csv
+  - summary_DeathToRepoted_14days_2020-06-14.csv
   - other_files/
   
 # Optional name of a variable to make the SQL connection available to

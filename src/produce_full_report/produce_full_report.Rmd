@@ -37,18 +37,18 @@ knitr::opts_chunk$set(
     messages = FALSE
     )
 
-week_starting <- as.Date('07-06-2020', format = '%d-%m-%Y')
+week_starting <- as.Date('14-06-2020', format = '%d-%m-%Y')
 
 ```
 
 # Introduction 
 
-As of 07^th^ June 2020,  more than
-6,700,000 cases of COVID-19 have been reported across the world, with more than 397,000
+As of 14^th^ June 2020,  more than
+7,600,000 cases of COVID-19 have been reported across the world, with more than 427,000
 deaths [@whositrep]. This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 48 countries with active transmission.
+ascertainment) for 51 countries with active transmission.
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -89,8 +89,8 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week beginning 7^th^ June 2020, 
-the number of countries/regions included based on these thresholds is 48.
+two weeks. For the week beginning 14^th^ June 2020, 
+the number of countries/regions included based on these thresholds is 51.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
@@ -181,6 +181,11 @@ knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_2.png")
 
 ```
 
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
+
+```
 
 *Figure 2.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Asia with active transmission (see Methods),
@@ -337,7 +342,7 @@ x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
 ## ) %>% kable_styling()
 exclude <- c(
   "Ecuador", "Cameroon", "United_States_of_America",
-  "Honduras", "Sudan", "Guatemala"
+  "Honduras", "Sudan", "Guatemala", "Mali", "Panama"
 )  %>% snakecase::to_title_case()
 
 x <- x[! x$Country %in% exclude, ]
@@ -396,6 +401,10 @@ knitr::include_graphics("figs/reporting_ratio_Asia_page_1.png")
 knitr::include_graphics("figs/reporting_ratio_Asia_page_2.png")
 ```
 
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Asia_page_3.png")
+```
+
 
 ### Africa
 
@@ -450,8 +459,9 @@ for each country (mean and 95% CI) during the last *14 days*; (**ii**) the estim
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
-x <- readr::read_csv("summary_DeathToRepoted_14days_2020-06-07.csv")
+x <- readr::read_csv("summary_DeathToRepoted_14days_2020-06-14.csv")
 exclude <- c("Ecuador", "Cameroon", "United_States_of_America", "Honduras")
+
 x <- x[!x$country %in% exclude, ]
 x <- dplyr::select(
   x, country, deaths_to_reported_ratio, estimated_reporting
@@ -655,7 +665,7 @@ knitr::include_graphics("figs/Europe_si_2_page_4.png")
 ```
 
 
-*Figure 12.* Projections (7-day ahead) for the week starting 7^th^ June 2020 from individual models
+*Figure 12.* Projections (7-day ahead) for the week starting 14^th^ June 2020 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -671,7 +681,12 @@ knitr::include_graphics("figs/Asia_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_2.png")
 ```
-*Figure 13.* Projections (7-day ahead) for the week starting 7^th^ June 2020 from individual models (Models 1, 2
+
+
+```{r}
+knitr::include_graphics("figs/Asia_si_2_page_3.png")
+```
+*Figure 13.* Projections (7-day ahead) for the week starting 14^th^ June 2020 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -686,7 +701,7 @@ CrI of the projections.
 knitr::include_graphics("figs/Africa_si_2_page_1.png")
 ```
 
-*Figure 14.* Projections (7-day ahead) for the week starting 7^th^ June 2020 from individual models (Models 1, 2
+*Figure 14.* Projections (7-day ahead) for the week starting 14^th^ June 2020 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -698,7 +713,7 @@ CrI of the projections.
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 7^th^ June 2020 from individual models (Models 1, 2
+*Figure 15.* Projections (7-day ahead) for the week starting 14^th^ June 2020 from individual models (Models 1, 2
 and 3) for each country in North America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -711,7 +726,7 @@ CrI of the projections.
 knitr::include_graphics("figs/South America_si_2_page_1.png")
 ```
 *Figure 16.* Projections (7-day ahead) for the week starting
-7^th^ June 2020 from individual models (Models 1, 2
+14^th^ June 2020 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -726,7 +741,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 17.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-7^th^ June 2020. 
+14^th^ June 2020. 
 
 
 #### Asia
@@ -738,7 +753,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 18.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-7^th^ June 2020. 
+14^th^ June 2020. 
 
 
 #### Africa
@@ -750,7 +765,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 19.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-7^th^ June 2020. 
+14^th^ June 2020. 
 
 
 #### North & Central America
@@ -762,7 +777,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 20.* Estimates of $R_t$ from individual models for each country in
 North America with
 active transmission (see Methods) for the week starting
-7^th^ June 2020. 
+14^th^ June 2020. 
 
 
 
@@ -772,9 +787,10 @@ active transmission (see Methods) for the week starting
 ```{r}
 knitr::include_graphics("figs/rt_si_2_South America.png")
 ```
-*Figure 22.* Estimates of $R_t$ from individual models for each country in Africa with
+*Figure 22.* Estimates of $R_t$ from individual models for each
+country in South America with
 active transmission (see Methods) for the week starting
-7^th^ June 2020. 
+14^th^ June 2020. 
 
 ## Code 
 
@@ -813,25 +829,14 @@ country available on the ECDC website:
 https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
 
 *Notes* 
-Cameroon, Ecuador, Guatemala, Honduras and Sudan 
+Ecuador, Cameroon, Guatemala, Honduras, Mali, Panama, and Sudan 
 have been exlcuded from the analysis due to concerns about data 
 reliability. The following corrections were applied to data downloaded
 from ECDC. All corrections are based on the numbers
 reported on Worldometers (https://www.worldometers.info/coronavirus/).
 
- - The latest data downloaded from
-   ECDC did not contain data for 7^th^ June for Spain. 240 cases and 1
-death were manually added to the downloaded file.
-
-- The number of deaths in Brazil was manually corrected to 910 on
-  6^th^ June and 542 on 7^th^ June.
-
-- The number of deaths in Panama was manually corrected to 8 on
-  3^rd^ June and 5 on 4^th^ June. 
-
-- The number of deaths in Peru was manually corrected to 127 on
-  3^rd^ June and 137 on 4^th^ June.
-
+- The number of deaths in Colombia was manually corrected to 55 on
+  12^th^ June and 57 on 13^th^ June.
 
 
 

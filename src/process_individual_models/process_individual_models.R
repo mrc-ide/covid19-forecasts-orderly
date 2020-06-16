@@ -77,41 +77,41 @@ readr::write_rds(
 
 ##purrr::walk2(model_predictions_qntls, outfiles, ~ readr::write_rds(.x, .y))
 dates <-seq(from = as.Date(week_ending) + 1, length.out = 7, by = "1 day")
-## weekly_predictions_qntls <- purrr::map_dfr(
-##   model_outputs,
-##   function(x) {
-##     pred <- x[["Predictions"]]
-##     purrr::imap_dfr(pred, function(y, country) {
-##       message(country)
-##       obs_deaths <- model_input[["D_active_transmission"]][c("dates", country)]
-##       ## We now want deaths observed in the week preceding the one
-##       ## for which we are forecasting.
-##       dates_prev_week <- dates - 7
-##       message("Dates of previous week")
-##       message(paste(dates_prev_week, collapse = ""))
-##       obs_deaths <- obs_deaths[obs_deaths$dates %in% dates_prev_week, ]
-##       if (nrow(obs_deaths) == 0) {
-##         message(
-##           "No observations for dates ", dates, " in ", country
-##         )
-##         obs_deaths <- NA
-##       } else {
-##         obs_deaths <- sum(obs_deaths[[country]])
-##       }
+weekly_predictions_qntls <- purrr::map_dfr(
+  model_outputs,
+  function(x) {
+    pred <- x[["Predictions"]]
+    purrr::imap_dfr(pred, function(y, country) {
+      message(country)
+      obs_deaths <- model_input[["D_active_transmission"]][c("dates", country)]
+      ## We now want deaths observed in the week preceding the one
+      ## for which we are forecasting.
+      dates_prev_week <- dates - 7
+      message("Dates of previous week")
+      message(paste(dates_prev_week, collapse = ""))
+      obs_deaths <- obs_deaths[obs_deaths$dates %in% dates_prev_week, ]
+      if (nrow(obs_deaths) == 0) {
+        message(
+          "No observations for dates ", dates, " in ", country
+        )
+        obs_deaths <- NA
+      } else {
+        obs_deaths <- sum(obs_deaths[[country]])
+      }
 
-##       weekly_df <- daily_to_weekly(y)
+      weekly_df <- daily_to_weekly(y)
 
-##       weekly_df$observed <- obs_deaths
-##       weekly_df
-##     }, .id = "country")
-##   },
-##   .id = "model"
-## )
+      weekly_df$observed <- obs_deaths
+      weekly_df
+    }, .id = "country")
+  },
+  .id = "model"
+)
 
-## readr::write_rds(
-##     x = weekly_predictions_qntls,
-##     path = "weekly_predictions_qntls.rds"
-## )
+readr::write_rds(
+    x = weekly_predictions_qntls,
+    path = "weekly_predictions_qntls.rds"
+)
 
 
 model_rt_qntls <- purrr::map_dfr(
