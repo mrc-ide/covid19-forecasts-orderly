@@ -1,6 +1,10 @@
 ######### Performance metrics
 observed <- readRDS("model_input.rds")
 
+main_text_countries <- c(
+  "Brazil", "India", "Italy", "Mexico", "United_States_of_America"
+)
+
 labels <- c(
   "rel_mae" = "Relative mean error",
   "rel_mse" = "Relative mean squared error",
@@ -13,7 +17,7 @@ labels <- c(
 
 wtd_all_prev_weeks_error <- readr::read_csv(
   "wtd_all_prev_weeks_error.csv"
-)
+) %>% dplyr::filter(si == use_si)
 
 wtd_all_prev_weeks_error$strategy <- "Weighted (all previous weeks)"
 
@@ -23,7 +27,9 @@ wtd_all_prev_weeks_error <- tidyr::separate(
   into = c(NA, NA, NA, NA, "forecast_date"),
   sep = "_"
 )
-
+wtd_all_prev_weeks_error$rel_mae <- log(
+  wtd_all_prev_weeks_error$rel_mae, 10
+)
 p1 <- metrics_over_time(
   wtd_all_prev_weeks_error,
   use_si,

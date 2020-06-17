@@ -72,17 +72,17 @@ names(infiles) <- gsub(
 
 ## All unweighted ensemble outputs
 unweighted <- purrr::map(
-  infiles[grep("unwtd", infiles)], readRDS
+  infiles[grep("unwtd_ensemble_model", infiles)], readRDS
 )
 
 ## Weighted using weights from previous weeks forecasts only
 wtd_prev_week <- purrr::map(
-  grep("wtd_prev_week", infiles, value = TRUE), readRDS
+  grep("wtd_ensb_prev_week", infiles, value = TRUE), readRDS
 )
 
 ## Weighted using weights from all previous forecasts
 wtd_all_prev_weeks <- purrr::map(
-  grep("wtd_all_prev_weeks", infiles, value = TRUE), readRDS
+  grep("wtd_ensb_all_prev_weeks", infiles, value = TRUE), readRDS
 )
 
 unwtd_pred_error <- purrr::imap_dfr(
