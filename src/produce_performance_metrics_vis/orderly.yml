@@ -30,12 +30,22 @@ depends:
       id: latest
       use:
         model_predictions_error.csv: model_predictions_error.csv
-        wtd_all_prev_weeks_error.csv: wtd_all_prev_weeks_error.csv
-        wtd_prev_week_error.csv: wtd_prev_week_error.csv
-        unwtd_pred_error.csv: unwtd_pred_error.csv
         
   - prepare_ecdc_data:
       id: latest
       use:
         model_input.rds: latest_deaths_wide_no_filter.rds        
 
+  - collate_model_outputs:
+      id: latest
+      use:
+        wtd_prev_week_rt_qntls.rds: wtd_prev_week_rt_qntls.rds
+        wtd_rt_all_prev_week_qntls.rds: wtd_rt_all_prev_week_qntls.rds
+        unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
+        
+  - produce_performance_metrics_ensemble:
+      id: latest
+      use:
+        wtd_all_prev_weeks_error.csv: wtd_all_prev_weeks_error.csv
+        wtd_prev_week_error.csv: wtd_prev_week_error.csv
+        unwtd_pred_error.csv: unwtd_pred_error.csv

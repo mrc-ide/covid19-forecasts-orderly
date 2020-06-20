@@ -1,3 +1,5 @@
+## orderly::orderly_develop_start(
+## use_draft = TRUE, parameters = list(use_si = "si_2"))
 ######### Performance metrics
 observed <- readRDS("model_input.rds")
 
@@ -15,6 +17,90 @@ labels <- c(
   "empirical_p" = "Probability(obs|predictions)"
 )
 
+observed_tall <- tidyr::gather(observed, country, deaths, -dates)
+
+observed_tall <- split(
+  observed_tall, observed_tall$country
+) %>%
+  purrr::map_dfr(
+    function(df) {
+      df$deaths_scaled <- df$deaths / max(df$deaths)
+      cum_deaths <- cumsum(df$deaths)
+      idx <- which(cum_deaths >= 100)
+      if (length(idx) == 0) {
+        days_since_100_deaths <- rep(0, length(cum_deaths))
+      } else {
+        idx <- idx[1]
+        days_since_100_deaths <- c(
+          rep(0, idx - 1),
+          seq(
+            from = 1, length.out = length(cum_deaths) - idx + 1, by = 1
+          )
+        )
+      }
+      df$days_since_100_deaths <- days_since_100_deaths
+      df
+   }
+)
+
+
+######################################################################
+######################################################################
+############# Using previou weeks ####################################
+######################################################################
+######################################################################
+
+wtd_prev_week_error <- readr::read_csv(
+  "wtd_prev_week_error.csv"
+) %>% dplyr::filter(si == use_si)
+
+wtd_prev_week_error$strategy <- "Weighted (previous week)"
+wtd_prev_week_error <- tidyr::separate(
+  wtd_prev_week_error,
+  col = "model",
+  into = c(NA, NA, NA, NA, "forecast_date"),
+  sep = "_"
+)
+
+wtd_prev_week_rt_qntls <- readRDS("wtd_prev_week_rt_qntls.rds") %>%
+  dplyr::filter(si == use_si)
+
+## Combine with phase information
+wtd_prev_week_error <- dplyr::left_join(
+  wtd_prev_week_error, wtd_prev_week_rt_qntls
+)
+## Combine with observed deaths
+forecast_sundays <- as.Date(unique(wtd_prev_week_error$forecast_date))
+names(forecast_sundays) <- forecast_sundays
+
+forecast_dates <- purrr::map(
+  forecast_sundays,
+  function(x) seq(x + 1, length.out = 7, by = "1 day")
+)
+
+weekly_incidence <- purrr::map_dfr(
+  forecast_dates,
+  function(dates) {
+    x <- observed[observed$dates %in% dates, ]
+    weekly <- data.frame(weekly_incid = colSums(x[, -1]))
+    weekly$incid_level <- case_when(
+      weekly$weekly_incid <= 100 ~ "Weekly deaths <= 100",
+      weekly$weekly_incid > 100 ~ "Weekly deaths > 100"
+    )
+    tibble::rownames_to_column(weekly, var = "country")
+  }, .id = "forecast_date"
+)
+
+wtd_prev_week_error <- dplyr::left_join(
+  wtd_prev_week_error, weekly_incidence
+)
+
+######################################################################
+######################################################################
+############# Using all previous weeks ###############################
+######################################################################
+######################################################################
+
 wtd_all_prev_weeks_error <- readr::read_csv(
   "wtd_all_prev_weeks_error.csv"
 ) %>% dplyr::filter(si == use_si)
@@ -24,18 +110,82 @@ wtd_all_prev_weeks_error$strategy <- "Weighted (all previous weeks)"
 wtd_all_prev_weeks_error <- tidyr::separate(
   wtd_all_prev_weeks_error,
   col = "model",
-  into = c(NA, NA, NA, NA, "forecast_date"),
+  into = c(NA, NA, NA, NA, NA, "forecast_date"),
   sep = "_"
 )
-wtd_all_prev_weeks_error$rel_mae <- log(
-  wtd_all_prev_weeks_error$rel_mae, 10
+
+wtd_all_prev_weeks_rt_qntls <- readRDS(
+  "wtd_rt_all_prev_week_qntls.rds"
+) %>% dplyr::filter(si == use_si)
+
+
+wtd_all_prev_weeks_error <- dplyr::left_join(
+  wtd_all_prev_weeks_error, weekly_incidence
 )
+
+wtd_all_prev_weeks_error <- dplyr::left_join(
+  wtd_all_prev_weeks_error, wtd_all_prev_weeks_rt_qntls
+)
+
+######################################################################
+######################################################################
+################## Unweighted Ensemble ###############################
+######################################################################
+######################################################################
+
+unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv")
+unwtd_pred_error$strategy <- "Unweighted"
+unwtd_pred_error <- tidyr::separate(
+  unwtd_pred_error,
+  col = "model",
+  into = c(NA, "forecast_date"),
+  sep = "_"
+)
+
+unweighted_rt_qntls <- readRDS(
+  "unweighted_rt_qntls.rds"
+) %>% dplyr::filter(si == use_si)
+
+
+unwtd_pred_error <- dplyr::left_join(
+  unwtd_pred_error, weekly_incidence
+)
+
+unwtd_pred_error <- dplyr::left_join(
+  unwtd_pred_error, unweighted_rt_qntls
+)
+
+######################################################################
+######################################################################
+################ Figures for each strategy ###########################
+######################################################################
+######################################################################
+x <- observed_tall[observed_tall$country %in% main_text_countries, ]
+y <- wtd_prev_week_error[wtd_prev_week_error$country %in% main_text_countries, ]
+y <- y[ , c("date", "country", "rel_mae", "forecast_date")]
+y <- y[y$rel_mae < 30, ]
+y <- tidyr::gather(y, var, val, rel_mae)
+y <- dplyr::left_join(y, x, by = c("date" = "dates", "country"))
+y <- na.omit(y)
+
+
+ggplot() +
+  geom_line(data = x, aes(days_since_100_deaths, deaths_scaled)) +
+  geom_point(
+    data = y, aes(days_since_100_deaths, val, col = forecast_date),
+    linetype = "dashed"
+  ) +
+  facet_wrap(~country, ncol = 1, scales = "free_y")
+
+
+
+
+
+
+
+
 p1 <- metrics_over_time(
-  wtd_all_prev_weeks_error,
-  use_si,
-  main_text_countries,
-  "rel_mae",
-  labels
+  wtd_prev_week_error, use_si, main_text_countries, "rel_mae", labels
 )
 
 p1 <- p1 +
@@ -60,17 +210,15 @@ p <- cowplot::plot_grid(
 
 cowplot::save_plot("wtd_all_prev_weeks_metrics.tiff", p, base_height = 5)
 
-wtd_prev_week_error <- readr::read_csv(
-  "wtd_prev_week_error.csv"
-  )
 
-wtd_prev_week_error$strategy <- "Weighted (previous week)"
-wtd_prev_week_error <- tidyr::separate(
+
+wtd_prev_week_error <- wtd_prev_week_error[wtd_prev_week_error$country %in% main_text_countries, ]
+ggplot(
   wtd_prev_week_error,
-  col = "model",
-  into = c(NA, NA, NA, "forecast_date"),
-  sep = "_"
-)
+  aes(date, rel_mae)
+) + geom_point() +
+  facet_wrap(~phase, ncol = 1, scales = "free_y") +
+  ggthemes::theme_base()
 
 
 p1 <- metrics_over_time(
@@ -104,17 +252,6 @@ p <- cowplot::plot_grid(
 cowplot::save_plot("wtd_prev_week_metrics.tiff", p, base_height = 5)
 
 
-unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv")
-unwtd_pred_error$rel_mae <- log(
-  unwtd_pred_error$rel_mae, 10
-)
-unwtd_pred_error$strategy <- "Unweighted"
-unwtd_pred_error <- tidyr::separate(
-  unwtd_pred_error,
-  col = "model",
-  into = c(NA, "forecast_date"),
-  sep = "_"
-)
 
 p1 <- metrics_over_time(
   unwtd_pred_error,

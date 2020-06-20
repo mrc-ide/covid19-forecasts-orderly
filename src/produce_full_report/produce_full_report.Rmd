@@ -829,9 +829,10 @@ country available on the ECDC website:
 https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
 
 *Notes* 
-Ecuador, Cameroon, Guatemala, Honduras, Mali, Panama, and Sudan 
-have been exlcuded from the analysis due to concerns about data 
-reliability. The following corrections were applied to data downloaded
+Some countries have been exlcuded from the analysis despite meeting
+the threshold because the number of deaths per day did not allow
+reliable inference. 
+The following corrections were applied to data downloaded
 from ECDC. All corrections are based on the numbers
 reported on Worldometers (https://www.worldometers.info/coronavirus/).
 

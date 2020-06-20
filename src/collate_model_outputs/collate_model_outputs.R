@@ -11,6 +11,7 @@ split_and_stick <- function(rt_qntls) {
       df
     }
     )
+
   out
 }
 ## rt in wide form
@@ -101,7 +102,7 @@ infiles <- grep(
 ######################################################################
 unweighted_rt_qntls <- purrr::map_dfr(
   infiles[grep("unwtd_ensemble_model_rt", infiles)], readRDS
-  )
+)
 
 unweighted_rt_qntls <- split_and_stick(unweighted_rt_qntls)
 
@@ -116,8 +117,8 @@ saveRDS(
 
 
 wtd_prev_week_rt_qntls <- purrr::map_dfr(
-  grep("wtd_rt_prev_week", infiles, value = TRUE), readRDS
-  )
+  grep("wtd_rt_prev_week_qntls", infiles, value = TRUE), readRDS
+)
 wtd_prev_week_rt_qntls <- split_and_stick(wtd_prev_week_rt_qntls)
 wtd_prev_week_rt_qntls <- dplyr::rename(
   wtd_prev_week_rt_qntls, forecast_date = "model"
@@ -129,8 +130,8 @@ saveRDS(wtd_prev_week_rt_qntls, "wtd_prev_week_rt_qntls.rds")
 
 
 wtd_rt_all_prev_week_qntls <- purrr::map_dfr(
-  grep("wtd_rt_all_prev_week", infiles, value = TRUE), readRDS
-  )
+  grep("wtd_rt_all_prev_week_qntls", infiles, value = TRUE), readRDS
+)
 wtd_rt_all_prev_week_qntls <- split_and_stick(
   wtd_rt_all_prev_week_qntls
 )
