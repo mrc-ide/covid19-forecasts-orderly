@@ -164,7 +164,7 @@ unwtd_pred_error <- dplyr::left_join(
 ######################################################################
 
 ## Trying dual axis
-pdf("main_text_countries_rel_mae.pdf")
+png("main_text_countries_rel_mae.png")
 par(mar = c(5, 2, 1, 5), oma = c(3, 3, 2, 3))
 layout(matrix(1:5, nrow = 5, ncol = 1))
 for (country in main_text_countries) {
@@ -192,9 +192,12 @@ mtext(
 )
 dev.off()
 
-
-
+######################################################################
+######################################################################
+## Single axis for both scaled deaths and rmae
 ## With ggplot.
+######################################################################
+######################################################################
 x <- observed_tall[observed_tall$country %in% main_text_countries, ]
 y <- wtd_prev_week_error[wtd_prev_week_error$country %in% main_text_countries, ]
 y <- y[ , c("date", "country", "rel_mae", "forecast_date")]
@@ -204,144 +207,108 @@ y <- na.omit(y)
 ## There is this one point in USA that is messing with the scale
 y <- y[y$val < 30, ]
 
-ggplot() +
+p <- ggplot() +
   geom_line(
-    data = x, aes(days_since_100_deaths, deaths_scaled), col = "blue"
+    data = x, aes(days_since_100_deaths, deaths_scaled, col = "blue"),
   ) +
   geom_point(
-    data = y, aes(days_since_100_deaths, val), col = "red"
+    data = y, aes(days_since_100_deaths, val, col = "red"),
   ) +
-  facet_wrap(~country, ncol = 1, scales = "free_y") +
+  facet_wrap(
+    ~country,
+    ncol = 1,
+    scales = "free_y",
+    labeller = labeller(country = snakecase::to_title_case)
+  ) +
   theme_classic() +
+  scale_color_identity(
+    breaks = c("blue", "red"),
+    labels = c("Deaths (scaled)", "Relative error"),
+    guide = "legend",
+  ) +
+  theme(legend.position = "top", legend.title = element_blank()) +
   xlab("Days since 100 deaths") +
-  ylab("")
+  ylab("Deaths (scaled)/Relative Error")
 
-
-
-
-p1 <- metrics_over_time(
-  wtd_prev_week_error, use_si, main_text_countries, "rel_mae", labels
+ggsave("main_text_countries_rel_mae_same_axis.png", p)
+######################################################################
+######################################################################
+x <- dplyr::left_join(
+  wtd_prev_week_error,
+  observed_tall,
+  by = c("date" = "dates", "country")
 )
+p1 <- metrics_over_time(
+  x[x$rel_mae < 30, ], use_si, main_text_countries, "rel_mae", labels
+) + xlab("")
 
-p1 <- p1 +
-  geom_hline(yintercept = 1, linetype = "dashed") +
-  scale_y_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-  annotation_logticks(sides = "l")
+## p1 <- p1 +
+##   geom_hline(yintercept = 1, linetype = "dashed") +
+##   scale_y_log10(
+##     breaks = scales::trans_breaks("log10", function(x) 10^x),
+##     labels = scales::trans_format("log10", scales::math_format(10^.x))
+##   ) +
+##   annotation_logticks(sides = "l")
 
 p2 <- metrics_over_time(
-  wtd_all_prev_weeks_error,
-  use_si,
-  main_text_countries,
-  "rel_sharpness",
-  labels
+  x, use_si, main_text_countries, "rel_sharpness", labels
 )
 
 p <- cowplot::plot_grid(
   p1, p2, labels = c('A', 'B'), label_size = 12, align = "l", ncol = 1
 )
 
-cowplot::save_plot("wtd_all_prev_weeks_metrics.tiff", p, base_height = 5)
+cowplot::save_plot("wtd_prev_week_metrics.png", p, base_height = 5)
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+#### By phase
+######################################################################
+######################################################################
+######################################################################
+######################################################################
 
-
-
-wtd_prev_week_error <- wtd_prev_week_error[wtd_prev_week_error$country %in% main_text_countries, ]
-ggplot(
-  wtd_prev_week_error,
-  aes(date, rel_mae)
-) + geom_point() +
-  facet_wrap(~phase, ncol = 1, scales = "free_y") +
-  ggthemes::theme_base()
-
-
-p1 <- metrics_over_time(
-  wtd_prev_week_error,
-  use_si,
-  main_text_countries,
-  "rel_mae",
-  labels
-)
-
-p1 <- p1 +
-  geom_hline(yintercept = 1, linetype = "dashed") +
-  scale_y_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
+p1_byphase <- p1 + geom_point(aes(col = phase)) +
+  scale_color_manual(
+    labels = c("Decline", "Stable/Growing slowly", "Growing", "Unclear"),
+    breaks = c("decline", "stable/growing slowly", "growing", "unclear"),
+    values = c("#33bd3e", "#ff7d4d", "#dec55c", "#0177dd")
   ) +
-  annotation_logticks(sides = "l")
+  theme(
+    legend.position = "top",
+    legend.title = element_blank()
+  )
 
-p2 <- metrics_over_time(
-  wtd_prev_week_error,
-  use_si,
-  main_text_countries,
-  "rel_sharpness",
-  labels
-)
-
-p <- cowplot::plot_grid(
-  p1, p2, labels = c('A', 'B'), label_size = 12, align = "l", ncol = 1
-)
-
-cowplot::save_plot("wtd_prev_week_metrics.tiff", p, base_height = 5)
-
-
-
-p1 <- metrics_over_time(
-  unwtd_pred_error,
-  use_si,
-  main_text_countries,
-  "rel_mae",
-  labels
-)
-
-p1 <- p1 +
-  geom_hline(yintercept = 1, linetype = "dashed") +
-  scale_y_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
+p2_byphase <- p2 +
+  geom_point(aes(col = phase)) +
+  scale_color_manual(
+    labels = c("Decline", "Stable/Growing slowly", "Growing", "Unclear"),
+    breaks = c("decline", "stable/growing slowly", "growing", "unclear"),
+    values = c("#33bd3e", "#ff7d4d", "#dec55c", "#0177dd")
   ) +
-  annotation_logticks(sides = "l")
+  theme(
+    legend.position = "none"
+  )
 
-p2 <- metrics_over_time(
-  unwtd_pred_error,
-  use_si,
-  main_text_countries,
-  "rel_sharpness",
-  labels
+p_byphase <- cowplot::plot_grid(
+  p1_byphase,
+  p2_byphase,
+  labels = c('A', 'B'),
+  label_size = 12,
+  align = "l",
+  ncol = 1
 )
 
-p <- cowplot::plot_grid(
-  p1, p2, labels = c('A', 'B'), label_size = 12, align = "l", ncol = 1
+cowplot::save_plot(
+  "wtd_prev_week_metrics_by_phase.png", p_byphase, base_height = 5
 )
-
-cowplot::save_plot("unwtd_pred_metrics.tiff", p, base_height = 5)
-
-df <- rbind(
-  wtd_all_prev_weeks_error, wtd_prev_week_error, unwtd_pred_error
-)
-df <- df[df$si == use_si, ]
-
-df <- dplyr::left_join(df, observed)
-df$incid_level <- dplyr::case_when(
-  df$deaths <= 100 ~ "Less than 100 deaths",
-  df$deaths > 100 ~ "More than 100 deaths",
-)
-
-dftall <- tidyr::gather(df, var, val, `rel_mae`:`poisson_p`)
-
-
-x <- dplyr::filter(
-  dftall,
-  var %in% c("rel_mae", "rel_sharpness") &
-  country %in% main_text_countries
-)
-
-x$val[x$var == "rel_mae"] <- log(x$val[x$var == "rel_mae"], base = 10)
-
-
-ggplot(x, aes(forecast_date, val, fill = strategy)) +
-  geom_boxplot() +
-  facet_grid(var~incid_level)
-
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+#### By incidence level
+######################################################################
+######################################################################
+######################################################################
+######################################################################

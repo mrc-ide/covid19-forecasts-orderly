@@ -5,14 +5,14 @@ metrics_over_time <- function(df, si, countries, var, labels) {
   df <- tidyr::gather(df, var, val, `rel_mae`:`poisson_p`)
   df <- df[df$var %in% var, ]
 
-  p <- ggplot(df, aes(date, val)) +
+  p <- ggplot(df, aes(days_since_100_deaths, val)) +
     geom_point() +
     facet_wrap(
       ~var, scales = "free_y", ncol = 1, labeller = labeller(var = labels)
     ) +
-    scale_x_date(date_breaks = "2 weeks") +
+    ##scale_x_date(date_breaks = "2 weeks") +
     theme_classic() +
-    xlab("") +
+    xlab("Days since 100 deaths") +
     ylab("")
 
   p
@@ -48,6 +48,8 @@ scaled_incid_and_metric <- function(incid,
   )
   ## organise yticks which are otherwise all over the place
   ymax <- ceiling(max(metrics$val))
+  message("ymax = ", ymax)
+  message(paste(seq(0, ymax, by = 1), collapse = " "))
   axis(
     side = 4,
     at = seq(0, ymax, by = 1),
