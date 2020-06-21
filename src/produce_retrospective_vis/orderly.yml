@@ -1,0 +1,32 @@
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
+script: script.R
+
+artefacts:
+  staticgraph:
+    description: Number of countries included
+    filenames:
+      - n_included_line.png
+      - n_included_bar.png
+      - population_by_phase.png
+      - epicurve_by_continent.png
+
+packages:
+  - ggplot2
+  - ggthemes
+  - dplyr
+
+resources:
+  - country-and-continent-codes-list.csv
+  - COVID-19-geographic-disbtribution-worldwide-2020-06-14.csv
+
+depends:
+  prepare_ecdc_data:
+    id: "latest"
+    use:
+      model_input.rds: latest_deaths_wide_no_filter.rds
+  collate_model_outputs:
+    id: latest
+    use:
+      unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
