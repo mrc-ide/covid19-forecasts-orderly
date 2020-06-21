@@ -133,18 +133,20 @@ wtd_all_prev_weeks_error <- dplyr::left_join(
 ######################################################################
 ######################################################################
 
-unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv")
+unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
+  dplyr::filter(si == use_si)
+
 unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- tidyr::separate(
   unwtd_pred_error,
   col = "model",
-  into = c(NA, "forecast_date"),
+  into = c(NA, NA, NA, NA, "forecast_date"),
   sep = "_"
 )
 
-unweighted_rt_qntls <- readRDS(
-  "unweighted_rt_qntls.rds"
-) %>% dplyr::filter(si == use_si)
+## This has one row for each quantile.
+unweighted_rt_qntls <- readRDS("unweighted_rt_qntls.rds") %>%
+  dplyr::filter(si == use_si)
 
 
 unwtd_pred_error <- dplyr::left_join(
@@ -160,26 +162,59 @@ unwtd_pred_error <- dplyr::left_join(
 ################ Figures for each strategy ###########################
 ######################################################################
 ######################################################################
+
+## Trying dual axis
+pdf("main_text_countries_rel_mae.pdf")
+par(mar = c(5, 2, 1, 5), oma = c(3, 3, 2, 3))
+layout(matrix(1:5, nrow = 5, ncol = 1))
+for (country in main_text_countries) {
+  x <- observed_tall[observed_tall$country %in% country, ]
+  y <- wtd_prev_week_error[wtd_prev_week_error$country %in% country, ]
+  y <- y[ , c("date", "country", "rel_mae", "forecast_date")]
+  y <- tidyr::gather(y, var, val, rel_mae)
+  y <- dplyr::left_join(y, x, by = c("date" = "dates", "country"))
+  y <- na.omit(y)
+  ## There is this one point in USA that is messing with the scale
+  y <- y[y$val < 30, ]
+  legend <- ifelse(country == "Brazil", TRUE, FALSE)
+  xlab <- ifelse(
+    country == "United_States_of_America", "Days since 100 deaths", ""
+  )
+  xticks <- ifelse(country == "United_States_of_America", TRUE, FALSE)
+
+  scaled_incid_and_metric(incid = x, metrics = y, legend, xlab, xticks)
+}
+mtext(
+  "Deaths (scaled)", side = 2, outer = TRUE, line = 0, col = "blue"
+)
+mtext(
+  "Relative error", side = 4, outer = TRUE, line = 0, col = "red"
+)
+dev.off()
+
+
+
+## With ggplot.
 x <- observed_tall[observed_tall$country %in% main_text_countries, ]
 y <- wtd_prev_week_error[wtd_prev_week_error$country %in% main_text_countries, ]
 y <- y[ , c("date", "country", "rel_mae", "forecast_date")]
-y <- y[y$rel_mae < 30, ]
 y <- tidyr::gather(y, var, val, rel_mae)
 y <- dplyr::left_join(y, x, by = c("date" = "dates", "country"))
 y <- na.omit(y)
-
+## There is this one point in USA that is messing with the scale
+y <- y[y$val < 30, ]
 
 ggplot() +
-  geom_line(data = x, aes(days_since_100_deaths, deaths_scaled)) +
-  geom_point(
-    data = y, aes(days_since_100_deaths, val, col = forecast_date),
-    linetype = "dashed"
+  geom_line(
+    data = x, aes(days_since_100_deaths, deaths_scaled), col = "blue"
   ) +
-  facet_wrap(~country, ncol = 1, scales = "free_y")
-
-
-
-
+  geom_point(
+    data = y, aes(days_since_100_deaths, val), col = "red"
+  ) +
+  facet_wrap(~country, ncol = 1, scales = "free_y") +
+  theme_classic() +
+  xlab("Days since 100 deaths") +
+  ylab("")
 
 
 

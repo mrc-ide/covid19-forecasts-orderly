@@ -17,3 +17,50 @@ metrics_over_time <- function(df, si, countries, var, labels) {
 
   p
 }
+
+scaled_incid_and_metric <- function(incid,
+                                    metrics,
+                                    legend = TRUE,
+                                    xlab,
+                                    xticks) {
+  plot(
+    x = incid$days_since_100_deaths,
+    y = incid$deaths_scaled,
+    col = "blue",
+    type = "l",
+    axes = FALSE,
+    xlab = xlab,
+    ylab = "",
+    cex.axis = 1.5,
+    main = snakecase::to_title_case(incid$country[1])
+  )
+  axis(side = 1, lwd = 1.5, tick = xticks, labels = xticks)
+  axis(
+    side = 2, col = "blue", col.axis = "blue",
+    lwd = 1.5, at = c(0, 0.5, 1)
+  )
+  par(new = TRUE)
+  plot(
+    x = metrics$days_since_100_deaths,
+    y = metrics$val,
+    xaxt = "n", yaxt = "n",
+    ylab = "", xlab = "", col = "red", axes = FALSE
+  )
+  ## organise yticks which are otherwise all over the place
+  ymax <- ceiling(max(metrics$val))
+  axis(
+    side = 4,
+    at = seq(0, ymax, by = 1),
+    labels = seq(0, ymax, by = 1),
+    col = "red", col.axis = "red", lwd = 1.5
+  )
+
+  if (legend) {
+    legend(
+        "topleft",
+      c("Scaled Deaths", "Relative Error"),
+      col = c("blue", "red"), lty = c(1, 2)
+    )
+  }
+
+}
