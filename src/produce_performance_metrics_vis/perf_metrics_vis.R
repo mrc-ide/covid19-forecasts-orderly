@@ -42,14 +42,11 @@ observed_tall <- split(
       df
    }
 )
-
-
 ######################################################################
 ######################################################################
 ############# Using previou weeks ####################################
 ######################################################################
 ######################################################################
-
 wtd_prev_week_error <- readr::read_csv(
   "wtd_prev_week_error.csv"
 ) %>% dplyr::filter(si == use_si)
@@ -162,6 +159,12 @@ unwtd_pred_error <- dplyr::left_join(
 ################ Figures for each strategy ###########################
 ######################################################################
 ######################################################################
+use_strategy <- list(
+  wtd_prev_week = wtd_prev_week_error,
+  wtd_all_prev_weeks = wtd_all_prev_weeks_error,
+  unwtd = unwtd_pred_error
+)
+metrics <- use_strategy[[strategy]]
 
 ## Trying dual axis
 png("main_text_countries_rel_mae.png")
@@ -169,7 +172,7 @@ par(mar = c(5, 2, 1, 5), oma = c(3, 3, 2, 3))
 layout(matrix(1:5, nrow = 5, ncol = 1))
 for (country in main_text_countries) {
   x <- observed_tall[observed_tall$country %in% country, ]
-  y <- wtd_prev_week_error[wtd_prev_week_error$country %in% country, ]
+  y <- metrics[metrics$country %in% country, ]
   y <- y[ , c("date", "country", "rel_mae", "forecast_date")]
   y <- tidyr::gather(y, var, val, rel_mae)
   y <- dplyr::left_join(y, x, by = c("date" = "dates", "country"))
@@ -199,7 +202,8 @@ dev.off()
 ######################################################################
 ######################################################################
 x <- observed_tall[observed_tall$country %in% main_text_countries, ]
-y <- wtd_prev_week_error[wtd_prev_week_error$country %in% main_text_countries, ]
+
+y <- metrics[metrics$country %in% main_text_countries, ]
 y <- y[ , c("date", "country", "rel_mae", "forecast_date")]
 y <- tidyr::gather(y, var, val, rel_mae)
 y <- dplyr::left_join(y, x, by = c("date" = "dates", "country"))
@@ -234,7 +238,7 @@ ggsave("main_text_countries_rel_mae_same_axis.png", p)
 ######################################################################
 ######################################################################
 x <- dplyr::left_join(
-  wtd_prev_week_error,
+  metrics,
   observed_tall,
   by = c("date" = "dates", "country")
 )
@@ -258,7 +262,7 @@ p <- cowplot::plot_grid(
   p1, p2, labels = c('A', 'B'), label_size = 12, align = "l", ncol = 1
 )
 
-cowplot::save_plot("wtd_prev_week_metrics.png", p, base_height = 5)
+cowplot::save_plot(glue::glue("{strategy}_metrics.png"), p, base_height = 5)
 ######################################################################
 ######################################################################
 ######################################################################
@@ -300,15 +304,89 @@ p_byphase <- cowplot::plot_grid(
   ncol = 1
 )
 
+pall <- metrics_over_time(
+  x, use_si, unique(x$country), "rel_mae", labels
+) +
+  scale_y_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+  annotation_logticks(sides = "l") +
+  geom_point(aes(col = phase)) +
+  scale_color_manual(
+    labels = c("Decline", "Stable/Growing slowly", "Growing", "Unclear"),
+    breaks = c("decline", "stable/growing slowly", "growing", "unclear"),
+    values = c("#33bd3e", "#ff7d4d", "#dec55c", "#0177dd")
+  ) +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank()
+  )
+ggsave(glue::glue("{strategy}_metrics_by_phase_all.png"), pall)
+
 cowplot::save_plot(
-  "wtd_prev_week_metrics_by_phase.png", p_byphase, base_height = 5
+  glue::glue("{strategy}_metrics_by_phase.png"), p_byphase, base_height = 5
 )
+
+
 ######################################################################
 ######################################################################
+#### Comapring the three
 ######################################################################
 ######################################################################
-#### By incidence level
-######################################################################
-######################################################################
-######################################################################
-######################################################################
+columns <- colnames(unwtd_pred_error)
+wtd_all_prev_weeks_error <- wtd_all_prev_weeks_error[, columns]
+wtd_prev_week_error <- wtd_prev_week_error[, columns]
+allthree <- rbind(
+  unwtd_pred_error, wtd_all_prev_weeks_error, wtd_prev_week_error
+)
+allthree <- left_join(
+  allthree, observed_tall, by = c("date" = "dates", "country")
+)
+
+p1 <- metrics_over_time(
+  allthree[allthree$rel_mae < 30, ], use_si, main_text_countries, "rel_mae", labels
+) + geom_point(aes(col = strategy)) +
+  scale_color_manual(
+    labels = c("Unweighted",
+               "Weighted (all previous weeks)",
+               "Weighted (previous week)"
+               ),
+    breaks = c("Unweighted",
+               "Weighted (all previous weeks)",
+               "Weighted (previous week)"
+               ),
+    values = c("#0072B2", "#D55E00", "#CC79A7")
+  ) +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank()
+  ) +
+  xlab("")
+
+p2 <- metrics_over_time(
+  allthree[allthree$rel_mae < 30, ], use_si, main_text_countries, "rel_sharpness", labels
+) + geom_point(aes(col = strategy)) +
+  scale_color_manual(
+    labels = c("Unweighted",
+               "Weighted (all previous weeks)",
+               "Weighted (previous week)"
+               ),
+    breaks = c("Unweighted",
+               "Weighted (all previous weeks)",
+               "Weighted (previous week)"
+               ),
+    values = c("#0072B2", "#D55E00", "#CC79A7")
+  ) +
+  theme(legend.position = "none") +
+  xlab("Days since first 100 deaths")
+
+p_bystrategy <- cowplot::plot_grid(
+  p1, p2, labels = c('A', 'B'), label_size = 12, align = "l", ncol = 1
+)
+
+cowplot::save_plot(
+  glue::glue("metrics_by_strategy.png"), p_bystrategy, base_height = 5
+)
+
+dev.off()

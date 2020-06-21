@@ -4,9 +4,7 @@ artefacts:
   data:
     description: Model performance metrics
     filenames:
-      - unwtd_pred_metrics.tiff
-      - wtd_prev_week_metrics.tiff
-      - wtd_all_prev_weeks_metrics.tiff
+      - metrics_by_strategy.png
   
 packages:
   - dplyr
@@ -19,8 +17,10 @@ packages:
   - cowplot
 
 ## use_si should be one of si_1 or si_2
+## strategy must be one of wtd_prev_week, wtd_all_prev_weeks or unwtd
 parameters:
   - use_si
+  - strategy
 
 sources:
   - R/utils.R
