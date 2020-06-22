@@ -1,11 +1,17 @@
-week_finishing <- "2020-06-14"
+week_finishing <- "2020-06-21"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
   stringsAsFactors = FALSE
-) %>%
-  dplyr::mutate_at(
-    vars("DateRep"), ~ as.Date(., format = "%d/%m/%Y")
+)
+
+## colnames(raw_data) <- c(
+##   "DateRep", "day", "month", "year", "Cases", "Deaths", "Countries and territories",
+##   "geoId", "countryterritoryCode", "popData2018", "continent"
+## )
+
+raw_data <- dplyr::mutate_at(
+    raw_data, vars("DateRep"), ~ as.Date(., format = "%d/%m/%Y")
   ) %>%
   ## Manual fixes.
   ## For 2020-03-17, there are two rows for Somalia

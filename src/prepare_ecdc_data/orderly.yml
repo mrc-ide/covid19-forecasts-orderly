@@ -14,4 +14,4 @@ packages:
 sources:
   - R/utils.R
 
-resources: COVID-19-geographic-disbtribution-worldwide-2020-06-14.csv
+resources: COVID-19-geographic-disbtribution-worldwide-2020-06-21.csv
