@@ -11,11 +11,14 @@ artefacts:
       - n_included_bar.png
       - population_by_phase.png
       - epicurve_by_continent.png
+      - epicurve_pline.png
 
 packages:
   - ggplot2
   - ggthemes
   - dplyr
+  - ggrepel
+  - cowplot
 
 resources:
   - country-and-continent-codes-list.csv

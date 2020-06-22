@@ -59,7 +59,7 @@ pbar <- ggplot(included, aes(week_starting)) +
   theme_classic() +
   theme(legend.position = "top", legend.title = element_blank()) +
   scale_fill_manual(values = palette) +
-  ylab("Number of countries with active transmission") +
+  ylab("Countries with active transmission") +
   xlab("Week Starting")
 
 
@@ -67,9 +67,9 @@ pbar <- ggplot(included, aes(week_starting)) +
 x <- dplyr::count(included, week_starting, continent_name)
 x$week_starting <- as.Date(x$week_starting)
 
-y <- dplyr::filter(x, week_starting == "2020-06-14")
+y <- dplyr::filter(x, week_starting == "2020-06-21")
 labels <- data.frame(
-  x = as.Date("2020-06-23"),
+  x = as.Date("2020-06-24"),
   label = c("Asia", "Europe", "North America", "South America", "Africa")
 )
 
@@ -77,16 +77,23 @@ labels <- dplyr::left_join(labels, y, by = c("label" = "continent_name"))
 
 pline <- ggplot() +
   geom_line(data = x, aes(week_starting, n, col = continent_name), size = 1.5) +
-  geom_text(
-    data = labels,
-    aes(x = x, y = n, label = label, col = label)
+  ## geom_text_repel(
+  ##   data = labels,
+  ##   aes(x = x, y = n, label = label, col = label)
+  ## ) +
+  scale_x_date(
+    breaks = seq(
+      from = as.Date("2020-03-01"),
+      to = as.Date("2020-06-27"),
+      by = "2 weeks"
+    ),
+    limits = c(as.Date("2020-03-01"), as.Date("2020-06-27"))
   ) +
   coord_cartesian(clip = 'off') +
   theme_classic() +
   theme(legend.position = "none", legend.title = element_blank()) +
   scale_color_manual(values = palette) +
-  scale_x_date(date_breaks = "2 weeks") +
-  ylab("Number of countries with active transmission") +
+  ylab("Countries with active transmission") +
   xlab("Week Starting")
 
 ggsave("n_included_bar.png", pbar)
@@ -122,29 +129,37 @@ epicurve <- ggplot() +
   ) +
   scale_color_manual(values = palette) +
   scale_x_date(
-    date_breaks = "2 weeks",
-    limits = c(as.Date("2020-03-01"), NA)
+    breaks = seq(
+      from = as.Date("2020-03-01"),
+      to = as.Date("2020-06-27"),
+      by = "2 weeks"
+    ),
+    limits = c(as.Date("2020-03-01"), as.Date("2020-06-27"))
   ) +
-  coord_cartesian(clip = 'off') +
   theme_classic() +
-  theme(legend.position = "none", legend.title = element_blank()) +
+  theme(legend.position = "top", legend.title = element_blank()) +
   xlab("") +
   ylab("Deaths")
 
 y <- dplyr::filter(by_continent, dates == max(dates))
+y$deaths <- y$deaths + 1
 labels <- data.frame(
-  x = max(model_input$dates) + 3,
+  x = max(model_input$dates) + 5,
   label = c("Asia", "Europe", "North America", "South America", "Africa")
 )
 
-labels <- dplyr::left_join(labels, y, by = c("label" = "continent_name"))
-epicurve <- epicurve +
-  geom_text(
-    data = labels, aes(x = x, y = deaths, label = label, col = label)
-  )
+## labels <- dplyr::left_join(labels, y, by = c("label" = "continent_name"))
+## epicurve <- epicurve +
+##   geom_text_repel(
+##     data = labels, aes(x = x, y = deaths, label = label, col = label)
+##   ) + coord_cartesian(clip = "off")
 
 ggsave("epicurve_by_continent.png", epicurve)
 
+
+## Side by side:
+p <- cowplot::plot_grid(epicurve, pline, nrow = 2, labels = "AUTO", align = "hv")
+ggsave("epicurve_pline.png", p)
 #####################################################################
 #####################################################################
 ############# Rt by population ######################################

@@ -18,24 +18,30 @@ weekly_qntls <- dplyr::left_join(world, weekly_qntls)
 # generating the ISO3 code for the model predictions to link with the simple features map data
 
 rt_estimates <- readRDS("ensemble_model_rt.rds")
+exclude <- c(
+  "Ecuador", "Cameroon", "United_States_of_America",
+  "Sudan", "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania"
+)
+
+rt_estimates <- rt_estimates[! rt_estimates$country %in% exclude, ]
 rt_estimates$iso_a3 <-countrycode::countrycode(
   snakecase::to_title_case(rt_estimates$country),
   "country.name",
   "iso3c"
-  )
+)
 rt_estimates <- tidyr::spread(rt_estimates, quantile, out2)
+
 rt_estimates$phase <- dplyr::case_when(
   rt_estimates$`97.5%` < 1 ~ "decline",
-  rt_estimates$`2.5%` < 1 & rt_estimates$`97.5%` > 1 & rt_estimates$`97.5%` < 2 ~ "stable/growing slowly",
-  ##rt_estimates$`97.5%` > 1 & rt_estimates$`97.5%` < 2 & rt_estimates$`2.5%` > 1 & rt_estimates$`2.5%` < 2 ~ "slow",
-  rt_estimates$`2.5%` < 1 & rt_estimates$`97.5%` > 2   ~ "unclear",
-  ##rt_estimates$`2.5%` > 2  ~ "fast",
-  rt_estimates$`2.5%` > 1  ~ "growing"
-)
+  (rt_estimates$`97.5%` - rt_estimates$`2.5%` > 1)  ~ "unclear",
+  (rt_estimates$`2.5%` > 1 &
+   ((rt_estimates$`97.5%` - rt_estimates$`2.5%`) < 1))  ~ "growing",
+  (rt_estimates$`2.5%` < 1 &
+   ((rt_estimates$`97.5%` - rt_estimates$`2.5%`) < 1))  ~ "stable/growing slowly"
+  )
+
 rt_estimates <- dplyr::left_join(world, rt_estimates)
 # filling in the missing values
-
-
 
 x <- split(
   weekly_qntls, weekly_qntls$si
@@ -67,9 +73,7 @@ maps <- purrr::iwalk(
 )
 
 
-x <- split(
-  rt_estimates, rt_estimates$si
-)
+x <- split(rt_estimates, rt_estimates$si)
 
 maps <- purrr::iwalk(
   x,

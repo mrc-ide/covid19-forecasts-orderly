@@ -142,14 +142,12 @@ sources:
 depends:
   process_individual_models:
     id: "latest"
-    draft: false
     use:
       daily_predictions_qntls: daily_predictions_qntls.rds
       weekly_predictions_qntls.rds: weekly_predictions_qntls.rds
       model_rt_qntls.rds: model_rt_qntls.rds
   produce_ensemble_outputs:
     id: "latest"
-    draft: false
     use:
       ensemble_model_rt.rds: ensemble_model_rt.rds
       ensemble_weekly_qntls.rds: ensemble_weekly_qntls.rds

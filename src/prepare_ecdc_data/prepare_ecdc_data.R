@@ -193,6 +193,14 @@ raw_data$Deaths[raw_data$DateRep == "2020-06-13" & raw_data$`Countries.and.terri
 raw_data$Cases[raw_data$DateRep == "2020-06-12" & raw_data$`Countries.and.territories` == "Colombia"] <- 1530
 raw_data$Cases[raw_data$DateRep == "2020-06-13" & raw_data$`Countries.and.territories` == "Colombia"] <- 1646
 
+## 22nd June, corrections for India, Russia and Iraq
+raw_data$Deaths[raw_data$DateRep == "2020-06-17" & raw_data$`Countries.and.territories` == "India"] <- 675
+raw_data$Deaths[raw_data$DateRep == "2020-06-20" & raw_data$`Countries.and.territories` == "Iraq"] <- 69
+raw_data$Deaths[raw_data$DateRep == "2020-06-21" & raw_data$`Countries.and.territories` == "Iraq"] <- 88
+
+raw_data$Deaths[raw_data$DateRep == "2020-06-19" & raw_data$`Countries.and.territories` == "Russia"] <- 182
+raw_data$Deaths[raw_data$DateRep == "2020-06-20" & raw_data$`Countries.and.territories` == "Russia"] <- 181
+raw_data$Deaths[raw_data$DateRep == "2020-06-21" & raw_data$`Countries.and.territories` == "Russia"] <- 161
 
 ## uk_extra <- data.frame(
 ##   DateRep = "2020-05-24",

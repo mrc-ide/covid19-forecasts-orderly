@@ -22,7 +22,7 @@ resources:
   - annual-review-of-statistics-and-its-application.csl
   - case_ascertainment_methods.Rmd
   - figs/
-  - summary_DeathToRepoted_14days_2020-06-14.csv
+  - summary_DeathToRepoted_14days_2020-06-21.csv
   - other_files/
   
 # Optional name of a variable to make the SQL connection available to
@@ -52,14 +52,6 @@ resources:
 #           other-data.csv: data.csv
 #
 depends:
-  produce_exec_summary:
-    id: "latest"
-    use:
-      executive_summary.html: executive_summary.html
-  produce_summary:
-    id: "latest"
-    use:
-      summary.html: summary.html
   format_model_outputs:
     id: "latest"
     use:
@@ -67,3 +59,11 @@ depends:
       model_2_formatted_output.rds: model_2_formatted_output.rds
       model_3_formatted_output.rds: model_3_formatted_output.rds
       fmtd_ensemble_weekly_qntls.rds: fmtd_ensemble_weekly_qntls.rds
+  produce_retrospective_vis:
+    id: "latest"
+    use:
+      figs/epicurve_pline.png: epicurve_pline.png
+  produce_maps:
+    id: "latest"
+    use:
+      figs/rt_phase_si_2.png: rt_phase_si_2.png
