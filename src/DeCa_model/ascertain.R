@@ -80,28 +80,34 @@ deaths_to_cases <- purrr::map(
 ## 0.3826683 0.3846517 0.3622162 0.4735149 0.5226517 0.4538020
 ## could be due to stochastic nature of binom.bayes which doesn't
 ## accept a seed as far as I can see.
-deaths_to_cases_qntls <- purrr::imap_dfr(
+deaths_to_cases_qntls <- purrr::imap(
   deaths_to_cases,
   function(rit, country) {
     message(country)
     df <- quantiles_to_df(rit)
-    scaled_deaths <- ascertainr_deaths[[country]] /
-      max(ascertainr_deaths[[country]], na.rm = TRUE)
+    df <- dplyr::select(
+      df, low_ratio = `2.5%`, median_ratio = `50.0%`, up_ratio = `97.5%`
+      )
 
-    scaled_cases <- ascertainr_cases[[country]] /
+    ymax <- max(
+      max(ascertainr_deaths[[country]], na.rm = TRUE),
       max(ascertainr_cases[[country]], na.rm = TRUE)
+    )
+
+    scaled_deaths <- ascertainr_deaths[[country]] / ymax
+    scaled_cases <- ascertainr_cases[[country]] / ymax
 
     ## Align deaths on day t with cases on day t - 10
     scaled_cases <- stats::lag(scaled_cases, n = round(mu_delta))
 
     df <- cbind(
-      date = ascertainr_deaths[["dates"]],
-      scaled_deaths = scaled_deaths,
-      scaled_cases = scaled_cases,
+      dates = ascertainr_deaths[["dates"]],
+      D_t = scaled_deaths,
+      I_t_minus_meanDelay = scaled_cases,
       df
     )
     df
-  }, .id = "country"
+  }##, .id = "country"
 )
 
 saveRDS(deaths_to_cases_qntls, "deaths_to_cases_qntls.rds")
