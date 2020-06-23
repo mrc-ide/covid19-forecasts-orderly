@@ -30,15 +30,7 @@ rt_estimates$iso_a3 <-countrycode::countrycode(
   "iso3c"
 )
 rt_estimates <- tidyr::spread(rt_estimates, quantile, out2)
-
-rt_estimates$phase <- dplyr::case_when(
-  rt_estimates$`97.5%` < 1 ~ "decline",
-  (rt_estimates$`97.5%` - rt_estimates$`2.5%` > 1)  ~ "unclear",
-  (rt_estimates$`2.5%` > 1 &
-   ((rt_estimates$`97.5%` - rt_estimates$`2.5%`) < 1))  ~ "growing",
-  (rt_estimates$`2.5%` < 1 &
-   ((rt_estimates$`97.5%` - rt_estimates$`2.5%`) < 1))  ~ "stable/growing slowly"
-  )
+rt_estimates <- rincewind::assign_epidemic_phase(rt_estimates)
 
 rt_estimates <- dplyr::left_join(world, rt_estimates)
 # filling in the missing values

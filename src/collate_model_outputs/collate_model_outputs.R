@@ -1,32 +1,18 @@
 split_and_stick <- function(rt_qntls) {
 
-  out <- split(
-    rt_qntls, rt_qntls$si
-  ) %>%
+  out <- split(rt_qntls, rt_qntls$si)
   purrr::map_dfr(
+    out,
     function(df) {
       df <- tidyr::spread(df, quantile, out2)
-      df <- assign_epidemic_phase(df)
+      df <- rincewind::assign_epidemic_phase(df)
       df <- tidyr::gather(df, quantile, out2, `1%`:`99%`)
       df
     }
-    )
-
-  out
-}
-## rt in wide form
-assign_epidemic_phase <- function(rt) {
-
-  rt$phase <- dplyr::case_when(
-    rt$`97.5%` < 1 ~ "decline",
-    rt$`2.5%` < 1 & rt$`97.5%` > 1 & rt$`97.5%` < 2 ~ "stable/growing slowly",
-    ##rt$`97.5%` > 1 & rt$`97.5%` < 2 & rt$`2.5%` > 1 & rt$`2.5%` < 2 ~ "slow",
-    rt$`2.5%` < 1 & rt$`97.5%` > 2   ~ "unclear",
-    ##rt$`2.5%` > 2  ~ "fast",
-    rt$`2.5%` > 1  ~ "growing"
   )
-  rt
 }
+
+## rt in wide form
 
 model_input <- readRDS("model_input.rds")
 deaths_tall <- tidyr::gather(model_input, country, deaths, -dates)

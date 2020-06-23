@@ -15,6 +15,7 @@ artefacts:
 packages:
 - dplyr
 - tidyr
+- rincewind
 depends:
   - produce_weighted_ensemble:
       id: latest(parameter:week_ending == "2020-03-15")
