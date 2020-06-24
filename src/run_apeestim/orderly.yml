@@ -1,0 +1,28 @@
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
+script: run_apeestim.R
+
+parameters:
+  week_ending
+
+packages:
+  - purrr
+  - stringr
+  - projections
+  - tidyr
+  - incidence
+  - EpiEstim
+
+artefacts:
+  data:
+    description: Model outputs
+    filenames:
+      - apeestim_model_outputs.rds
+      - r_apeestim.rds
+
+sources:
+  - R/apeEstim.R
+  - R/apePredPost.R
+  - R/apeSpecific.R
+  - R/util.R
