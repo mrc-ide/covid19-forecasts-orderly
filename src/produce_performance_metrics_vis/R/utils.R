@@ -25,7 +25,7 @@ scaled_incid_and_metric <- function(incid,
                                     xticks) {
   plot(
     x = incid$days_since_100_deaths,
-    y = incid$deaths_scaled,
+    y = incid$moving_avg,
     col = "blue",
     type = "l",
     axes = FALSE,

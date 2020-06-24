@@ -2,7 +2,8 @@ environment:
   covid_19_path: COVID19_INPUT_PATH
 
 parameters:
-  week_ending
+  - week_ending
+  - short_run
 
 script: run_rti0.R
 
@@ -19,3 +20,9 @@ sources:
   - R/MCMC/adapt.R
   - R/MCMC/adapt_tuning.R
   - R/MCMC/lambda_fct.R
+
+artefacts:
+  data:
+    description: Latest model output
+    filenames:
+       - RtI0_latest_output.rds
