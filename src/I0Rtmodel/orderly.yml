@@ -1,0 +1,21 @@
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
+parameters:
+  week_ending
+
+script: run_rti0.R
+
+packages:
+  - EpiEstim
+  - Hmisc
+  
+sources:
+  - R/MCMC/Like1.R
+  - R/MCMC/MCMC_full.R
+  - R/MCMC/MCMC_iter.R
+  - R/MCMC/Proj_Pois.R
+  - R/MCMC/SI_gamma_dist_EpiEstim.R
+  - R/MCMC/adapt.R
+  - R/MCMC/adapt_tuning.R
+  - R/MCMC/lambda_fct.R
