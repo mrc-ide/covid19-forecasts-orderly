@@ -31,3 +31,4 @@ artefacts:
       - episize_after_mu_qntls.rds
       - cases_augmented.rds
       - weighted_cases_augm.rds
+      - summary_DeathToRepoted_14days.csv

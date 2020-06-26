@@ -70,3 +70,9 @@ depends:
     use:
       daily_predictions_qntls.rds: daily_predictions_qntls.rds
       model_rt_qntls.rds: model_rt_qntls.rds
+      
+  DeCa_model:
+    id: latest(parameter:week_ending == week_ending_vis)
+    use:
+      deaths_to_cases_qntls.rds: deaths_to_cases_qntls.rds
+      

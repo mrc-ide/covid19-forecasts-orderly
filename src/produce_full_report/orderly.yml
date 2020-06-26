@@ -67,3 +67,7 @@ depends:
     id: "latest"
     use:
       figs/rt_phase_si_2.png: rt_phase_si_2.png
+  DeCa_model:
+    id: latest
+    use:
+      summary_DeathToRepoted_14days.csv: summary_DeathToRepoted_14days.csv

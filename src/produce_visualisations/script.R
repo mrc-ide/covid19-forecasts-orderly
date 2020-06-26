@@ -298,43 +298,44 @@ purrr::iwalk(
 ###################
 ##### Reporting Trends
 ### col -> column to scale
-x <- readr::read_rds("DeCa_Std_Ratio_plot_2020-06-21.rds")
+x <- readr::read_rds("deaths_to_cases_qntls.rds")
 x <- x[! names(x) %in% exclude]
-max_deaths <- purrr::map_dfr(x, ~ max(.[["D_t"]]), .id = "country")
-max_deaths <- tidyr::gather(max_deaths, country, max_deaths)
+## This scaling is happening in DeCa model
+## max_deaths <- purrr::map_dfr(x, ~ max(.[["D_t"]]), .id = "country")
+## max_deaths <- tidyr::gather(max_deaths, country, max_deaths)
 
-max_cases <- purrr::map_dfr(
-  x, ~ max(.[["I_t_minus_meanDelay"]]),
-  .id = "country"
-)
-max_cases <- tidyr::gather(max_cases, country, max_cases)
+## max_cases <- purrr::map_dfr(
+##   x, ~ max(.[["I_t_minus_meanDelay"]]),
+##   .id = "country"
+## )
+## max_cases <- tidyr::gather(max_cases, country, max_cases)
 
-x <- purrr::map_dfr(
-  x,
-  function(cntry) {
-    scale_by <- max(
-      max(cntry$I_t_minus_meanDelay),
-      max(cntry$D_t)
-    )
-    cases_scaled <- cntry$I_t_minus_meanDelay / scale_by
-
-
-    deaths_scaled <- cntry$D_t / scale_by
-    out <- data.frame(
-      date = cntry$dates,
-      cases_scaled = cases_scaled,
-      deaths_scaled = deaths_scaled,
-      median_ratio = cntry$median_ratio,
-      low_ratio = cntry$low_ratio,
-      up_ratio = cntry$up_ratio
-    )
-    out
-  },
-  .id = "country"
-)
+## x <- purrr::map_dfr(
+##   x,
+##   function(cntry) {
+##     scale_by <- max(
+##       max(cntry$I_t_minus_meanDelay),
+##       max(cntry$D_t)
+##     )
+##     cases_scaled <- cntry$I_t_minus_meanDelay / scale_by
 
 
+##     deaths_scaled <- cntry$D_t / scale_by
+##     out <- data.frame(
+##       date = cntry$dates,
+##       cases_scaled = cases_scaled,
+##       deaths_scaled = deaths_scaled,
+##       median_ratio = cntry$median_ratio,
+##       low_ratio = cntry$low_ratio,
+##       up_ratio = cntry$up_ratio
+##     )
+##     out
+##   },
+##   .id = "country"
+## )
 
+
+x <- purrr::map_dfr(x, ~ ., .id = "country")
 x <- add_continents(x, continents)
 x$date <- as.Date(x$date)
 x$country <- snakecase::to_title_case(x$country)
@@ -353,8 +354,8 @@ plots <- split(x, x$continent_name) %>%
       }
       for (page_num in seq_len(npages)) {
         p <- ggplot(df) +
-          geom_point(aes(date, cases_scaled, color = "black")) +
-          geom_point(aes(date, deaths_scaled, color = "red")) +
+          geom_point(aes(date, I_t_minus_meanDelay, color = "black")) +
+          geom_point(aes(date, D_t, color = "red")) +
           geom_ribbon(
             aes(x = date, ymin = low_ratio, ymax = up_ratio),
             fill = "blue",
@@ -394,7 +395,6 @@ plots <- split(x, x$continent_name) %>%
       }
     }
   )
-
 
 
 

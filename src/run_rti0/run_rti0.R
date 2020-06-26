@@ -1,4 +1,5 @@
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-08", short_run = TRUE))
 set.seed(1)
 
 day.project <- 7
@@ -17,7 +18,7 @@ raw_data <- readRDS(
   glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
 )
 
-deaths_to_use = raw_data[["D_active_transmission"]]
+deaths_to_use <- raw_data[["D_active_transmission"]]
 
 country <- raw_data$Country
 N_geo <- length(country)
@@ -34,18 +35,18 @@ incidence_inference <- deaths_to_use[which(deaths_to_use$dates %in% t.window), ]
 # initial proposal variances (they are now tuned!)
 sigma_prop <- rep(0.1, N_geo * 2)
 # initial incidence conditions
-if ( N_geo > 1 ){
+if (N_geo > 1) {
   mu0 <- purrr::map(
     raw_data$si_mean,
     function(mu) {
-      as.numeric(log(colMeans(incidence_inference[ , -1]) * mu))
+      as.numeric(log(colMeans(incidence_inference[, -1]) * mu))
     }
   )
 } else {
   mu0 <- purrr::map(
     raw_data$si_mean,
     function(mu) {
-      as.numeric(log(mean(incidence_inference[,-1]) * mu))
+      as.numeric(log(mean(incidence_inference[, -1]) * mu))
     }
   )
 }
@@ -64,7 +65,7 @@ si_distrs <- purrr::map2(
   raw_data$si_std,
   function(mu, std) {
     SI_gamma_dist_EpiEstim(
-      mu = mu, si_std  = std, SItrunc = SItrunc
+      mu = mu, si_std = std, SItrunc = SItrunc
     )
   }
 )
@@ -75,7 +76,7 @@ res <- purrr::pmap(
     theta = theta0,
     mu = mu0
   ),
-  function(si_distr, theta,  mu) {
+  function(si_distr, theta, mu) {
     MCMC_full(
       I = incidence_inference,
       N_geo = N_geo,
@@ -103,7 +104,7 @@ R_est <- purrr::map(
   function(r) {
     if (N_geo > 1) {
       apply(
-        r$theta[,1:N_geo], 2, quantile,c(0.5, 0.025, 0.975)
+        r$theta[, 1:N_geo], 2, quantile, c(0.5, 0.025, 0.975)
       )
     } else {
       quantile(r$theta[, 1], c(0.5, 0.025, 0.975))
@@ -117,9 +118,9 @@ I0_est <- purrr::map(
   function(r) {
     if (N_geo > 1) {
       apply(
-        r$theta[ , (N_geo + 1):(2 * N_geo)],
+        r$theta[, (N_geo + 1):(2 * N_geo)],
         2,
-        quantile,c(0.5, 0.025, 0.975)
+        quantile, c(0.5, 0.025, 0.975)
       )
     } else {
       quantile(r$theta[, 2], c(0.5, 0.025, 0.975))
@@ -129,7 +130,7 @@ I0_est <- purrr::map(
 
 ### Project forward
 
-Nsim_per_samples <-  10
+Nsim_per_samples <- 10
 
 day_forward <- day.project + t.window.range
 
@@ -138,9 +139,9 @@ I_pred <- purrr::map2(
   res,
   si_distrs,
   function(r, si_distr) {
-    NR_samples <- nrow(r$theta)/10
+    NR_samples <- nrow(r$theta) / 10
     out <- Proj_Pois(
-      Results = r ,
+      Results = r,
       NR_samples = NR_samples,
       Nsim_per_samples = Nsim_per_samples,
       day_forward = day_forward,
@@ -155,11 +156,11 @@ I_pred <- purrr::map2(
 Rt_last <- purrr::map(
   res,
   function(r) {
-    out <- data.frame(r$theta[ , 1:N_geo])
+    out <- data.frame(r$theta[, 1:N_geo])
     names(out) <- raw_data$Country
-    if (nrow(out) > 1e4){
+    if (nrow(out) > 1e4) {
       f <- round(seq(1, nrow(out), length.out = 1e4))
-      out <- out[f,]
+      out <- out[f, ]
     }
     out
   }
@@ -184,11 +185,11 @@ Predictions <- purrr::map(
       I_pred,
       function(pred_si) {
         out <- pred_si[[country]]
-        out <- as.data.frame(out, out[ ,8:14])
+        out <- as.data.frame(out, out[, 8:14])
         names(out) <- dates_pred
         if (nrow(out) > 1e4) {
-            f <- round(seq(1, nrow(out),length.out = 1e4))
-            out <- out[f,]
+          f <- round(seq(1, nrow(out), length.out = 1e4))
+          out <- out[f, ]
         }
       }
     )
@@ -207,11 +208,66 @@ Std_results <- list(
 
 saveRDS(
   object = Std_results,
-  file = paste0('RtI0_Std_results_week_end_', week_ending,'.rds' )
+  file = paste0("RtI0_Std_results_week_end_", week_ending, ".rds")
 )
 
 saveRDS(
   object = Std_results,
-  file = paste0('RtI0_latest_output.rds')
+  file = paste0("RtI0_latest_output.rds")
 )
 
+#### Diagonistic Plots ##############################################
+## pdf("likelihood.pdf")
+## plot(res[[2]]$logL[, 1]) # of likelihood
+## dev.off()
+
+## plot("r0.pdf")
+## layout(matrix(1:4, 2, 2, byrow = TRUE))
+## for (i in 1:N_geo) {
+##   plot(res[[2]]$theta[, i], main = paste("R0", country[i]))
+## }
+## for (i in 1:N_geo) {
+##   plot(
+##     res[[2]]$theta[, N_geo + i] * res[[2]]$theta[, i],
+##     main = paste("I0", country[i])
+##   )
+## }
+## dev.off()
+I_plot <- tail(deaths_to_use, 14)
+                                        # incidence_inference
+pdf("ci_pred.pdf")
+layout(matrix(1:4, 2, 2, byrow = TRUE))
+
+for (i in 1:N_geo) {
+  CI_pred <- apply(
+    I_pred[[2]][[i]], 2, quantile, c(.5, .025, .975),
+    na.rm = TRUE
+  )
+
+  plot(I_plot$dates, I_plot[, i + 1],
+       xlim = c(
+         I_plot$dates[1], tail(incidence_inference$dates, 1) + day.project
+       ),
+       ylim = c(
+         0, 1 + max(c(incidence_inference[, 1 + i], as.vector(CI_pred)))
+       ),
+    xlab = "time", ylab = "incidence", main = country[i], bty = "n"
+  )
+
+  lines(
+    incidence_inference$dates,
+    incidence_inference[, i + 1],
+    type = "p",
+    pch = 16,
+    col = "black"
+  )
+
+  x <- 1:ncol(CI_pred) + incidence_inference$dates[1] - 1
+  lines(x, CI_pred[1, ], col = "blue", lwd = 2)
+  polygon(c(x, rev(x)), c(CI_pred[2, ], rev(CI_pred[3, ])),
+    col = rgb(0, 0, 1, .2), border = FALSE
+  )
+
+  legend("topleft", legend = c("for inference"), pch = 16, col = "black", bty = "n")
+}
+dev.off()
