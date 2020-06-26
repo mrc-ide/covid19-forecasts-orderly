@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = TRUE, parameters = list(use_si = "si_2"))
+## use_draft = TRUE, parameters = list(use_si = "si_2", strategy = "unwtd"))
 ######### Performance metrics
 observed <- readRDS("model_input.rds")
 
@@ -25,6 +25,9 @@ observed_tall <- split(
   purrr::map_dfr(
     function(df) {
       df$deaths_scaled <- df$deaths / max(df$deaths)
+      df$moving_avg <- slider::slide_dbl(
+        df$deaths, ~ mean(.x), .before = 3, .after = 3
+      )
       cum_deaths <- cumsum(df$deaths)
       idx <- which(cum_deaths >= 100)
       if (length(idx) == 0) {
@@ -59,6 +62,13 @@ wtd_prev_week_error <- tidyr::separate(
   sep = "_"
 )
 
+## Weekly metrics
+wtd_prev_week_error <- dplyr::group_by(
+  wtd_prev_week_error, forecast_date, country, si
+) %>%
+  dplyr::summarise_if(is.numeric, mean) %>%
+dplyr::ungroup()
+
 wtd_prev_week_rt_qntls <- readRDS("wtd_prev_week_rt_qntls.rds") %>%
   dplyr::filter(si == use_si)
 
@@ -79,7 +89,12 @@ weekly_incidence <- purrr::map_dfr(
   forecast_dates,
   function(dates) {
     x <- observed[observed$dates %in% dates, ]
-    weekly <- data.frame(weekly_incid = colSums(x[, -1]))
+    weekly <- data.frame(
+      weekly_incid = colSums(x[, -1]),
+      weekly_mean = colMeans(x[, -1]),
+      weekly_sd = apply(x[, -1], 2, sd)
+    )
+    weekly$cv <- weekly$weekly_mean / weekly$weekly_sd
     weekly$incid_level <- case_when(
       weekly$weekly_incid <= 100 ~ "Weekly deaths <= 100",
       weekly$weekly_incid > 100 ~ "Weekly deaths > 100"
@@ -111,6 +126,12 @@ wtd_all_prev_weeks_error <- tidyr::separate(
   sep = "_"
 )
 
+wtd_all_prev_weeks_error <- dplyr::group_by(
+  wtd_all_prev_weeks_error, forecast_date, country, si
+) %>%
+  dplyr::summarise_if(is.numeric, mean) %>%
+dplyr::ungroup()
+
 wtd_all_prev_weeks_rt_qntls <- readRDS(
   "wtd_rt_all_prev_week_qntls.rds"
 ) %>% dplyr::filter(si == use_si)
@@ -141,6 +162,12 @@ unwtd_pred_error <- tidyr::separate(
   sep = "_"
 )
 
+unwtd_pred_error <- dplyr::group_by(
+  unwtd_pred_error, forecast_date, country, si
+) %>%
+  dplyr::summarise_if(is.numeric, mean) %>%
+dplyr::ungroup()
+
 ## This has one row for each quantile.
 unweighted_rt_qntls <- readRDS("unweighted_rt_qntls.rds") %>%
   dplyr::filter(si == use_si)
@@ -154,11 +181,7 @@ unwtd_pred_error <- dplyr::left_join(
   unwtd_pred_error, unweighted_rt_qntls
 )
 
-######################################################################
-######################################################################
-################ Figures for each strategy ###########################
-######################################################################
-######################################################################
+#####################################################################
 use_strategy <- list(
   wtd_prev_week = wtd_prev_week_error,
   wtd_all_prev_weeks = wtd_all_prev_weeks_error,
@@ -166,227 +189,33 @@ use_strategy <- list(
 )
 metrics <- use_strategy[[strategy]]
 
-## Trying dual axis
-png("main_text_countries_rel_mae.png")
-par(mar = c(5, 2, 1, 5), oma = c(3, 3, 2, 3))
-layout(matrix(1:5, nrow = 5, ncol = 1))
-for (country in main_text_countries) {
-  x <- observed_tall[observed_tall$country %in% country, ]
-  y <- metrics[metrics$country %in% country, ]
-  y <- y[ , c("date", "country", "rel_mae", "forecast_date")]
-  y <- tidyr::gather(y, var, val, rel_mae)
-  y <- dplyr::left_join(y, x, by = c("date" = "dates", "country"))
-  y <- na.omit(y)
-  ## There is this one point in USA that is messing with the scale
-  y <- y[y$val < 30, ]
-  legend <- ifelse(country == "Brazil", TRUE, FALSE)
-  xlab <- ifelse(
-    country == "United_States_of_America", "Days since 100 deaths", ""
-  )
-  xticks <- ifelse(country == "United_States_of_America", TRUE, FALSE)
-
-  scaled_incid_and_metric(incid = x, metrics = y, legend, xlab, xticks)
-}
-mtext(
-  "Deaths (scaled)", side = 2, outer = TRUE, line = 0, col = "blue"
-)
-mtext(
-  "Relative error", side = 4, outer = TRUE, line = 0, col = "red"
-)
-dev.off()
-
-######################################################################
-######################################################################
-## Single axis for both scaled deaths and rmae
-## With ggplot.
-######################################################################
-######################################################################
-x <- observed_tall[observed_tall$country %in% main_text_countries, ]
-
-y <- metrics[metrics$country %in% main_text_countries, ]
-y <- y[ , c("date", "country", "rel_mae", "forecast_date")]
-y <- tidyr::gather(y, var, val, rel_mae)
-y <- dplyr::left_join(y, x, by = c("date" = "dates", "country"))
-y <- na.omit(y)
-## There is this one point in USA that is messing with the scale
-y <- y[y$val < 30, ]
-
-p <- ggplot() +
-  geom_line(
-    data = x, aes(days_since_100_deaths, deaths_scaled, col = "blue"),
-  ) +
-  geom_point(
-    data = y, aes(days_since_100_deaths, val, col = "red"),
-  ) +
-  facet_wrap(
-    ~country,
-    ncol = 1,
-    scales = "free_y",
-    labeller = labeller(country = snakecase::to_title_case)
-  ) +
-  theme_classic() +
-  scale_color_identity(
-    breaks = c("blue", "red"),
-    labels = c("Deaths (scaled)", "Relative error"),
-    guide = "legend",
-  ) +
-  theme(legend.position = "top", legend.title = element_blank()) +
-  xlab("Days since 100 deaths") +
-  ylab("Deaths (scaled)/Relative Error")
-
-ggsave("main_text_countries_rel_mae_same_axis.png", p)
-######################################################################
-######################################################################
-x <- dplyr::left_join(
-  metrics,
-  observed_tall,
-  by = c("date" = "dates", "country")
-)
-p1 <- metrics_over_time(
-  x[x$rel_mae < 30, ], use_si, main_text_countries, "rel_mae", labels
-) + xlab("")
-
-## p1 <- p1 +
-##   geom_hline(yintercept = 1, linetype = "dashed") +
-##   scale_y_log10(
-##     breaks = scales::trans_breaks("log10", function(x) 10^x),
-##     labels = scales::trans_format("log10", scales::math_format(10^.x))
-##   ) +
-##   annotation_logticks(sides = "l")
-
-p2 <- metrics_over_time(
-  x, use_si, main_text_countries, "rel_sharpness", labels
-)
-
-p <- cowplot::plot_grid(
-  p1, p2, labels = c('A', 'B'), label_size = 12, align = "l", ncol = 1
-)
-
-cowplot::save_plot(glue::glue("{strategy}_metrics.png"), p, base_height = 5)
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-#### By phase
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-
-p1_byphase <- p1 + geom_point(aes(col = phase)) +
-  scale_color_manual(
-    labels = c("Decline", "Stable/Growing slowly", "Growing", "Unclear"),
-    breaks = c("decline", "stable/growing slowly", "growing", "unclear"),
-    values = c("#33bd3e", "#ff7d4d", "#dec55c", "#0177dd")
-  ) +
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  )
-
-p2_byphase <- p2 +
-  geom_point(aes(col = phase)) +
-  scale_color_manual(
-    labels = c("Decline", "Stable/Growing slowly", "Growing", "Unclear"),
-    breaks = c("decline", "stable/growing slowly", "growing", "unclear"),
-    values = c("#33bd3e", "#ff7d4d", "#dec55c", "#0177dd")
-  ) +
-  theme(
-    legend.position = "none"
-  )
-
-p_byphase <- cowplot::plot_grid(
-  p1_byphase,
-  p2_byphase,
-  labels = c('A', 'B'),
-  label_size = 12,
-  align = "l",
-  ncol = 1
-)
-
-pall <- metrics_over_time(
-  x, use_si, unique(x$country), "rel_mae", labels
-) +
+ggplot(
+  metrics, aes(weekly_incid, rel_mae, col = phase)
+) + geom_point() +
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
     labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-  annotation_logticks(sides = "l") +
-  geom_point(aes(col = phase)) +
-  scale_color_manual(
-    labels = c("Decline", "Stable/Growing slowly", "Growing", "Unclear"),
-    breaks = c("decline", "stable/growing slowly", "growing", "unclear"),
-    values = c("#33bd3e", "#ff7d4d", "#dec55c", "#0177dd")
-  ) +
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
+  ) + facet_wrap(~phase, ncol = 1, scales = "free_y")
+
+
+ggplot(
+  metrics, aes(cv, rel_mae, col = phase)
+) + geom_point() +
+ facet_wrap(~phase, ncol = 1, scales = "free_y")
+
+
+x <- metrics[metrics$country %in% main_text_countries, ]
+x <- x[, c("forecast_date", "rel_mae", "cv", "country")]
+x <- tidyr::gather(x, var, val, rel_mae:cv)
+
+ggplot(
+  x, aes(forecast_date, val, col = var)
+) + facet_wrap(~country, ncol = 1, scales = "free_y") + geom_point()
+
+
+ggplot(x, aes(cv, rel_mae, col = phase)) +
+  geom_point() +
+    scale_y_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
   )
-ggsave(glue::glue("{strategy}_metrics_by_phase_all.png"), pall)
-
-cowplot::save_plot(
-  glue::glue("{strategy}_metrics_by_phase.png"), p_byphase, base_height = 5
-)
-
-
-######################################################################
-######################################################################
-#### Comapring the three
-######################################################################
-######################################################################
-columns <- colnames(unwtd_pred_error)
-wtd_all_prev_weeks_error <- wtd_all_prev_weeks_error[, columns]
-wtd_prev_week_error <- wtd_prev_week_error[, columns]
-allthree <- rbind(
-  unwtd_pred_error, wtd_all_prev_weeks_error, wtd_prev_week_error
-)
-allthree <- left_join(
-  allthree, observed_tall, by = c("date" = "dates", "country")
-)
-
-p1 <- metrics_over_time(
-  allthree[allthree$rel_mae < 30, ], use_si, main_text_countries, "rel_mae", labels
-) + geom_point(aes(col = strategy)) +
-  scale_color_manual(
-    labels = c("Unweighted",
-               "Weighted (all previous weeks)",
-               "Weighted (previous week)"
-               ),
-    breaks = c("Unweighted",
-               "Weighted (all previous weeks)",
-               "Weighted (previous week)"
-               ),
-    values = c("#0072B2", "#D55E00", "#CC79A7")
-  ) +
-  theme(
-    legend.position = "top",
-    legend.title = element_blank()
-  ) +
-  xlab("")
-
-p2 <- metrics_over_time(
-  allthree[allthree$rel_mae < 30, ], use_si, main_text_countries, "rel_sharpness", labels
-) + geom_point(aes(col = strategy)) +
-  scale_color_manual(
-    labels = c("Unweighted",
-               "Weighted (all previous weeks)",
-               "Weighted (previous week)"
-               ),
-    breaks = c("Unweighted",
-               "Weighted (all previous weeks)",
-               "Weighted (previous week)"
-               ),
-    values = c("#0072B2", "#D55E00", "#CC79A7")
-  ) +
-  theme(legend.position = "none") +
-  xlab("Days since first 100 deaths")
-
-p_bystrategy <- cowplot::plot_grid(
-  p1, p2, labels = c('A', 'B'), label_size = 12, align = "l", ncol = 1
-)
-
-cowplot::save_plot(
-  glue::glue("metrics_by_strategy.png"), p_bystrategy, base_height = 5
-)
-
-dev.off()

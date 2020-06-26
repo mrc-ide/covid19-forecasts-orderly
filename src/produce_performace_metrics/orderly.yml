@@ -2,7 +2,6 @@ script: produce_performace_metrics.R
 environment:
   covid_19_path: COVID19_INPUT_PATH
 sources: R/utils.R
-parameters: exclude
 artefacts:
   data:
     description: Model performance metrics
@@ -17,3 +16,15 @@ depends:
       id: latest
       use:
         model_input.rds: latest_deaths_wide_no_filter.rds
+  - run_rti0:
+      id: latest(parameter:week_ending == "2020-03-08")
+      use:
+         RtI0_Std_results_week_end_2020-03-08.rds: RtI0_latest_output.rds
+  - run_apeestim:
+      id: latest(parameter:week_ending == "2020-03-08")
+      use:
+         sbkp_Std_results_week_end_2020-03-08.rds: apeestim_model_outputs.rds
+  - DeCa_model:
+      id: latest(parameter:week_ending == "2020-03-08")
+      use:
+         DeCa_Std_results_week_end_2020-03-08.rds: DeCa_latest.rds

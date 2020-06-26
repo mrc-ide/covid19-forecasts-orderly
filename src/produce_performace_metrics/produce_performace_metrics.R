@@ -1,8 +1,12 @@
-output_files <- list.files(covid_19_path)
+run_info <- orderly::orderly_run_info()
+output_files <- run_info$depends$as
+output_files <- output_files[output_files != "model_input.rds"]
+
+##output_files <- list.files(covid_19_path)
 ## Exclude the latest outputs as we don't have observed data for these
-output_files <- grep(
-  exclude, output_files, value = TRUE, invert = TRUE
-)
+## output_files <- grep(
+##   exclude, output_files, value = TRUE, invert = TRUE
+## )
 
 names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
