@@ -3,20 +3,22 @@
 probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 ## weeks_ending <- readr::read_rds("latest_week_ending.rds")
 
-output_files <- list.files(covid_19_path)
-output_files <- output_files[grepl(x = output_files, pattern = week_ending)]
+run_info <- orderly::orderly_run_info()
+output_files <- run_info$depends$as
+output_files <- output_files[output_files != "model_input.rds"]
 
-names(output_files) <- gsub(
-  pattern = ".rds", replacement = "", x = output_files
+names(output_files) <- paste(
+  gsub(
+    pattern = ".rds", replacement = "", x = output_files
+  ), week_ending, sep = "_"
 )
+
 names(week_ending) <- week_ending
 message("For week ending ", week_ending)
 
-message("Output Files ", output_files)
+message("Output Files ", paste(output_files, collapse = "\n"))
 
-model_outputs <- purrr::map(
-  output_files, ~ readRDS(paste0(covid_19_path, .))
-)
+model_outputs <- purrr::map(output_files, readRDS)
 
 ## Equal weighted models
 ## First Level is model, 2nd is country, 3rd is SI.

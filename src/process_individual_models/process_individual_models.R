@@ -5,8 +5,9 @@
 ## "Philippines", "Poland", "Portugal", "Romania", "Russia", "South_Korea",
 ## "Spain", "Sweden", "Switzerland", "Turkey", "United_Kingdom",
 ## "United_States_of_America")
-message(covid_19_path)
-output_files <- list.files(path = covid_19_path)
+run_info <- orderly::orderly_run_info()
+output_files <- run_info$depends$as
+output_files <- output_files[output_files != "model_input.rds"]
 
 names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
@@ -14,13 +15,11 @@ names(output_files) <- gsub(
 
 ##week_ending <- max(as.Date(params))
 
-output_files <- output_files[grepl(pattern = week_ending, x = names(output_files))]
+##output_files <- output_files[grepl(pattern = week_ending, x = names(output_files))]
 message("Processing ", paste(output_files, collapse = "\n"))
 
-model_outputs <- purrr::map(
-  output_files,
-  ~ readRDS(paste0(covid_19_path, .))
-)
+model_outputs <- purrr::map(output_files, readRDS)
+
 model_input <- readRDS(
   glue::glue(
     "{dirname(covid_19_path)}/model_inputs/data_{week_ending}.rds"
@@ -60,7 +59,7 @@ daily_predictions_qntls <- purrr::imap_dfr(
     message(model)
     pred <- x[["Predictions"]]
     purrr::imap_dfr(
-             pred, function(y, country) {
+      pred, function(y, country) {
                message(country)
                extract_predictions_qntls(y)
              },
@@ -69,9 +68,9 @@ daily_predictions_qntls <- purrr::imap_dfr(
   }, .id = "model"
 )
 
-readr::write_rds(
-    x = daily_predictions_qntls,
-    path = "daily_predictions_qntls.rds"
+saveRDS(
+  object = daily_predictions_qntls,
+  file = "daily_predictions_qntls.rds"
 )
 
 
@@ -108,9 +107,9 @@ weekly_predictions_qntls <- purrr::map_dfr(
   .id = "model"
 )
 
-readr::write_rds(
-    x = weekly_predictions_qntls,
-    path = "weekly_predictions_qntls.rds"
+saveRDS(
+  object = weekly_predictions_qntls,
+  file = "weekly_predictions_qntls.rds"
 )
 
 
@@ -140,10 +139,7 @@ model_rt_qntls <- purrr::map_dfr(
   }, .id = "model"
 )
 
-readr::write_rds(
-    x = model_rt_qntls,
-    path = "model_rt_qntls.rds"
-)
+saveRDS(object = model_rt_qntls, file = "model_rt_qntls.rds")
 
 
 model_rt_samples <- purrr::map_dfr(
@@ -162,13 +158,4 @@ model_rt_samples <- purrr::map_dfr(
   }, .id = "model"
 )
 
-readr::write_rds(
-    x = model_rt_samples,
-    path = "model_rt_samples.rds"
-)
-
-readr::write_rds(
-    x = week_ending,
-    path = "week_ending.rds"
-)
-
+saveRDS(model_rt_samples, "model_rt_samples.rds")

@@ -10,11 +10,10 @@ artefacts:
         - daily_predictions_qntls.rds
         - model_rt_qntls.rds
         - model_rt_samples.rds
-        - week_ending.rds
         - weekly_predictions_qntls.rds
 
 parameters:
-  week_ending: 2020-04-19
+  week_ending
 
 packages:
   - purrr
@@ -26,8 +25,21 @@ sources:
   - R/utils.R
 
 depends:
-  prepare_ecdc_data:
-    id: "latest"
-    draft: false
-    use:
-      model_input.rds: latest_model_input.rds
+  - prepare_ecdc_data:
+      id: "latest"
+      draft: false
+      use:
+        model_input.rds: latest_model_input.rds
+  - run_rti0:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         RtI0_Std_results.rds: RtI0_latest_output.rds
+  - run_apeestim:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         sbkp_Std_results.rds: apeestim_model_outputs.rds
+  - DeCa_model:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         DeCa_Std_results.rds: DeCa_latest.rds
+      

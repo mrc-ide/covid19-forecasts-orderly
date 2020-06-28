@@ -12,7 +12,7 @@ names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
 
-model_outputs <- purrr::map(output_files, ~ readRDS(paste0(covid_19_path, .)))
+model_outputs <- purrr::map(output_files, readRDS)
 
 model_input <- readRDS("model_input.rds")
 ## Czech_Republic is the same as Czechia

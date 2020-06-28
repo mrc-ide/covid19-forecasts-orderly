@@ -1,8 +1,5 @@
 script: produce_ensemble_outputs.R
 
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-
 artefacts:
   - data:
       description: Ensemble Model Outputs
@@ -25,3 +22,17 @@ packages:
 
 sources:
   - R/utils.R
+
+depends:
+  - run_rti0:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         RtI0_Std_results.rds: RtI0_latest_output.rds
+  - run_apeestim:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         sbkp_Std_results.rds: apeestim_model_outputs.rds
+  - DeCa_model:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         DeCa_Std_results.rds: DeCa_latest.rds
