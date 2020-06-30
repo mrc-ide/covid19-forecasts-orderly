@@ -185,7 +185,7 @@ Predictions <- purrr::map(
       I_pred,
       function(pred_si) {
         out <- pred_si[[country]]
-        out <- as.data.frame(out, out[, 8:14])
+        out <- as.data.frame(out[, 8:14])
         names(out) <- dates_pred
         if (nrow(out) > 1e4) {
           f <- round(seq(1, nrow(out), length.out = 1e4))
@@ -202,7 +202,7 @@ Std_results <- list(
   I_active_transmission = raw_data$I_active_transmission,
   D_active_transmission = raw_data$D_active_transmission,
   Country = raw_data$Country,
-  Rt_last = Rt_last,
+  R_last = Rt_last,
   Predictions = Predictions
 )
 

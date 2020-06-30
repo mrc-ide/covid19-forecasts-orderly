@@ -24,7 +24,7 @@ for (week in weeks) {
   m1 <- orderly::orderly_run(
     "run_rti0", parameters = parameter, use_draft = use_draft
   )
-  ##orderly::orderly_commit(m1)
+  ## orderly::orderly_commit(m1)
   ##orderly::orderly_push_archive(m1)
 }
 
@@ -33,7 +33,7 @@ for (week in weeks) {
   parameter <- list(week_ending = week)
   m2 <- orderly::orderly_run(
     "run_apeestim", parameters = parameter, use_draft = use_draft
-    )
+  )
   ##orderly::orderly_commit(m2)
   ##orderly::orderly_push_archive(m2)
 }
@@ -45,7 +45,7 @@ for (week in weeks) {
   m3 <- orderly::orderly_run(
     "DeCa_model", parameters = parameter, use_draft = use_draft
   )
-  ##orderly::orderly_commit(m3)
+  ## orderly::orderly_commit(m3)
   ##orderly::orderly_push_archive(m3)
 }
 
@@ -55,7 +55,7 @@ for (week in weeks) {
   m3 <- orderly::orderly_run(
     "process_individual_models", parameters = parameter, use_draft = use_draft
   )
-  ##orderly::orderly_commit(m3)
+  ## orderly::orderly_commit(m3)
   ##orderly::orderly_push_archive(m3)
 }
 
@@ -69,15 +69,15 @@ for (week in weeks) {
   ## orderly::orderly_push_archive(unwtd)
 }
 
-for (week in weeks) {
-  message("################ ", week, " #############################")
-  parameter <- list(week_ending = week)
-  unwtd <- orderly::orderly_run(
-    "produce_ensemble_outputs", parameters = parameter, use_draft = use_draft
-  )
-  orderly::orderly_commit(unwtd)
-  orderly::orderly_push_archive(unwtd)
-}
+## for (week in weeks) {
+##   message("################ ", week, " #############################")
+##   parameter <- list(week_ending = week)
+##   unwtd <- orderly::orderly_run(
+##     "produce_ensemble_outputs", parameters = parameter, use_draft = use_draft
+##   )
+##   orderly::orderly_commit(unwtd)
+##   orderly::orderly_push_archive(unwtd)
+## }
 
 
 a <- orderly::orderly_run(

@@ -45,9 +45,39 @@ weighted_cases <- purrr::map(
    )
   }
 )
-
 saveRDS(weighted_cases, "weighted_cases.rds")
+######################################################################
+############ Weighted cases/ Unweighted cases ########################
+wtd_df <- purrr::map_dfr(
+  weighted_cases,
+  function(x) {
+    data.frame(
+      dates = ascertainr_cases[["dates"]],
+      cases = x[, 1]
+    )
+  }, .id = "country"
+)
+unwtd_df <- tidyr::gather(ascertainr_cases, country, cases, -dates)
+unwtd_df$category <- "cases"
+wtd_df$category <- "weighted_cases"
+x <- rbind(unwtd_df, wtd_df)
 
+npages <- length(countries) / 4
+p <- ggplot(
+  x, aes(dates, cases, col = category)
+) + geom_line(size = 1.1) +
+  theme_classic() +
+  theme(legend.position = "top", legend.title = element_blank())
+
+for (page in 1:npages) {
+  p <- p +
+    facet_wrap_paginate(
+      ~country, nrow = 4, ncol = 1, page = page, scales = "free_y"
+    )
+  ggsave(filename = glue::glue("wtd_cases_{page}.png"), p)
+}
+######################################################################
+######################################################################
 deaths_to_cases <- purrr::map(
   countries,
   function(country) {
@@ -189,6 +219,24 @@ ascertainment_qntls <- purrr::map(
 
 saveRDS(ascertainment_qntls, "ascertainment_qntls.rds")
 
+######################################################################
+################# ascertainment quantiles ############################
+######################################################################
+## p <- ggplot(x) +
+##   geom_ribbon(aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
+##   geom_line(aes(x = date, y = `50.0%`), size = 1.1) +
+##   theme_classic() +
+##   xlab("") +
+##   ylab("Ascertainment")
+
+## for (page in 1:npages) {
+##   p <-  p +
+##     facet_wrap_paginate(~country, ncol = 1, nrow = 4, page = page)
+##   ggsave(glue::glue("ascertainment_{page}.png"), p)
+## }
+######################################################################
+######################################################################
+
 episize_prev <- purrr::map(
   countries,
   function(country) {
@@ -274,8 +322,35 @@ episize_projected_qntls <- purrr::imap(
     cbind(date = ascertainr_deaths[["dates"]][idx], df)
   }
 )
-
 saveRDS(episize_projected_qntls, "episize_after_mu_qntls.rds")
+
+
+######################################################################
+#################### Episize quantiles ###############################
+######################################################################
+######################################################################
+x <- dplyr::bind_rows(episize_projected_qntls, .id = "country")
+x <- rbind(episize_prev_qntls, x)
+
+p <- ggplot(x) +
+  geom_ribbon(aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
+  geom_line(aes(x = date, y = `50.0%`), size = 1.1) +
+  theme_classic() +
+  xlab("") +
+  ylab("Episize")
+
+for (page in 1:npages) {
+  y <- tail(ascertainr_deaths[["dates"]], 1) - round(mu_delta)
+  p <-  p +
+    geom_vline(xintercept = y) +
+    facet_wrap_paginate(
+      ~country, ncol = 1, nrow = 4, page = page, scales = "free_y"
+  )
+  ggsave(glue::glue("episize_{page}.png"), p)
+}
+
+######################################################################
+######################################################################
 
 cases_augmented <- purrr::map(
   countries,
@@ -304,6 +379,8 @@ cases_augmented <- purrr::map(
 
 saveRDS(cases_augmented, "cases_augmented.rds")
 
+######################################################################
+######################################################################
 weighted_cases_augm <- purrr::map(
   countries,
   function(country) {
@@ -316,13 +393,61 @@ weighted_cases_augm <- purrr::map(
         ascertainr::weighted_incid(
           incid = x, weights = report_to_death, trunc = SItrunc
        )
-     }
+      }
     )
     out <- out[ , seq(to = ncol(out), length.out = 7)]
   }
- )
-
+)
 saveRDS(weighted_cases_augm, "weighted_cases_augm.rds")
+######################################################################
+######################################################################
+x <- purrr::map2_dfr(
+  cases_augmented,
+  weighted_cases_augm,
+  function(y, z) {
+    out <- data.frame(
+      t(apply(y, 2, quantile, probs = c(0.025, 0.5, 0.975))),
+      check.names = FALSE
+    )
+    out$category <- "augmented"
+    out$dates <- c(
+      tail(ascertainr_cases$dates, SItrunc),
+      seq(
+        from = max(ascertainr_cases$dates) + 1, length.out = 7, by = "1 day"
+      )
+    )
+    wtd_augmented <- data.frame(
+      t(apply(z, 2, quantile, probs = c(0.025, 0.5, 0.975))),
+      check.names = FALSE
+    )
+    dates <- seq(
+      tail(ascertainr_cases$dates, 1), length.out = 7, by = "1 day"
+    )
+    wtd_augmented$dates <- dates
+    wtd_augmented$category <- "weighted augmented"
+    rbind(out, wtd_augmented)
+  }, .id = "country"
+)
+
+p <- ggplot(x) +
+  geom_ribbon(
+    aes(x = dates, ymin = `2.5%`, ymax = `97.5%`, fill = category), alpha = 0.3
+  ) +
+  geom_line(aes(x = dates, y = `50%`, col = category), size = 1.1) +
+  theme_classic() +
+  xlab("") +
+  ylab("Episize")
+
+for (page in 1:npages) {
+
+  p <-  p +
+    facet_wrap_paginate(
+      ~country, ncol = 1, nrow = 4, page = page, scales = "free_y"
+  )
+  ggsave(glue::glue("weighted_augmented_cases_{page}.png"), p)
+}
+######################################################################
+######################################################################
 
 predictions <- purrr::map(
   countries,
@@ -342,7 +467,7 @@ predictions <- purrr::map(
       d_exp[, k] <- rbinom(
         n = n_post,
         size = round(weighted_i[, k]),
-        prob = reporting[,k]
+        prob = reporting[, k]
       )
     }
     colnames(d_exp) <- seq(
@@ -354,38 +479,38 @@ predictions <- purrr::map(
 
 t.window <- 10
 r_estim <- purrr::map(
-      countries,
-      function(country){
-        message(country)
-        pred <- apply(
-          predictions[[country]][[1]], 2, median, na.rm = TRUE
+  countries,
+  function(country){
+    message(country)
+    pred <- apply(
+      predictions[[country]][[1]], 2, median, na.rm = TRUE
+    )
+    obs <- c(abs(ascertainr_deaths[[country]]), pred)
+    purrr::map2(
+      input_data$si_mean,
+      input_data$si_std,
+      function(s_mean, s_sd) {
+        si_distr <- gamma_dist_EpiEstim(
+          si_mu = s_mean, si_std = s_sd, SItrunc = 30
         )
-        obs <- c(abs(ascertainr_cases[[country]]), pred)
-        purrr::map2(
-          input_data$si_mean,
-          input_data$si_std,
-          function(s_mean, s_sd) {
-            si_distr <- gamma_dist_EpiEstim(
-              si_mu = s_mean, si_std = s_sd, SItrunc = 30
-            )
-            res <- EpiEstim::estimate_R(
-              obs,
-              method = 'non_parametric_si',
-              config = make_config(
-                list(
-                  mean_prior = 1,
-                  si_distr = si_distr$dist,
-                  t_start = length(obs) - t.window + 1,
-                  t_end = length(obs))
-              )
-            )
-            res <- res$R
-            param <- epitrix::gamma_mucv2shapescale(
-             mu = res$`Mean(R)`, cv = res$`Std(R)`/res$`Mean(R)`
-             )
-            stats::rgamma(n = n_post, shape = param$shape, scale = param$scale)
-         }
-      )
+        res <- EpiEstim::estimate_R(
+          obs,
+          method = 'non_parametric_si',
+          config = make_config(
+            list(
+              mean_prior = 1,
+              si_distr = si_distr$dist,
+              t_start = length(obs) - t.window + 1,
+              t_end = length(obs))
+          )
+        )
+        res <- res$R
+        param <- epitrix::gamma_mucv2shapescale(
+          mu = res$`Mean(R)`, cv = res$`Std(R)`/res$`Mean(R)`
+        )
+        stats::rgamma(n = n_post, shape = param$shape, scale = param$scale)
+      }
+    )
   }
 )
 
@@ -431,7 +556,7 @@ summary_14days <- purrr::map_dfr(
 
     data.frame(
       country = country,
-      deaaths_to_reported_ratio = glue::glue(
+      deaths_to_reported_ratio = glue::glue(
         "{round(summary_r$median_ratio[nrow(ascertainr_deaths)], 3) }",
         " ({round(summary_r$low_ratio[nrow(ascertainr_deaths)], 3)} - {round(summary_r$up_ratio[nrow(ascertainr_deaths)],3)})",
       ),

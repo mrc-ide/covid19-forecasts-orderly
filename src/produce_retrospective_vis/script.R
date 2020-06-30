@@ -20,7 +20,7 @@ names(infiles) <- weeks
 
 included <- purrr::map(infiles, readRDS)
 included <- purrr::map_dfr(
-  included, ~ data.frame(country = .$Country), .id = "week_starting"
+  included, ~ data.frame(country = .$Country, stringsAsFactors = FALSE), .id = "week_starting"
 )
 ## These are now included in the ECDC data. ECDC doesn;t distuish
 ## N and S America
@@ -67,7 +67,7 @@ pbar <- ggplot(included, aes(week_starting)) +
 x <- dplyr::count(included, week_starting, continent_name)
 x$week_starting <- as.Date(x$week_starting)
 
-y <- dplyr::filter(x, week_starting == "2020-06-21")
+y <- dplyr::filter(x, week_starting == "2020-06-28")
 labels <- data.frame(
   x = as.Date("2020-06-24"),
   label = c("Asia", "Europe", "North America", "South America", "Africa")
@@ -160,52 +160,3 @@ ggsave("epicurve_by_continent.png", epicurve)
 ## Side by side:
 p <- cowplot::plot_grid(epicurve, pline, nrow = 2, labels = "AUTO", align = "hv")
 ggsave("epicurve_pline.png", p)
-#####################################################################
-#####################################################################
-############# Rt by population ######################################
-#####################################################################
-#####################################################################
-unweighted_rt_qntls <- readRDS("unweighted_rt_qntls.rds") %>%
-  dplyr::filter(si == "si_2")
-
-ecdc <- readr::read_csv(
-  "COVID-19-geographic-disbtribution-worldwide-2020-06-14.csv"
-  ) %>%
-  dplyr::select(
-    country = `Countries and territories`, popData2018, continent
-  ) %>% dplyr::distinct()
-
-unweighted_rt_qntls$country[unweighted_rt_qntls$country == "Czech_Republic"] <- "Czechia"
-unweighted_rt_qntls <- dplyr::left_join(unweighted_rt_qntls, ecdc)
-
-x <- dplyr::group_by(unweighted_rt_qntls, forecast_date, phase) %>%
-  dplyr::summarise(total_pop = sum(popData2018)) %>%
-  dplyr::ungroup()
-
-x$forecast_date <- as.Date(x$forecast_date)
-
-phase_palette <- c(
-  decline = "018571",
-  growing = "#a6611a",
-  unclear = "#dfc27d",
-  `stable/growing slowly` = "#80cdc1"
-)
-
-p <- ggplot() +
-  geom_line(
-    data = x, aes(forecast_date, total_pop, col = phase), size = 1.2
-  ) +
-  scale_color_manual(
-    values = phase_palette
-  ) +
-  theme_classic() +
-  theme(legend.position = "top", legend.title = element_blank()) +
-  xlab("") +
-  ylab("Population") +
-  scale_x_date(
-    date_breaks = "2 weeks",
-    limits = c(as.Date("2020-03-01"), NA)
-  )
-
-
-ggsave("population_by_phase.png", p)

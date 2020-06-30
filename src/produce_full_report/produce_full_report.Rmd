@@ -37,20 +37,20 @@ knitr::opts_chunk$set(
     messages = FALSE
     )
 
-week_starting <- as.Date('14-06-2020', format = '%d-%m-%Y')
+week_starting <- as.Date('28-06-2020', format = '%d-%m-%Y')
 
 ```
 
 # Introduction 
 
-As of 21^st^ June 2020,  more than
-8,700,000 cases of COVID-19 have been reported across the world, with more than 461,000
+As of 28^th^ June 2020,  more than
+9,800,000 cases of COVID-19 have been reported across the world, with more than 495,000
 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 53 countries with active transmission.
+ascertainment) for 55 countries with active transmission.
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -103,8 +103,8 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week beginning 21^st^ June 2020, 
-the number of countries/regions included based on these thresholds is 53.
+two weeks. For the week beginning 28^th^ June 2020, 
+the number of countries/regions included based on these thresholds is 55.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
@@ -217,6 +217,12 @@ and 3, see Methods).
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_1.png")
 
 ```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_2.png")
+
+```
 *Figure 4.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Africa with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
@@ -231,6 +237,12 @@ and 3, see Methods).
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_1.png")
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_2.png")
 
 ```
 *Figure 5.* Reported daily deaths and current forecasts based on the ensemble
@@ -269,14 +281,14 @@ and 3, see Methods). The reporting of deaths and cases in Brazil is currently ch
 knitr::include_graphics("figs/rt_phase_si_2.png")
 ```
 *Figure 7.* Estimates of transmissibility in countries with active
-transmission for the week ending 21^st^ June 2020. A country is defined
+transmission for the week ending 28^th^ June 2020. A country is defined
 to be in the declining phase if the 97.5^th^ quantile of the effective
 reproduction number is below 1. It is defined to be in the growing
 phase if the 2.5^th^ quantile of the effective reproduction number is
 above 1 and the width of the 95% CrI is less than 1. 
 If the 2.5^th^ quantile of the effective reproduction number is
 below 1 and the width of the 95% CrI is less than 1, we define the
-phase as stable/growing slowly. If the the width of the 95% CrI is
+phase as stable/growing slowly. If the width of the 95% CrI is
 more than 1, the phase is defined as uncertain.
 Note that
 estimates of transmissibility rely on a constant rate of reporting of
@@ -405,7 +417,7 @@ being reported. Any temporal trend in the ratio suggests a change in
 the reporting. For instance, an increase in the ratio gives an
 indication that cases reporting is decreasing. If all cases
 (including asymptomatic cases) and death were reported, then the ratio defined
-would be equivalent to the IFR.
+would be equivalent to the infection fatality ratio (IFR).
 
 
 ### Europe
@@ -453,6 +465,10 @@ knitr::include_graphics("figs/reporting_ratio_Africa_page_1.png")
 knitr::include_graphics("figs/reporting_ratio_North America_page_1.png")
 ```
 
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_North America_page_2.png")
+```
+
 ### South America
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -496,7 +512,11 @@ for each country (mean and 95% CI) during the last *14 days*; (**ii**) the estim
 
 ##x <- readr::read_csv("summary_DeathToRepoted_14days_2020-06-21.csv")
 x <- readr::read_csv("summary_DeathToRepoted_14days.csv")
-exclude <- c("Ecuador", "Cameroon", "United_States_of_America", "Honduras")
+exclude <- c(
+  "Ecuador", "Cameroon", "United_States_of_America",
+  "Sudan", "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
+  "Spain"
+)
 
 x <- x[!x$country %in% exclude, ]
 x <- dplyr::select(
@@ -701,7 +721,7 @@ knitr::include_graphics("figs/Europe_si_2_page_4.png")
 ```
 
 
-*Figure 14.* Projections (7-day ahead) for the week starting 21^st^ June 2020 from individual models
+*Figure 14.* Projections (7-day ahead) for the week starting 28^th^ June 2020 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -722,7 +742,7 @@ knitr::include_graphics("figs/Asia_si_2_page_2.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_3.png")
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 21^st^ June 2020 from individual models (Models 1, 2
+*Figure 15.* Projections (7-day ahead) for the week starting 28^th^ June 2020 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -737,7 +757,7 @@ CrI of the projections.
 knitr::include_graphics("figs/Africa_si_2_page_1.png")
 ```
 
-*Figure 16.* Projections (7-day ahead) for the week starting 21^st^ June 2020 from individual models (Models 1, 2
+*Figure 16.* Projections (7-day ahead) for the week starting 28^th^ June 2020 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -749,7 +769,10 @@ CrI of the projections.
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 21^st^ June 2020 from individual models (Models 1, 2
+```{r}
+knitr::include_graphics("figs/North America_si_2_page_2.png")
+```
+*Figure 17.* Projections (7-day ahead) for the week starting 28^th^ June 2020 from individual models (Models 1, 2
 and 3) for each country in North America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -762,7 +785,7 @@ CrI of the projections.
 knitr::include_graphics("figs/South America_si_2_page_1.png")
 ```
 *Figure 18.* Projections (7-day ahead) for the week starting
-21^st^ June 2020 from individual models (Models 1, 2
+28^th^ June 2020 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -777,7 +800,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 19.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-21^st^ June 2020. 
+28^th^ June 2020. 
 
 
 #### Asia
@@ -789,7 +812,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 20.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-21^st^ June 2020. 
+28^th^ June 2020. 
 
 
 #### Africa
@@ -801,7 +824,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-21^st^ June 2020. 
+28^th^ June 2020. 
 
 
 #### North & Central America
@@ -813,7 +836,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 22.* Estimates of $R_t$ from individual models for each country in
 North America with
 active transmission (see Methods) for the week starting
-21^st^ June 2020. 
+28^th^ June 2020. 
 
 
 
@@ -826,7 +849,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 23.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-21^st^ June 2020. 
+28^th^ June 2020. 
 
 ## Code 
 
@@ -865,22 +888,14 @@ country available on the ECDC website:
 https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
 
 *Notes* 
-Some countries have been exlcuded from the analysis despite meeting
+Some countries have been excluded from the analysis despite meeting
 the threshold because the number of deaths per day did not allow
 reliable inference. 
-The following corrections were applied to data downloaded
-from ECDC. All corrections are based on the numbers
+A complete list of corrections applied to the data downloaded
+from ECDC is
+available
+[here](https://github.com/mrc-ide/covid19-forecasts-orderly/blob/main/src/prepare_ecdc_data/R/corrections_28June.R). 
+All corrections are based on the numbers
 reported by the World Health Organization (https://covid19.who.int)
-
-- The number of deaths in India was manually corrected to 594 on
-  17^th^ June as deaths that occurred in March and April were reported 
-  on this day.
-  
-- The number of deaths in Russia was manually corrected to 182, 181
-  and 161 on 19^th^, 20^th^ and 21^st^ June respectively.
-  
-- The number of deaths in Iraq was manually corrected to 69 on 20^th^
-  June, and 88 on 21^st^ June.
-
 
 

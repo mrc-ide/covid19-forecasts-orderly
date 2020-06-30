@@ -35,7 +35,8 @@ ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
 exclude <- c(
   "Ecuador", "Cameroon", "United_States_of_America",
-  "Sudan", "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania"
+  "Sudan", "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
+  "Spain"
 )
 
 ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
@@ -43,11 +44,14 @@ ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
 ## Read in the model specific outputs here so that we can construct
 ## nice names
 daily_predictions_qntls <- readRDS("daily_predictions_qntls.rds")
+daily_predictions_qntls$model <- glue::glue(
+  "{daily_predictions_qntls$model}_{week_ending_vis}"
+)
 daily_predictions_qntls <- daily_predictions_qntls[! daily_predictions_qntls$country %in% exclude, ]
 daily_predictions_qntls <- tidyr::separate(
   daily_predictions_qntls,
   col = "model",
-  into = c("proj", NA, NA, NA, NA, "week_ending"),
+  into = c("proj", NA, NA, "week_ending"),
   sep = "_"
 )
 
