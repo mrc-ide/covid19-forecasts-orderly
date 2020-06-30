@@ -387,7 +387,7 @@ weighted_cases_augm <- purrr::map(
     message(country)
     out <- apply(
       cases_augmented[[country]],
-      2,
+      1,
       function(x) {
         x <- matrix(x[2:length(x)], ncol = 1)
         ascertainr::weighted_incid(
@@ -395,6 +395,7 @@ weighted_cases_augm <- purrr::map(
        )
       }
     )
+    out <- t(out)
     out <- out[ , seq(to = ncol(out), length.out = 7)]
   }
 )
