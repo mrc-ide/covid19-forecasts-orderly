@@ -46,7 +46,7 @@ directory on the src directory.
    
    ```
    a <- orderly::orderly_run("process_individual_models", parameter =
-   list(week_ending = "2020-05-10"))
+   list(week_ending = "2020-05-31"))
    orderly::orderly_commit(a)
    ```
 
@@ -60,11 +60,12 @@ directory on the src directory.
 
    compute_model_weights Computes model weights using the metrics
    produced in the previous task.
+   
 3. produce_ensemble_outputs This task creates an ensemble model. 
 
    
    ```
-   a <- orderly::orderly_run("produce_ensemble_outputs", parameters = list(week_ending = "2020-05-10"))
+   a <- orderly::orderly_run("produce_ensemble_outputs", parameters = list(week_ending = "2020-06-14"))
    orderly::orderly_commit(a)
    ```
 
@@ -73,7 +74,7 @@ directory on the src directory.
    
    
    ```
-   a <- orderly::orderly_run("format_model_outputs")
+   a <- orderly::orderly_run("format_model_outputs", use_draft = TRUE)
    orderly::orderly_commit(a)
    ```
 5. produce_visualisations As the name suggests, makes all the graphs
