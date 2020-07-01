@@ -1,4 +1,4 @@
-use_draft <- TRUE
+use_draft <- FALSE
 weeks <- list(
   "2020-03-08",
   "2020-03-15",
@@ -15,7 +15,8 @@ weeks <- list(
   "2020-05-31",
   "2020-06-07",
   "2020-06-14",
-  "2020-06-21"
+  "2020-06-21",
+  "2020-06-28"
 )
 
 for (week in weeks) {
@@ -45,8 +46,8 @@ for (week in weeks) {
   m3 <- orderly::orderly_run(
     "DeCa_model", parameters = parameter, use_draft = use_draft
   )
-  ## orderly::orderly_commit(m3)
-  ##orderly::orderly_push_archive(m3)
+  orderly::orderly_commit(m3)
+  orderly::orderly_push_archive(name = "DeCa_model", id = m3)
 }
 
 for (week in weeks) {
@@ -68,6 +69,17 @@ for (week in weeks) {
   ## orderly::orderly_commit(unwtd)
   ## orderly::orderly_push_archive(unwtd)
 }
+
+a <- orderly::orderly_run("src/format_model_outputs/")
+orderly::orderly_commit(a)
+
+a <- orderly::orderly_run("src/produce_maps/")
+orderly::orderly_commit(a)
+
+a <- orderly::orderly_run("src/produce_visualisations/", parameters = list(week_ending_vis = week))
+orderly::orderly_commit(a)
+
+a <- orderly::orderly_run("src/produce_full_report")
 
 ## for (week in weeks) {
 ##   message("################ ", week, " #############################")
