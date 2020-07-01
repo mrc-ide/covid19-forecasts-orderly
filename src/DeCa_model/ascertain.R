@@ -1,6 +1,6 @@
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
 set.seed(1)
-
+dir.create("figures")
 ## -----------------------------------------------------------------------------
 
 week_ending <-  as.Date(week_ending)
@@ -66,7 +66,7 @@ npages <- length(countries) / 4
 p <- ggplot(
   x, aes(dates, cases, col = category)
 ) + geom_line(size = 1.1) +
-  theme_classic() +
+  theme_minimal() +
   theme(legend.position = "top", legend.title = element_blank())
 
 for (page in 1:npages) {
@@ -74,7 +74,7 @@ for (page in 1:npages) {
     facet_wrap_paginate(
       ~country, nrow = 4, ncol = 1, page = page, scales = "free_y"
     )
-  ggsave(filename = glue::glue("wtd_cases_{page}.png"), p)
+  ggsave(filename = glue::glue("figures/wtd_cases_{page}.png"), p)
 }
 ######################################################################
 ######################################################################
@@ -157,9 +157,11 @@ saveRDS(deaths_to_cases_qntls, "deaths_to_cases_qntls.rds")
 CFR_esti <- c(1.38, 1.23, 1.53)/100
 # function to get parameters
 f1 <- function(shape){
-  res <- c(shape[1]/(shape[1]+shape[2]),
-           qbeta(.025, shape1 = shape[1], shape2 = shape[2]),
-           qbeta(.975, shape1 = shape[1], shape2 = shape[2]))
+  res <- c(
+    shape[1]/(shape[1]+shape[2]),
+    qbeta(.025, shape1 = shape[1], shape2 = shape[2]),
+    qbeta(.975, shape1 = shape[1], shape2 = shape[2])
+  )
   res <- sum((res*100-CFR_esti*100)^2)
   return(res)
 }
@@ -225,7 +227,7 @@ saveRDS(ascertainment_qntls, "ascertainment_qntls.rds")
 ## p <- ggplot(x) +
 ##   geom_ribbon(aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
 ##   geom_line(aes(x = date, y = `50.0%`), size = 1.1) +
-##   theme_classic() +
+##   theme_minimal() +
 ##   xlab("") +
 ##   ylab("Ascertainment")
 
@@ -335,7 +337,7 @@ x <- rbind(episize_prev_qntls, x)
 p <- ggplot(x) +
   geom_ribbon(aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
   geom_line(aes(x = date, y = `50.0%`), size = 1.1) +
-  theme_classic() +
+  theme_minimal() +
   xlab("") +
   ylab("Episize")
 
@@ -346,7 +348,7 @@ for (page in 1:npages) {
     facet_wrap_paginate(
       ~country, ncol = 1, nrow = 4, page = page, scales = "free_y"
   )
-  ggsave(glue::glue("episize_{page}.png"), p)
+  ggsave(glue::glue("figures/episize_{page}.png"), p)
 }
 
 ######################################################################
@@ -435,7 +437,7 @@ p <- ggplot(x) +
     aes(x = dates, ymin = `2.5%`, ymax = `97.5%`, fill = category), alpha = 0.3
   ) +
   geom_line(aes(x = dates, y = `50%`, col = category), size = 1.1) +
-  theme_classic() +
+  theme_minimal() +
   xlab("") +
   ylab("Episize")
 
@@ -445,7 +447,7 @@ for (page in 1:npages) {
     facet_wrap_paginate(
       ~country, ncol = 1, nrow = 4, page = page, scales = "free_y"
   )
-  ggsave(glue::glue("weighted_augmented_cases_{page}.png"), p)
+  ggsave(glue::glue("figures/weighted_augmented_cases_{page}.png"), p)
 }
 ######################################################################
 ######################################################################
@@ -477,6 +479,78 @@ predictions <- purrr::map(
     list(si_1 = d_exp, si_2 = d_exp)
   }
 )
+######################################################################
+######################################################################
+################# Visualisation #####################################
+######################################################################
+######################################################################
+pred_qntls <- purrr::map(
+  predictions,
+  function(pred) {
+    pred <- pred[[2]]
+    pred <- tidyr::gather(pred, dates, val)
+    qntls <- dplyr::group_by(pred, dates) %>%
+      ggdist::median_qi(.width = c(0.75, 0.95))
+    qntls$dates <- as.Date(qntls$dates)
+    qntls
+  }
+)
+
+### Test against Pierre's outputs for previous weeks
+pierre <- readRDS(
+  glue::glue("{covid_19_path}DeCa_Std_results_week_end_{week_ending}.rds")
+)
+pierre_pred <- purrr::map_dfr(
+  pierre[["Predictions"]],
+  function(pred) {
+    pred <- pred[[2]]
+    pred <- tidyr::gather(pred, dates, val)
+    qntls <- dplyr::group_by(pred, dates) %>%
+      ggdist::median_qi(.width = c(0.75, 0.95))
+    qntls$dates <- as.Date(qntls$dates)
+    qntls
+  }, .id = "country"
+ )
+
+check <- dplyr::bind_rows(pred_qntls, .id = "country") %>%
+  dplyr::left_join(
+    pierre_pred,
+    by = c("country", "dates"),
+    suffix = c("_pkgd", "_pierre")
+  )
+readr::write_csv(check, "compare_outputs.csv")
+
+purrr::iwalk(
+  pred_qntls,
+  function(pred, cntry) {
+    obs <- ascertainr_deaths[, c("dates", cntry)]
+    obs$deaths <- obs[[cntry]]
+    xintercept <- as.numeric(as.Date(week_ending)) + 0.5
+    p <- ggplot() +
+      geom_point(data = obs, aes(dates, deaths)) +
+      geom_lineribbon(
+        data = pred,
+        aes(
+          x = dates, y = val, ymin = .lower, ymax = .upper
+        )
+      ) +
+      scale_fill_brewer(palette = "Greens") +
+      scale_x_date(limits = c(as.Date("2020-03-01"), NA)) +
+      geom_vline(xintercept = xintercept, linetype = "dashed") +
+      theme_minimal() +
+      xlab("") + ylab("Deaths") +
+      theme(legend.position = "none") +
+      ggtitle(
+        glue::glue("Projections for {cntry} for week starting {week_ending}")
+      )
+
+    ggsave(glue::glue("figures/projections_{cntry}.png"), p)
+  }
+)
+
+######################################################################
+######################################################################
+
 
 t.window <- 10
 r_estim <- purrr::map(
@@ -528,9 +602,7 @@ saveRDS(
   file = paste0('DeCa_Std_results_week_end_',week_ending,'.rds' )
 )
 
-saveRDS(
-  object = out, file = paste0('DeCa_latest.rds')
-)
+saveRDS(object = out, file = paste0('DeCa_latest.rds'))
 
 
 #####################################################################
@@ -582,6 +654,6 @@ summary_14days <- purrr::map_dfr(
 ## TODO check why we have NAs
 summary_14days <- na.omit(summary_14days)
 readr::write_csv(
-    x = summary_14days,
-    path = 'summary_DeathToRepoted_14days.csv'
+  x = summary_14days,
+  path = 'summary_DeathToRepoted_14days.csv'
 )
