@@ -500,7 +500,7 @@ pred_qntls <- purrr::map(
 pierre <- readRDS(
   glue::glue("{covid_19_path}DeCa_Std_results_week_end_{week_ending}.rds")
 )
-pierre_pred <- purrr::map_dfr(
+pierre_qntls <- purrr::map(
   pierre[["Predictions"]],
   function(pred) {
     pred <- pred[[2]]
@@ -509,16 +509,29 @@ pierre_pred <- purrr::map_dfr(
       ggdist::median_qi(.width = c(0.75, 0.95))
     qntls$dates <- as.Date(qntls$dates)
     qntls
-  }, .id = "country"
- )
+  }
+)
 
-check <- dplyr::bind_rows(pred_qntls, .id = "country") %>%
-  dplyr::left_join(
-    pierre_pred,
-    by = c("country", "dates"),
-    suffix = c("_pkgd", "_pierre")
-  )
-readr::write_csv(check, "compare_outputs.csv")
+purrr::walk(
+  countries,
+  function(country) {
+    x <- pred_qntls[[country]]
+    y <- pierre_qntls[[country]]
+    z <- dplyr::bind_rows(list(packaged = x, old = y), .id = "category")
+    z <- z[z$`.width` == 0.75, ]
+    p <- ggplot(z) +
+      geom_ribbon(
+        aes(x = dates, ymin = .lower, ymax = .upper, fill = category),
+        alpha = 0.3
+      ) +
+      geom_line(aes(dates, val, col = category)) +
+      theme_minimal()
+
+    ggsave(glue::glue("figures/{country}_compare.png"), p)
+  }
+)
+
+
 
 purrr::iwalk(
   pred_qntls,
