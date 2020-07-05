@@ -1,3 +1,4 @@
+dir.create("figures")
 indir <- dirname(covid_19_path)
 raw_data <- readRDS(
   glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
@@ -89,7 +90,7 @@ r_apeestim <- purrr::imap(
 ## "ape", "pmse", "prob", "rhat", "rhatci", "post_mean_tplus1",
 ## "tplus1_ci", "alpha", "beta", "post_negbin_pr". We want the
 ## last values of alpha and beta.
-
+n_sim <- 1000
 rsamples_ape <- map(
   r_apeestim,
   function(r_country) {
@@ -102,13 +103,13 @@ rsamples_ape <- map(
         scale <- tail(
           r_si[["best_set_ape"]][["beta"]], 1
         )
-        rgamma(10000, shape = shape, scale = scale)
+        rgamma(n_sim, shape = shape, scale = scale)
       }
     )
   }
 )
-date_to_project_from <- week_ending
-n_sim <- 10000
+date_to_project_from <- as.Date(week_ending)
+sims_per_rt <- 10
 n_days <- 7
 ## Projections using projections package with
 ## Poisson offspring distribution
@@ -120,19 +121,54 @@ ape_projections <- purrr::map2(
     purrr::map2(
       rt, si_distrs,
       function(rt_si, si) {
-        projections::project(
-          x = df,
-          R = rt_si,
-          si = si,
-          n_sim = n_sim,
-          n_days = n_days,
-          R_fix_within = TRUE,
-          model = "poisson"
-        ) %>% t
+        out <- map(
+          seq_len(sims_per_rt),
+          function(i) {
+            projections::project(
+              x = df,
+              R = rt_si,
+              si = si,
+              n_sim = n_sim,
+              n_days = n_days,
+              R_fix_within = TRUE,
+              model = "poisson"
+              ) %>%
+              as.matrix() %>% t
+          }
+        )
+        do.call(what = "rbind", args = out)
       }
     )
   }
 )
+
+pred_qntls <- purrr::map(
+  ape_projections,
+  function(pred) {
+    pred <- pred[[2]]
+    pred <- data.frame(pred, check.names = FALSE)
+    pred <- tidyr::gather(pred, dates, val)
+    qntls <- dplyr::group_by(pred, dates) %>%
+      ggdist::median_qi(.width = c(0.75, 0.95))
+    qntls$dates <- as.Date(qntls$dates)
+    qntls
+  }
+)
+
+purrr::iwalk(
+  pred_qntls,
+  function(pred, cntry) {
+    obs <- deaths_to_use[, c("dates", cntry)]
+    obs$deaths <- obs[[cntry]]
+    p <- rincewind::plot_projections(obs, pred)
+    p <- p +
+      ggtitle(
+        glue::glue("Projections for {cntry} for week starting {week_ending}")
+      )
+    ggsave(glue::glue("figures/projections_{cntry}.png"), p)
+  }
+)
+
 
 ## ## Save in format required
 out <- saveRDS(

@@ -13,6 +13,8 @@ packages:
   - tidyr
   - incidence
   - EpiEstim
+  - ggplot2
+  - rincewind
 
 artefacts:
   data:

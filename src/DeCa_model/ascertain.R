@@ -47,36 +47,6 @@ weighted_cases <- purrr::map(
 )
 saveRDS(weighted_cases, "weighted_cases.rds")
 ######################################################################
-############ Weighted cases/ Unweighted cases ########################
-wtd_df <- purrr::map_dfr(
-  weighted_cases,
-  function(x) {
-    data.frame(
-      dates = ascertainr_cases[["dates"]],
-      cases = x[, 1]
-    )
-  }, .id = "country"
-)
-unwtd_df <- tidyr::gather(ascertainr_cases, country, cases, -dates)
-unwtd_df$category <- "cases"
-wtd_df$category <- "weighted_cases"
-x <- rbind(unwtd_df, wtd_df)
-
-npages <- length(countries) / 4
-p <- ggplot(
-  x, aes(dates, cases, col = category)
-) + geom_line(size = 1.1) +
-  theme_minimal() +
-  theme(legend.position = "top", legend.title = element_blank())
-
-for (page in 1:npages) {
-  p <- p +
-    facet_wrap_paginate(
-      ~country, nrow = 4, ncol = 1, page = page, scales = "free_y"
-    )
-  ggsave(filename = glue::glue("figures/wtd_cases_{page}.png"), p)
-}
-######################################################################
 ######################################################################
 deaths_to_cases <- purrr::map(
   countries,
@@ -117,7 +87,7 @@ deaths_to_cases_qntls <- purrr::imap(
     df <- quantiles_to_df(rit)
     df <- dplyr::select(
       df, low_ratio = `2.5%`, median_ratio = `50.0%`, up_ratio = `97.5%`
-      )
+    )
 
     ymax <- max(
       max(ascertainr_deaths[[country]], na.rm = TRUE),
@@ -331,25 +301,25 @@ saveRDS(episize_projected_qntls, "episize_after_mu_qntls.rds")
 #################### Episize quantiles ###############################
 ######################################################################
 ######################################################################
-x <- dplyr::bind_rows(episize_projected_qntls, .id = "country")
-x <- rbind(episize_prev_qntls, x)
+## x <- dplyr::bind_rows(episize_projected_qntls, .id = "country")
+## x <- rbind(episize_prev_qntls, x)
 
-p <- ggplot(x) +
-  geom_ribbon(aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
-  geom_line(aes(x = date, y = `50.0%`), size = 1.1) +
-  theme_minimal() +
-  xlab("") +
-  ylab("Episize")
+## p <- ggplot(x) +
+##   geom_ribbon(aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
+##   geom_line(aes(x = date, y = `50.0%`), size = 1.1) +
+##   theme_minimal() +
+##   xlab("") +
+##   ylab("Episize")
 
-for (page in 1:npages) {
-  y <- tail(ascertainr_deaths[["dates"]], 1) - round(mu_delta)
-  p <-  p +
-    geom_vline(xintercept = y) +
-    facet_wrap_paginate(
-      ~country, ncol = 1, nrow = 4, page = page, scales = "free_y"
-  )
-  ggsave(glue::glue("figures/episize_{page}.png"), p)
-}
+## for (page in 1:npages) {
+##   y <- tail(ascertainr_deaths[["dates"]], 1) - round(mu_delta)
+##   p <-  p +
+##     geom_vline(xintercept = y) +
+##     facet_wrap_paginate(
+##       ~country, ncol = 1, nrow = 4, page = page, scales = "free_y"
+##   )
+##   ggsave(glue::glue("figures/episize_{page}.png"), p)
+## }
 
 ######################################################################
 ######################################################################
@@ -402,53 +372,6 @@ weighted_cases_augm <- purrr::map(
   }
 )
 saveRDS(weighted_cases_augm, "weighted_cases_augm.rds")
-######################################################################
-######################################################################
-x <- purrr::map2_dfr(
-  cases_augmented,
-  weighted_cases_augm,
-  function(y, z) {
-    out <- data.frame(
-      t(apply(y, 2, quantile, probs = c(0.025, 0.5, 0.975))),
-      check.names = FALSE
-    )
-    out$category <- "augmented"
-    out$dates <- c(
-      tail(ascertainr_cases$dates, SItrunc),
-      seq(
-        from = max(ascertainr_cases$dates) + 1, length.out = 7, by = "1 day"
-      )
-    )
-    wtd_augmented <- data.frame(
-      t(apply(z, 2, quantile, probs = c(0.025, 0.5, 0.975))),
-      check.names = FALSE
-    )
-    dates <- seq(
-      tail(ascertainr_cases$dates, 1), length.out = 7, by = "1 day"
-    )
-    wtd_augmented$dates <- dates
-    wtd_augmented$category <- "weighted augmented"
-    rbind(out, wtd_augmented)
-  }, .id = "country"
-)
-
-p <- ggplot(x) +
-  geom_ribbon(
-    aes(x = dates, ymin = `2.5%`, ymax = `97.5%`, fill = category), alpha = 0.3
-  ) +
-  geom_line(aes(x = dates, y = `50%`, col = category), size = 1.1) +
-  theme_minimal() +
-  xlab("") +
-  ylab("Episize")
-
-for (page in 1:npages) {
-
-  p <-  p +
-    facet_wrap_paginate(
-      ~country, ncol = 1, nrow = 4, page = page, scales = "free_y"
-  )
-  ggsave(glue::glue("figures/weighted_augmented_cases_{page}.png"), p)
-}
 ######################################################################
 ######################################################################
 
@@ -538,21 +461,8 @@ purrr::iwalk(
   function(pred, cntry) {
     obs <- ascertainr_deaths[, c("dates", cntry)]
     obs$deaths <- obs[[cntry]]
-    xintercept <- as.numeric(as.Date(week_ending)) + 0.5
-    p <- ggplot() +
-      geom_point(data = obs, aes(dates, deaths)) +
-      geom_lineribbon(
-        data = pred,
-        aes(
-          x = dates, y = val, ymin = .lower, ymax = .upper
-        )
-      ) +
-      scale_fill_brewer(palette = "Greens") +
-      scale_x_date(limits = c(as.Date("2020-03-01"), NA)) +
-      geom_vline(xintercept = xintercept, linetype = "dashed") +
-      theme_minimal() +
-      xlab("") + ylab("Deaths") +
-      theme(legend.position = "none") +
+    p <- rincewind::plot_projections(obs, pred)
+    p <- p +
       ggtitle(
         glue::glue("Projections for {cntry} for week starting {week_ending}")
       )

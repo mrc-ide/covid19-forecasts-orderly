@@ -14,7 +14,7 @@ packages:
   - purrr
   - dplyr
   - ggforce
-  - ggdist
+  - rincewind
 
 sources:
   - R/utils.R

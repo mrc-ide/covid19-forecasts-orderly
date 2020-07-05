@@ -10,6 +10,9 @@ script: run_rti0.R
 packages:
   - EpiEstim
   - Hmisc
+  - rincewind
+  - dplyr
+  - ggdist
   
 sources:
   - R/MCMC/Like1.R
