@@ -16,7 +16,8 @@ weeks <- list(
   "2020-06-07",
   "2020-06-14",
   "2020-06-21",
-  "2020-06-28"
+  "2020-06-28",
+  "2020-07-05"
 )
 
 for (week in weeks) {
@@ -105,16 +106,19 @@ orderly::orderly_commit(a)
 orderly::orderly_push_archive(a)
 
 ## For the first week, we don't have weighted ensemble.
-weeks <- week[-1]
+weeks <- weeks[-1]
 
 for (week in weeks) {
   message("################ ", week, " #############################")
   parameter <- list(week_ending = week)
-  orderly::orderly_run(
+  wtd <- orderly::orderly_run(
     "produce_weighted_ensemble",
     parameters = parameter,
-    use_draft = TRUE
-  )
+    use_draft = FALSE
+    )
+  orderly::orderly_commit(wtd)
+  ##orderly::orderly_push_archive("produce_weighted_ensemble", wtd)
+
 }
 
 orderly::orderly_run("collate_model_outputs", use_draft = TRUE)

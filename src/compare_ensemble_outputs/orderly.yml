@@ -4,7 +4,7 @@ artefacts:
   data:
     description: Forecast comparisons
     filenames:
-      - main_forecasts_comparison.tiff
+      - main_forecasts_comparison.png
   
 packages:
   - dplyr

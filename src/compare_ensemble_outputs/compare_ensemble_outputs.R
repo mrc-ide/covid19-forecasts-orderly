@@ -13,13 +13,16 @@ main_text_countries <- c(
 )
 
 unweighted_qntls <- readRDS("unweighted_qntls.rds") %>%
-  dplyr::filter(si == use_si)
+  dplyr::filter(si == use_si) %>%
+  na.omit()
 
 wtd_prev_week <- readRDS("wtd_prev_week_qntls.rds") %>%
-  dplyr::filter(si == use_si)
+  dplyr::filter(si == use_si) %>%
+  na.omit()
 
 wtd_all_prev_weeks <- readRDS("wtd_all_prev_weeks_qntls.rds") %>%
-    dplyr::filter(si == use_si)
+  dplyr::filter(si == use_si) %>%
+  na.omit()
 
 unweighted_qntls$date <- as.Date(unweighted_qntls$date)
 wtd_prev_week$date <- as.Date(wtd_prev_week$date)
@@ -310,3 +313,60 @@ purrr::walk(
     ggsave(glue::glue("{country}_forecasts_comparison{file_format}"), p1)
   }
 )
+
+
+### compare observed with predicted
+p <- ggplot(wtd_prev_week, aes(deaths, `50%`)) +
+  geom_point() +
+  geom_abline(
+    slope = 1,
+    intercept = c(0, -0.30, 0.17),
+    linetype = "dashed",
+    col = "red"
+  ) +
+  scale_y_log10() +
+  scale_x_log10() +
+  xlab("(log) Observed Deaths") +
+  ylab("(log) Median predicted Deaths") +
+  theme_minimal() +
+  coord_cartesian(clip = 'off')
+
+
+ggsave("wtd_prev_week_obs_vs_pred.png", p)
+
+
+p <- ggplot(wtd_all_prev_weeks, aes(deaths, `50%`)) +
+  geom_point() +
+  geom_abline(
+    slope = 1,
+    intercept = c(0, -0.30, 0.17),
+    linetype = "dashed",
+    col = "red"
+  ) +
+  scale_y_log10() +
+  scale_x_log10() +
+  xlab("(log) Observed Deaths") +
+  ylab("(log) Median predicted Deaths") +
+  theme_minimal() +
+  coord_cartesian(clip = 'off')
+
+
+ggsave("wtd_all_prev_weeks_obs_vs_pred.png", p)
+
+p <- ggplot(unweighted_qntls, aes(deaths, `50%`)) +
+  geom_point() +
+  geom_abline(
+    slope = 1,
+    intercept = c(0, -0.30, 0.17),
+    linetype = "dashed",
+    col = "red"
+  ) +
+  scale_y_log10() +
+  scale_x_log10() +
+  xlab("(log) Observed Deaths") +
+  ylab("(log) Median predicted Deaths") +
+  theme_minimal() +
+  coord_cartesian(clip = 'off')
+
+
+ggsave("unwtd_obs_vs_pred.png", p)
