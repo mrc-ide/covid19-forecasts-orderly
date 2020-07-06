@@ -17,8 +17,9 @@ unwtd_weeks <- list(
   "2020-03-08", "2020-03-15", "2020-03-22", "2020-03-29","2020-04-05",
   "2020-04-12", "2020-04-19", "2020-04-26", "2020-05-03","2020-05-10",
   "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07", "2020-06-14",
-  "2020-06-21", "2020-06-28"
+  "2020-06-21", "2020-06-28", "2020-07-05"
 )
+
 
 dependancies2 <- purrr::map(
   unwtd_weeks,
@@ -26,33 +27,48 @@ dependancies2 <- purrr::map(
   y <- list(
     run_rti0 = list(
       id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-      use = "RtI0_latest_output.rds"
+      use = list("RtI0_latest_output.rds")
     )
-    ## run_apeestim = list(
-    ##   id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-    ##   use = "apeestim_model_outputs.rds"
-    ## ),
-    ## DeCa_model = list(
-    ##   id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-    ##   use = "DeCa_latest.rds"
-    ## )
   )
   names(y[[1]]$use) <- glue::glue("RtI0_Std_results_week_end_{week}.rds")
-  ##names(y[[2]]$use) <- glue::glue("sbkp_Std_results_week_end_{week}.rds")
-  ##names(y[[3]]$use) <- glue::glue("DeCa_Std_results_week_end_{week}.rds")
   y
  }
 )
 
-dependancies2$prepare_ecdc_data <- list(
-  id = "latest",
-  use = list(
-    `model_input.rds` = "latest_deaths_wide_no_filter.rds"
+dependancies3 <- purrr::map(
+  unwtd_weeks,
+  function(week) {
+  y <- list(
+    run_apeestim = list(
+      id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
+      use = list("apeestim_model_outputs.rds")
+    )
   )
+  names(y[[1]]$use) <- glue::glue("sbkp_Std_results_week_end_{week}.rds")
+  y
+ }
+)
+
+dependancies4 <- purrr::map(
+  unwtd_weeks,
+  function(week) {
+  y <- list(
+    DeCa_model = list(
+      id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
+      use = list("DeCa_latest.rds")
+    )
+  )
+  names(y[[1]]$use) <- glue::glue("DeCa_Std_results_week_end_{week}.rds")
+  y
+ }
 )
 
 
-x$depends <- dependancies2
+dependancies <- c(dependancies2, dependancies3, dependancies4)
+
+
+
+x$depends <- dependancies
 
 con <- file("src/produce_performace_metrics/orderly.yml", "w")
 yaml::write_yaml(x, con)
