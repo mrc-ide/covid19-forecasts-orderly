@@ -19,13 +19,15 @@ x <- list(
 wtd_weeks <- list(
   "2020-03-15", "2020-03-22", "2020-03-29","2020-04-05",
   "2020-04-12", "2020-04-19", "2020-04-26", "2020-05-03","2020-05-10",
-  "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07"
+  "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07",
+  "2020-06-14", "2020-06-21", "2020-06-28", "2020-07-05"
 )
 
 unwtd_weeks <- list(
   "2020-03-08", "2020-03-15", "2020-03-22", "2020-03-29","2020-04-05",
   "2020-04-12", "2020-04-19", "2020-04-26", "2020-05-03","2020-05-10",
-  "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07"
+  "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07",
+  "2020-06-14", "2020-06-21", "2020-06-28", "2020-07-05"
 )
 
 dependancies <- purrr::map(
@@ -44,12 +46,12 @@ dependancies <- purrr::map(
       )
     )
    )
-    infiles <- purrr::map(
-      y$produce_weighted_ensemble$use,
-      function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
-    )
-    names(y$produce_weighted_ensemble$use) <- glue::glue("{infiles}_{week}.rds")
-    y
+   infiles <- purrr::map(
+     y$produce_weighted_ensemble$use,
+     function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
+  )
+  names(y$produce_weighted_ensemble$use) <- glue::glue("{infiles}_{week}.rds")
+  y
  }
 )
 
@@ -77,20 +79,18 @@ dependancies2 <- purrr::map(
  }
 )
 
-prepare_ecdc_data <- list(
-  prepare_ecdc_data = list(
-  id = "latest",
-  use = list(
-    `model_input.rds` = "latest_deaths_wide_no_filter.rds"
+dependancies5 <- list(
+  list(
+    prepare_ecdc_data = list(
+      id = "latest",
+      use = list(
+        "model_input.rds" =  "latest_deaths_wide_no_filter.rds"
+      )
+    )
   )
 )
-)
 
-x$depends <- list(
-  dependancies,
-  dependancies2,
-  prepare_ecdc_data
-)
+x$depends <- c(dependancies, dependancies2, dependancies5)
 
 con <- file("src/collate_model_outputs/orderly.yml", "w")
 yaml::write_yaml(x, con)

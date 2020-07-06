@@ -1,19 +1,23 @@
 ## Generate orderly.yml for collate_model_outputs
 x <- list(
-  script = "produce_performace_metrics.R",
+  script = "produce_performace_metrics_ensb.R",
   environment = list(covid_19_path = "COVID19_INPUT_PATH"),
   sources = c("R/utils.R"),
   artefacts = list(
     data = list(
     description = "Model performance metrics",
-    filenames = "model_predictions_error.csv"
+    filenames = list(
+      "wtd_all_prev_weeks_error.csv",
+      "wtd_prev_week_error.csv",
+      "unwtd_pred_error.csv"
+    )
   )
  ),
  packages = c("dplyr", "tidyr", "assessr")
 )
 
-unwtd_weeks <- list(
-  "2020-03-08", "2020-03-15", "2020-03-22", "2020-03-29","2020-04-05",
+wtd_weeks <- list(
+  "2020-03-15", "2020-03-22", "2020-03-29","2020-04-05",
   "2020-04-12", "2020-04-19", "2020-04-26", "2020-05-03","2020-05-10",
   "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07", "2020-06-14",
   "2020-06-21", "2020-06-28"
@@ -21,29 +25,39 @@ unwtd_weeks <- list(
 
 
 dependancies2 <- purrr::map(
-  unwtd_weeks,
+  wtd_weeks,
   function(week) {
-  y <- list(
-    run_rti0 = list(
-      id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-      use = list("RtI0_latest_output.rds")
+    y <- list(
+      produce_ensemble_outputs = list(
+        id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
+        use = list("ensemble_model_predictions.rds")
+      )
     )
-  )
-  names(y[[1]]$use) <- glue::glue("RtI0_Std_results_week_end_{week}.rds")
-  y
- }
+    infiles <- purrr::map(
+      y$produce_ensemble_outputs$use,
+      function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
+      )
+    names(y$produce_ensemble_outputs$use) <- glue::glue(
+      "unwtd_{infiles}_{week}.rds"
+      )
+    y
+  }
 )
 
 dependancies3 <- purrr::map(
-  unwtd_weeks,
+  wtd_weeks,
   function(week) {
   y <- list(
-    run_apeestim = list(
+    produce_weighted_ensemble = list(
       id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-      use = list("apeestim_model_outputs.rds")
+      use = list("wtd_ensb_prev_week.rds", "wtd_ensb_all_prev_weeks.rds")
     )
   )
-  names(y[[1]]$use) <- glue::glue("sbkp_Std_results_week_end_{week}.rds")
+  infiles <- purrr::map(
+    y$produce_weighted_ensemble$use,
+    function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
+  )
+  names(y$produce_weighted_ensemble$use) <- glue::glue("{infiles}_{week}.rds")
   y
  }
 )
