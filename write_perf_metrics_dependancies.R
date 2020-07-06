@@ -63,8 +63,20 @@ dependancies4 <- purrr::map(
  }
 )
 
+dependancies5 <- list(
+  list(
+    prepare_ecdc_data = list(
+      id = "latest",
+      use = list(
+        "model_input.rds" =  "latest_deaths_wide_no_filter.rds"
+      )
+    )
+  )
+)
 
-dependancies <- c(dependancies2, dependancies3, dependancies4)
+dependancies <- c(
+  dependancies2, dependancies3, dependancies4, dependancies5
+)
 
 
 
