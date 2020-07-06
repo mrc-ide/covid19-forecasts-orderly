@@ -25,8 +25,8 @@ for (week in weeks) {
   m1 <- orderly::orderly_run(
     "run_rti0", parameters = parameter, use_draft = use_draft
   )
-  ## orderly::orderly_commit(m1)
-  ##orderly::orderly_push_archive(m1)
+  orderly::orderly_commit(m1)
+  orderly::orderly_push_archive("run_rti0", m1)
 }
 
 for (week in weeks) {
@@ -35,8 +35,8 @@ for (week in weeks) {
   m2 <- orderly::orderly_run(
     "run_apeestim", parameters = parameter, use_draft = use_draft
   )
-  ##orderly::orderly_commit(m2)
-  ##orderly::orderly_push_archive(m2)
+  orderly::orderly_commit(m2)
+  orderly::orderly_push_archive("run_apeestim", m2)
 }
 
 
@@ -56,8 +56,8 @@ for (week in weeks) {
   m3 <- orderly::orderly_run(
     "process_individual_models", parameters = parameter, use_draft = use_draft
   )
-  ## orderly::orderly_commit(m3)
-  ##orderly::orderly_push_archive(m3)
+  orderly::orderly_commit(m3)
+  orderly::orderly_push_archive("process_individual_models", m3)
 }
 
 for (week in weeks) {
@@ -66,8 +66,8 @@ for (week in weeks) {
   unwtd <- orderly::orderly_run(
     "produce_ensemble_outputs", parameters = parameter, use_draft = use_draft
   )
-  ## orderly::orderly_commit(unwtd)
-  ## orderly::orderly_push_archive(unwtd)
+  orderly::orderly_commit(unwtd)
+  orderly::orderly_push_archive("produce_ensemble_outputs", unwtd)
 }
 
 a <- orderly::orderly_run("src/format_model_outputs/")
@@ -92,7 +92,7 @@ a <- orderly::orderly_run("src/produce_full_report")
 ## }
 
 
-a <- orderly::orderly_run(
+aa <- orderly::orderly_run(
   "produce_performace_metrics",
   parameters = list(exclude = "2020-06-14"), use_draft = use_draft
 )
