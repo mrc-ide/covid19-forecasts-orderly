@@ -34,11 +34,11 @@ ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
 exclude <- c(
-  "Ecuador", "Cameroon", "United_States_of_America",
+  "Cameroon", "United_States_of_America",
   "Sudan", "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
-  "Spain"
+  "Ethiopia", "Ghana", "Haiti"
 )
-
+##exclude <- c()
 ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
 
 ## Read in the model specific outputs here so that we can construct
