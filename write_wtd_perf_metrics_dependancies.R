@@ -14,7 +14,7 @@ x <- list(
     )
   )
  ),
- packages = c("dplyr", "tidyr", "assessr")
+ packages = c("dplyr", "tidyr", "assessr", "slider")
 )
 
 wtd_weeks <- list(
