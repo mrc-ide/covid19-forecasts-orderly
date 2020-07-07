@@ -3,6 +3,7 @@ x <- list(
   script = "produce_performace_metrics_ensb.R",
   environment = list(covid_19_path = "COVID19_INPUT_PATH"),
   sources = c("R/utils.R"),
+  parameters = "window",
   artefacts = list(
     data = list(
     description = "Model performance metrics",
@@ -62,20 +63,6 @@ dependancies3 <- purrr::map(
  }
 )
 
-dependancies4 <- purrr::map(
-  unwtd_weeks,
-  function(week) {
-  y <- list(
-    DeCa_model = list(
-      id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-      use = list("DeCa_latest.rds")
-    )
-  )
-  names(y[[1]]$use) <- glue::glue("DeCa_Std_results_week_end_{week}.rds")
-  y
- }
-)
-
 dependancies5 <- list(
   list(
     prepare_ecdc_data = list(
@@ -87,9 +74,7 @@ dependancies5 <- list(
   )
 )
 
-dependancies <- c(
-  dependancies2, dependancies3, dependancies4, dependancies5
-)
+dependancies <- c(dependancies2, dependancies3, dependancies5)
 
 
 
