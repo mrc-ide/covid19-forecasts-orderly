@@ -61,7 +61,7 @@ wtd_prev_week_error <- tidyr::separate(
   into = c(NA, NA, NA, NA, "forecast_date"),
   sep = "_"
 )
-
+wtd_prev_week_error_daily <- wtd_prev_week_error
 ## Weekly metrics
 wtd_prev_week_error <- dplyr::group_by(
   wtd_prev_week_error, forecast_date, country, si
@@ -126,6 +126,8 @@ wtd_all_prev_weeks_error <- tidyr::separate(
   sep = "_"
 )
 
+wtd_all_prev_weeks_error_daily <- wtd_all_prev_weeks_error
+
 wtd_all_prev_weeks_error <- dplyr::group_by(
   wtd_all_prev_weeks_error, forecast_date, country, si
 ) %>%
@@ -161,7 +163,7 @@ unwtd_pred_error <- tidyr::separate(
   into = c(NA, NA, NA, NA, "forecast_date"),
   sep = "_"
 )
-
+unwtd_pred_error_daily <- unwtd_pred_error
 unwtd_pred_error <- dplyr::group_by(
   unwtd_pred_error, forecast_date, country, si
 ) %>%
@@ -188,10 +190,10 @@ use_strategy <- list(
   unwtd = unwtd_pred_error
 )
 metrics <- use_strategy[[strategy]]
-
-ggplot(
+## All countries, Relative mean error on log scale and weekly incidence
+pall <- ggplot(
   metrics, aes(weekly_incid, rel_mae, col = phase)
-) + geom_point() +
+) + geom_point(size = 2) +
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
     labels = scales::trans_format("log10", scales::math_format(10^.x))
@@ -200,13 +202,76 @@ ggplot(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
     labels = scales::trans_format("log10", scales::math_format(10^.x))
   ) +
-  facet_wrap(~phase, ncol = 1, scales = "free_y")
+  theme_minimal() +
+  xlab("(log) Weekly Incidence") +
+  ylab("(log) Relative mean error") +
+  theme(legend.position = "top", legend.title = element_blank())
+
+ggsave("rmae_vs_weekly_incid_all_countries.png", pall)
+
+## Main text countries,
+## Relative mean error on log scale and weekly incidence
+pmain <- ggplot() +
+  geom_point(
+    data = metrics[metrics$country %in% main_text_countries, ],
+    aes(weekly_incid, rel_mae, col = phase),
+    size = 2
+  ) +
+  scale_y_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+  theme_minimal() +
+  xlab("Weekly Incidence") +
+  ylab("(log) Relative mean error") +
+  theme(legend.position = "top", legend.title = element_blank())
+
+ggsave("rmae_vs_weekly_incid_main_countries.png", pmain)
+
+######################################################################
 
 
-ggplot(
+pcv_all <- ggplot(
   metrics, aes(cv, rel_mae, col = phase)
-) + geom_point() +
- facet_wrap(~phase, ncol = 1, scales = "free_y")
+) + geom_point(size = 2) +
+    scale_y_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+    ) +
+    scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+  theme_minimal() +
+  xlab("(log) Weekly coefficient of vraion") +
+  ylab("(log) Relative mean error") +
+  theme(legend.position = "top", legend.title = element_blank())
+
+ggsave("rmae_vs_weekly_cv_all_countries.png", pcv_pall)
+
+
+pcv_main <- ggplot() +
+  geom_point(
+    data = metrics[metrics$country %in% main_text_countries, ],
+    aes(cv, rel_mae, col = phase),
+    size = 2
+  ) +
+    scale_y_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+    ) +
+    scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+  theme_minimal() +
+  xlab("(log) Weekly coefficient of vraion") +
+  ylab("(log) Relative mean error") +
+  theme(legend.position = "top", legend.title = element_blank())
+
+ggsave("rmae_vs_weekly_cv_main_countries.png", pcv_main)
+
+
 
 
 x <- metrics[metrics$country %in% main_text_countries, ]
