@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = TRUE, parameters = list(use_si = "si_2", strategy = "unwtd"))
+## use_draft = FALSE, parameters = list(use_si = "si_2", strategy = "unwtd"))
 ######### Performance metrics
 observed <- readRDS("model_input.rds")
 
@@ -195,7 +195,12 @@ ggplot(
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
     labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) + facet_wrap(~phase, ncol = 1, scales = "free_y")
+  ) +
+  scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+  facet_wrap(~phase, ncol = 1, scales = "free_y")
 
 
 ggplot(

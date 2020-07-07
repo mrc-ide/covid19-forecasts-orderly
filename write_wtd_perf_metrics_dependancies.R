@@ -95,6 +95,6 @@ dependancies <- c(
 
 x$depends <- dependancies
 
-con <- file("src/produce_performace_metrics/orderly.yml", "w")
+con <- file("src/produce_performance_metrics_ensemble/orderly.yml", "w")
 yaml::write_yaml(x, con)
 close(con)
