@@ -15,7 +15,14 @@ names(output_files) <- gsub(
 
 model_outputs <- purrr::map(output_files, readRDS)
 
+f <- function(vec, window) {
+  slider::slide_dbl(vec, ~mean(.x), .before = window, .after = window)
+}
+
 model_input <- readRDS("model_input.rds")
+model_input <- dplyr::mutate_if(
+  model_input, is.numeric, f, window = window
+)
 ## Czech_Republic is the same as Czechia
 model_input$Czech_Republic <- model_input$Czechia
 

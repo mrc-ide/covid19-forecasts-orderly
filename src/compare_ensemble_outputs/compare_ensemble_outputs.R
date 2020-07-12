@@ -9,7 +9,7 @@
 file_format <- ".png"
 
 main_text_countries <- c(
-  "Brazil", "India", "Italy", "Mexico", "United_States_of_America"
+  "Brazil", "India", "Italy", "South_Africa", "United_States_of_America"
 )
 
 unweighted_qntls <- readRDS("unweighted_qntls.rds") %>%
@@ -317,22 +317,61 @@ purrr::walk(
 
 ### compare observed with predicted
 p <- ggplot(wtd_prev_week, aes(deaths, `50%`)) +
-  geom_point() +
-  geom_abline(
-    slope = 1,
-    intercept = c(0, -0.30, 0.17),
-    linetype = "dashed",
-    col = "red"
-  ) +
+  geom_bin2d(binwidth = 0.1) +
+  ## geom_abline(
+  ##   slope = 1,
+  ##   intercept = c(0, -0.30, 0.17),
+  ##   linetype = "dashed",
+  ##   col = "red"
+  ## ) +
+  scale_y_log10() +
+  scale_x_log10() +
+  scale_fill_continuous(low="lavenderblush", high="red") +
+  xlab("(log) Observed Deaths") +
+  ylab("(log) Median predicted Deaths") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  coord_cartesian(clip = 'off')
+
+
+plow <- ggplot(wtd_prev_week, aes(deaths, `25%`)) +
+  geom_bin2d(binwidth = 0.1) +
+  ## geom_abline(
+  ##   slope = 1,
+  ##   intercept = c(0, -0.30, 0.17),
+  ##   linetype = "dashed",
+  ##   col = "red"
+  ## ) +
   scale_y_log10() +
   scale_x_log10() +
   xlab("(log) Observed Deaths") +
   ylab("(log) Median predicted Deaths") +
+  scale_fill_continuous(low="lavenderblush", high="red") +
   theme_minimal() +
+  theme(legend.position = "none") +
+  coord_cartesian(clip = 'off')
+
+phigh <- ggplot(wtd_prev_week, aes(deaths, `75%`)) +
+  geom_bin2d(binwidth = 0.1) +
+  ## geom_abline(
+  ##   slope = 1,
+  ##   intercept = c(0, -0.30, 0.17),
+  ##   linetype = "dashed",
+  ##   col = "red"
+  ## ) +
+  scale_y_log10() +
+  scale_x_log10() +
+  xlab("(log) Observed Deaths") +
+  ylab("(log) Median predicted Deaths") +
+  scale_fill_continuous(low="lavenderblush", high="red") +
+  theme_minimal() +
+  theme(legend.position = "none") +
   coord_cartesian(clip = 'off')
 
 
 ggsave("wtd_prev_week_obs_vs_pred.png", p)
+ggsave("wtd_prev_week_obs_vs_pred_25.png", plow)
+ggsave("wtd_prev_week_obs_vs_pred_75.png", phigh)
 
 
 p <- ggplot(wtd_all_prev_weeks, aes(deaths, `50%`)) +
