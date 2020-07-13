@@ -37,14 +37,14 @@ knitr::opts_chunk$set(
     messages = FALSE
     )
 
-week_starting <- as.Date('05-07-2020', format = '%d-%m-%Y')
+week_starting <- as.Date('12-07-2020', format = '%d-%m-%Y')
 
 ```
 
 # Introduction 
 
-As of 5^th^ July 2020,  more than
-11,100,000 cases of COVID-19 have been reported across the world, with more than 528,000
+As of 12^th^ July 2020,  more than
+12,500,000 cases of COVID-19 have been reported across the world, with more than 561,000
 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
@@ -103,7 +103,7 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week beginning 5^th^ July 2020, 
+two weeks. For the week beginning 12^th^ July 2020, 
 the number of countries/regions included based on these thresholds is 56.
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -282,7 +282,7 @@ and 3, see Methods). The reporting of deaths and cases in Brazil is currently ch
 knitr::include_graphics("figs/rt_phase_si_2.png")
 ```
 *Figure 7.* Estimates of transmissibility in countries with active
-transmission for the week ending 5^th^ July 2020. A country is defined
+transmission for the week ending 12^th^ July 2020. A country is defined
 to be in the declining phase if the 97.5^th^ quantile of the effective
 reproduction number is below 1. It is defined to be in the growing
 phase if the 2.5^th^ quantile of the effective reproduction number is
@@ -727,7 +727,7 @@ knitr::include_graphics("figs/Europe_si_2_page_4.png")
 ```
 
 
-*Figure 14.* Projections (7-day ahead) for the week starting 5^th^ July 2020 from individual models
+*Figure 14.* Projections (7-day ahead) for the week starting 12^th^ July 2020 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -748,7 +748,7 @@ knitr::include_graphics("figs/Asia_si_2_page_2.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_3.png")
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 5^th^ July 2020 from individual models (Models 1, 2
+*Figure 15.* Projections (7-day ahead) for the week starting 12^th^ July 2020 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -763,7 +763,7 @@ CrI of the projections.
 knitr::include_graphics("figs/Africa_si_2_page_1.png")
 ```
 
-*Figure 16.* Projections (7-day ahead) for the week starting 5^th^ July 2020 from individual models (Models 1, 2
+*Figure 16.* Projections (7-day ahead) for the week starting 12^th^ July 2020 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -778,7 +778,7 @@ knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_2.png")
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 5^th^ July 2020 from individual models (Models 1, 2
+*Figure 17.* Projections (7-day ahead) for the week starting 12^th^ July 2020 from individual models (Models 1, 2
 and 3) for each country in North America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -796,7 +796,7 @@ knitr::include_graphics("figs/South America_si_2_page_1.png")
 knitr::include_graphics("figs/South America_si_2_page_2.png")
 ```
 *Figure 18.* Projections (7-day ahead) for the week starting
-5^th^ July 2020 from individual models (Models 1, 2
+12^th^ July 2020 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -811,7 +811,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 19.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-5^th^ July 2020. 
+12^th^ July 2020. 
 
 
 #### Asia
@@ -823,7 +823,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 20.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-5^th^ July 2020. 
+12^th^ July 2020. 
 
 
 #### Africa
@@ -835,7 +835,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-5^th^ July 2020. 
+12^th^ July 2020. 
 
 
 #### North & Central America
@@ -847,7 +847,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 22.* Estimates of $R_t$ from individual models for each country in
 North America with
 active transmission (see Methods) for the week starting
-5^th^ July 2020. 
+12^th^ July 2020. 
 
 
 
@@ -860,7 +860,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 23.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-5^th^ July 2020. 
+12^th^ July 2020. 
 
 ## Code 
 
@@ -903,5 +903,5 @@ Some countries have been excluded from the analysis despite meeting
 the threshold because the number of deaths per day did not allow
 reliable inference. A complete list of corrections applied to the data downloaded
 from ECDC is available
-[here](https://github.com/mrc-ide/covid19-forecasts-orderly/blob/main/src/prepare_ecdc_data/R/corrections_5July.R). 
+[here](https://github.com/mrc-ide/covid19-forecasts-orderly/blob/main/src/prepare_ecdc_data/R/corrections_12July.R). 
 All corrections are based on the numbers reported by the World Health Organization (https://covid19.who.int).
