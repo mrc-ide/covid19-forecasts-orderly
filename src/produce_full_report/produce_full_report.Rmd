@@ -50,7 +50,7 @@ deaths [@whositrep].
 This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 56 countries with active transmission.
+ascertainment) for 58 countries with active transmission.
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -104,7 +104,8 @@ transmission.
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
 two weeks. For the week beginning 12^th^ July 2020, 
-the number of countries/regions included based on these thresholds is 56.
+the number of countries/regions included based on these thresholds is 
+58.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
@@ -215,6 +216,13 @@ and 3, see Methods).
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_1.png")
+
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_2.png")
 
 ```
 
@@ -390,8 +398,8 @@ x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
 ## ) %>% kable_styling()
 exclude <- c(
   "Cameroon", "United_States_of_America",
-  "Sudan", "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
-  "Ethiopia", "Ghana", "Haiti"
+  "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
+  "Ethiopia", "Ghana", "El_Salvador", "Kazakhstan"
 ) %>% snakecase::to_title_case()
 
 x <- x[! x$Country %in% exclude, ]
@@ -459,6 +467,10 @@ knitr::include_graphics("figs/reporting_ratio_Asia_page_3.png")
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figs/reporting_ratio_Africa_page_1.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Africa_page_2.png")
 ```
 
 ### North & Central America 
@@ -692,7 +704,7 @@ the changes in transmissibility due to the non-pharmaceutical
 interventions for 12 European countries (Austria, Belgium,
 Denmark, France, Germany, Italy, Netherlands, Portugal, Spain, 
 Sweden, Switzerland and United Kingdom). Details for this model and
-models results can be
+its results can be
 found [here](https://imperialcollegelondon.github.io/covid19estimates/).
 
 ## Ensemble Model
@@ -763,6 +775,10 @@ CrI of the projections.
 knitr::include_graphics("figs/Africa_si_2_page_1.png")
 ```
 
+```{r}
+knitr::include_graphics("figs/Africa_si_2_page_2.png")
+```
+
 *Figure 16.* Projections (7-day ahead) for the week starting 12^th^ July 2020 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
@@ -800,7 +816,10 @@ knitr::include_graphics("figs/South America_si_2_page_2.png")
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
-CrI of the projections. The reporting of deaths and cases in Brazil is currently changing; results should be interpreted with caution.
+CrI of the projections. 
+The reporting of deaths and cases in Brazil is currently changing;
+results should be interpreted with caution.
+
 
 ### Effective Reproduction Number
 

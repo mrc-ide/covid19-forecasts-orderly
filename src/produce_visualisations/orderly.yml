@@ -46,8 +46,7 @@ sources:
   - R/common_plot_properties.R
 
 resources:
-  - country-and-continent-codes-list-csv_csv.csv
-  - DeCa_Std_Ratio_plot_2020-06-21.rds
+  - country_continent.csv
 
 parameters:
   - week_ending_vis
