@@ -3,13 +3,14 @@ x <- list(
   script = "produce_performace_metrics.R",
   environment = list(covid_19_path = "COVID19_INPUT_PATH"),
   sources = c("R/utils.R"),
+  parameters = "window",
   artefacts = list(
     data = list(
     description = "Model performance metrics",
     filenames = "model_predictions_error.csv"
   )
  ),
- packages = c("dplyr", "tidyr", "assessr")
+ packages = c("dplyr", "tidyr", "assessr", "slider")
 )
 
 unwtd_weeks <- list(

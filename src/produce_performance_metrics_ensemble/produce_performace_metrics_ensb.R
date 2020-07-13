@@ -1,5 +1,8 @@
 f <- function(vec, window) {
-  slider::slide_dbl(vec, ~mean(.x), .before = window, .after = window)
+
+  slider::slide_dbl(
+    vec, ~round(mean(.x)), .before = window, .after = window
+  )
 }
 
 model_input <- readRDS("model_input.rds")
@@ -57,6 +60,7 @@ unwtd_pred_error <- purrr::imap_dfr(
 
             out <- all_metrics(obs, y_si)
             out$date <- dates2
+            out$obs <- obs
             out
 
           }, .id = "si"
@@ -85,6 +89,8 @@ wtd_prev_week_error <- purrr::imap_dfr(
 
             out <- all_metrics(obs, y_si)
             out$date <- dates2
+            out$obs <- obs
+
             out
           }, .id = "si"
         )
@@ -112,6 +118,8 @@ wtd_all_prev_weeks_error <- purrr::imap_dfr(
               model_input, dates %in% dates2) %>% pull(cntry)
             out <- all_metrics(obs, y_si)
             out$date <- dates2
+            out$obs <- obs
+
             out
           }, .id = "si"
         )
