@@ -1,60 +1,78 @@
 infiles <- list.files(pattern = "*.rds")
 rt_samples <- purrr::map_dfr(infiles, readRDS)
+week_ending <- as.Date(week_ending)
+rt_samples$model <- as.Date(rt_samples$model)
+
 countries <- unique(
   rt_samples[rt_samples$model == week_ending, "country"]
 )
 names(countries) <- countries
-map(
+
+country_weeks <- purrr::map(
   countries,
   function(country) {
     weeks <- unique(
       rt_samples[rt_samples$country == country, "model"]
     )
-    weeks <- as.Date(weeks)
-
+    consecutive_weeks <- list()
+    prev_week <- week_ending
+    while (prev_week %in% weeks) {
+      message(country, " in ", prev_week)
+      consecutive_weeks <- append(consecutive_weeks, prev_week)
+      prev_week <- prev_week - 7
+    }
+    consecutive_weeks
   }
 )
 
 
-  x <- diff(weeks)
-  message(country, "\n", paste0(x, collapse = " "))
-}
+country_weeks <- purrr::keep(country_weeks, ~ length(.) > 1)
 
-country <- "United_States_of_America"
+week_iqr <- purrr::imap(
+  country_weeks,
+  function(weeks, country) {
+    rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, ]
+    x <- dplyr::group_by(rt, model) %>%
+      dplyr::summarise_if(
+        is.numeric,
+        ~ list(`25%` = quantile(., prob = 0.25),
+               `75%` = quantile(., prob = 0.75))
+        ) %>% dplyr::ungroup()
 
-weeks <- seq(
-  to = as.Date(week),
-  from = as.Date("2020-03-08"),
-  by = "7 days"
+    x <- tidyr::unnest(x, cols = c(si_1, si_2))
+    x <- x[, c("model", use_si)]
+    colnames(x) <- c("forecast_week", "val")
+    x$qntl <- rep(c("25%", "75%"), nrow(x) / 2)
+    tidyr::spread(x, qntl, val)
+  }
 )
 
-combined <- dplyr::filter(
-  rt_samples, model == week & country == "United_States_of_America"
-)
 
-for (idx in 1:(length(weeks) - 1)) {
-  iqr_combined <- quantile(
-    combined$si_2, probs = c(0.25, 0.75)
-  )
-  iqr_combined[["25%"]] <- floor(iqr_combined[["25%"]])
-  iqr_combined[["75%"]] <- ceiling(iqr_combined[["75%"]])
+combine_with_previous <- function(df, country) {
+  df <- df[order(df$forecast_week, decreasing = TRUE), ]
+  combined_iqr <- c(df$`25%`[1], df$`75%`[1])
+  prev <- 2
+  prev_iqr <- c(df$`25%`[prev], df$`75%`[prev])
+  overlap <- rincewind::overlaps(combined_iqr, prev_iqr)
 
-  prev_week <- weeks[length(weeks) - idx]
-  message("Previous week is ", prev_week)
-  prev_week_rt <- dplyr::filter(
-    rt_samples,
-    model == prev_week & country == "United_States_of_America"
-  )
-  iqr_prev <- quantile(
-    prev_week_rt$si_2, probs = c(0.25, 0.75)
-  )
-  iqr_prev[["25%"]] <- floor(iqr_prev[["25%"]])
-  iqr_prev[["75%"]] <- ceiling(iqr_prev[["75%"]])
+  while (overlap & prev < nrow(df)) {
+    message("prev = ", prev)
+    weeks <- head(df$forecast_week, prev)
+    combined_rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, use_si]
+    combined_iqr <- quantile(combined_rt, probs = c(0.25, 0.75))
+    combined_iqr <- c(combined_iqr[["25%"]], combined_iqr[["75%"]])
+    prev <- prev + 1
+    prev_iqr <- c(df$`25%`[prev], df$`75%`[prev])
+    overlap <- rincewind::overlaps(combined_iqr, prev_iqr)
+  }
 
-  overlap <- rincewind::overlaps(iqr_prev, iqr_combined)
-  if (overlap) {
-    combined <- combine_rt(
-      rt_samples, length(weeks):(length(weeks) - idx)
-    )
-  } else break
+  list(
+    combined_rt = combined_iqr,
+    weeks_combined = head(df$forecast_week, prev),
+    rt_samples = sample(x = combined_rt, size = 1000)
+  )
 }
+
+combined_estimates <- purrr::imap(
+  week_iqr, ~ combine_with_previous(.x, .y)
+)

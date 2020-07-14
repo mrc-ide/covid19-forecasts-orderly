@@ -1,0 +1,23 @@
+script: script.R
+parameters:
+  - week_ending
+packages:
+- dplyr
+- tidyr
+depends:
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-08")
+    use:
+      unwtd_ensemble_model_rt_samples_2020-03-08.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-15")
+    use:
+      unwtd_ensemble_model_rt_samples_2020-03-15.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-22")
+    use:
+      unwtd_ensemble_model_rt_samples_2020-03-22.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-29")
+    use:
+      unwtd_ensemble_model_rt_samples_2020-03-29.rds: ensemble_model_rt_samples.rds
