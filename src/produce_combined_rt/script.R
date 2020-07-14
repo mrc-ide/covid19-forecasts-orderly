@@ -1,6 +1,25 @@
 infiles <- list.files(pattern = "*.rds")
 rt_samples <- purrr::map_dfr(infiles, readRDS)
-week <- "2020-03-22"
+countries <- unique(
+  rt_samples[rt_samples$model == week_ending, "country"]
+)
+names(countries) <- countries
+map(
+  countries,
+  function(country) {
+    weeks <- unique(
+      rt_samples[rt_samples$country == country, "model"]
+    )
+    weeks <- as.Date(weeks)
+
+  }
+)
+
+
+  x <- diff(weeks)
+  message(country, "\n", paste0(x, collapse = " "))
+}
+
 country <- "United_States_of_America"
 
 weeks <- seq(
