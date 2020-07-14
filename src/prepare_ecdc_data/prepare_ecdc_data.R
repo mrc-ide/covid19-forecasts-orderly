@@ -1,10 +1,10 @@
-week_finishing <- "2020-07-05"
+week_finishing <- "2020-07-12"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
   stringsAsFactors = FALSE
 )
-
+raw_data <- dplyr::select(raw_data, -`Cumulative_number_for_14_days_of_COVID.19_cases_per_100000`)
 ## colnames(raw_data) <- c(
 ##   "DateRep", "day", "month", "year", "Cases", "Deaths", "Countries and territories",
 ##   "geoId", "countryterritoryCode", "popData2018", "continent"
@@ -301,6 +301,21 @@ raw_data$Cases[raw_data$DateRep == "2020-07-03" & raw_data$`Countries.and.territ
         )
     )
   )
+
+#####################################################################
+######################################################################
+######################################################################
+######################################################################
+########### Corrections 12th July ####################################
+######################################################################
+######################################################################
+######################################################################
+raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Algeria"] <- 8
+raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Algeria"] <- 8
+raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Haiti"] <- 7
+raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Haiti"] <- 5
+raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Ukraine"] <- 27
+raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Ukraine"] <- 11
 
 ## uk_extra <- data.frame(
 ##   DateRep = "2020-05-24",

@@ -20,8 +20,8 @@ weekly_qntls <- dplyr::left_join(world, weekly_qntls)
 rt_estimates <- readRDS("ensemble_model_rt.rds")
 exclude <- c(
   "Cameroon", "United_States_of_America",
-  "Sudan", "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
-  "Ethiopia", "Ghana", "Haiti"
+  "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
+  "Ethiopia", "Ghana", "El_Salvador", "Kazakhstan"
 )
 
 rt_estimates <- rt_estimates[! rt_estimates$country %in% exclude, ]
