@@ -1,4 +1,7 @@
-infiles <- list.files(pattern = "*.rds")
+dir.create("figures")
+run_info <- orderly::orderly_run_info()
+infiles <- run_info$depends$as
+
 rt_samples <- purrr::map_dfr(infiles, readRDS)
 week_ending <- as.Date(week_ending)
 rt_samples$model <- as.Date(rt_samples$model)
@@ -36,43 +39,80 @@ week_iqr <- purrr::imap(
       dplyr::summarise_if(
         is.numeric,
         ~ list(`25%` = quantile(., prob = 0.25),
+               `50%` = quantile(., prob = 0.50),
                `75%` = quantile(., prob = 0.75))
         ) %>% dplyr::ungroup()
 
     x <- tidyr::unnest(x, cols = c(si_1, si_2))
     x <- x[, c("model", use_si)]
     colnames(x) <- c("forecast_week", "val")
-    x$qntl <- rep(c("25%", "75%"), nrow(x) / 2)
+    x$qntl <- rep(c("25%", "50%", "75%"), nrow(x) / 3)
     tidyr::spread(x, qntl, val)
   }
 )
 
+saveRDS(week_iqr, "weekly_iqr.rds")
 
-combine_with_previous <- function(df, country) {
-  df <- df[order(df$forecast_week, decreasing = TRUE), ]
-  combined_iqr <- c(df$`25%`[1], df$`75%`[1])
-  prev <- 2
-  prev_iqr <- c(df$`25%`[prev], df$`75%`[prev])
-  overlap <- rincewind::overlaps(combined_iqr, prev_iqr)
-
-  while (overlap & prev < nrow(df)) {
-    message("prev = ", prev)
-    weeks <- head(df$forecast_week, prev)
-    combined_rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, use_si]
-    combined_iqr <- quantile(combined_rt, probs = c(0.25, 0.75))
-    combined_iqr <- c(combined_iqr[["25%"]], combined_iqr[["75%"]])
-    prev <- prev + 1
-    prev_iqr <- c(df$`25%`[prev], df$`75%`[prev])
-    overlap <- rincewind::overlaps(combined_iqr, prev_iqr)
-  }
-
-  list(
-    combined_rt = combined_iqr,
-    weeks_combined = head(df$forecast_week, prev),
-    rt_samples = sample(x = combined_rt, size = 1000)
-  )
-}
 
 combined_estimates <- purrr::imap(
   week_iqr, ~ combine_with_previous(.x, .y)
 )
+
+saveRDS(combined_estimates, "combined_rt_estimates.rds")
+
+plots <- purrr::map2(
+  week_iqr,
+  combined_estimates,
+  function(x, y) {
+
+    x <- split(x, x$forecast_week) %>%
+      purrr::map_dfr(
+        function(df) {
+          df <- df[rep(seq_len(nrow(df)), each = 7), ]
+          df$week_starting <- df$forecast_week
+          df$forecast_week <- seq(
+            from = df$forecast_week[1] + 1,
+            length.out = 7,
+            by = "1 day"
+          )
+          df
+        }
+    )
+    df <- data.frame(
+      week_starting1 = min(y$weeks_combined),
+      week_starting2 = max(y$weeks_combined),
+      `25%` = y$combined_rt[["25%"]],
+      `50%` = y$combined_rt[["50%"]],
+      `75%` = y$combined_rt[["75%"]],
+      check.names = FALSE
+    )
+    ndays <- as.numeric(df$week_starting2 - df$week_starting1)
+
+    df <- df[rep(seq_len(nrow(df)), each = ndays), ]
+    df$forecast_week <- seq(
+      from = df$week_starting1[1] + 1,
+      length.out = ndays,
+      by = "1 day"
+    )
+
+    ymax <- ceiling(max(x[["75%"]]))
+
+    p1 <- plot_weekly_iqr(x) +
+      coord_cartesian(clip = "off") +
+      ylim(0, ymax)
+
+    p2 <- plot_combined_iqr(df) +
+      coord_cartesian(clip = "off") +
+      ylim(0, ymax)
+
+    p <- cowplot::plot_grid(p1, p2, ncol = 1, align = "hv")
+    p
+  }
+)
+
+purrr::iwalk(
+  plots,
+  function(p, country) ggsave(glue::glue("figures/{country}.png"), p)
+)
+
+
