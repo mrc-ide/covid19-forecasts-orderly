@@ -8,7 +8,7 @@ all_deaths <- readRDS("latest_deaths_wide_no_filter.rds")
 x <- split(
   pred_qntls,
   list(pred_qntls$forecast_week, pred_qntls$country),
-  sep = "_"
+  sep = ":"
 )
 
 x <- purrr::keep(x, ~ nrow(.) > 0)
@@ -16,7 +16,8 @@ x <- purrr::keep(x, ~ nrow(.) > 0)
 purrr::iwalk(
   x,
   function(pred, cntry_week) {
-    cntry <- strsplit(cntry_week, split = "_")[[1]][2]
+    message(cntry_week)
+    cntry <- strsplit(cntry_week, split = ":")[[1]][2]
     obs <- all_deaths[, c("dates", cntry)]
     obs <- obs[obs$dates <= max(pred$dates) + 7, ]
     obs$deaths <- obs[[cntry]]
@@ -57,6 +58,7 @@ x <- split(pred_qntls, pred_qntls$country)
 purrr::iwalk(
   x,
   function(pred, cntry) {
+    message(cntry)
     pred <- pred[order(pred$forecast_week), ]
     forecast_weeks <- unique(pred$forecast_week)
     palette <- rep(c("#efa7ff", "#9c1f4c"), 2 * length(forecast_weeks))
