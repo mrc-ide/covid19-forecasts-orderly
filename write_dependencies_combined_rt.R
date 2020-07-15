@@ -1,6 +1,7 @@
 ## Generate orderly.yml for collate_model_outputs
 x <- list(
   script = "script.R",
+  parameters = c("week_ending", "use_si"),
   artefacts = list(
     data = list(
     description = "Collated model outputs (quantiles)",
@@ -13,18 +14,18 @@ x <- list(
 
 
 week_starting <- as.Date("2020-03-08")
-week_ending <- as.Date("2020-03-29")
+week_ending <- as.Date("2020-05-24")
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
 )
 
-x$depends <- purrr::map(
+dependances <- purrr::map(
   weeks_needed,
   function(week) {
   y <- list(
     produce_ensemble_outputs = list(
       id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-      use =  "ensemble_model_rt_samples.rds"
+      use =  list("ensemble_model_rt_samples.rds")
     )
    )
    infiles <- purrr::map(
@@ -36,9 +37,13 @@ x$depends <- purrr::map(
  }
 )
 
+x$depends <- c(dependances)
 
 
 
 con <- file("src/produce_combined_rt/orderly.yml", "w")
 yaml::write_yaml(x, con)
 close(con)
+
+##parameters <- list(week_ending = as.character(week_ending), use_si = "si_2")
+##orderly::orderly_run("produce_combined_rt", parameters = parameters)
