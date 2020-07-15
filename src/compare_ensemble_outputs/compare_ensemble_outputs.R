@@ -158,7 +158,7 @@ purrr::iwalk(
       message("No data for ", country)
       continue
     }
-    pred <- cap_predictions(pred)
+    pred <- rincewind::cap_predictions(pred)
 
     p <- all_forecasts(obs, pred)
     outfile <- glue::glue("{name}_forecasts{file_format}")
@@ -176,7 +176,7 @@ purrr::iwalk(
       message("No data for ", country)
       return()
     }
-    pred <- cap_predictions(pred)
+    pred <- rincewind::cap_predictions(pred)
     p <- all_forecasts(obs, pred)
     outfile <- glue::glue("{name}_forecasts_wtd_prev_week{file_format}")
     ggsave(outfile, p)
@@ -193,7 +193,7 @@ purrr::iwalk(
       message("No data for ", country)
       return()
     }
-    pred <- cap_predictions(pred)
+    pred <- rincewind::cap_predictions(pred)
     p <- all_forecasts(obs, pred)
     outfile <- glue::glue("{name}_forecasts_wtd_all_prev_weeks{file_format}")
     ggsave(outfile, p)
@@ -213,7 +213,7 @@ purrr::walk(
       message("No data for ", country)
       return()
     }
-    pred <- cap_predictions(pred)
+    pred <- rincewind::cap_predictions(pred)
 
     p <- ggplot() +
       geom_point(
@@ -246,10 +246,10 @@ purrr::walk(
 
     ### Unweighted and weighted comparison
     wtd1 <- wtd_prev_week[wtd_prev_week$country %in% country, ] %>%
-      cap_predictions()
+      rincewind::cap_predictions()
 
     wtd2 <- wtd_all_prev_weeks[wtd_all_prev_weeks$country %in% country, ] %>%
-      cap_predictions()
+      rincewind::cap_predictions()
 
     message(country)
     p1 <- p +

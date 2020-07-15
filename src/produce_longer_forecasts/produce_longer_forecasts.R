@@ -28,27 +28,13 @@ si <- si_distrs[[use_si]]
 
 deaths_to_use <- raw_data[["D_active_transmission"]]
 
-ts_to_incid <- function(ts, date_col, case_col) {
 
-  first_date <- min(ts[[date_col]])
-  last_date <- max(ts[[date_col]])
-  x <- tidyr::uncount(ts, weights = ts[[case_col]])
-  out <- incidence(
-    x[[date_col]],
-    first_date = first_date,
-    last_date = last_date
-  )
-  out
-}
-
-tall_deaths <- gather(
+tall_deaths <- tidyr::gather(
   deaths_to_use, key = country, value = deaths, -dates
 ) %>%
   split(.$country) %>%
-  map(
-    ~ ts_to_incid(
-  ts = ., date_col = "dates", case_col = "deaths"
- )
+  purrr::map(
+  ~ rincewind::ts_to_incid(ts = ., date_col = "dates", case_col = "deaths")
 )
 
 
@@ -67,6 +53,7 @@ n_sim <- 1000
 projections <- purrr::map(
   countries,
   function(country) {
+    message(country)
     n_days <- length(rt_estimates[[country]]$weeks_combined) * 7
     x <- tall_deaths[[country]]
     rt <- rt_estimates[[country]]$rt_samples
@@ -89,49 +76,4 @@ projections <- purrr::map(
   }
 )
 
-
-
-pred_qntls <- purrr::map(
-  projections,
-  function(pred) {
-    pred <- data.frame(pred, check.names = FALSE)
-    pred <- tidyr::gather(pred, dates, val)
-    qntls <- dplyr::group_by(pred, dates) %>%
-      ggdist::median_qi(.width = 0.95)
-    qntls$dates <- as.Date(qntls$dates)
-    qntls
-  }
-)
-
-all_deaths <- readRDS("latest_deaths_wide_no_filter.rds")
-
-purrr::iwalk(
-  pred_qntls,
-  function(pred, cntry) {
-    obs <- all_deaths[, c("dates", cntry)]
-    obs <- obs[obs$dates <= max(pred$dates) + 7, ]
-    obs$deaths <- obs[[cntry]]
-
-    p <- ggplot() +
-      geom_point(data = obs, aes(dates, deaths), col = "blue") +
-      geom_ribbon(
-        data = pred, aes(x = dates, ymin = .lower, ymax = .upper),
-        alpha = 0.3
-      ) +
-      geom_line(
-        data = pred, aes(dates, val), size = 1.2
-      ) +
-      theme_minimal() +
-      scale_x_date(
-        date_breaks = "3 weeks", limits = c(as.Date("2020-03-01"), NA)
-      ) +
-      xlab("") +
-      ylab("Daily Incidence")
-
-    p <- p +
-      ggtitle(
-        glue::glue("Projections for {cntry} for week starting {week_ending}")
-      )
-    ggsave(glue::glue("figures/projections_{cntry}.png"), p)
-  }
-)
+saveRDS(projections, "longer_projections.rds")

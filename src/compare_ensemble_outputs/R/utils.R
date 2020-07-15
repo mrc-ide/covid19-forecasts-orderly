@@ -123,13 +123,3 @@ all_forecasts <- function(obs, pred) {
 }
 
 
-cap_predictions <- function(pred) {
-
-  x <- split(pred, pred$country)
-  purrr::map_dfr(x, function(y) {
-    ymax <- 2 * ceiling(max(y$deaths, na.rm = TRUE) / 10) * 10
-    y$`50%`[y$`50%` > ymax] <- NA
-    dplyr::mutate_if(y, is.numeric, ~ ifelse(.x > ymax, ymax, .x))
-  }
- )
-}

@@ -1,0 +1,70 @@
+script: collate_longer_forecasts.R
+artefacts:
+  data:
+    description: Collated model outputs (quantiles)
+    filenames: longer_projections_qntls.rds
+packages:
+- dplyr
+- tidyr
+- ggdist
+depends:
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-03-22"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-03-22.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-03-29"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-03-29.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-05"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-04-05.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-12"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-04-12.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-19"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-04-19.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-26"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-04-26.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-03"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-05-03.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-10"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-05-10.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-17"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-05-17.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-24"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-05-24.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-31"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-05-31.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-07"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-06-07.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-14"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-06-14.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-21"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-06-21.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-28"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-06-28.rds: longer_projections.rds

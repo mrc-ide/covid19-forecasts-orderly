@@ -7,6 +7,10 @@ parameters:
   - week_ending
   - use_si
 
+artefacts:
+  data:
+    description: Projections
+    filenames: longer_projections.rds
 
 packages:
   - purrr
@@ -14,15 +18,10 @@ packages:
   - projections
   - tidyr
   - incidence
-  - ggplot2
   - rincewind
  
 depends:
   produce_combined_rt:
-    id: latest(parameter:week_ending == "2020-05-24")
+    id: latest(parameter:week_ending == week_ending)
     use:
       combined_rt_estimates.rds: combined_rt_estimates.rds
-  prepare_ecdc_data:
-    id: "latest"
-    use:
-      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds

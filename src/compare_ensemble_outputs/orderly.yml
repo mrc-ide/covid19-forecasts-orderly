@@ -15,6 +15,7 @@ packages:
   - snakecase
   - glue
   - cowplot
+  - rincewind
 
 ## use_si should be one of si_1 or si_2
 parameters:
