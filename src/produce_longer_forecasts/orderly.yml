@@ -1,0 +1,28 @@
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
+script: produce_longer_forecasts.R
+
+parameters:
+  - week_ending
+  - use_si
+
+
+packages:
+  - purrr
+  - stringr
+  - projections
+  - tidyr
+  - incidence
+  - ggplot2
+  - rincewind
+ 
+depends:
+  produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-24")
+    use:
+      combined_rt_estimates.rds: combined_rt_estimates.rds
+  prepare_ecdc_data:
+    id: "latest"
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
