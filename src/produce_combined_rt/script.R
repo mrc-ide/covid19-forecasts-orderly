@@ -60,18 +60,21 @@ combined_estimates <- purrr::imap(
 
 saveRDS(combined_estimates, "combined_rt_estimates.rds")
 
-plots <- purrr::map2(
-  week_iqr,
-  combined_estimates,
-  function(x, y) {
+combined2 <- purrr::keep(
+  combined_estimates, ~ length(.$weeks_combined) > 1
+)
 
+plots <- purrr::imap(
+  combined2,
+  function(y, country) {
+    x <- week_iqr[[country]]
     x <- split(x, x$forecast_week) %>%
       purrr::map_dfr(
         function(df) {
           df <- df[rep(seq_len(nrow(df)), each = 7), ]
           df$week_starting <- df$forecast_week
           df$forecast_week <- seq(
-            from = df$forecast_week[1] + 1,
+            from = df$forecast_week[1],
             length.out = 7,
             by = "1 day"
           )
@@ -86,11 +89,14 @@ plots <- purrr::map2(
       `75%` = y$combined_rt[["75%"]],
       check.names = FALSE
     )
-    ndays <- as.numeric(df$week_starting2 - df$week_starting1)
+    ## Extend this for the days between week_starting2 and
+    ## week_starting1 + another 7 days because you would have continued
+    ## with Rt estimate for another 7 days
+    ndays <- as.numeric(df$week_starting2 - df$week_starting1) + 7
 
     df <- df[rep(seq_len(nrow(df)), each = ndays), ]
     df$forecast_week <- seq(
-      from = df$week_starting1[1] + 1,
+      from = df$week_starting1[1],
       length.out = ndays,
       by = "1 day"
     )
@@ -101,9 +107,13 @@ plots <- purrr::map2(
       coord_cartesian(clip = "off") +
       ylim(0, ymax)
 
+    xmin <- min(x$forecast_week)
+    xmax <-max(x$forecast_week)
+
     p2 <- plot_combined_iqr(df) +
       coord_cartesian(clip = "off") +
-      ylim(0, ymax)
+      ylim(0, ymax) +
+      scale_x_date(date_breaks = "1 week", limits = c(xmin, xmax))
 
     p <- cowplot::plot_grid(p1, p2, ncol = 1, align = "hv")
     p

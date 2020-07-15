@@ -17,7 +17,7 @@ combine_with_previous <- function(df, country) {
   while (overlap & prev < nrow(df)) {
     prev <- prev + 1
     prev_iqr <- c(df$`25%`[prev], df$`75%`[prev])
-    overlap <- rincewind::overlaps(combined_iqr, prev_iqr)
+    overlap <- rincewind::overlaps(combined_iqr, prev_iqr, digits = 1)
     if (overlap) {
       weeks <- head(df$forecast_week, prev)
       combined_rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, use_si]
@@ -43,14 +43,12 @@ plot_combined_iqr <- function(df) {
     geom_ribbon(
       data = df,
       aes(x = forecast_week, ymin = `25%`, ymax = `75%`),
-    alpha = 0.3
-  ) + geom_line(
-    data = df,
-    aes(
-      x = forecast_week, y = `50%`
-    )
-    ) + theme_minimal() +
-    scale_x_date(date_breaks = "1 week") +
+      alpha = 0.3
+    ) + geom_line(
+        data = df,
+        aes(x = forecast_week, y = `50%`)
+      ) +
+    theme_minimal() +
     xlab("Forecast Week") +
     ylab("Combined Effective Reproduction Number") +
     geom_hline(yintercept = 1, linetype = "dashed") +
