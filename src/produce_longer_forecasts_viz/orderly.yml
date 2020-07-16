@@ -3,7 +3,7 @@ script: script.R
 artefacts:
   data:
     description: Figures
-    filenames: all_projections_India.png
+    filenames: figures/all_projections_India.png
 
 packages:
   - purrr

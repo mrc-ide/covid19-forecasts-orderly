@@ -34,15 +34,15 @@ tall_deaths <- tidyr::gather(
 ) %>%
   split(.$country) %>%
   purrr::map(
-  ~ rincewind::ts_to_incid(ts = ., date_col = "dates", case_col = "deaths")
+  ~ rincewind:::ts_to_incid(ts = ., date_col = "dates", case_col = "deaths")
 )
 
 
 rt_estimates <- readRDS("combined_rt_estimates.rds")
 
-rt_estimates <- purrr::keep(
-  rt_estimates, ~ length(.$weeks_combined) > 1
-)
+## rt_estimates <- purrr::keep(
+##   rt_estimates, ~ length(.$weeks_combined) > 1
+## )
 
 countries <- stats::setNames(names(rt_estimates), names(rt_estimates))
 

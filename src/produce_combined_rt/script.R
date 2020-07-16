@@ -38,15 +38,19 @@ week_iqr <- purrr::imap(
     x <- dplyr::group_by(rt, model) %>%
       dplyr::summarise_if(
         is.numeric,
-        ~ list(`25%` = quantile(., prob = 0.25),
-               `50%` = quantile(., prob = 0.50),
-               `75%` = quantile(., prob = 0.75))
-        ) %>% dplyr::ungroup()
+        ~ list(
+  `2.5%` = quantile(., prob = 0.025),
+  `25%` = quantile(., prob = 0.25),
+  `50%` = quantile(., prob = 0.50),
+  `75%` = quantile(., prob = 0.75),
+  `97.5%` = quantile(., prob = 0.975)
+)
+  ) %>% dplyr::ungroup()
 
     x <- tidyr::unnest(x, cols = c(si_1, si_2))
     x <- x[, c("model", use_si)]
     colnames(x) <- c("forecast_week", "val")
-    x$qntl <- rep(c("25%", "50%", "75%"), nrow(x) / 3)
+    x$qntl <- rep(c("2.5%", "25%", "50%", "75%", "97.5%"), nrow(x) / 5)
     tidyr::spread(x, qntl, val)
   }
 )

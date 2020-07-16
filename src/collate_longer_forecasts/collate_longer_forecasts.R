@@ -13,7 +13,7 @@ pred_qntls <- purrr::map_depth(
     pred <- data.frame(pred, check.names = FALSE)
     pred <- tidyr::gather(pred, dates, val)
     qntls <- dplyr::group_by(pred, dates) %>%
-      ggdist::median_qi(.width = 0.95)
+      ggdist::median_qi(.width = c(0.75, 0.95))
     qntls$dates <- as.Date(qntls$dates)
     qntls
   }
