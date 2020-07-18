@@ -40,7 +40,7 @@ f <- function(pred, obs) {
           data = weekly,
           aes(x = dates, y = val), col = "#cc6f47", size = 1.2
         ) +
-        theme_minimal() +
+         theme_minimal() +
         xlab("") +
         ylab("") +
         ggtitle(title) +
