@@ -29,7 +29,7 @@ country_weeks <- purrr::map(
 )
 
 
-country_weeks <- purrr::keep(country_weeks, ~ length(.) > 1)
+##country_weeks <- purrr::keep(country_weeks, ~ length(.) > 1)
 
 week_iqr <- purrr::imap(
   country_weeks,
@@ -88,9 +88,9 @@ plots <- purrr::imap(
     df <- data.frame(
       week_starting1 = min(y$weeks_combined),
       week_starting2 = max(y$weeks_combined),
-      `25%` = y$combined_rt[["25%"]],
+      `2.5%` = y$combined_rt[["2.5%"]],
       `50%` = y$combined_rt[["50%"]],
-      `75%` = y$combined_rt[["75%"]],
+      `97.5%` = y$combined_rt[["97.5%"]],
       check.names = FALSE
     )
     ## Extend this for the days between week_starting2 and
@@ -105,7 +105,7 @@ plots <- purrr::imap(
       by = "1 day"
     )
 
-    ymax <- ceiling(max(x[["75%"]]))
+    ymax <- ceiling(max(x[["97.5%"]]))
 
     p1 <- plot_weekly_iqr(x) +
       coord_cartesian(clip = "off") +

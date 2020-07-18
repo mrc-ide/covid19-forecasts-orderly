@@ -10,8 +10,8 @@ x <- list(
  packages = c("dplyr", "tidyr", "ggdist")
 )
 
-week_starting <- as.Date("2020-03-08")
-week_ending <- as.Date("2020-06-28")
+week_starting <- as.Date("2020-03-22")
+week_ending <- as.Date("2020-07-12")
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
@@ -24,7 +24,7 @@ dependancies <- purrr::map(
   function(week) {
     query <- glue::glue(
       "latest(parameter:week_ending == \"{week}\" ",
-       " && use_si == \"{use_si}\")"
+       " && parameter:use_si == \"{use_si}\")"
     )
     y <- list(
       produce_longer_forecasts = list(

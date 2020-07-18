@@ -1,9 +1,77 @@
+f <- function(pred, obs) {
+  y <- split(pred, pred$forecast_week)
+  cntry <- pred$country[1]
+  plots <- purrr::map(
+    y,
+    function(weekly) {
+      obs <- all_deaths[, c("dates", cntry)]
+      obs$deaths <- obs[[cntry]]
+      idx <- which(cumsum(obs$deaths) >= 100)[1]
+      xmin <- max(
+        obs$dates[idx], min(weekly$dates) - 21,
+        na.rm = TRUE
+      )
+      obs <- obs[obs$dates >= xmin, ]
+      obs <- obs[obs$dates <= max(weekly$dates) + 7, ]
+      ymax <- 2 * ceiling(max(obs$deaths, na.rm = TRUE) / 10) * 10
+      weekly$val[weekly$val > ymax] <- NA
+      weekly <- dplyr::mutate_if(
+        weekly, is.numeric, ~ ifelse(.x > ymax, ymax, .x)
+      )
+
+      nice_date <- strftime(weekly$forecast_week[1], "%d %b %Y")
+
+      title <- glue::glue("Projections made on {nice_date}")
+      p <- ggplot() +
+        geom_point(
+          data = obs, aes(dates, deaths), col = "#663723", alpha = 0.5
+        ) +
+        geom_ribbon(
+          data = weekly[weekly$`.width` == 0.95, ],
+          aes(x = dates, ymin = .lower, ymax = .upper),
+          fill = "#cc6f47", alpha = 0.3
+        ) +
+        geom_ribbon(
+          data = weekly[weekly$`.width` == 0.75, ],
+          aes(x = dates, ymin = .lower, ymax = .upper),
+          fill = "#cc6f47", alpha = 0.5
+        ) +
+        geom_line(
+          data = weekly,
+          aes(x = dates, y = val), col = "#cc6f47", size = 1.2
+        ) +
+        theme_minimal() +
+        xlab("") +
+        ylab("") +
+        ggtitle(title) +
+        coord_cartesian(clip = "off") +
+        theme(plot.title = element_text(size = 10)) +
+        scale_x_date(
+          breaks = rev(
+            seq(
+              to = min(obs$dates), from = max(weekly$dates) + 7, length.out = 4
+            )
+          )
+        )
+      p
+    }
+  )
+
+  p <- cowplot::plot_grid(plotlist = plots, ncol = 3) +
+    draw_label(
+      "Daily Deaths",
+      x = 0, y = 0.5, angle = 90, size = 12, vjust = 1
+    )
+  p
+}
+
 dir.create("figures")
 
 pred_qntls <- readRDS("longer_projections_qntls.rds")
 pred_qntls$forecast_week <- as.Date(pred_qntls$forecast_week)
 
 all_deaths <- readRDS("latest_deaths_wide_no_filter.rds")
+all_deaths$Czech_Republic <- all_deaths$Czechia
 
 x <- split(
   pred_qntls,
@@ -40,9 +108,9 @@ purrr::iwalk(
       scale_x_date(
         date_breaks = "2 weeks",
         limits = c(as.Date("2020-03-01"), NA),
-        ) +
+      ) +
       theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
       ) +
       xlab("") +
       ylab("Daily Incidence")
@@ -58,7 +126,8 @@ purrr::iwalk(
 
 ## For a given country, overlapping projections
 x <- split(pred_qntls, pred_qntls$country)
-##x <- purrr::map(x, ~ .[.$`.width` == 0.95, ])
+
+## x <- purrr::map(x, ~ .[.$`.width` == 0.95, ])
 purrr::iwalk(
   x,
   function(pred, cntry) {
@@ -82,11 +151,11 @@ purrr::iwalk(
     idx <- which(cumsum(obs$deaths) >= 100)[1]
     xmin <- obs$dates[idx]
     p <- ggplot() +
-      geom_point(data = obs, aes(dates, deaths), col = "blue") +
+      geom_point(data = obs, aes(dates, deaths), col = "blue", alpha = 0.3) +
       geom_ribbon(
         data = pred[pred$`.width` == 0.95, ],
         aes(x = dates, ymin = .lower, ymax = .upper, fill = forecast_week),
-        alpha = 0.3
+        alpha = 0.4
       ) +
       geom_line(
         data = pred, aes(dates, val, col = forecast_week), size = 1.2
@@ -97,7 +166,7 @@ purrr::iwalk(
         date_breaks = "2 weeks", limits = c(as.Date(xmin), NA)
       ) +
       theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
       ) +
       xlab("") +
       ylab("Daily Incidence") +
@@ -105,12 +174,8 @@ purrr::iwalk(
     label <- glue::glue("Projections for {cntry}")
     p <- p + ggtitle(label)
 
-    p2 <- p +
-      facet_wrap(~forecast_week, ncol = 1, scales = "free_y") +
-      theme(
-        strip.background = element_blank(),
-        strip.text.x = element_blank()
-      )
+
+    p2 <- f(pred, obs)
 
     ggsave(
       glue::glue("figures/all_projections_facetted_{cntry}.png"), p2
@@ -118,3 +183,4 @@ purrr::iwalk(
     ggsave(glue::glue("figures/all_projections_{cntry}.png"), p)
   }
 )
+

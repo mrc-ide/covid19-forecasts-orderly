@@ -42,11 +42,26 @@ model_predictions_error <- purrr::imap_dfr(
           function(y_si) {
             y_si <- as.matrix(y_si)
             dates2 <- as.Date(colnames(y_si))
-            obs <- dplyr::filter(
-              model_input, dates %in% dates2) %>% pull(cntry)
+            obs <- model_input[model_input$dates %in% dates2, cntry]
+            ## This is the week previous to the week for which
+            ## forcasts were made
+            prev_week <- dates2 - 7
+            prev_week_avg <- mean(
+              model_input[model_input$dates %in% dates_prev, cntry]
+            )
+            ## The baseline error - if we only projected that the
+            ## deaths next week will the average of the deaths last
+            ## week
+            null_pred <- matrix(
+              mean(prev_week_avg), ncol = 10000, nrow = 7
+            )
+            baseline <- assessr::rel_mae(obs = obs, pred = null_pred)
             if (length(x) > 0) {
               metrics <- all_metrics(obs, y_si)
               metrics$date <- dates2
+              metrics$baseline_error <- baseline
+              metrics$prev_week_avg <- prev_week_avg
+
             } else {
               metrics <- NULL
             }
@@ -60,6 +75,7 @@ model_predictions_error <- purrr::imap_dfr(
   },
   .id = "model"
 )
+
 
 model_predictions_error <- tidyr::separate(
   model_predictions_error,

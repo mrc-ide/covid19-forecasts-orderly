@@ -1,10 +1,10 @@
-week_finishing <- "2020-06-28"
+week_finishing <- "2020-07-12"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
   stringsAsFactors = FALSE
 )
-
+raw_data <- dplyr::select(raw_data, -`Cumulative_number_for_14_days_of_COVID.19_cases_per_100000`)
 ## colnames(raw_data) <- c(
 ##   "DateRep", "day", "month", "year", "Cases", "Deaths", "Countries and territories",
 ##   "geoId", "countryterritoryCode", "popData2018", "continent"
@@ -262,7 +262,60 @@ deaths_avg <- round(
 raw_data$Deaths[raw_data$DateRep == "2020-06-25" & raw_data$`Countries.and.territories` == "Italy"] <- deaths_avg
 
 #####################################################################
+######################################################################
+######################################################################
+######################################################################
+########### Corrections 5th July #####################################
+######################################################################
+######################################################################
+######################################################################
+raw_data$Cases[raw_data$DateRep == "2020-07-01" & raw_data$`Countries.and.territories` == "Kazakhstan"] <-
+  round(mean(
+  c(raw_data$Cases[raw_data$DateRep == "2020-07-02" & raw_data$`Countries.and.territories` == "Kazakhstan"],
+    raw_data$Cases[raw_data$DateRep == "2020-07-03" & raw_data$`Countries.and.territories` == "Kazakhstan"],
+    raw_data$Cases[raw_data$DateRep == "2020-06-30" & raw_data$`Countries.and.territories` == "Kazakhstan"],
+    raw_data$Cases[raw_data$DateRep == "2020-06-29" & raw_data$`Countries.and.territories` == "Kazakhstan"]
+    )
+  ))
 
+raw_data$Deaths[raw_data$DateRep == "2020-07-04" & raw_data$`Countries.and.territories` == "Kazakhstan"] <- 26
+raw_data$Deaths[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "Kazakhstan"] <- 26
+
+raw_data$Deaths[raw_data$DateRep == "2020-07-04" & raw_data$`Countries.and.territories` == "Qatar"] <- 3
+raw_data$Deaths[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "Qatar"] <- 2
+
+raw_data$Deaths[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "Sudan"] <- 4
+
+raw_data$Deaths[raw_data$DateRep == "2020-07-01" & raw_data$`Countries.and.territories` == "Ukraine"] <- 12
+raw_data$Deaths[raw_data$DateRep == "2020-07-02" & raw_data$`Countries.and.territories` == "Ukraine"] <- 14
+raw_data$Deaths[raw_data$DateRep == "2020-07-04" & raw_data$`Countries.and.territories` == "Ukraine"] <- 27
+raw_data$Deaths[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "Ukraine"] <- 15
+
+raw_data$Cases[raw_data$DateRep == "2020-07-03" & raw_data$`Countries.and.territories` == "United_Kingdom"] <-
+  round(
+    mean(
+      c(raw_data$Cases[raw_data$DateRep == "2020-07-01" & raw_data$`Countries.and.territories` == "United_Kingdom"],
+        raw_data$Cases[raw_data$DateRep == "2020-07-02" & raw_data$`Countries.and.territories` == "United_Kingdom"],
+        raw_data$Cases[raw_data$DateRep == "2020-07-04" & raw_data$`Countries.and.territories` == "United_Kingdom"],
+        raw_data$Cases[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "United_Kingdom"]
+        )
+    )
+  )
+
+#####################################################################
+######################################################################
+######################################################################
+######################################################################
+########### Corrections 12th July ####################################
+######################################################################
+######################################################################
+######################################################################
+raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Algeria"] <- 8
+raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Algeria"] <- 8
+raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Haiti"] <- 7
+raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Haiti"] <- 5
+raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Ukraine"] <- 27
+raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Ukraine"] <- 11
 
 ## uk_extra <- data.frame(
 ##   DateRep = "2020-05-24",

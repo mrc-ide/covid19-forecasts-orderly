@@ -45,12 +45,57 @@ combine_with_previous <- function(df, country) {
 }
 
 
+combine_with_previous2 <- function(df, country) {
+
+  df <- df[order(df$forecast_week, decreasing = TRUE), ]
+  combined_rt <- rt_samples[rt_samples$model %in% df$forecast_week[1] &
+                            rt_samples$country == country, use_si]
+  combined_qntls <- c(
+    `2.5%` = df$`2.5%`[1],
+    `25%` = df$`25%`[1],
+    `50%` = df$`50%`[1],
+    `75%` = df$`75%`[1],
+    `97.5%` = df$`97.5%`[1]
+  )
+  combined_rt <- round(combined_rt, 2)
+  prev <- 1
+  overlap <- TRUE
+  out <- list(
+    combined_rt = combined_qntls,
+    weeks_combined = head(df$forecast_week, prev),
+    rt_samples = sample(x = combined_rt, size = 1000)
+  )
+  while (overlap & prev < nrow(df)) {
+    prev <- prev + 1
+    prev_rt <- rt_samples[rt_samples$model %in% df$forecast_week[prev] &
+                          rt_samples$country == country, use_si]
+    prev_rt <- round(prev_rt, 2)
+    overlap <- any(prev_rt %in% combined_rt)
+    if (overlap) {
+      weeks <- head(df$forecast_week, prev)
+      combined_rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, use_si]
+      combined_qntls <- quantile(
+        combined_rt, probs = c(0.025, 0.25, 0.50, 0.75, 0.975)
+      )
+      out <- list(
+        combined_rt = combined_qntls,
+        weeks_combined = head(df$forecast_week, prev),
+        rt_samples = sample(x = combined_rt, size = 1000)
+      )
+    }
+  }
+
+  out
+
+}
+
+
 plot_combined_iqr <- function(df) {
 
   p <- ggplot() +
     geom_ribbon(
       data = df,
-      aes(x = forecast_week, ymin = `25%`, ymax = `75%`),
+      aes(x = forecast_week, ymin = `2.5%`, ymax = `97.5%`),
       alpha = 0.3
     ) + geom_line(
         data = df,
@@ -75,7 +120,7 @@ plot_weekly_iqr <- function(df) {
   geom_ribbon(
     data = df,
     aes(
-      x = forecast_week, ymin = `25%`, ymax = `75%`, group = week_starting
+      x = forecast_week, ymin = `2.5%`, ymax = `97.5%`, group = week_starting
     ),
     alpha = 0.3
   ) + geom_line(

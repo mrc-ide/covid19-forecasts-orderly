@@ -9,7 +9,7 @@ poisson_probability <- function(obs, pred) {
     FUN = function(x, xhat) {
       lambda <- mean(xhat)
       message("mean of predictions ", lambda)
-      dpois(x = x, lambda = lambda)
+      dpois(x = round(x), lambda = lambda)
     },
     x = obs,
     xhat = pred_rows
