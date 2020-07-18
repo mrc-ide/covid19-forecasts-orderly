@@ -1,0 +1,97 @@
+script: collate_combined_rt.R
+artefacts:
+  staticgraph:
+    description: Combined Figures
+    filenames:
+      - figures/
+packages:
+- dplyr
+- tidyr
+- ggdist
+- cowplot
+depends:
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-03-22"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-03-22.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-03-22.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-03-29"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-03-29.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-03-29.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-04-05"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-04-05.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-04-05.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-04-12"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-04-12.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-04-12.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-04-19"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-04-19.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-04-19.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-04-26"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-04-26.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-04-26.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-03"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-03.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-03.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-10"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-10.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-10.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-17"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-17.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-17.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-24"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-24.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-24.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-31"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-31.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-31.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-06-07"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-06-07.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-06-07.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-06-14"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-06-14.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-06-14.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-06-21"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-06-21.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-06-21.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-06-28"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-06-28.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-06-28.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-07-05"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-07-05.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-07-05.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-07-12"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-07-12.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-07-12.rds: weekly_iqr.rds

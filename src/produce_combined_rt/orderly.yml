@@ -4,7 +4,7 @@ parameters:
 - use_si
 artefacts:
   data:
-    description: Collated model outputs (quantiles)
+    description: Combined Rt Estimates
     filenames:
     - weekly_iqr.rds
     - combined_rt_estimates.rds
