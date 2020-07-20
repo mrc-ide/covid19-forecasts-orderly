@@ -21,9 +21,9 @@ rt_estimates <- readRDS("ensemble_model_rt.rds")
 exclude <- c(
   "Cameroon", "United_States_of_America",
   "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
-  "Ethiopia", "Ghana", "El_Salvador", "Kazakhstan"
+  "Ethiopia", "Ghana", "Kazakhstan",
+  "Zambia", "Kyrgyzstan", "Philippines", "Sudan", "Haiti"
 )
-
 rt_estimates <- rt_estimates[! rt_estimates$country %in% exclude, ]
 rt_estimates$iso_a3 <-countrycode::countrycode(
   snakecase::to_title_case(rt_estimates$country),

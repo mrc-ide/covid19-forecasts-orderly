@@ -50,7 +50,7 @@ deaths [@whositrep].
 This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 58 countries with active transmission.
+ascertainment) for 53 countries with active transmission.
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -105,7 +105,7 @@ deaths have been reported in a country so far, and
 at least *ten* deaths were observed in the country in each of the past
 two weeks. For the week beginning 19^th^ July 2020, 
 the number of countries/regions included based on these thresholds is 
-58.
+53.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
@@ -194,12 +194,6 @@ knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_1.png")
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_2.png")
-
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
 
 ```
 
@@ -399,7 +393,8 @@ x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
 exclude <- c(
   "Cameroon", "United_States_of_America",
   "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
-  "Ethiopia", "Ghana", "El_Salvador", "Kazakhstan"
+  "Ethiopia", "Ghana", "Kazakhstan",
+  "Zambia", "Kyrgyzstan", "Philippines", "Sudan", "Haiti"
 ) %>% snakecase::to_title_case()
 
 x <- x[! x$Country %in% exclude, ]
@@ -755,11 +750,6 @@ knitr::include_graphics("figs/Asia_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_2.png")
 ```
-
-
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_3.png")
-```
 *Figure 15.* Projections (7-day ahead) for the week starting 19^th^ July 2020 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
@@ -922,5 +912,6 @@ Some countries have been excluded from the analysis despite meeting
 the threshold because the number of deaths per day did not allow
 reliable inference. A complete list of corrections applied to the data downloaded
 from ECDC is available
-[here](https://github.com/mrc-ide/covid19-forecasts-orderly/blob/main/src/prepare_ecdc_data/R/corrections_12July.R). 
-All corrections are based on the numbers reported by the World Health Organization (https://covid19.who.int).
+[here](https://github.com/mrc-ide/covid19-forecasts-orderly/blob/main/src/prepare_ecdc_data/R/corrections_19July.R). 
+All corrections are based on the numbers reported by the World Health
+Organization (https://covid19.who.int) or Worldometer (https://www.worldometers.info).
