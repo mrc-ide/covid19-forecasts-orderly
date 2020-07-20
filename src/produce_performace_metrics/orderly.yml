@@ -2,6 +2,7 @@ script: produce_performace_metrics.R
 environment:
   covid_19_path: COVID19_INPUT_PATH
 sources: R/utils.R
+parameters: window
 artefacts:
   data:
     description: Model performance metrics
@@ -10,6 +11,7 @@ packages:
 - dplyr
 - tidyr
 - assessr
+- slider
 depends:
 - run_rti0:
     id: latest(parameter:week_ending == "2020-03-08")
@@ -79,6 +81,10 @@ depends:
     id: latest(parameter:week_ending == "2020-06-28")
     use:
       RtI0_Std_results_week_end_2020-06-28.rds: RtI0_latest_output.rds
+- run_rti0:
+    id: latest(parameter:week_ending == "2020-07-05")
+    use:
+      RtI0_Std_results_week_end_2020-07-05.rds: RtI0_latest_output.rds
 - run_apeestim:
     id: latest(parameter:week_ending == "2020-03-08")
     use:
@@ -147,6 +153,10 @@ depends:
     id: latest(parameter:week_ending == "2020-06-28")
     use:
       sbkp_Std_results_week_end_2020-06-28.rds: apeestim_model_outputs.rds
+- run_apeestim:
+    id: latest(parameter:week_ending == "2020-07-05")
+    use:
+      sbkp_Std_results_week_end_2020-07-05.rds: apeestim_model_outputs.rds
 - DeCa_model:
     id: latest(parameter:week_ending == "2020-03-08")
     use:
@@ -215,6 +225,10 @@ depends:
     id: latest(parameter:week_ending == "2020-06-28")
     use:
       DeCa_Std_results_week_end_2020-06-28.rds: DeCa_latest.rds
+- DeCa_model:
+    id: latest(parameter:week_ending == "2020-07-05")
+    use:
+      DeCa_Std_results_week_end_2020-07-05.rds: DeCa_latest.rds
 - prepare_ecdc_data:
     id: latest
     use:

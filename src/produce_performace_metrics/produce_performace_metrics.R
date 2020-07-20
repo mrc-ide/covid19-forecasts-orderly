@@ -47,7 +47,7 @@ model_predictions_error <- purrr::imap_dfr(
             ## forcasts were made
             prev_week <- dates2 - 7
             prev_week_avg <- mean(
-              model_input[model_input$dates %in% dates_prev, cntry]
+              model_input[model_input$dates %in% prev_week, cntry]
             )
             ## The baseline error - if we only projected that the
             ## deaths next week will the average of the deaths last
