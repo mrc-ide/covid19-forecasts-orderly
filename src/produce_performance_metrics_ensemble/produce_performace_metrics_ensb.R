@@ -55,12 +55,24 @@ unwtd_pred_error <- purrr::imap_dfr(
           function(y_si) {
             y_si <- as.matrix(y_si)
             dates2 <- as.Date(colnames(y_si))
-            obs <- dplyr::filter(
-              model_input, dates %in% dates2) %>% pull(cntry)
-
+            obs <- model_input[model_input$dates %in% dates2, cntry]
+            prev_week <- dates2 - 7
+            prev_week_avg <- mean(
+              model_input[model_input$dates %in% prev_week, cntry]
+            )
+            ## The baseline error - if we only projected that the
+            ## deaths next week will the average of the deaths last
+            ## week
+            null_pred <- matrix(
+              mean(prev_week_avg), ncol = 10000, nrow = 7
+            )
+            baseline <- assessr::rel_mae(obs = obs, pred = null_pred)
             out <- all_metrics(obs, y_si)
             out$date <- dates2
             out$obs <- obs
+            out$baseline_error <- baseline
+            out$prev_week_avg <- prev_week_avg
+
             out
 
           }, .id = "si"

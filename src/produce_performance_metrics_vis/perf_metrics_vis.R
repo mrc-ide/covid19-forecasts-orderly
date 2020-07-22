@@ -341,3 +341,24 @@ pcv_main <- ggplot() +
   theme(legend.position = "top", legend.title = element_blank())
 
 ggsave("rmae_vs_weekly_cv_main_countries.png", pcv_main)
+##############
+
+## x <- readr::read_csv("model_predictions_error2.csv")
+## x <- x[x$si == "si_2", ]
+
+
+## y <- split(x, x$model)
+## y[[1]] <- dplyr::group_by(y[[1]], forecast_date, country) %>%
+##   dplyr::summarise(baseline = mean(baseline_error), rel_mae = mean(rel_mae)) %>%
+##   dplyr::ungroup()
+
+## y[[1]]$ratio <- y[[1]]$rel_mae / y[[1]]$baseline
+
+## out <- dplyr::select(y[[1]], forecast_date, country, ratio)
+## out$forecast_date <- factor(out$forecast_date)
+
+## ggplot(
+##   out, aes(forecast_date, country)
+## ) + geom_tile(aes(fill = ratio)) +
+##   theme(axis.text.x = element_text(angle = 90, hjust = 0.5)) +
+##   coord_flip()

@@ -4,7 +4,7 @@ weeks <- list(
   "2020-04-19", "2020-04-26", "2020-05-03", "2020-05-10",
   "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07",
   "2020-06-14", "2020-06-21", "2020-06-28", "2020-07-05",
-  "2020-07-12"
+  "2020-07-12", "2020-07-19"
 )
 use_si <- "si_2"
 
@@ -27,6 +27,8 @@ for (week in weeks) {
   #  name = "produce_longer_forecasts", id = m2
   #)
 }
+
+
 source("write_dependencies_collate_longer_forecasts.R")
 orderly::orderly_run(
   "src/collate_longer_forecasts/", use_draft = TRUE

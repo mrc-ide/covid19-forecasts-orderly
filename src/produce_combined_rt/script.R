@@ -2,14 +2,15 @@ dir.create("figures")
 run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
 
+
+latest <- readRDS(grep(week_ending, infiles, value = TRUE))
+countries <- unique(latest$country)
+names(countries) <- countries
+
 rt_samples <- purrr::map_dfr(infiles, readRDS)
 week_ending <- as.Date(week_ending)
 rt_samples$model <- as.Date(rt_samples$model)
 
-countries <- unique(
-  rt_samples[rt_samples$model == week_ending, "country"]
-)
-names(countries) <- countries
 
 country_weeks <- purrr::map(
   countries,
@@ -44,8 +45,7 @@ week_iqr <- purrr::imap(
   `50%` = quantile(., prob = 0.50),
   `75%` = quantile(., prob = 0.75),
   `97.5%` = quantile(., prob = 0.975)
-)
-  ) %>% dplyr::ungroup()
+  )) %>% dplyr::ungroup()
 
     x <- tidyr::unnest(x, cols = c(si_1, si_2))
     x <- x[, c("model", use_si)]

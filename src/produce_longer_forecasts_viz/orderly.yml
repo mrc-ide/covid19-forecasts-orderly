@@ -13,6 +13,7 @@ packages:
   - incidence
   - ggplot2
   - rincewind
+  - cowplot
  
 depends:
   collate_longer_forecasts:

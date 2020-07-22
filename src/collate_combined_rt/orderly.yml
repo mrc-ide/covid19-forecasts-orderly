@@ -3,12 +3,13 @@ artefacts:
   staticgraph:
     description: Combined Figures
     filenames:
-      - figures/
+      - figures
 packages:
 - dplyr
 - tidyr
 - ggdist
 - cowplot
+- ggplot2
 depends:
 - produce_combined_rt:
     id: latest(parameter:week_ending == "2020-03-22"  && parameter:use_si == "si_2")

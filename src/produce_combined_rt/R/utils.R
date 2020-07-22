@@ -1,5 +1,5 @@
 combine_with_previous <- function(df, country) {
-
+  message(country)
   df <- df[order(df$forecast_week, decreasing = TRUE), ]
   combined_rt <- rt_samples[rt_samples$model %in% df$forecast_week[1] &
                             rt_samples$country == country, use_si]
@@ -11,6 +11,7 @@ combine_with_previous <- function(df, country) {
     `97.5%` = df$`97.5%`[1]
   )
   combined_iqr <- c(df$`2.5%`[1], df$`97.5%`[1])
+  latest_iqr <- combined_iqr
   prev <- 1
   overlap <- TRUE
   out <- list(
@@ -21,7 +22,8 @@ combine_with_previous <- function(df, country) {
   while (overlap & prev < nrow(df)) {
     prev <- prev + 1
     prev_iqr <- c(df$`2.5%`[prev], df$`97.5%`[prev])
-    overlap <- rincewind::overlaps(combined_iqr, prev_iqr, digits = 2)
+    overlap <- rincewind::overlaps(latest_iqr, prev_iqr, digits = 2)
+    message(prev_iqr, " overlaps ", latest_iqr)
     if (overlap) {
       weeks <- head(df$forecast_week, prev)
       combined_rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, use_si]
@@ -44,50 +46,6 @@ combine_with_previous <- function(df, country) {
 
 }
 
-
-combine_with_previous2 <- function(df, country) {
-
-  df <- df[order(df$forecast_week, decreasing = TRUE), ]
-  combined_rt <- rt_samples[rt_samples$model %in% df$forecast_week[1] &
-                            rt_samples$country == country, use_si]
-  combined_qntls <- c(
-    `2.5%` = df$`2.5%`[1],
-    `25%` = df$`25%`[1],
-    `50%` = df$`50%`[1],
-    `75%` = df$`75%`[1],
-    `97.5%` = df$`97.5%`[1]
-  )
-  combined_rt <- round(combined_rt, 2)
-  prev <- 1
-  overlap <- TRUE
-  out <- list(
-    combined_rt = combined_qntls,
-    weeks_combined = head(df$forecast_week, prev),
-    rt_samples = sample(x = combined_rt, size = 1000)
-  )
-  while (overlap & prev < nrow(df)) {
-    prev <- prev + 1
-    prev_rt <- rt_samples[rt_samples$model %in% df$forecast_week[prev] &
-                          rt_samples$country == country, use_si]
-    prev_rt <- round(prev_rt, 2)
-    overlap <- any(prev_rt %in% combined_rt)
-    if (overlap) {
-      weeks <- head(df$forecast_week, prev)
-      combined_rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, use_si]
-      combined_qntls <- quantile(
-        combined_rt, probs = c(0.025, 0.25, 0.50, 0.75, 0.975)
-      )
-      out <- list(
-        combined_rt = combined_qntls,
-        weeks_combined = head(df$forecast_week, prev),
-        rt_samples = sample(x = combined_rt, size = 1000)
-      )
-    }
-  }
-
-  out
-
-}
 
 
 plot_combined_iqr <- function(df) {

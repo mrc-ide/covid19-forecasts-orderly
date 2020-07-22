@@ -1,0 +1,21 @@
+script: script.R
+parameters:
+  - week_starting
+  - week_ending
+artefacts:
+  data:
+    description: Null Model performance metrics
+    filenames:
+      - null_model_error.rds
+      - weekly_incidence.rds
+packages:
+- dplyr
+- tidyr
+- assessr
+- slider
+- purrr
+depends:
+- prepare_ecdc_data:
+    id: latest
+    use:
+      model_input.rds: latest_deaths_wide_no_filter.rds

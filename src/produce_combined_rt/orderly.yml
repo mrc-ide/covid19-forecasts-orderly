@@ -4,7 +4,7 @@ parameters:
 - use_si
 artefacts:
   data:
-    description: Combined Rt Estimates
+    description: Collated model outputs (quantiles)
     filenames:
     - weekly_iqr.rds
     - combined_rt_estimates.rds
@@ -92,3 +92,7 @@ depends:
     id: latest(parameter:week_ending == "2020-07-12")
     use:
       ensemble_model_rt_samples_2020-07-12.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-07-19")
+    use:
+      ensemble_model_rt_samples_2020-07-19.rds: ensemble_model_rt_samples.rds
