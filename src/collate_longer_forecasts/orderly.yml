@@ -76,3 +76,7 @@ depends:
     id: latest(parameter:week_ending == "2020-07-12"  && parameter:use_si == "si_2")
     use:
       longer_projections_2020-07-12.rds: longer_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-07-19"  && parameter:use_si == "si_2")
+    use:
+      longer_projections_2020-07-19.rds: longer_projections.rds
