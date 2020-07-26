@@ -2,7 +2,7 @@ script: collate_combined_rt.R
 artefacts:
   data:
     description: Collated combined rt estimates (quantiles)
-    filenames: combined_rt_qntls.rds
+    filenames: figures/India.png
 packages:
 - dplyr
 - tidyr

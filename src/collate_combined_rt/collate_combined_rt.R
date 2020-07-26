@@ -108,11 +108,12 @@ plots <- purrr::imap(
           `50%` = y$combined_rt[["50%"]],
           `97.5%` = y$combined_rt[["97.5%"]],
           check.names = FALSE
-        )
+    )
     ## Extend this for the days between week_starting2 and
     ## week_starting1 + another 7 days because you would have continued
     ## with Rt estimate for another 7 days
-    ndays <- length(y$weeks_combined) * 7
+    z <- as.Date(y$weeks_combined)
+    ndays <- as.numeric(max(z) - min(z))
 
     df <- df[rep(seq_len(nrow(df)), each = ndays), ]
     df$dates <- seq(
