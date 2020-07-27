@@ -1,0 +1,34 @@
+script: script.R
+parameters:
+- week_ending
+- use_si
+artefacts:
+  data:
+    description: Collated model outputs (quantiles)
+    filenames:
+    - weekly_iqr.rds
+    - combined_rt_estimates.rds
+packages:
+- dplyr
+- tidyr
+- ggplot2
+- purrr
+- rincewind
+sources: R/utils.R
+depends:
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-08")
+    use:
+      ensemble_model_rt_samples_2020-03-08.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-15")
+    use:
+      ensemble_model_rt_samples_2020-03-15.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-22")
+    use:
+      ensemble_model_rt_samples_2020-03-22.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-29")
+    use:
+      ensemble_model_rt_samples_2020-03-29.rds: ensemble_model_rt_samples.rds
