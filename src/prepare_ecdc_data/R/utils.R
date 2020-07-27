@@ -34,8 +34,7 @@ parameters <- function(week_finishing) {
 
   params <- list(
     infile = glue::glue(
-      "COVID-19-geographic-disbtribution-worldwide-",
-      "{week_finishing}.csv"
+      "WHO-COVID-19-global-data-", "{week_finishing}.csv"
     ),
     si_mean = si_mean,
     si_std = si_std,
