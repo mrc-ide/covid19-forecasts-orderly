@@ -26,10 +26,10 @@ sources:
   - R/utils.R
   
 depends:
-  - produce_performace_metrics:
-      id: latest
-      use:
-        model_predictions_error.csv: model_predictions_error.csv
+  # - produce_performace_metrics:
+  #     id: latest
+  #     use:
+  #       model_predictions_error.csv: model_predictions_error.csv
         
   - prepare_ecdc_data:
       id: latest
@@ -42,3 +42,11 @@ depends:
         wtd_all_prev_weeks_error.csv: wtd_all_prev_weeks_error.csv
         wtd_prev_week_error.csv: wtd_prev_week_error.csv
         unwtd_pred_error.csv: unwtd_pred_error.csv
+
+
+  - produce_baseline_error:
+      id: latest
+      use:
+        null_model_error.rds: null_model_error.rds
+        weekly_incidence.rds: weekly_incidence.rds
+

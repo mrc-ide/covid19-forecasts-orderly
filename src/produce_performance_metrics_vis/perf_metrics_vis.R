@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = FALSE, parameters = list(use_si = "si_2", strategy = "unwtd"))
+## use_draft = TRUE, parameters = list(use_si = "si_2", strategy = "unwtd"))
 ######### Performance metrics
 observed <- readRDS("model_input.rds")
 
@@ -41,7 +41,32 @@ observed_tall <- split(
       df$days_since_100_deaths <- days_since_100_deaths
       df
    }
+   )
+
+weekly_incidence <- readRDS("weekly_incidence.rds")
+weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting) - 1
+weekly_incidence <- gather(
+  weekly_incidence, country, weekly_incid, -week_starting, -forecast_date
 )
+
+## weekly_incidence <- purrr::map_dfr(
+##   forecast_dates,
+##   function(dates) {
+##     x <- observed[observed$dates %in% dates, ]
+##     weekly <- data.frame(
+##       weekly_incid = colSums(x[, -1]),
+##       weekly_mean = colMeans(x[, -1]),
+##       weekly_sd = apply(x[, -1], 2, sd)
+##     )
+##     weekly$cv <- weekly$weekly_mean / weekly$weekly_sd
+##     weekly$incid_level <- case_when(
+##       weekly$weekly_incid <= 100 ~ "Weekly deaths <= 100",
+##       weekly$weekly_incid > 100 ~ "Weekly deaths > 100"
+##     )
+##     tibble::rownames_to_column(weekly, var = "country")
+##   }, .id = "forecast_date"
+## )
+
 ######################################################################
 ######################################################################
 ############# Using previou weeks ####################################
@@ -87,23 +112,6 @@ forecast_dates <- purrr::map(
   function(x) seq(x + 1, length.out = 7, by = "1 day")
 )
 
-weekly_incidence <- purrr::map_dfr(
-  forecast_dates,
-  function(dates) {
-    x <- observed[observed$dates %in% dates, ]
-    weekly <- data.frame(
-      weekly_incid = colSums(x[, -1]),
-      weekly_mean = colMeans(x[, -1]),
-      weekly_sd = apply(x[, -1], 2, sd)
-    )
-    weekly$cv <- weekly$weekly_mean / weekly$weekly_sd
-    weekly$incid_level <- case_when(
-      weekly$weekly_incid <= 100 ~ "Weekly deaths <= 100",
-      weekly$weekly_incid > 100 ~ "Weekly deaths > 100"
-    )
-    tibble::rownames_to_column(weekly, var = "country")
-  }, .id = "forecast_date"
-)
 
 wtd_prev_week_error <- dplyr::left_join(
   wtd_prev_week_error, weekly_incidence
@@ -181,15 +189,15 @@ dplyr::ungroup()
 unweighted_rt_qntls <- readRDS("unweighted_rt_qntls.rds") %>%
   dplyr::filter(si == use_si)
 
+unwtd_pred_error$forecast_date <- as.Date(unwtd_pred_error$forecast_date)
+unwtd_pred_error <- dplyr::left_join(unwtd_pred_error, weekly_incidence)
 
-unwtd_pred_error <- dplyr::left_join(
-  unwtd_pred_error, weekly_incidence
-)
-
+unweighted_rt_qntls$forecast_date <- as.Date(unweighted_rt_qntls$forecast_date)
 unwtd_pred_error <- dplyr::left_join(
   unwtd_pred_error, unweighted_rt_qntls
 )
 
+unwtd_pred_error_daily$forecast_date <- as.Date(unwtd_pred_error_daily$forecast_date)
 unwtd_pred_error_daily <- dplyr::left_join(
   unwtd_pred_error_daily, unweighted_rt_qntls
 )
@@ -343,22 +351,43 @@ pcv_main <- ggplot() +
 ggsave("rmae_vs_weekly_cv_main_countries.png", pcv_main)
 ##############
 
-## x <- readr::read_csv("model_predictions_error2.csv")
-## x <- x[x$si == "si_2", ]
+null_error <- readRDS("null_model_error.rds")
+x <- dplyr::left_join(daily, null_error, by = c("date" = "dates", "country"))
+weekly_compare <- group_by(x, forecast_date, country, si) %>%
+  summarise(weekly_rel_err = mean(rel_mae), weekly_null_err = mean(null_error)) %>%
+  ungroup()
+weekly_compare$ratio <- weekly_compare$weekly_rel_err / weekly_compare$weekly_null_err
 
+weekly_compare$forecast_date <- factor(weekly_compare$forecast_date)
+x <- dplyr::count(weekly_compare, country)
+countries <- x$country[x$n > 10]
+weekly_compare$err_level <- ifelse(
+  weekly_compare$ratio >= 1, "greater_than_1", "less_than_1"
+)
 
-## y <- split(x, x$model)
-## y[[1]] <- dplyr::group_by(y[[1]], forecast_date, country) %>%
-##   dplyr::summarise(baseline = mean(baseline_error), rel_mae = mean(rel_mae)) %>%
-##   dplyr::ungroup()
+ggplot() +
+  theme_classic() +
+  geom_tile(
+    data = weekly_compare[weekly_compare$country %in% countries, ],
+    aes(forecast_date, country, fill = err_level)
+  ) +
+  ##scale_fill_distiller(palette = "YlOrRd", na.value = "white") +
+  xlab("") + ylab("") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.key.width = unit(2, "lines")
+  )
 
-## y[[1]]$ratio <- y[[1]]$rel_mae / y[[1]]$baseline
+out <- select(weekly_compare, forecast_date, country, ratio) %>%
+  spread(forecast_date, ratio)
 
-## out <- dplyr::select(y[[1]], forecast_date, country, ratio)
-## out$forecast_date <- factor(out$forecast_date)
-
-## ggplot(
-##   out, aes(forecast_date, country)
-## ) + geom_tile(aes(fill = ratio)) +
-##   theme(axis.text.x = element_text(angle = 90, hjust = 0.5)) +
-##   coord_flip()
+## gt::gt(out) %>%
+##   gt::data_color(
+##     columns = vars(`2020-03-15`, `2020-07-12`),
+##     colors = scales::col_numeric(
+##       palette = c(
+##         "red", "orange", "green", "blue"),
+##       domain = c(0, 30))
+##   )

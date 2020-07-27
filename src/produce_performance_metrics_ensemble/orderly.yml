@@ -14,6 +14,7 @@ packages:
 - dplyr
 - tidyr
 - assessr
+- slider
 depends:
 - produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2020-03-15")
@@ -79,86 +80,14 @@ depends:
     id: latest(parameter:week_ending == "2020-06-28")
     use:
       unwtd_ensemble_model_predictions_2020-06-28.rds: ensemble_model_predictions.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-03-15")
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-07-05")
     use:
-      wtd_ensb_prev_week_2020-03-15.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-03-15.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-03-22")
+      unwtd_ensemble_model_predictions_2020-07-05.rds: ensemble_model_predictions.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-07-12")
     use:
-      wtd_ensb_prev_week_2020-03-22.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-03-22.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-03-29")
-    use:
-      wtd_ensb_prev_week_2020-03-29.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-03-29.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-04-05")
-    use:
-      wtd_ensb_prev_week_2020-04-05.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-04-05.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-04-12")
-    use:
-      wtd_ensb_prev_week_2020-04-12.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-04-12.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-04-19")
-    use:
-      wtd_ensb_prev_week_2020-04-19.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-04-19.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-04-26")
-    use:
-      wtd_ensb_prev_week_2020-04-26.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-04-26.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-05-03")
-    use:
-      wtd_ensb_prev_week_2020-05-03.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-05-03.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-05-10")
-    use:
-      wtd_ensb_prev_week_2020-05-10.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-05-10.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-05-17")
-    use:
-      wtd_ensb_prev_week_2020-05-17.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-05-17.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-05-24")
-    use:
-      wtd_ensb_prev_week_2020-05-24.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-05-24.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-05-31")
-    use:
-      wtd_ensb_prev_week_2020-05-31.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-05-31.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-06-07")
-    use:
-      wtd_ensb_prev_week_2020-06-07.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-06-07.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-06-14")
-    use:
-      wtd_ensb_prev_week_2020-06-14.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-06-14.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-06-21")
-    use:
-      wtd_ensb_prev_week_2020-06-21.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-06-21.rds: wtd_ensb_all_prev_weeks.rds
-- produce_weighted_ensemble:
-    id: latest(parameter:week_ending == "2020-06-28")
-    use:
-      wtd_ensb_prev_week_2020-06-28.rds: wtd_ensb_prev_week.rds
-      wtd_ensb_all_prev_weeks_2020-06-28.rds: wtd_ensb_all_prev_weeks.rds
+      unwtd_ensemble_model_predictions_2020-07-12.rds: ensemble_model_predictions.rds
 - prepare_ecdc_data:
     id: latest
     use:

@@ -4,7 +4,8 @@ week_ending <- as.Date(week_ending)
 weeks <- seq(from = week_starting + 1, to = week_ending, by = "7 days")
 
 model_input <- readRDS("model_input.rds")
-model_input <- model_input[model_input$dates > week_starting & model_input$dates <= week_ending, ]
+model_input <- model_input[model_input$dates > week_starting &
+                           model_input$dates <= week_ending, ]
 tall <- tidyr::gather(model_input, country, deaths, -dates)
 
 weekly <- split(tall, tall$country) %>%
@@ -31,7 +32,7 @@ weekly <- split(tall, tall$country) %>%
 countries <- setNames(colnames(weekly)[-1], colnames(weekly)[-1])
 weeks <- slider::slide_period(
   model_input$dates, model_input$dates, "week", identity, .origin = week_starting
-  )
+)
 weeks <- weeks[-1]
 weeks <- purrr::keep(weeks, ~ length(.) == 7)
 
