@@ -4,7 +4,7 @@ raw_data <- readRDS(
   glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
 )
 
-deaths_to_use = raw_data[["D_active_transmission"]]
+deaths_to_use = data.frame(raw_data[["D_active_transmission"]])
 
 ## Convert to incidence object
 tall_deaths <- gather(
@@ -12,9 +12,10 @@ tall_deaths <- gather(
 ) %>%
   split(.$country) %>%
   map(
-    ~ ts_to_incid(
-  ts = ., date_col = "dates", case_col = "deaths"
- )
+    function(x) {
+      message(x$country[1])
+      ts_to_incid(ts = x, date_col = "dates", case_col = "deaths")
+    }
 )
 
 si_distrs <- purrr::map2(

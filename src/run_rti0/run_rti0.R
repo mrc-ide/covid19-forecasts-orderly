@@ -1,5 +1,5 @@
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-08", short_run = TRUE))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-07-26", short_run = TRUE))
 set.seed(1)
 dir.create("figures")
 day.project <- 7
@@ -235,7 +235,9 @@ saveRDS(
 ## }
 ## dev.off()
 I_plot <- tail(deaths_to_use, 14)
+I_plot <- data.frame(I_plot)
                                         # incidence_inference
+incidence_inference <- data.frame(incidence_inference)
 pdf("ci_pred.pdf")
 layout(matrix(1:4, 2, 2, byrow = TRUE))
 
