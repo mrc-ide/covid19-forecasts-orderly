@@ -67,7 +67,7 @@ pbar <- ggplot(included, aes(week_starting)) +
 x <- dplyr::count(included, week_starting, continent_name)
 x$week_starting <- as.Date(x$week_starting)
 
-y <- dplyr::filter(x, week_starting == "2020-07-19")
+y <- dplyr::filter(x, week_starting == "2020-07-26")
 labels <- data.frame(
   x = as.Date("2020-06-24"),
   label = c("Asia", "Europe", "North America", "South America", "Africa")
@@ -84,10 +84,10 @@ pline <- ggplot() +
   scale_x_date(
     breaks = seq(
       from = as.Date("2020-03-01"),
-      to = as.Date("2020-07-19"),
+      to = as.Date("2020-07-26"),
       by = "3 weeks"
     ),
-    limits = c(as.Date("2020-03-01"), as.Date("2020-07-19"))
+    limits = c(as.Date("2020-03-01"), as.Date("2020-07-26"))
   ) +
   coord_cartesian(clip = 'off') +
   theme_classic() +
@@ -134,7 +134,7 @@ epicurve <- ggplot() +
       to = as.Date("2020-07-12"),
       by = "3 weeks"
     ),
-    limits = c(as.Date("2020-03-01"), as.Date("2020-07-19"))
+    limits = c(as.Date("2020-03-01"), as.Date("2020-07-26"))
   ) +
   theme_classic() +
   theme(legend.position = "top", legend.title = element_blank()) +

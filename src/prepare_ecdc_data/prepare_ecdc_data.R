@@ -1,4 +1,4 @@
-week_finishing <- "2020-07-19"
+week_finishing <- "2020-07-26"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -331,7 +331,8 @@ raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.terri
 who <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
   janitor::clean_names()
 
-who$date_reported <- lubridate::dmy(who$date_reported)
+who$date_reported <- lubridate::ymd(who$date_reported)
+
 who_argentina <- who[who$country == "Argentina", ]
 ecdc_argentina <- raw_data[raw_data$`Countries.and.territories` == "Argentina", ]
 who_argentina <- who_argentina[who_argentina$date_reported %in% ecdc_argentina$DateRep, ]
@@ -339,6 +340,15 @@ df <- dplyr::left_join(who_argentina, ecdc_argentina, by = c("date_reported" = "
 df <- dplyr::arrange(df, desc(date_reported))
 raw_data$Cases[raw_data$`Countries.and.territories` == "Argentina"] <- df$new_cases
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina"] <- df$new_deaths
+
+
+who_elsalv <- who[who$country == "El Salvador", ]
+ecdc_elsalv <- raw_data[raw_data$`Countries.and.territories` == "El_Salvador", ]
+who_elsalv <- who_elsalv[who_elsalv$date_reported %in% ecdc_elsalv$DateRep, ]
+df <- dplyr::left_join(who_elsalv, ecdc_elsalv, by = c("date_reported" = "DateRep"))
+df <- dplyr::arrange(df, desc(date_reported))
+raw_data$Cases[raw_data$`Countries.and.territories` == "El_Salvador"] <- df$new_cases
+raw_data$Deaths[raw_data$`Countries.and.territories` == "El_Salvador"] <- df$new_deaths
 
 
 ## Canada
@@ -384,8 +394,23 @@ df <- dplyr::arrange(df, desc(date_reported))
 raw_data$Cases[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
 
+#####################################################################
+######################################################################
+######################################################################
+######################################################################
+########### Corrections 26th July ####################################
+######################################################################
+######################################################################
+######################################################################
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Guatemala" & raw_data$DateRep == "2020-07-26"] <- 30
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-07-24"] <- 188
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2020-07-26"] <- 8
+raw_data$Cases[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2020-07-26"] <- 411
 
-
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-07-26"] <- 195
+raw_data$Cases[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-07-26"] <- 2316
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-07-25"] <- 215
+raw_data$Cases[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-07-25"] <- 2489
 
 ## uk_extra <- data.frame(
 ##   DateRep = "2020-05-24",
