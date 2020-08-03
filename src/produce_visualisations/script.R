@@ -28,7 +28,7 @@ exclude <- c(
   "Cameroon", "United_States_of_America",
   "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
   "Ethiopia", "Ghana", "Kazakhstan",
-  "Zambia", "Kyrgyzstan", "Philippines", "Sudan", "Haiti"
+  "Zambia", "Kyrgyzstan", "Sudan", "Haiti"
 )
 ##exclude <- c()
 ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]

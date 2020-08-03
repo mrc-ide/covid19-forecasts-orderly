@@ -16,5 +16,5 @@ sources:
   - R/utils.R
 
 resources:
-  - COVID-19-geographic-disbtribution-worldwide-2020-07-26.csv
+  - COVID-19-geographic-disbtribution-worldwide-2020-08-02.csv
   - WHO-COVID-19-global-data.csv
