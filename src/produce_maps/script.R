@@ -22,7 +22,7 @@ exclude <- c(
   "Cameroon", "United_States_of_America",
   "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
   "Ethiopia", "Ghana", "Kazakhstan",
-  "Zambia", "Kyrgyzstan", "Philippines", "Sudan", "Haiti"
+  "Zambia", "Kyrgyzstan", "Sudan", "Haiti"
 )
 rt_estimates <- rt_estimates[! rt_estimates$country %in% exclude, ]
 rt_estimates$iso_a3 <-countrycode::countrycode(
