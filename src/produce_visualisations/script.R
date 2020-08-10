@@ -24,13 +24,13 @@ ensb_pred <- readr::read_rds("ensemble_daily_qntls.rds")
 ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
-exclude <- c(
-  "Cameroon", "United_States_of_America",
-  "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
-  "Ethiopia", "Ghana", "Kazakhstan",
-  "Zambia", "Kyrgyzstan", "Sudan", "Haiti"
-)
-##exclude <- c()
+## exclude <- c(
+##   "Cameroon", "United_States_of_America",
+##   "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
+##   "Ethiopia", "Ghana", "Kazakhstan",
+##   "Zambia", "Kyrgyzstan", "Sudan", "Haiti"
+## )
+exclude <- readRDS("exclude.rds")
 ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
 
 ## Read in the model specific outputs here so that we can construct

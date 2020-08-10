@@ -18,12 +18,7 @@ weekly_qntls <- dplyr::left_join(world, weekly_qntls)
 # generating the ISO3 code for the model predictions to link with the simple features map data
 
 rt_estimates <- readRDS("ensemble_model_rt.rds")
-exclude <- c(
-  "Cameroon", "United_States_of_America",
-  "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
-  "Ethiopia", "Ghana", "Kazakhstan",
-  "Zambia", "Kyrgyzstan", "Sudan", "Haiti"
-)
+exclude <- readRDS("exclude.rds")
 rt_estimates <- rt_estimates[! rt_estimates$country %in% exclude, ]
 rt_estimates$iso_a3 <-countrycode::countrycode(
   snakecase::to_title_case(rt_estimates$country),
@@ -36,9 +31,7 @@ rt_estimates <- rincewind::assign_epidemic_phase(rt_estimates)
 rt_estimates <- dplyr::left_join(world, rt_estimates)
 # filling in the missing values
 
-x <- split(
-  weekly_qntls, weekly_qntls$si
-)
+x <- split(weekly_qntls, weekly_qntls$si)
 
 maps <- purrr::iwalk(
   x,

@@ -63,6 +63,7 @@ depends:
     id: "latest"
     use:
       model_input.rds: latest_model_input.rds
+      exclude.rds: exclude.rds
       
   process_individual_models:
     id: "latest"
