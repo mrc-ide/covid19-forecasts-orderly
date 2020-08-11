@@ -16,44 +16,41 @@ x <- list(
  packages = c("dplyr", "tidyr")
 )
 
-wtd_weeks <- list(
-  "2020-03-15", "2020-03-22", "2020-03-29","2020-04-05",
-  "2020-04-12", "2020-04-19", "2020-04-26", "2020-05-03","2020-05-10",
-  "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07",
-  "2020-06-14", "2020-06-21", "2020-06-28", "2020-07-05"
+wtd_weeks <- seq(
+  from = as.Date("2020-03-15"),
+  to = as.Date("2020-08-09"),
+  by = "7 days"
+)
+unwtd_weeks <- seq(
+  from = as.Date("2020-03-08"),
+  to = as.Date("2020-08-09"),
+  by = "7 days"
 )
 
-unwtd_weeks <- list(
-  "2020-03-08", "2020-03-15", "2020-03-22", "2020-03-29","2020-04-05",
-  "2020-04-12", "2020-04-19", "2020-04-26", "2020-05-03","2020-05-10",
-  "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07",
-  "2020-06-14", "2020-06-21", "2020-06-28", "2020-07-05"
-)
-
-dependancies <- purrr::map(
-  wtd_weeks,
-  function(week) {
-  y <- list(
-    produce_weighted_ensemble = list(
-      id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-      use =  list(
-      "wtd_ensb_prev_week_daily_qntls.rds",
-      "wtd_ensb_all_prev_weeks_daily_qntls.rds",
-      "wtd_rt_prev_week.rds",
-      "wtd_rt_all_prev_week.rds",
-      "wtd_rt_prev_week_qntls.rds",
-      "wtd_rt_all_prev_week_qntls.rds"
-      )
-    )
-   )
-   infiles <- purrr::map(
-     y$produce_weighted_ensemble$use,
-     function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
-  )
-  names(y$produce_weighted_ensemble$use) <- glue::glue("{infiles}_{week}.rds")
-  y
- }
-)
+## dependancies <- purrr::map(
+##   wtd_weeks,
+##   function(week) {
+##   y <- list(
+##     produce_weighted_ensemble = list(
+##       id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
+##       use =  list(
+##       "wtd_ensb_prev_week_daily_qntls.rds",
+##       "wtd_ensb_all_prev_weeks_daily_qntls.rds",
+##       "wtd_rt_prev_week.rds",
+##       "wtd_rt_all_prev_week.rds",
+##       "wtd_rt_prev_week_qntls.rds",
+##       "wtd_rt_all_prev_week_qntls.rds"
+##       )
+##     )
+##    )
+##    infiles <- purrr::map(
+##      y$produce_weighted_ensemble$use,
+##      function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
+##   )
+##   names(y$produce_weighted_ensemble$use) <- glue::glue("{infiles}_{week}.rds")
+##   y
+##  }
+## )
 
 dependancies2 <- purrr::map(
   unwtd_weeks,
@@ -90,8 +87,8 @@ dependancies5 <- list(
   )
 )
 
-x$depends <- c(dependancies, dependancies2, dependancies5)
-
+##x$depends <- c(dependancies, dependancies2, dependancies5)
+x$depends <- c(dependancies2, dependancies5)
 con <- file("src/collate_model_outputs/orderly.yml", "w")
 yaml::write_yaml(x, con)
 close(con)

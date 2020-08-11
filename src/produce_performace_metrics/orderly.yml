@@ -85,6 +85,22 @@ depends:
     id: latest(parameter:week_ending == "2020-07-05")
     use:
       RtI0_Std_results_week_end_2020-07-05.rds: RtI0_latest_output.rds
+- run_rti0:
+    id: latest(parameter:week_ending == "2020-07-12")
+    use:
+      RtI0_Std_results_week_end_2020-07-12.rds: RtI0_latest_output.rds
+- run_rti0:
+    id: latest(parameter:week_ending == "2020-07-19")
+    use:
+      RtI0_Std_results_week_end_2020-07-19.rds: RtI0_latest_output.rds
+- run_rti0:
+    id: latest(parameter:week_ending == "2020-07-26")
+    use:
+      RtI0_Std_results_week_end_2020-07-26.rds: RtI0_latest_output.rds
+- run_rti0:
+    id: latest(parameter:week_ending == "2020-08-02")
+    use:
+      RtI0_Std_results_week_end_2020-08-02.rds: RtI0_latest_output.rds
 - run_apeestim:
     id: latest(parameter:week_ending == "2020-03-08")
     use:
@@ -157,6 +173,22 @@ depends:
     id: latest(parameter:week_ending == "2020-07-05")
     use:
       sbkp_Std_results_week_end_2020-07-05.rds: apeestim_model_outputs.rds
+- run_apeestim:
+    id: latest(parameter:week_ending == "2020-07-12")
+    use:
+      sbkp_Std_results_week_end_2020-07-12.rds: apeestim_model_outputs.rds
+- run_apeestim:
+    id: latest(parameter:week_ending == "2020-07-19")
+    use:
+      sbkp_Std_results_week_end_2020-07-19.rds: apeestim_model_outputs.rds
+- run_apeestim:
+    id: latest(parameter:week_ending == "2020-07-26")
+    use:
+      sbkp_Std_results_week_end_2020-07-26.rds: apeestim_model_outputs.rds
+- run_apeestim:
+    id: latest(parameter:week_ending == "2020-08-02")
+    use:
+      sbkp_Std_results_week_end_2020-08-02.rds: apeestim_model_outputs.rds
 - DeCa_model:
     id: latest(parameter:week_ending == "2020-03-08")
     use:
@@ -229,6 +261,22 @@ depends:
     id: latest(parameter:week_ending == "2020-07-05")
     use:
       DeCa_Std_results_week_end_2020-07-05.rds: DeCa_latest.rds
+- DeCa_model:
+    id: latest(parameter:week_ending == "2020-07-12")
+    use:
+      DeCa_Std_results_week_end_2020-07-12.rds: DeCa_latest.rds
+- DeCa_model:
+    id: latest(parameter:week_ending == "2020-07-19")
+    use:
+      DeCa_Std_results_week_end_2020-07-19.rds: DeCa_latest.rds
+- DeCa_model:
+    id: latest(parameter:week_ending == "2020-07-26")
+    use:
+      DeCa_Std_results_week_end_2020-07-26.rds: DeCa_latest.rds
+- DeCa_model:
+    id: latest(parameter:week_ending == "2020-08-02")
+    use:
+      DeCa_Std_results_week_end_2020-08-02.rds: DeCa_latest.rds
 - prepare_ecdc_data:
     id: latest
     use:
