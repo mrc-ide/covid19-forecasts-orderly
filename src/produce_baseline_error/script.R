@@ -1,3 +1,4 @@
+##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-07-26", week_starting = "2020-03-08"))
 week_starting <- as.Date(week_starting)
 week_ending <- as.Date(week_ending)
 
@@ -35,7 +36,9 @@ weekly <- split(tall, tall$country) %>%
 ### week, what would the error we make?
 
 
-countries <- setNames(colnames(weekly)[-1], colnames(weekly)[-1])
+countries <- setNames(
+  unique(weekly$country), unique(weekly$country)
+)
 weeks <- slider::slide_period(
   model_input$dates, model_input$dates, "week", identity, .origin = week_starting
 )
@@ -45,9 +48,11 @@ weeks <- purrr::keep(weeks, ~ length(.) == 7)
 null_model_error <- purrr::map_dfr(
   countries,
   function(country) {
+    message(country)
     purrr::map_dfr(
       weeks,
       function(week) {
+        message(paste(week, collapse = " "))
         obs <- model_input[model_input$dates %in% week, country]
         prev_week <- model_input[model_input$dates %in% (week - 7), country]
         null_pred <- matrix(mean(prev_week), ncol = 10000, nrow = 7)
