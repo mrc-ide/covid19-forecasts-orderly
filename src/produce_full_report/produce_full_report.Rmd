@@ -575,13 +575,8 @@ consecutive weeks.
 
 We intend to produce forecasts every
 week, for the week ahead. Ensemble forecasts are produced from the
-outputs of three different models. We assume a gamma
-distributed serial interval with mean 6.48 days
-and standard deviation of 3.83 days following [@wang2020strongly].
-
-## Serial Interval
-
-We assume a gamma distributed serial interval with mean 6.48 days
+outputs of three different models. We assume a gamma distributed
+serial interval with mean 6.48 days
 and standard deviation of 3.83 days following [@ferguson2020report].
 
 
