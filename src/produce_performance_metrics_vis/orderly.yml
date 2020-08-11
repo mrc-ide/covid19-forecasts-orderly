@@ -26,10 +26,10 @@ sources:
   - R/utils.R
   
 depends:
-  # - produce_performace_metrics:
-  #     id: latest
-  #     use:
-  #       model_predictions_error.csv: model_predictions_error.csv
+  - produce_performace_metrics:
+      id: latest
+      use:
+        model_predictions_error.csv: model_predictions_error.csv
         
   - prepare_ecdc_data:
       id: latest

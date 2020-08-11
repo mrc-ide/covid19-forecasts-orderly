@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = TRUE, parameters = list(use_si = "si_2", strategy = "unwtd"))
+## use_draft = FALSE, parameters = list(use_si = "si_2", strategy = "unwtd"))
 ######### Performance metrics
 observed <- readRDS("model_input.rds")
 
@@ -32,7 +32,7 @@ observed_tall <- split(
       } else {
         idx <- idx[1]
         days_since_100_deaths <- c(
-          rep(0, idx - 1),
+          seq(to = -1, length.out = idx - 1, by = 1),
           seq(
             from = 1, length.out = length(cum_deaths) - idx + 1, by = 1
           )
@@ -41,126 +41,12 @@ observed_tall <- split(
       df$days_since_100_deaths <- days_since_100_deaths
       df
    }
-   )
+)
 
 weekly_incidence <- readRDS("weekly_incidence.rds")
-weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting) - 1
-weekly_incidence <- gather(
-  weekly_incidence, country, weekly_incid, -week_starting, -forecast_date
-)
+weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
 
-## weekly_incidence <- purrr::map_dfr(
-##   forecast_dates,
-##   function(dates) {
-##     x <- observed[observed$dates %in% dates, ]
-##     weekly <- data.frame(
-##       weekly_incid = colSums(x[, -1]),
-##       weekly_mean = colMeans(x[, -1]),
-##       weekly_sd = apply(x[, -1], 2, sd)
-##     )
-##     weekly$cv <- weekly$weekly_mean / weekly$weekly_sd
-##     weekly$incid_level <- case_when(
-##       weekly$weekly_incid <= 100 ~ "Weekly deaths <= 100",
-##       weekly$weekly_incid > 100 ~ "Weekly deaths > 100"
-##     )
-##     tibble::rownames_to_column(weekly, var = "country")
-##   }, .id = "forecast_date"
-## )
-
-######################################################################
-######################################################################
-############# Using previou weeks ####################################
-######################################################################
-######################################################################
-wtd_prev_week_error <- readr::read_csv(
-  "wtd_prev_week_error.csv"
-) %>% dplyr::filter(si == use_si)
-
-wtd_prev_week_error$strategy <- "Weighted (previous week)"
-wtd_prev_week_error <- tidyr::separate(
-  wtd_prev_week_error,
-  col = "model",
-  into = c(NA, NA, NA, NA, "forecast_date"),
-  sep = "_"
-)
-wtd_prev_week_error_daily <- wtd_prev_week_error
-
-## Weekly metrics
-wtd_prev_week_error <- dplyr::group_by(
-  wtd_prev_week_error, forecast_date, country, si
-) %>%
-  dplyr::summarise_if(is.numeric, mean) %>%
-dplyr::ungroup()
-
-wtd_prev_week_rt_qntls <- readRDS("wtd_prev_week_rt_qntls.rds") %>%
-  dplyr::filter(si == use_si)
-
-## Combine with phase information
-wtd_prev_week_error_daily <- dplyr::left_join(
-  wtd_prev_week_error_daily , wtd_prev_week_rt_qntls
-)
-
-wtd_prev_week_error <- dplyr::left_join(
-  wtd_prev_week_error, wtd_prev_week_rt_qntls
-)
-## Combine with observed deaths
-forecast_sundays <- as.Date(unique(wtd_prev_week_error$forecast_date))
-names(forecast_sundays) <- forecast_sundays
-
-forecast_dates <- purrr::map(
-  forecast_sundays,
-  function(x) seq(x + 1, length.out = 7, by = "1 day")
-)
-
-
-wtd_prev_week_error <- dplyr::left_join(
-  wtd_prev_week_error, weekly_incidence
-)
-
-######################################################################
-######################################################################
-############# Using all previous weeks ###############################
-######################################################################
-######################################################################
-
-wtd_all_prev_weeks_error <- readr::read_csv(
-  "wtd_all_prev_weeks_error.csv"
-) %>% dplyr::filter(si == use_si)
-
-wtd_all_prev_weeks_error$strategy <- "Weighted (all previous weeks)"
-
-wtd_all_prev_weeks_error <- tidyr::separate(
-  wtd_all_prev_weeks_error,
-  col = "model",
-  into = c(NA, NA, NA, NA, NA, "forecast_date"),
-  sep = "_"
-)
-
-wtd_all_prev_weeks_error_daily <- wtd_all_prev_weeks_error
-
-wtd_all_prev_weeks_error <- dplyr::group_by(
-  wtd_all_prev_weeks_error, forecast_date, country, si
-) %>%
-  dplyr::summarise_if(is.numeric, mean) %>%
-dplyr::ungroup()
-
-wtd_all_prev_weeks_rt_qntls <- readRDS(
-  "wtd_rt_all_prev_week_qntls.rds"
-) %>% dplyr::filter(si == use_si)
-
-
-wtd_all_prev_weeks_error <- dplyr::left_join(
-  wtd_all_prev_weeks_error, weekly_incidence
-)
-
-
-wtd_all_prev_weeks_error <- dplyr::left_join(
-  wtd_all_prev_weeks_error, wtd_all_prev_weeks_rt_qntls
-)
-
-wtd_all_prev_weeks_error_daily <- dplyr::left_join(
-  wtd_all_prev_weeks_error_daily, wtd_all_prev_weeks_rt_qntls
-)
+weekly_incidence$forecast_date[weekly_incidence$forecast_date == as.Date("2020-03-09")] <- as.Date("2020-03-08")
 
 ######################################################################
 ######################################################################
@@ -204,14 +90,14 @@ unwtd_pred_error_daily <- dplyr::left_join(
 
 #####################################################################
 w_use_strategy <- list(
-  wtd_prev_week = wtd_prev_week_error,
-  wtd_all_prev_weeks = wtd_all_prev_weeks_error,
+  ##wtd_prev_week = wtd_prev_week_error,
+  ##wtd_all_prev_weeks = wtd_all_prev_weeks_error,
   unwtd = unwtd_pred_error
 )
 
 d_use_strategy <- list(
-  wtd_prev_week = wtd_prev_week_error_daily,
-  wtd_all_prev_weeks = wtd_all_prev_weeks_error_daily,
+  ##wtd_prev_week = wtd_prev_week_error_daily,
+  ##wtd_all_prev_weeks = wtd_all_prev_weeks_error_daily,
   unwtd = unwtd_pred_error_daily
 )
 
@@ -271,7 +157,7 @@ ggsave("daily_obs_error_main_countries.png", pdaily)
 
 ## All countries, Relative mean error on log scale and weekly incidence
 pall <- ggplot(
-  weekly, aes(weekly_incid, rel_mae, col = phase)
+  weekly, aes(weekly_cv, rel_mae, col = phase)
 ) + geom_point() +
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
@@ -283,25 +169,33 @@ pall <- ggplot(
   ) +
   theme_minimal() +
   coord_cartesian(clip = "off") +
-  xlab("(log) Weekly Incidence") +
+  xlab("(log) Weekly CV") +
   ylab("(log) Relative mean error") +
+  geom_abline(
+    slope = 1, intercept = c(0, log(0.5, 10), log(1.5, 10)), linetype = "dashed"
+  )+
   theme(legend.position = "top", legend.title = element_blank())
 
-ggsave("rmae_vs_weekly_incid_all_countries.png", pall)
+ggsave("rmae_vs_weekly_cv_all_countries.png", pall)
 
 ## Main text countries,
 ## Relative mean error on log scale and weekly incidence
 pmain <- ggplot() +
   geom_point(
     data = weekly[weekly$country %in% main_text_countries, ],
-    aes(weekly_incid, rel_mae, col = phase)
+    aes(weekly_cv, rel_mae, col = phase)
   ) +
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
     labels = scales::trans_format("log10", scales::math_format(10^.x))
   ) +
+  scale_x_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  ) +
+
   theme_minimal() +
-  xlab("Weekly Incidence") +
+  xlab("Weekly CV") +
   ylab("(log) Relative mean error") +
   theme(legend.position = "top", legend.title = element_blank())
 

@@ -17,6 +17,10 @@ packages:
 - slider
 depends:
 - produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-03-08")
+    use:
+      unwtd_ensemble_model_predictions_2020-03-08.rds: ensemble_model_predictions.rds
+- produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2020-03-15")
     use:
       unwtd_ensemble_model_predictions_2020-03-15.rds: ensemble_model_predictions.rds
@@ -88,6 +92,18 @@ depends:
     id: latest(parameter:week_ending == "2020-07-12")
     use:
       unwtd_ensemble_model_predictions_2020-07-12.rds: ensemble_model_predictions.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-07-19")
+    use:
+      unwtd_ensemble_model_predictions_2020-07-19.rds: ensemble_model_predictions.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-07-26")
+    use:
+      unwtd_ensemble_model_predictions_2020-07-26.rds: ensemble_model_predictions.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-08-02")
+    use:
+      unwtd_ensemble_model_predictions_2020-08-02.rds: ensemble_model_predictions.rds
 - prepare_ecdc_data:
     id: latest
     use:
