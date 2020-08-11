@@ -90,7 +90,11 @@ unweighted_qntls <- purrr::map_dfr(
 unweighted_qntls$model <- "Unweighted Ensemble"
 unweighted_qntls$date <- as.Date(unweighted_qntls$date)
 
-
+unweighted_qntls <- dplyr::left_join(
+  unweighted_qntls,
+  deaths_tall,
+  by = c("date" = "dates", "country" = "country")
+)
 
 
 

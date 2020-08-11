@@ -31,7 +31,7 @@ all_restimates_line <- function(out) {
   p <- ggplot(out) +
     geom_ribbon(
       aes(
-        x = dates,
+        x = days_since_100_deaths,
         ymin = `2.5%`,
         ymax = `97.5%`,
         group = forecast_date
@@ -40,7 +40,7 @@ all_restimates_line <- function(out) {
     ) +
     geom_ribbon(
       aes(
-        x = dates,
+        x = days_since_100_deaths,
         ymin = `25%`,
         ymax = `75%`,
         group = forecast_date
@@ -48,15 +48,12 @@ all_restimates_line <- function(out) {
       alpha = 0.5
     ) +
     geom_line(
-      aes(dates, `50%`, group = forecast_date)) +
+      aes(days_since_100_deaths, `50%`, group = forecast_date)) +
     geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
     facet_wrap(~country, ncol = 1, scales = "free_y") +
     theme_minimal() +
     xlab("") +
     ylab("Effective Reproduction Number") +
-  scale_x_date(
-    limits = c(as.Date("2020-03-01"), NA), date_breaks = "2 weeks"
-  ) +
   facet_wrap(
     ~country,
     ncol = 1,
@@ -74,18 +71,18 @@ all_forecasts <- function(obs, pred) {
   ggplot() +
       geom_point(
         data = obs,
-        aes(date, deaths),
+        aes(days_since_100_deaths, deaths),
         col = "black"
       ) +
       geom_line(
         data = pred,
-        aes(x = date, `50%`, group = proj, col = "#0072B2"),
+        aes(x = days_since_100_deaths, `50%`, group = proj, col = "#0072B2"),
         size = 1
       ) +
       geom_ribbon(
         data = pred,
         aes(
-          x = date,
+          x = days_since_100_deaths,
           ymin = `2.5%`,
           ymax = `97.5%`,
           group = proj,
@@ -96,7 +93,7 @@ all_forecasts <- function(obs, pred) {
       geom_ribbon(
         data = pred,
         aes(
-          x = date,
+          x = days_since_100_deaths,
           ymin = `25%`,
           ymax = `75%`,
           group = proj,
@@ -108,10 +105,10 @@ all_forecasts <- function(obs, pred) {
       theme(legend.position = "none", legend.title = element_blank()) +
       xlab("") +
       ylab("") +
-    scale_x_date(
-      limits = c(as.Date("2020-03-01"), NA),
-      date_breaks = "2 weeks"
-    ) +
+    ## scale_x_date(
+    ##   limits = c(as.Date("2020-03-01"), NA),
+    ##   date_breaks = "2 weeks"
+    ## ) +
     facet_wrap(
       ~country,
       ncol = 1,
