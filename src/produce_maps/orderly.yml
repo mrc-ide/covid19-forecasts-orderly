@@ -28,5 +28,8 @@ depends:
     id: "latest"
     use:
       ensemble_weekly_qntls.rds: ensemble_weekly_qntls.rds
-      ensemble_model_rt.rds: ensemble_model_rt.rds
- 
+      ensemble_model_rt.rds: ensemble_model_rt.rds 
+  prepare_ecdc_data:
+    id: "latest"
+    use:
+      exclude.rds: exclude.rds
