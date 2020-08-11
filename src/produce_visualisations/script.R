@@ -1,15 +1,6 @@
 ## List of continents-coutnry mapping
-continents <- readr::read_csv(
-  "country-and-continent-codes-list-csv_csv.csv"
-)
+continents <- readr::read_csv("country_continent.csv")
 continents <- janitor::clean_names(continents)
-## Some are dups, not that it matters..
-dups <- duplicated(continents$three_letter_country_code)
-continents <- continents[!dups, ]
-continents <- continents[, c(
-  "continent_name",
-  "three_letter_country_code"
-)]
 
 
 ## Observations in tall format
@@ -33,12 +24,13 @@ ensb_pred <- readr::read_rds("ensemble_daily_qntls.rds")
 ensb_pred <- na.omit(ensb_pred)
 ensb_pred$week_ending <- ensb_pred$proj
 ensb_pred$proj <- "Ensemble"
-exclude <- c(
-  "Ecuador", "Cameroon", "United_States_of_America",
-  "Sudan", "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
-  "Spain"
-)
-
+## exclude <- c(
+##   "Cameroon", "United_States_of_America",
+##   "Yemen", "Democratic_Republic_of_the_Congo", "Mauritania",
+##   "Ethiopia", "Ghana", "Kazakhstan",
+##   "Zambia", "Kyrgyzstan", "Sudan", "Haiti"
+## )
+exclude <- readRDS("exclude.rds")
 ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
 
 ## Read in the model specific outputs here so that we can construct
@@ -65,7 +57,7 @@ ensb_pred <- ensb_pred[ensb_pred$week_ending == max(as.Date(ensb_pred$week_endin
 ensb_pred <- add_continents(ensb_pred, continents)
 
 by_continent_si <- split(
-  ensb_pred, list(ensb_pred$continent_name, ensb_pred$si),
+  ensb_pred, list(ensb_pred$continent, ensb_pred$si),
   sep = "_"
 )
 
@@ -147,7 +139,7 @@ by_model_si <- split(
   daily_predictions_qntls,
   list(
     ##daily_predictions_qntls$proj,
-    daily_predictions_qntls$continent_name,
+    daily_predictions_qntls$continent,
     daily_predictions_qntls$si
   ),
   sep = "_"
@@ -225,7 +217,7 @@ ensemble_rt_wide$proj <- "Ensemble"
 plots <- split(
   ensemble_rt_wide,
   list(
-    ensemble_rt_wide$continent_name,
+    ensemble_rt_wide$continent,
     ensemble_rt_wide$si
   ),
   sep = "_"
@@ -279,7 +271,7 @@ rt_both <- add_continents(rt_both, continents)
 
 plots <- split(
   rt_both,
-  list(rt_both$si, rt_both$continent_name),
+  list(rt_both$si, rt_both$continent),
   sep = "_"
 ) %>% purrr::map(~ rt_lineplot(., nice_names))
 
@@ -343,7 +335,7 @@ x <- purrr::map_dfr(x, ~ ., .id = "country")
 x <- add_continents(x, continents)
 x$date <- as.Date(x$date)
 x$country <- snakecase::to_title_case(x$country)
-plots <- split(x, x$continent_name) %>%
+plots <- split(x, x$continent) %>%
   purrr::imap(
     function(df, continent) {
       npages <- ceiling(length(unique(df$country)) / 6)

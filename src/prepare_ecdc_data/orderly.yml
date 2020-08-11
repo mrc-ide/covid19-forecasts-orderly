@@ -6,12 +6,16 @@ artefacts:
       filenames:
         - latest_model_input.rds
         - latest_deaths_wide_no_filter.rds
+        - exclude.rds
 
 packages:
   - dplyr
   - tidyr
+  - readr
   
 sources:
   - R/utils.R
 
-resources: COVID-19-geographic-disbtribution-worldwide-2020-07-12.csv
+resources:
+  - COVID-19-geographic-disbtribution-worldwide-2020-08-09.csv
+  - WHO-COVID-19-global-data.csv

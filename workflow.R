@@ -18,7 +18,9 @@ weeks <- list(
   "2020-06-21",
   "2020-06-28",
   "2020-07-05",
-  "2020-07-12"
+  "2020-07-12",
+  "2020-08-02",
+  "2020-08-09"
 
 )
 
@@ -79,6 +81,9 @@ orderly::orderly_commit(a)
 a <- orderly::orderly_run("src/produce_maps/")
 orderly::orderly_commit(a)
 
+a <- orderly::orderly_run("src/produce_retrospective_vis/")
+orderly::orderly_commit(a)
+
 a <- orderly::orderly_run("src/produce_visualisations/", parameters = list(week_ending_vis = week))
 orderly::orderly_commit(a)
 
@@ -95,7 +100,7 @@ a <- orderly::orderly_run("src/produce_full_report")
 ## }
 
 
-a <- orderly::orderly_run(
+aa <- orderly::orderly_run(
   "produce_performace_metrics",
   parameters = list(exclude = "2020-06-14"), use_draft = use_draft
 )

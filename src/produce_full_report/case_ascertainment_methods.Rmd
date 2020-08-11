@@ -74,8 +74,8 @@ new reporting cases in the coming week by sampling from a Gamma
 distribution with mean and standard deviation estimated from
 the number of observed cases in the last week. 
 
-While this assumes no growth or decline in the coming week, this baseline assumtpion
-is justfiable as a null-hypthesis scenario as it does not influence 
+While this assumes no growth or decline in the coming week, this baseline assumption
+is justifiable as a null-hypothesis scenario as it does not influence 
 our results dramatically given the contribution to deaths due to those being
 very small (i.e. less than 2%).
 

@@ -32,6 +32,8 @@ projection_plot <- function(obs, pred) {
     by = "1 day"
   )
   dates_to_mark <- dates_to_mark[weekdays(dates_to_mark) == "Monday"]
+  idx <- seq(from = length(dates_to_mark), to = 1, by = -3)
+  dates_to_mark <- dates_to_mark[rev(idx)]
   ## Get dates of adding vlines.
   window_eps <- dplyr::group_by(pred, proj) %>%
     dplyr::summarise(date = min(date)) %>%
@@ -122,7 +124,9 @@ rt_lineplot <- function(rt, nice_names) {
         ) + theme_project() +
           scale_color_manual(
             values = palette
-          ) + coord_flip()
+          ) +
+      ylim(0, 5) +
+      coord_flip()
 
     p
 }
@@ -162,23 +166,18 @@ rt_boxplot <- function(rt, nice_names) {
     theme(
       legend.position = "top",
       legend.title = element_blank()
-    )
+    ) +
+    xlim(0, 5)
 
   p
 }
 
 add_continents <- function(df, mapping) {
 
-  df$iso3c <- countrycode::countrycode(
-    snakecase::to_title_case(df$country),
-      "country.name",
-      "iso3c"
-   )
-
   df <- dplyr::left_join(
     df,
     mapping,
-    by = c("iso3c" = "three_letter_country_code")
+    by = c("country" = "countries_and_territories")
   )
   df
 }

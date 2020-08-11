@@ -71,3 +71,7 @@ depends:
     id: latest
     use:
       summary_DeathToRepoted_14days.csv: summary_DeathToRepoted_14days.csv
+  prepare_ecdc_data:
+    id: "latest"
+    use:
+      exclude.rds: exclude.rds      

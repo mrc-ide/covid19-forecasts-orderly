@@ -46,8 +46,7 @@ sources:
   - R/common_plot_properties.R
 
 resources:
-  - country-and-continent-codes-list-csv_csv.csv
-  - DeCa_Std_Ratio_plot_2020-06-21.rds
+  - country_continent.csv
 
 parameters:
   - week_ending_vis
@@ -64,6 +63,7 @@ depends:
     id: "latest"
     use:
       model_input.rds: latest_model_input.rds
+      exclude.rds: exclude.rds
       
   process_individual_models:
     id: "latest"
