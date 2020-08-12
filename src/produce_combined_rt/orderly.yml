@@ -72,27 +72,3 @@ depends:
     id: latest(parameter:week_ending == "2020-06-07")
     use:
       ensemble_model_rt_samples_2020-06-07.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-14")
-    use:
-      ensemble_model_rt_samples_2020-06-14.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-21")
-    use:
-      ensemble_model_rt_samples_2020-06-21.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-28")
-    use:
-      ensemble_model_rt_samples_2020-06-28.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-07-05")
-    use:
-      ensemble_model_rt_samples_2020-07-05.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-07-12")
-    use:
-      ensemble_model_rt_samples_2020-07-12.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-07-19")
-    use:
-      ensemble_model_rt_samples_2020-07-19.rds: ensemble_model_rt_samples.rds

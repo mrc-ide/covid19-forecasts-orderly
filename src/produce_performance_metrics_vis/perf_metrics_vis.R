@@ -251,7 +251,7 @@ weekly_compare$ratio <- weekly_compare$weekly_rel_err / weekly_compare$weekly_nu
 
 weekly_compare$forecast_date <- factor(weekly_compare$forecast_date)
 x <- dplyr::count(weekly_compare, country)
-countries <- x$country[x$n > 10]
+countries <- x$country
 weekly_compare$err_level <- ifelse(
   weekly_compare$ratio >= 1, "greater_than_1", "less_than_1"
 )
@@ -270,19 +270,38 @@ weekly_compare$label <- glue::glue(
 )
 labels <- unique(weekly_compare$forecast_date)
 
+weekly_compare$weekly_rel_err <- signif(weekly_compare$weekly_rel_err, 3)
+weekly_compare$weekly_null_err <- signif(weekly_compare$weekly_null_err, 3)
+weekly_compare$error_values <- glue(
+  "{weekly_compare$weekly_rel_err}/{weekly_compare$weekly_null_err}"
+)
+
 p1 <- ggplot() +
   theme_classic() +
   geom_tile(
-    data = weekly_compare[weekly_compare$country %in% countries, ],
-    aes(forecast_date, country, fill = err_level),
-    width = 0.8,
+    data = weekly_compare[weekly_compare$country %in% countries &
+                          weekly_compare$ratio <= 5 & weekly_compare$n_forecasts >= 15, ],
+    aes(forecast_date, country, fill = ratio),
+    width = 0.9,
     height = 0.8
   ) +
   geom_text(
-    data = weekly_compare[weekly_compare$country %in% countries, ],
-    aes(x = "2020-08-09", y = country, label = label)
+    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts >= 15, ],
+     aes(x = "2020-08-09", y = country, label = label)
   ) +
-  ##scale_fill_distiller(palette = "YlOrRd", na.value = "white") +
+  geom_text(
+    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts >= 15, ],
+    aes(x = forecast_date, y = country, label = error_values),
+    size = 3
+  ) +
+  scale_fill_distiller(palette = "YlOrRd", na.value = "white", direction = 1) +
+  geom_tile(
+    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$ratio > 5 & weekly_compare$n_forecasts >= 15, ],
+    aes(forecast_date, country),
+    fill = "blue",
+    width = 0.9,
+    height = 0.8
+  ) +
   xlab("") + ylab("") +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 0.5),
@@ -293,6 +312,43 @@ p1 <- ggplot() +
   coord_cartesian(clip = "off")
 
 ggsave("comparison_with_baseline_error.png", p1)
+
+
+
+p1 <- ggplot() +
+  theme_classic() +
+  geom_tile(
+    data = weekly_compare[weekly_compare$country %in% countries &
+                          weekly_compare$ratio <= 5 & weekly_compare$n_forecasts < 15, ],
+    aes(forecast_date, country, fill = ratio),
+    width = 0.9,
+    height = 0.8
+  ) +
+  geom_text(
+    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts < 15, ],
+     aes(x = "2020-08-09", y = country, label = label)
+  ) +
+  geom_text(
+    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts < 15, ],
+    aes(x = forecast_date, y = country, label = error_values),
+    size = 3
+  ) +
+  scale_fill_distiller(palette = "YlOrRd", na.value = "white", direction = 1) +
+  geom_tile(
+    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$ratio > 5 & weekly_compare$n_forecasts < 15, ],
+    aes(forecast_date, country),
+    fill = "blue",
+    width = 0.9,
+    height = 0.8
+  ) +
+  xlab("") + ylab("") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.key.width = unit(2, "lines")
+  ) +
+  coord_cartesian(clip = "off")
 ## out <- select(weekly_compare, forecast_date, country, ratio) %>%
 ##   spread(forecast_date, ratio)
 

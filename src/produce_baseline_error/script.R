@@ -1,4 +1,4 @@
-##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-07-26", week_starting = "2020-03-08"))
+##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-08-02", week_starting = "2020-03-08"))
 week_starting <- as.Date(week_starting)
 week_ending <- as.Date(week_ending)
 
