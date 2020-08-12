@@ -157,7 +157,7 @@ ggsave("daily_obs_error_main_countries.png", pdaily)
 
 ## All countries, Relative mean error on log scale and weekly incidence
 pall <- ggplot(
-  weekly, aes(weekly_cv, rel_mae, col = phase)
+  weekly, aes(weekly_incid, rel_mae, col = phase)
 ) + geom_point() +
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
@@ -169,21 +169,18 @@ pall <- ggplot(
   ) +
   theme_minimal() +
   coord_cartesian(clip = "off") +
-  xlab("(log) Weekly CV") +
+  xlab("(log) Weekly Incidence") +
   ylab("(log) Relative mean error") +
-  geom_abline(
-    slope = 1, intercept = c(0, log(0.5, 10), log(1.5, 10)), linetype = "dashed"
-  )+
   theme(legend.position = "top", legend.title = element_blank())
 
-ggsave("rmae_vs_weekly_cv_all_countries.png", pall)
+ggsave("rmae_vs_weekly_incid_all_countries.png", pall)
 
 ## Main text countries,
 ## Relative mean error on log scale and weekly incidence
 pmain <- ggplot() +
   geom_point(
     data = weekly[weekly$country %in% main_text_countries, ],
-    aes(weekly_cv, rel_mae, col = phase)
+    aes(weekly_incid, rel_mae, col = phase)
   ) +
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
@@ -195,7 +192,7 @@ pmain <- ggplot() +
   ) +
 
   theme_minimal() +
-  xlab("Weekly CV") +
+  xlab("Weekly Incidence") +
   ylab("(log) Relative mean error") +
   theme(legend.position = "top", legend.title = element_blank())
 
@@ -205,7 +202,7 @@ ggsave("rmae_vs_weekly_incid_main_countries.png", pmain)
 
 
 pcv_all <- ggplot(
-  weekly, aes(cv, rel_mae, col = phase)
+  weekly, aes(weekly_cv, rel_mae, col = phase)
 ) + geom_point() +
     scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
@@ -226,7 +223,7 @@ ggsave("rmae_vs_weekly_cv_all_countries.png", pcv_all)
 pcv_main <- ggplot() +
   geom_point(
     data = weekly[weekly$country %in% main_text_countries, ],
-    aes(cv, rel_mae, col = phase),
+    aes(weekly_cv, rel_mae, col = phase),
     size = 2
   ) +
     scale_y_log10(
@@ -259,11 +256,31 @@ weekly_compare$err_level <- ifelse(
   weekly_compare$ratio >= 1, "greater_than_1", "less_than_1"
 )
 
-ggplot() +
+x <- group_by(weekly_compare, country) %>%
+  summarise(
+    n_forecasts = n(), n_less_than_1 = sum(ratio < 1, na.rm = TRUE)
+  ) %>% ungroup()
+
+weekly_compare <- left_join(weekly_compare, x)
+weekly_compare$country <- snakecase::to_title_case(weekly_compare$country)
+weekly_compare$country <- factor(weekly_compare$country)
+weekly_compare$country <- forcats::fct_reorder(weekly_compare$country, weekly_compare$n_forecasts)
+weekly_compare$label <- glue::glue(
+  "{weekly_compare$n_less_than_1} / {weekly_compare$n_forecasts}"
+)
+labels <- unique(weekly_compare$forecast_date)
+
+p1 <- ggplot() +
   theme_classic() +
   geom_tile(
     data = weekly_compare[weekly_compare$country %in% countries, ],
-    aes(forecast_date, country, fill = err_level)
+    aes(forecast_date, country, fill = err_level),
+    width = 0.8,
+    height = 0.8
+  ) +
+  geom_text(
+    data = weekly_compare[weekly_compare$country %in% countries, ],
+    aes(x = "2020-08-09", y = country, label = label)
   ) +
   ##scale_fill_distiller(palette = "YlOrRd", na.value = "white") +
   xlab("") + ylab("") +
@@ -272,14 +289,29 @@ ggplot() +
     legend.position = "top",
     legend.title = element_blank(),
     legend.key.width = unit(2, "lines")
-  )
+  ) +
+  coord_cartesian(clip = "off")
 
-out <- select(weekly_compare, forecast_date, country, ratio) %>%
-  spread(forecast_date, ratio)
+ggsave("comparison_with_baseline_error.png", p1)
+## out <- select(weekly_compare, forecast_date, country, ratio) %>%
+##   spread(forecast_date, ratio)
 
-## gt::gt(out) %>%
+
+## gt(out) %>%
+##   fmt_number(
+##     columns = starts_with("2020"),
+##     decimals = 1
+##   ) %>%
+##     tab_style(
+##     style = cell_fill(color = "green"),
+##     locations = cells_body(
+##       columns = starts_with("2020") < 1,
+##       rows = TRUE
+##     )
+##   )
+
 ##   gt::data_color(
-##     columns = vars(`2020-03-15`, `2020-07-12`),
+##     columns = vars(`2020-03-15`:`2020-08-02`),
 ##     colors = scales::col_numeric(
 ##       palette = c(
 ##         "red", "orange", "green", "blue"),

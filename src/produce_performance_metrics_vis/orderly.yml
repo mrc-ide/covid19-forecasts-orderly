@@ -4,7 +4,7 @@ artefacts:
   data:
     description: Model performance metrics
     filenames:
-      - metrics_by_strategy.png
+      - rmae_vs_weekly_cv_main_countries.png
   
 packages:
   - dplyr
@@ -43,10 +43,14 @@ depends:
         wtd_prev_week_error.csv: wtd_prev_week_error.csv
         unwtd_pred_error.csv: unwtd_pred_error.csv
 
-
   - produce_baseline_error:
       id: latest
       use:
         null_model_error.rds: null_model_error.rds
         weekly_incidence.rds: weekly_incidence.rds
+
+  - collate_model_outputs:
+      id: latest
+      use:
+        unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
 
