@@ -14,6 +14,8 @@ packages:
 - ggplot2
 - purrr
 - rincewind
+- projections
+- incidence
 sources: R/utils.R
 depends:
 - produce_ensemble_outputs:

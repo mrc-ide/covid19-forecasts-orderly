@@ -1,4 +1,4 @@
-week_finishing <- "2020-08-09"
+week_finishing <- "2020-04-12"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,

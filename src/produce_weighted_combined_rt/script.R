@@ -2,6 +2,8 @@ run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
 
 
+##orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"))
+## infiles <- list.files(pattern = "*.rds")
 names(infiles) <- gsub(
   pattern = "ensemble_model_rt_samples_", replacement = "", x = infiles
 ) %>% gsub(pattern = ".rds", replacement = "", x = .)
@@ -13,6 +15,7 @@ week_ending <- as.Date(week_ending)
 ## so that we can minimise the error for this week.
 weeks <- seq(from = week_ending - 7, to = as.Date("2020-03-08"), by = "-7 days")
 betas <- seq(0, 5, by = 1)
+names(betas) <- betas
 combined_rts <- map(
   betas,
   function(beta) {
@@ -68,6 +71,7 @@ model_input <- readRDS(
 )
 deaths_to_use <- model_input$D_active_transmission
 si <- EpiEstim::discr_si(0:30, model_input$si_mean[2], model_input$si_std[2])
+
 projections <- map(
   combined_rts,
   function(rt) {
@@ -90,6 +94,52 @@ projections <- map(
 )
 
 
+
 observed <- readRDS(
-  "~/OneDrive - Imperial College London/covid19-short-term-forecasts/model_inputs/data_2020-03-29.rds"
+  "/Volumes/Sangeeta EHD/covid19-forecasts-orderly/archive/prepare_ecdc_data/20200810-133647-0cb97781/latest_deaths_wide_no_filter.rds"
 )
+
+
+countries <- setNames(
+  colnames(deaths_to_use)[-1], colnames(deaths_to_use)[-1]
+)
+
+error <- map(
+  betas,
+  function(beta) {
+
+    pred <- projections[[as.character(beta)]]
+    imap(
+      pred,
+      function(pred_country, country) {
+        obs <- observed[observed$dates %in% as.Date(rownames(pred_country)), country]
+        mean(assessr::rel_mae(obs, pred_country))
+      }
+    )
+  }
+)
+
+
+per_country <- map_dfr(
+  countries,
+  function(country) {
+    ## For each country, the value of beta that gives smallest error
+    x <- map(error, ~ .[[country]])
+    y <- x[which.min(x)]
+    data.frame(
+      beta = as.numeric(names(y)),
+      error = y[[1]]
+    )
+  }, .id = "country"
+)
+
+across_countries <- map(error, ~ sum(unlist(.)))
+across_countries <- across_countries[which.min(across_countries)]
+
+across_countries <- data.frame(
+  beta = as.numeric(names(across_countries)),
+  error = across_countries[[1]]
+)
+
+saveRDS(across_countries, "across_countries.rds")
+saveRDS(per_country, "per_country.rds")
