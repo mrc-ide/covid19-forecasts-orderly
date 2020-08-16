@@ -134,7 +134,10 @@ per_country <- map_dfr(
   }, .id = "country"
 )
 
-across_countries <- map(error, ~ sum(unlist(.)))
+across_countries <- map(
+  betas, function(beta) sum(map_dbl(error, ~ .[[as.character(beta)]]))
+)
+
 across_countries <- across_countries[which.min(across_countries)]
 
 across_countries <- data.frame(

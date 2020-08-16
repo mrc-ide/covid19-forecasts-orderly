@@ -8,8 +8,8 @@ artefacts:
   data:
     description: Collated model outputs (quantiles)
     filenames:
-    - weekly_iqr.rds
-    - combined_rt_estimates.rds
+    - across_countries.rds
+    - per_country.rds
 packages:
 - dplyr
 - tidyr
@@ -18,7 +18,6 @@ packages:
 - rincewind
 - projections
 - incidence
-sources: R/utils.R
 depends:
 - produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2020-03-08")
