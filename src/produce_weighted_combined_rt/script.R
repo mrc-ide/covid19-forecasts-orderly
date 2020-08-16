@@ -86,7 +86,7 @@ combined_weighted_estimates <- imap(
 )
 
 combined2 <- purrr::keep(
-  combined_estimates, ~ length(.$weeks_combined) > 1
+  combined_weighted_estimates, ~ length(.$weeks_combined) > 1
 )
 
 plots <- purrr::imap(
@@ -117,6 +117,8 @@ plots <- purrr::imap(
     ## Extend this for the days between week_starting2 and
     ## week_starting1 + another 7 days because you would have continued
     ## with Rt estimate for another 7 days
+    df$week_starting1 <- as.Date(df$week_starting1)
+    df$week_starting2 <- as.Date(df$week_starting2)
     ndays <- as.numeric(df$week_starting2 - df$week_starting1) + 7
 
     df <- df[rep(seq_len(nrow(df)), each = ndays), ]

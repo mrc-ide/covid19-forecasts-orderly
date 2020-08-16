@@ -54,7 +54,7 @@ combine_with_previous <- function(df, country) {
 ## weights <- c(`2020-03-29` = 0.950330211697379, `2020-03-22` = 0.047314155221824,
 ## `2020-03-15` = 0.00235563308079668)
 combine_with_previous_weighted <- function(df, weights, size = 10000) {
-  message(country)
+
   out <- split(df, df$model)
   idx <- sample(names(out), size = size, replace = TRUE, prob = weights)
   nsamples <- data.frame(table(idx))
@@ -75,7 +75,7 @@ combine_with_previous_weighted <- function(df, weights, size = 10000) {
     weeks_combined = names(out),
     weights = weights,
     frequency = nsamples$Freq,
-    rt_samples = sample(x = combined_rt[[use_si]], size = 1000)
+    rt_samples = sample(x = rt_samples[[use_si]], size = 1000)
   )
 }
 
