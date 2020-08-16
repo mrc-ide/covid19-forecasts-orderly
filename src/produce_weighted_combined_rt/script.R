@@ -50,123 +50,72 @@ country_weeks <- keep(country_weeks, ~ length(.) > 0)
 betas <- seq(0, 5, by = 1)
 names(betas) <- betas
 
-combined_rts <- map(
-  betas,
-  function(beta) {
-    weights <- rev(exp(-beta * seq_along(weeks)))
-    weights <- weights / sum(weights)
-
-    idx <- sample(
-      x = weeks, size = 10000, replace = TRUE, prob = weights
-    )
-    nsamples <- data.frame(table(idx), stringsAsFactors = FALSE)
-    message(nsamples)
-    message(beta)
-    map_dfr(
-      weeks,
-      function(week) {
-        message(week)
-        week <- as.character(week)
-        df <- rt_samples[[week]]
-        out <- split(df, df$country) %>%
-          map_dfr(
-            function(country) {
-              size <- nsamples$Freq[nsamples$idx == week]
-              if (length(size) == 0) return(NULL)
-              idx <- sample(
-                nrow(country),
-                size = size,
-                replace = TRUE
-              )
-              country[idx, ]
-            }
+combined_rts <- imap(
+  country_weeks,
+  function(weeks, country) {
+    map(
+      betas,
+      function(beta) {
+        message(beta)
+        weights <- exp(-beta * seq_along(weeks))
+        weights <- weights / sum(weights)
+        message(weights)
+        idx <- sample(
+          x = weeks, size = 10000, replace = TRUE, prob = weights
         )
-        out
+        nsamples <- data.frame(table(idx), stringsAsFactors = FALSE)
+
+        rt_country <- map_dfr(
+          weeks,
+          function(week) {
+            message(week)
+            week <- as.character(week)
+            df <- rt_samples[[week]]
+            df <- df[df$country == country, ]
+            size <- nsamples$Freq[nsamples$idx == week]
+            if (length(size) == 0) return(NULL)
+            idx <- sample(
+              nrow(df), size = size, replace = TRUE
+            )
+            df[idx, ]
+          }
+        )
+        rt_country
       }
     )
   }
 )
 
 
-combined_rts <- map(
-  betas,
-  function(beta) {
-    weights <- rev(exp(-beta * seq_along(weeks)))
-    weights <- weights / sum(weights)
-
-    idx <- sample(
-      x = weeks, size = 10000, replace = TRUE, prob = weights
-    )
-    nsamples <- data.frame(table(idx), stringsAsFactors = FALSE)
-    message(nsamples)
-    message(beta)
-    map_dfr(
-      weeks,
-      function(week) {
-        message(week)
-        week <- as.character(week)
-        df <- rt_samples[[week]]
-        out <- split(df, df$country) %>%
-          map_dfr(
-            function(country) {
-              size <- nsamples$Freq[nsamples$idx == week]
-              if (length(size) == 0) return(NULL)
-              idx <- sample(
-                nrow(country),
-                size = size,
-                replace = TRUE
-              )
-              country[idx, ]
-            }
-        )
-        out
-      }
-    )
-  }
-)
-
-
-
-projections <- map(
+projections <- imap(
   combined_rts,
-  function(rt) {
-    by_country <- split(rt, rt$country)
-    imap(
-      by_country,
-      function(rt_country, country) {
-        message(country)
-        obs <- deaths_to_use[deaths_to_use$dates <= week_ending - 7, c("dates", country)]
-        obs$deaths <- obs[[country]]
-        incid <- rincewind:::ts_to_incid(obs, "dates", "deaths")
+  function(rt, country) {
+    message(country)
+    obs <- deaths_to_use[deaths_to_use$dates <= week_ending - 7, c("dates", country)]
+    obs$deaths <- obs[[country]]
+    incid <- rincewind:::ts_to_incid(obs, "dates", "deaths")
+    map(
+      rt,
+      function(rt_beta) {
         out <- rerun(
           10,
-          projections::project(incid, rt_country$si_2, si, model = "poisson")
+          projections::project(incid, rt_beta$si_2, si, model = "poisson")
         )
         do.call(what = 'cbind', args = out)
       }
     )
   }
 )
+dates_projected <- seq(week_prev + 1, length.out = 7, by = "1 day")
 
-
-
-
-
-
-countries <- setNames(
-  colnames(deaths_to_use)[-1], colnames(deaths_to_use)[-1]
-)
-
-error <- map(
-  betas,
-  function(beta) {
-
-    pred <- projections[[as.character(beta)]]
-    imap(
+error <- imap(
+  projections,
+  function(pred, country) {
+    obs <- observed[observed$dates %in% dates_projected, country]
+    map(
       pred,
-      function(pred_country, country) {
-        obs <- observed[observed$dates %in% as.Date(rownames(pred_country)), country]
-        mean(assessr::rel_mae(obs, pred_country))
+      function(pred_beta) {
+        mean(assessr::rel_mae(obs, pred_beta))
       }
     )
   }
@@ -174,12 +123,10 @@ error <- map(
 
 
 per_country <- map_dfr(
-  countries,
-  function(country) {
-    message(country)
+  error,
+  function(err_country) {
     ## For each country, the value of beta that gives smallest error
-    x <- map_dbl(error, ~ .[[country]])
-    y <- x[which.min(x)]
+    y <- err_country[which.min(err_country)]
     data.frame(
       beta = as.numeric(names(y)),
       error = y[[1]]
