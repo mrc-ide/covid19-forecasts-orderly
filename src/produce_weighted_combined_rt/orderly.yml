@@ -32,7 +32,8 @@ depends:
     id: latest(parameter:week_ending == "2020-03-29")
     use:
       ensemble_model_rt_samples_2020-03-29.rds: ensemble_model_rt_samples.rds
-- produce_weighted_combined_rt:
+- produce_weights_combined_rt:
     id: latest(parameter:week_ending == week_ending)
     use:
       per_country_beta.rds: per_country.rds
+      across_countries.rds: across_countries.rds

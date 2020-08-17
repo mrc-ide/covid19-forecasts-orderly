@@ -47,18 +47,60 @@ combine_with_previous <- function(df, country) {
 }
 
 
+## df is the rt_samples filtered to the country of interest and
+## the weeks combined obtained from combine_with_previous
+## weights is a weighted list where the names are the weeks combined
+## for example:
+## weights <- c(`2020-03-29` = 0.950330211697379, `2020-03-22` = 0.047314155221824,
+## `2020-03-15` = 0.00235563308079668)
+combine_with_previous_weighted <- function(df, weights, size = 10000) {
+
+  out <- split(df, df$model)
+  idx <- sample(names(out), size = size, replace = TRUE, prob = weights)
+  nsamples <- data.frame(table(idx))
+  rt_samples <- imap_dfr(
+    out,
+    function(rt, week) {
+      choose <- nsamples$Freq[nsamples$idx == week]
+      if (length(choose) == 0) return(NULL)
+      rows <- sample(1:nrow(rt), choose, replace = TRUE)
+      rt[rows, ]
+    }
+  )
+  combined_qntls <- quantile(
+    rt_samples[[use_si]], probs = c(0.025, 0.25, 0.50, 0.75, 0.975)
+  )
+  list(
+    combined_rt = combined_qntls,
+    weeks_combined = names(out),
+    weights = weights,
+    frequency = nsamples$Freq,
+    rt_samples = sample(x = rt_samples[[use_si]], size = 1000)
+  )
+}
+
+
+
+
+
+
+
 
 plot_combined_iqr <- function(df) {
 
   p <- ggplot() +
     geom_ribbon(
       data = df,
-      aes(x = forecast_week, ymin = `2.5%`, ymax = `97.5%`),
+      aes(
+        x = forecast_week, ymin = `2.5%`, ymax = `97.5%`, fill = category
+      ),
       alpha = 0.3
-    ) + geom_line(
-        data = df,
-        aes(x = forecast_week, y = `50%`)
-      ) +
+    ) +
+    geom_line(
+      data = df,
+      aes(x = forecast_week, y = `50%`, col = category),
+      size = 1.1
+    ) +
     theme_minimal() +
     xlab("Forecast Week") +
     ylab("Combined Effective Reproduction Number") +
@@ -85,7 +127,8 @@ plot_weekly_iqr <- function(df) {
     data = df,
     aes(
       x = forecast_week, y = `50%`, group = week_starting
-    )
+    ),
+    size = 1.1
   ) + theme_minimal() +
     scale_x_date(date_breaks = "1 week") +
     xlab("Forecast Week") +

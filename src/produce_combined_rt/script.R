@@ -1,9 +1,13 @@
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"))
+## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
 run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
 
-
+infiles <- grep("beta", infiles, invert = TRUE, value = TRUE)
 latest <- readRDS(grep(week_ending, infiles, value = TRUE))
+per_country_beta <- readRDS("per_country_beta.rds")
+
 countries <- unique(latest$country)
 names(countries) <- countries
 
@@ -64,6 +68,23 @@ combined_estimates <- purrr::imap(
 
 saveRDS(combined_estimates, "combined_rt_estimates.rds")
 
+combined_weighted_estimates <- imap(
+  combined_estimates,
+  function(combined, country) {
+    message(country)
+    if (length(combined$weeks_combined) == 1) {
+      return(combined)
+    }
+    df <- rt_samples[rt_samples$model %in% combined$weeks_combined & rt_samples$country == country, ]
+    beta <- per_country_beta$beta[per_country_beta$country == country]
+    if (length(beta) == 0) beta <- 0
+    weights <- exp(-beta * seq(0, length(combined$weeks_combined) - 1))
+    weights <- weights/ sum(weights)
+    names(weights) <- combined$weeks_combined
+    combine_with_previous_weighted(df, weights)
+  }
+)
+
 combined2 <- purrr::keep(
   combined_estimates, ~ length(.$weeks_combined) > 1
 )
@@ -93,9 +114,25 @@ plots <- purrr::imap(
       `97.5%` = y$combined_rt[["97.5%"]],
       check.names = FALSE
     )
+    df2 <- combined_weighted_estimates[[country]]
+    df2 <- data.frame(
+      week_starting1 = min(df2$weeks_combined),
+      week_starting2 = max(df2$weeks_combined),
+      `2.5%` = df2$combined_rt[["2.5%"]],
+      `50%` = df2$combined_rt[["50%"]],
+      `97.5%` = df2$combined_rt[["97.5%"]],
+      check.names = FALSE
+    )
+
     ## Extend this for the days between week_starting2 and
     ## week_starting1 + another 7 days because you would have continued
     ## with Rt estimate for another 7 days
+    df$week_starting1 <- as.Date(df$week_starting1)
+    df$week_starting2 <- as.Date(df$week_starting2)
+    ndays <- as.numeric(df$week_starting2 - df$week_starting1) + 7
+
+    df2$week_starting1 <- as.Date(df2$week_starting1)
+    df2$week_starting2 <- as.Date(df2$week_starting2)
     ndays <- as.numeric(df$week_starting2 - df$week_starting1) + 7
 
     df <- df[rep(seq_len(nrow(df)), each = ndays), ]
@@ -104,6 +141,14 @@ plots <- purrr::imap(
       length.out = ndays,
       by = "1 day"
     )
+
+    df2 <- df2[rep(seq_len(nrow(df2)), each = ndays), ]
+    df2$forecast_week <- seq(
+      from = df2$week_starting1[1],
+      length.out = ndays,
+      by = "1 day"
+    )
+
 
     ymax <- ceiling(max(x[["97.5%"]]))
 
@@ -114,9 +159,15 @@ plots <- purrr::imap(
     xmin <- min(x$forecast_week)
     xmax <-max(x$forecast_week)
 
-    p2 <- plot_combined_iqr(df) +
+    df$category <- "Unweighted"
+    df2$category <- "Weighted"
+
+    both <- rbind(df, df2)
+
+    p2 <- plot_combined_iqr(both) +
       coord_cartesian(clip = "off") +
       ylim(0, ymax) +
+      theme(legend.position = "top", legend.title = element_blank()) +
       scale_x_date(date_breaks = "1 week", limits = c(xmin, xmax))
 
     p <- cowplot::plot_grid(p1, p2, ncol = 1, align = "hv")
