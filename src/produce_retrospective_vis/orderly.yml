@@ -26,4 +26,4 @@ depends:
   prepare_ecdc_data:
     id: "latest"
     use:
-      model_input.rds: latest_deaths_wide_no_filter.rds
+      model_input.rds: latest_model_input.rds
