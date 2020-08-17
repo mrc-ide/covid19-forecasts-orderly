@@ -91,12 +91,16 @@ plot_combined_iqr <- function(df) {
   p <- ggplot() +
     geom_ribbon(
       data = df,
-      aes(x = forecast_week, ymin = `2.5%`, ymax = `97.5%`),
+      aes(
+        x = forecast_week, ymin = `2.5%`, ymax = `97.5%`, fill = category
+      ),
       alpha = 0.3
-    ) + geom_line(
-        data = df,
-        aes(x = forecast_week, y = `50%`)
-      ) +
+    ) +
+    geom_line(
+      data = df,
+      aes(x = forecast_week, y = `50%`, col = category),
+      size = 1.1
+    ) +
     theme_minimal() +
     xlab("Forecast Week") +
     ylab("Combined Effective Reproduction Number") +
@@ -123,7 +127,8 @@ plot_weekly_iqr <- function(df) {
     data = df,
     aes(
       x = forecast_week, y = `50%`, group = week_starting
-    )
+    ),
+    size = 1.1
   ) + theme_minimal() +
     scale_x_date(date_breaks = "1 week") +
     xlab("Forecast Week") +
