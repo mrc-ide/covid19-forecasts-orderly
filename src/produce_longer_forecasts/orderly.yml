@@ -10,7 +10,10 @@ parameters:
 artefacts:
   data:
     description: Projections
-    filenames: longer_projections.rds
+    filenames:
+      - unwtd_projections.rds
+      - wtd_per_country_projections.rds
+      - wtd_across_all_projections.rds
 
 packages:
   - purrr
@@ -25,7 +28,5 @@ depends:
     id: latest(parameter:week_ending == week_ending)
     use:
       combined_rt_estimates.rds: combined_rt_estimates.rds
-  produce_weighted_combined_rt:
-    id: latest(parameter:week_ending == week_ending)
-    use:
-      per_country_beta.rds: per_country.rds
+      combined_weighted_estimates_per_country.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries.rds: combined_weighted_estimates_across_countries.rds

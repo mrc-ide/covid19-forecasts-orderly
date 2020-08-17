@@ -1,3 +1,5 @@
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"))
+## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
 indir <- dirname(covid_19_path)
 raw_data <- readRDS(
@@ -38,26 +40,92 @@ tall_deaths <- tidyr::gather(
 )
 
 
-rt_estimates <- readRDS("combined_rt_estimates.rds")
+unwtd_rt_estimates <- readRDS("combined_rt_estimates.rds")
+wtd_rt_estimates_across_countries <- readRDS(
+  "combined_weighted_estimates_across_countries.rds"
+)
+wtd_rt_estimates_per_country <- readRDS(
+  "combined_weighted_estimates_per_country.rds"
+)
 
 
 ## rt_estimates <- purrr::keep(
 ##   rt_estimates, ~ length(.$weeks_combined) > 1
 ## )
 
-countries <- stats::setNames(names(rt_estimates), names(rt_estimates))
+countries <- setNames(
+  names(unwtd_rt_estimates), names(unwtd_rt_estimates)
+)
 
 date_to_project_from <- as.Date(week_ending)
 sims_per_rt <- 10
 n_sim <- 1000
 
-projections <- purrr::map(
+unwtd_projections <- purrr::map(
   countries,
   function(country) {
     message(country)
-    n_days <- length(rt_estimates[[country]]$weeks_combined) * 7
+    n_days <- length(
+      unwtd_rt_estimates[[country]]$weeks_combined
+    ) * 7
     x <- tall_deaths[[country]]
-    rt <- rt_estimates[[country]]$rt_samples
+    rt <- unwtd_rt_estimates[[country]]$rt_samples
+    out <- purrr::map(
+      seq_len(sims_per_rt),
+      function(i) {
+        projections::project(
+          x = x,
+          R = rt,
+          si = si,
+          n_sim = n_sim,
+          n_days = n_days,
+          R_fix_within = TRUE,
+          model = "poisson"
+        ) %>%
+          as.matrix() %>% t
+      }
+    )
+    do.call(what = "rbind", args = out)
+  }
+  )
+
+wtd_across_all_projections <- purrr::map(
+  countries,
+  function(country) {
+    message(country)
+    n_days <- length(
+      wtd_rt_estimates_across_countries[[country]]$weeks_combined
+    ) * 7
+    x <- tall_deaths[[country]]
+    rt <- wtd_rt_estimates_across_countries[[country]]$rt_samples
+    out <- purrr::map(
+      seq_len(sims_per_rt),
+      function(i) {
+        projections::project(
+          x = x,
+          R = rt,
+          si = si,
+          n_sim = n_sim,
+          n_days = n_days,
+          R_fix_within = TRUE,
+          model = "poisson"
+        ) %>%
+          as.matrix() %>% t
+      }
+    )
+    do.call(what = "rbind", args = out)
+  }
+  )
+
+wtd_per_country_projections <- purrr::map(
+  countries,
+  function(country) {
+    message(country)
+    n_days <- length(
+      wtd_rt_estimates_per_country[[country]]$weeks_combined
+    ) * 7
+    x <- tall_deaths[[country]]
+    rt <- wtd_rt_estimates_per_country[[country]]$rt_samples
     out <- purrr::map(
       seq_len(sims_per_rt),
       function(i) {
@@ -77,4 +145,11 @@ projections <- purrr::map(
   }
 )
 
-saveRDS(projections, "longer_projections.rds")
+saveRDS(unwtd_projections, "unwtd_projections.rds")
+saveRDS(
+  wtd_per_country_projections, "wtd_per_country_projections.rds"
+)
+
+saveRDS(
+  wtd_across_all_projections, "wtd_across_all_projections.rds"
+)
