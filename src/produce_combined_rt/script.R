@@ -7,6 +7,7 @@ infiles <- run_info$depends$as
 infiles <- grep("beta", infiles, invert = TRUE, value = TRUE)
 latest <- readRDS(grep(week_ending, infiles, value = TRUE))
 per_country_beta <- readRDS("per_country_beta.rds")
+across_countries_beta <- readRDS("across_countries_beta.rds")
 
 countries <- unique(latest$country)
 names(countries) <- countries
@@ -85,9 +86,60 @@ combined_weighted_estimates <- imap(
   }
 )
 
+across_countries_beta <- across_countries_beta$beta
+
+combined_weighted_estimates2 <- imap(
+  combined_estimates,
+  function(combined, country) {
+    message(country)
+    if (length(combined$weeks_combined) == 1) {
+      return(combined)
+    }
+    df <- rt_samples[rt_samples$model %in% combined$weeks_combined & rt_samples$country == country, ]
+    beta <- across_countries_beta
+    weights <- exp(-beta * seq(0, length(combined$weeks_combined) - 1))
+    weights <- weights/ sum(weights)
+    names(weights) <- combined$weeks_combined
+    combine_with_previous_weighted(df, weights)
+  }
+)
+
+saveRDS(
+  combined_weighted_estimates2, "combined_weighted_estimates_across_countries.rds"
+)
+
+saveRDS(
+  combined_weighted_estimates, "combined_weighted_estimates_per_country.rds"
+)
+
 combined2 <- purrr::keep(
   combined_estimates, ~ length(.$weeks_combined) > 1
 )
+
+## Extend this for the days between week_starting2 and
+## week_starting1 + another 7 days because you would have continued
+## with Rt estimate for another 7 days
+f <- function(y) {
+
+  df <- data.frame(
+      week_starting1 = min(y$weeks_combined),
+      week_starting2 = max(y$weeks_combined),
+      `2.5%` = y$combined_rt[["2.5%"]],
+      `50%` = y$combined_rt[["50%"]],
+      `97.5%` = y$combined_rt[["97.5%"]],
+      check.names = FALSE
+    )
+  df$week_starting1 <- as.Date(df$week_starting1)
+  df$week_starting2 <- as.Date(df$week_starting2)
+  ndays <- as.numeric(df$week_starting2 - df$week_starting1) + 7
+  df <- df[rep(seq_len(nrow(df)), each = ndays), ]
+  df$forecast_week <- seq(
+    from = df$week_starting1[1],
+    length.out = ndays,
+    by = "1 day"
+  )
+  df
+}
 
 plots <- purrr::imap(
   combined2,
@@ -106,49 +158,28 @@ plots <- purrr::imap(
           df
         }
     )
-    df <- data.frame(
-      week_starting1 = min(y$weeks_combined),
-      week_starting2 = max(y$weeks_combined),
-      `2.5%` = y$combined_rt[["2.5%"]],
-      `50%` = y$combined_rt[["50%"]],
-      `97.5%` = y$combined_rt[["97.5%"]],
-      check.names = FALSE
+    unwtd <- f(y)
+    weighted_all <- f(combined_weighted_estimates2[[country]])
+    weighted_per  <- f(combined_weighted_estimates[[country]])
+
+    weights_all <- data.frame(
+      weights = combined_weighted_estimates2[[country]][["weights"]]
     )
-    df2 <- combined_weighted_estimates[[country]]
-    df2 <- data.frame(
-      week_starting1 = min(df2$weeks_combined),
-      week_starting2 = max(df2$weeks_combined),
-      `2.5%` = df2$combined_rt[["2.5%"]],
-      `50%` = df2$combined_rt[["50%"]],
-      `97.5%` = df2$combined_rt[["97.5%"]],
-      check.names = FALSE
+    weights_all <- tibble::rownames_to_column(weights_all, var = "Week Starting")
+
+    weights_per <- data.frame(
+      weights = combined_weighted_estimates[[country]][["weights"]]
     )
-
-    ## Extend this for the days between week_starting2 and
-    ## week_starting1 + another 7 days because you would have continued
-    ## with Rt estimate for another 7 days
-    df$week_starting1 <- as.Date(df$week_starting1)
-    df$week_starting2 <- as.Date(df$week_starting2)
-    ndays <- as.numeric(df$week_starting2 - df$week_starting1) + 7
-
-    df2$week_starting1 <- as.Date(df2$week_starting1)
-    df2$week_starting2 <- as.Date(df2$week_starting2)
-    ndays <- as.numeric(df$week_starting2 - df$week_starting1) + 7
-
-    df <- df[rep(seq_len(nrow(df)), each = ndays), ]
-    df$forecast_week <- seq(
-      from = df$week_starting1[1],
-      length.out = ndays,
-      by = "1 day"
+    weights_per <- tibble::rownames_to_column(weights_per, var = "Week Starting")
+    weights <- left_join(
+      weights_per, weights_all, by = "Week Starting"
     )
 
-    df2 <- df2[rep(seq_len(nrow(df2)), each = ndays), ]
-    df2$forecast_week <- seq(
-      from = df2$week_starting1[1],
-      length.out = ndays,
-      by = "1 day"
+    colnames(weights)[2:3] <- c(
+        "beta across countries", "beta per country"
     )
 
+    weights <- mutate_if(weights, is.numeric, ~ round(., 3))
 
     ymax <- ceiling(max(x[["97.5%"]]))
 
@@ -159,16 +190,23 @@ plots <- purrr::imap(
     xmin <- min(x$forecast_week)
     xmax <-max(x$forecast_week)
 
-    df$category <- "Unweighted"
-    df2$category <- "Weighted"
+    unwtd$category <- "Unweighted"
+    weighted_per$category <- "Weighted (beta per country)"
+    weighted_all$category <- "Weighted (beta across countries)"
 
-    both <- rbind(df, df2)
+    both <- rbind(unwtd, weighted_per, weighted_all)
+
+    ## Where to place the table.
+    xtable <- as.Date(xmin) + 2
+    ytable <- ymax
+    label <- tibble(x = xtable, y = ytable, tb = list(weights))
 
     p2 <- plot_combined_iqr(both) +
       coord_cartesian(clip = "off") +
       ylim(0, ymax) +
       theme(legend.position = "top", legend.title = element_blank()) +
-      scale_x_date(date_breaks = "1 week", limits = c(xmin, xmax))
+      scale_x_date(date_breaks = "1 week", limits = c(xmin, xmax)) +
+      geom_table(data = label, aes(x = x, y = y, label = tb))
 
     p <- cowplot::plot_grid(p1, p2, ncol = 1, align = "hv")
     p

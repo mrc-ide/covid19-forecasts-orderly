@@ -47,7 +47,7 @@ country_weeks <- keep(country_weeks, ~ length(.) > 0)
 
 ## week_ending is the week for which we already have observation,
 ## so that we can minimise the error for this week.
-betas <- seq(0, 5, by = 1)
+betas <- seq(0, 5, by = 0.1)
 names(betas) <- betas
 
 combined_rts <- imap(
