@@ -2,21 +2,16 @@
 x <- list(
   script = "script.R",
   parameters = c("week_ending", "use_si"),
+  environment = list(covid_19_path = "COVID19_INPUT_PATH"),
   artefacts = list(
     data = list(
-    description = "Collated model outputs (quantiles)",
-    filenames = c(
-      "weekly_iqr.rds",
-      "combined_rt_estimates.rds",
-      "combined_weighted_estimates_per_country.rds",
-      "combined_weighted_estimates_across_countries.rds"
-    )
+    description = "Weights for combined Rt estimates",
+    filenames = c("across_countries.rds", "per_country.rds")
   )
  ),
  packages = c(
-   "dplyr", "tidyr", "ggplot2", "purrr", "rincewind", "ggpmisc"
- ),
- sources =  "R/utils.R"
+   "dplyr", "tidyr", "ggplot2", "purrr", "rincewind", "projections", "incidence"
+ )
 )
 
 
@@ -44,11 +39,22 @@ dependances <- purrr::map(
  }
 )
 
-x$depends <- c(dependances)
+dependancies5 <- list(
+  list(
+    prepare_ecdc_data = list(
+      id = "latest",
+      use = list(
+        "latest_deaths_wide_no_filter.rds" =  "latest_deaths_wide_no_filter.rds"
+      )
+    )
+  )
+)
+
+x$depends <- c(dependances, dependancies5)
 
 
 
-con <- file("src/produce_combined_rt/orderly.yml", "w")
+con <- file("src/produce_weights_combined_rt/orderly.yml", "w")
 yaml::write_yaml(x, con)
 close(con)
 

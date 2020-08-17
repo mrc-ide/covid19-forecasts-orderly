@@ -1,12 +1,12 @@
 script: script.R
-environment:
-  covid_19_path: COVID19_INPUT_PATH
 parameters:
 - week_ending
 - use_si
+environment:
+  covid_19_path: COVID19_INPUT_PATH
 artefacts:
   data:
-    description: Collated model outputs (quantiles)
+    description: Weights for combined Rt estimates
     filenames:
     - across_countries.rds
     - per_country.rds
@@ -36,8 +36,6 @@ depends:
     use:
       ensemble_model_rt_samples_2020-03-29.rds: ensemble_model_rt_samples.rds
 - prepare_ecdc_data:
-   id: "latest"
-   use:
-     latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
-     
-      
+    id: latest
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
