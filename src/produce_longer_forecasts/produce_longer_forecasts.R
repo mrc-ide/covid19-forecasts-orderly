@@ -40,6 +40,7 @@ tall_deaths <- tidyr::gather(
 
 rt_estimates <- readRDS("combined_rt_estimates.rds")
 
+
 ## rt_estimates <- purrr::keep(
 ##   rt_estimates, ~ length(.$weeks_combined) > 1
 ## )
