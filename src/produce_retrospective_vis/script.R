@@ -87,7 +87,7 @@ pline <- ggplot() +
       to = as.Date("2020-08-09"),
       by = "3 weeks"
     ),
-    limits = c(as.Date("2020-03-01"), as.Date("2020-08-09"))
+    limits = c(as.Date("2020-03-01"), as.Date("2020-08-17"))
   ) +
   coord_cartesian(clip = 'off') +
   theme_classic() +
@@ -105,7 +105,7 @@ ggsave("n_included_line.png", pline)
 #####################################################################
 #####################################################################
 
-model_input <- readRDS("model_input.rds")
+model_input <- readRDS("model_input.rds")[["D_active_transmission"]]
 model_input <- tidyr::gather(model_input, country, deaths, -dates)
 model_input <- model_input[model_input$country %in% included$country, ]
 model_input$iso3c <- countrycode::countrycode(
@@ -131,10 +131,10 @@ epicurve <- ggplot() +
   scale_x_date(
     breaks = seq(
       from = as.Date("2020-03-01"),
-      to = as.Date("2020-08-09"),
+      to = as.Date("2020-08-17"),
       by = "3 weeks"
     ),
-    limits = c(as.Date("2020-03-01"), as.Date("2020-08-09"))
+    limits = c(as.Date("2020-03-01"), as.Date("2020-08-17"))
   ) +
   theme_classic() +
   theme(legend.position = "top", legend.title = element_blank()) +
