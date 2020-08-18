@@ -44,7 +44,19 @@ dependances <- purrr::map(
  }
 )
 
-x$depends <- c(dependances)
+dependancies5 <- list(
+  list(
+    produce_weights_combined_rt = list(
+      id = "latest",
+      use = list(
+        "across_countries_beta.rds" =  "across_countries.rds",
+        "per_country_beta.rds" = "per_country.rds"
+      )
+    )
+  )
+)
+
+x$depends <- c(dependances, dependancies5)
 
 
 
