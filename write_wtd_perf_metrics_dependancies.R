@@ -3,7 +3,7 @@ x <- list(
   script = "produce_performace_metrics_ensb.R",
   environment = list(covid_19_path = "COVID19_INPUT_PATH"),
   sources = c("R/utils.R"),
-  parameters = "window",
+  parameters = c("window", "week_ending"),
   artefacts = list(
     data = list(
     description = "Model performance metrics",
@@ -14,33 +14,17 @@ x <- list(
     )
   )
  ),
- packages = c("dplyr", "tidyr", "assessr", "slider")
+ packages = c("dplyr", "tidyr", "assessr", "slider", "purrr")
 )
 
-wtd_weeks <- seq(
-  from = as.Date("2020-03-08"),
-  to = as.Date("2020-08-02"),
-  by = "7 days"
-)
 
-dependancies2 <- purrr::map(
-  wtd_weeks,
-  function(week) {
-    y <- list(
-      produce_ensemble_outputs = list(
-        id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
-        use = list("ensemble_model_predictions.rds")
-      )
+dependancies2 <- list(
+  list(
+    produce_ensemble_outputs = list(
+      id = glue::glue("latest(parameter:week_ending == \"{week_ending}\")"),
+      use = list(unwtd_ensemble_model_predictions.rds = "ensemble_model_predictions.rds")
     )
-    infiles <- purrr::map(
-      y$produce_ensemble_outputs$use,
-      function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
-      )
-    names(y$produce_ensemble_outputs$use) <- glue::glue(
-      "unwtd_{infiles}_{week}.rds"
-      )
-    y
-  }
+  )
 )
 
 ## dependancies3 <- purrr::map(

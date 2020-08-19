@@ -1,5 +1,4 @@
 f <- function(vec, window) {
-
   slider::slide_dbl(
     vec, ~round(mean(.x)), .before = window, .after = window
   )
@@ -18,34 +17,29 @@ run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
 infiles <- infiles[infiles != "model_input.rds"]
 
-names(infiles) <- gsub(
-  pattern = ".rds",
-  replacement = "",
-  x = infiles
-)
-
+names(infiles) <- week_ending
 ## Weighted using weights from previous weeks forecasts only
-wtd_prev_week <- purrr::map(
+wtd_prev_week <- map(
   grep("wtd_ensb_prev_week", infiles, value = TRUE), readRDS
 )
 
 ## Weighted using weights from all previous forecasts
-wtd_all_prev_weeks <- purrr::map(
+wtd_all_prev_weeks <- map(
   grep("wtd_ensb_all_prev_weeks", infiles, value = TRUE), readRDS
 )
 
-unweighted <- purrr::map(
+unweighted <- map(
   infiles[grep("unwtd_ensemble_model", infiles)], readRDS
 )
 
-unwtd_pred_error <- purrr::imap_dfr(
+unwtd_pred_error <- imap_dfr(
   unweighted,
   function(x, model) {
     message("########################################")
     message("####################", model, "####################")
     message("########################################")
     pred <- x[[1]]
-    purrr::imap_dfr(
+    imap_dfr(
       pred,
       function(y, cntry) {
         message(cntry)
@@ -67,12 +61,12 @@ unwtd_pred_error <- purrr::imap_dfr(
   }, .id = "model"
 )
 
-wtd_prev_week_error <- purrr::imap_dfr(
+wtd_prev_week_error <- imap_dfr(
   wtd_prev_week,
   function(x, model) {
     message(model)
     pred <- x[[1]]
-    purrr::imap_dfr(
+    imap_dfr(
       pred,
       function(y, cntry) {
         names(y) <- c("si_1", "si_2")
@@ -97,12 +91,12 @@ wtd_prev_week_error <- purrr::imap_dfr(
 )
 
 
-wtd_all_prev_weeks_error <- purrr::imap_dfr(
+wtd_all_prev_weeks_error <- imap_dfr(
   wtd_all_prev_weeks,
   function(x, model) {
     message(model)
     pred <- x[[1]]
-    purrr::imap_dfr(
+    imap_dfr(
       pred,
       function(y, cntry) {
         names(y) <- c("si_1", "si_2")

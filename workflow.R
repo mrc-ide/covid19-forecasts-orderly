@@ -101,6 +101,17 @@ a <- orderly::orderly_run("src/produce_full_report")
 ##   orderly::orderly_push_archive(unwtd)
 ## }
 
+for (week_ending in weeks) {
+  message("################ ", week_ending, " #############################")
+  source("write_wtd_perf_metrics_dependancies.R")
+  parameter <- list(week_ending = week_ending, window = 1)
+  m1 <- orderly::orderly_run(
+    "src/produce_performance_metrics_ensemble/",
+    parameters = parameter, use_draft = use_draft
+  )
+  orderly::orderly_commit(m1)
+}
+
 
 aa <- orderly::orderly_run(
   "produce_performace_metrics",

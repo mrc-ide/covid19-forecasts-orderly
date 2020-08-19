@@ -2,7 +2,9 @@ script: produce_performace_metrics_ensb.R
 environment:
   covid_19_path: COVID19_INPUT_PATH
 sources: R/utils.R
-parameters: window
+parameters:
+- window
+- week_ending
 artefacts:
   data:
     description: Model performance metrics
@@ -15,35 +17,12 @@ packages:
 - tidyr
 - assessr
 - slider
+- purrr
 depends:
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-08")
+    id: latest(parameter:week_ending == "2020-05-17")
     use:
-      unwtd_ensemble_model_predictions_2020-03-08.rds: ensemble_model_predictions.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-15")
-    use:
-      unwtd_ensemble_model_predictions_2020-03-15.rds: ensemble_model_predictions.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-22")
-    use:
-      unwtd_ensemble_model_predictions_2020-03-22.rds: ensemble_model_predictions.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-29")
-    use:
-      unwtd_ensemble_model_predictions_2020-03-29.rds: ensemble_model_predictions.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-04-05")
-    use:
-      unwtd_ensemble_model_predictions_2020-04-05.rds: ensemble_model_predictions.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-04-12")
-    use:
-      unwtd_ensemble_model_predictions_2020-04-12.rds: ensemble_model_predictions.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-08-02")
-    use:
-      unwtd_ensemble_model_predictions_2020-08-02.rds: ensemble_model_predictions.rds
+      unwtd_ensemble_model_predictions.rds: ensemble_model_predictions.rds
 - prepare_ecdc_data:
     id: latest
     use:

@@ -45,6 +45,7 @@ all_metrics <- function(obs, pred) {
   qntls <- data.frame(qntls, check.names = FALSE)
   pred <- t(pred)
   data.frame(
+    mae = assessr::mae(obs, pred),
     rel_mae = assessr::rel_mae(obs, pred),
     rel_mse = assessr::rel_mse(obs, pred),
     rel_sharpness = assessr::rel_mean_dvtn(pred),
