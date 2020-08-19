@@ -1,4 +1,4 @@
-##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-08-02", week_starting = "2020-03-08"))
+##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-08-16", week_starting = "2020-03-08"))
 week_starting <- as.Date(week_starting)
 week_ending <- as.Date(week_ending)
 
@@ -12,7 +12,7 @@ tall <- tidyr::gather(model_input, country, deaths, -dates)
 weekly_cv <- function(vec) sd(vec) / mean(vec)
 
 weekly <- split(tall, tall$country) %>%
-  purrr::map_dfr(
+  map_dfr(
     function(x) {
       dates <- slider::slide_period_vec(
         x$dates, x$dates, "week", ~ .[1], .origin = week_starting
@@ -43,20 +43,20 @@ weeks <- slider::slide_period(
   model_input$dates, model_input$dates, "week", identity, .origin = week_starting
 )
 weeks <- weeks[-1]
-weeks <- purrr::keep(weeks, ~ length(.) == 7)
+weeks <- keep(weeks, ~ length(.) == 7)
 
-null_model_error <- purrr::map_dfr(
+null_model_error <- map_dfr(
   countries,
   function(country) {
     message(country)
-    purrr::map_dfr(
+    map_dfr(
       weeks,
       function(week) {
         message(paste(week, collapse = " "))
         obs <- model_input[model_input$dates %in% week, country]
         prev_week <- model_input[model_input$dates %in% (week - 7), country]
         null_pred <- matrix(mean(prev_week), ncol = 10000, nrow = 7)
-        baseline <- assessr::rel_mae(obs = obs, pred = null_pred)
+        baseline <- assessr::mae(obs = obs, pred = null_pred)
         data.frame(
           week_starting = week[1],
           dates = week,

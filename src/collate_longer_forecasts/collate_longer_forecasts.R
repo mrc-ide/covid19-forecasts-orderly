@@ -38,7 +38,7 @@ pred_qntls <- map(
         pred <- data.frame(pred, check.names = FALSE)
         pred <- tidyr::gather(pred, dates, val)
         qntls <- dplyr::group_by(pred, dates) %>%
-          ggdist::median_qi(.width = c(0.75, 0.95))
+          ggdist::median_qi(.width = 0.95)
         qntls$dates <- as.Date(qntls$dates)
         qntls
       }
@@ -47,6 +47,10 @@ pred_qntls <- map(
 )
 
 deaths_to_use <- readRDS("latest_deaths_wide_no_filter.rds")
+main_text_countries <- c(
+  "Brazil", "India", "Italy", "South_Africa", "United_States_of_America"
+)
+
 iwalk(
   pred_qntls,
   function(qntls, strategy) {
@@ -56,6 +60,7 @@ iwalk(
         imap(
           week,
           function(df, country) {
+            if (! country %in% main_text_countries) return(NULL)
             obs <- deaths_to_use[, c("dates", country)]
             obs$dates <- as.Date(obs$dates)
             obs <- obs[obs$dates <= max(df$dates), ]

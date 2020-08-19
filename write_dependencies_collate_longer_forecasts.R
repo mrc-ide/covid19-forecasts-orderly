@@ -4,14 +4,20 @@ x <- list(
   artefacts = list(
     data = list(
     description = "Collated model outputs (quantiles)",
-    filenames = "longer_projections_qntls.rds"
+    filenames = list(
+      "unwtd_projections_qntls.rds",
+      "wtd_across_all_projections_qntls.rds",
+      "wtd_per_country_projections_qntls.rds"
+    )
   )
  ),
- packages = c("dplyr", "tidyr", "ggdist")
+ packages = c(
+   "dplyr", "tidyr", "ggdist", "ggplot2", "rincewind", "purrr", "glue"
+ )
 )
 
-week_starting <- as.Date("2020-03-22")
-week_ending <- as.Date("2020-07-19")
+week_starting <- as.Date("2020-03-29")
+week_ending <- as.Date("2020-07-12")
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
@@ -29,7 +35,11 @@ dependancies <- purrr::map(
     y <- list(
       produce_longer_forecasts = list(
         id = query,
-        use =  list("longer_projections.rds")
+        use =  list(
+          "unwtd_projections.rds",
+          "wtd_per_country_projections.rds",
+          "wtd_across_all_projections.rds"
+        )
       )
     )
     infiles <- purrr::map(
@@ -41,7 +51,19 @@ dependancies <- purrr::map(
  }
 )
 
-x$depends <- dependancies
+dependancies5 <- list(
+  list(
+    prepare_ecdc_data = list(
+      id = "latest",
+      use = list(
+        "latest_deaths_wide_no_filter.rds" =  "latest_deaths_wide_no_filter.rds"
+      )
+    )
+  )
+)
+
+x$depends <- c(dependancies, dependancies5)
+
 
 con <- file("src/collate_longer_forecasts/orderly.yml", "w")
 yaml::write_yaml(x, con)

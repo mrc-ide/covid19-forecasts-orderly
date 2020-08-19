@@ -3,9 +3,9 @@ artefacts:
   data:
     description: Collated model outputs (quantiles)
     filenames:
-      - unwtd_projections_qntls.rds
-      - wtd_across_all_projections_qntls.rds
-      - wtd_per_country_projections_qntls.rds
+    - unwtd_projections_qntls.rds
+    - wtd_across_all_projections_qntls.rds
+    - wtd_per_country_projections_qntls.rds
 packages:
 - dplyr
 - tidyr
@@ -16,17 +16,101 @@ packages:
 - glue
 depends:
 - produce_longer_forecasts:
-    id: latest(parameter:week_ending == "2020-06-14"  && parameter:use_si == "si_2")
-    use:
-      unwtd_projections_2020-03-22.rds: unwtd_projections.rds
-      wtd_per_country_projections_2020-03-22.rds: wtd_per_country_projections.rds
-      wtd_across_all_projections_2020-03-22.rds: wtd_across_all_projections.rds
-- produce_longer_forecasts:
-    id: latest(parameter:week_ending == "2020-06-21"  && parameter:use_si == "si_2")
+    id: latest(parameter:week_ending == "2020-03-29"  && parameter:use_si == "si_2")
     use:
       unwtd_projections_2020-03-29.rds: unwtd_projections.rds
       wtd_per_country_projections_2020-03-29.rds: wtd_per_country_projections.rds
       wtd_across_all_projections_2020-03-29.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-05"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-04-05.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-04-05.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-04-05.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-12"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-04-12.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-04-12.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-04-12.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-19"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-04-19.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-04-19.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-04-19.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-26"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-04-26.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-04-26.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-04-26.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-03"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-05-03.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-05-03.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-05-03.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-10"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-05-10.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-05-10.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-05-10.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-17"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-05-17.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-05-17.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-05-17.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-24"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-05-24.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-05-24.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-05-24.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-31"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-05-31.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-05-31.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-05-31.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-07"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-06-07.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-06-07.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-06-07.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-14"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-06-14.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-06-14.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-06-14.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-21"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-06-21.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-06-21.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-06-21.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-28"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-06-28.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-06-28.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-06-28.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-07-05"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-07-05.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-07-05.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-07-05.rds: wtd_across_all_projections.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-07-12"  && parameter:use_si == "si_2")
+    use:
+      unwtd_projections_2020-07-12.rds: unwtd_projections.rds
+      wtd_per_country_projections_2020-07-12.rds: wtd_per_country_projections.rds
+      wtd_across_all_projections_2020-07-12.rds: wtd_across_all_projections.rds
 - prepare_ecdc_data:
     id: latest
     use:

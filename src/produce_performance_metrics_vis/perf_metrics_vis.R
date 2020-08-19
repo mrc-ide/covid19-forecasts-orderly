@@ -292,7 +292,7 @@ p1 <- ggplot() +
   geom_text(
     data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts >= 15, ],
     aes(x = forecast_date, y = country, label = error_values),
-    size = 3
+    size = 1
   ) +
   scale_fill_distiller(palette = "YlOrRd", na.value = "white", direction = 1) +
   geom_tile(
@@ -331,7 +331,7 @@ p1 <- ggplot() +
   geom_text(
     data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts < 15, ],
     aes(x = forecast_date, y = country, label = error_values),
-    size = 3
+    size = 1
   ) +
   scale_fill_distiller(palette = "YlOrRd", na.value = "white", direction = 1) +
   geom_tile(
@@ -349,6 +349,8 @@ p1 <- ggplot() +
     legend.key.width = unit(2, "lines")
   ) +
   coord_cartesian(clip = "off")
+
+  ggsave("comparison_with_baseline_error2.png", p1)
 ## out <- select(weekly_compare, forecast_date, country, ratio) %>%
 ##   spread(forecast_date, ratio)
 
