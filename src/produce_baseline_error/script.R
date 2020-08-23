@@ -39,26 +39,32 @@ weekly <- split(tall, tall$country) %>%
 countries <- setNames(
   unique(weekly$country), unique(weekly$country)
 )
-weeks <- slider::slide_period(
-  model_input$dates, model_input$dates, "week", identity, .origin = week_starting
+
+weeks_day1 <- seq(
+  week_starting, week_ending, "7 days"
 )
-weeks <- weeks[-1]
-weeks <- keep(weeks, ~ length(.) == 7)
+
+weeks <- map(
+  weeks_day1, function(x) seq(from = x + 1, length.out = 7, by = "1 day")
+)
+
+names(weeks) <- weeks_day1
 
 null_model_error <- map_dfr(
   countries,
   function(country) {
     message(country)
-    map_dfr(
+    imap_dfr(
       weeks,
-      function(week) {
+      function(week, week_starting) {
         message(paste(week, collapse = " "))
         obs <- model_input[model_input$dates %in% week, country]
+        if (length(obs) == 0) return(NULL)
         prev_week <- model_input[model_input$dates %in% (week - 7), country]
         null_pred <- matrix(mean(prev_week), ncol = 10000, nrow = 7)
         baseline <- assessr::mae(obs = obs, pred = null_pred)
         data.frame(
-          week_starting = week[1],
+          week_starting = week_starting,
           dates = week,
           null_error = baseline,
           prev_week_avg = mean(prev_week)

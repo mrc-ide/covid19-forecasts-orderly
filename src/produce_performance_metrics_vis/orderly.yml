@@ -36,11 +36,9 @@ depends:
       use:
         model_input.rds: latest_deaths_wide_no_filter.rds        
         
-  - produce_performance_metrics_ensemble:
+  - collate_weighted_performance_metrics:
       id: latest
       use:
-        wtd_all_prev_weeks_error.csv: wtd_all_prev_weeks_error.csv
-        wtd_prev_week_error.csv: wtd_prev_week_error.csv
         unwtd_pred_error.csv: unwtd_pred_error.csv
 
   - produce_baseline_error:

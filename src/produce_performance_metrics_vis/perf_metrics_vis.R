@@ -58,12 +58,7 @@ unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
   dplyr::filter(si == use_si)
 
 unwtd_pred_error$strategy <- "Unweighted"
-unwtd_pred_error <- tidyr::separate(
-  unwtd_pred_error,
-  col = "model",
-  into = c(NA, NA, NA, NA, "forecast_date"),
-  sep = "_"
-)
+unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
 unwtd_pred_error_daily <- unwtd_pred_error
 unwtd_pred_error <- dplyr::group_by(
   unwtd_pred_error, forecast_date, country, si
@@ -245,7 +240,7 @@ ggsave("rmae_vs_weekly_cv_main_countries.png", pcv_main)
 null_error <- readRDS("null_model_error.rds")
 x <- dplyr::left_join(daily, null_error, by = c("date" = "dates", "country"))
 weekly_compare <- group_by(x, forecast_date, country, si) %>%
-  summarise(weekly_rel_err = mean(rel_mae), weekly_null_err = mean(null_error)) %>%
+  summarise(weekly_rel_err = mean(mae), weekly_null_err = mean(null_error)) %>%
   ungroup()
 weekly_compare$ratio <- weekly_compare$weekly_rel_err / weekly_compare$weekly_null_err
 
@@ -275,30 +270,40 @@ weekly_compare$weekly_null_err <- signif(weekly_compare$weekly_null_err, 3)
 weekly_compare$error_values <- glue(
   "{weekly_compare$weekly_rel_err}/{weekly_compare$weekly_null_err}"
 )
+more_forecasts <- weekly_compare[weekly_compare$n_forecasts >= 15, ]
 
 p1 <- ggplot() +
   theme_classic() +
   geom_tile(
-    data = weekly_compare[weekly_compare$country %in% countries &
-                          weekly_compare$ratio <= 5 & weekly_compare$n_forecasts >= 15, ],
+    data = more_forecasts[more_forecasts$ratio <= 1, ],
     aes(forecast_date, country, fill = ratio),
     width = 0.9,
     height = 0.8
   ) +
-  geom_text(
-    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts >= 15, ],
-     aes(x = "2020-08-09", y = country, label = label)
+  ## geom_text(
+  ##   data = weekly_compare[weekly_compare$country %in% countries, ],
+  ##    aes(x = "2020-08-09", y = country, label = label)
+  ## ) +
+  scale_fill_distiller(
+    palette = "Greens", na.value = "white", direction = -1
   ) +
-  geom_text(
-    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts >= 15, ],
-    aes(x = forecast_date, y = country, label = error_values),
-    size = 1
-  ) +
-  scale_fill_distiller(palette = "YlOrRd", na.value = "white", direction = 1) +
+  ggnewscale::new_scale_fill() +
+
   geom_tile(
-    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$ratio > 5 & weekly_compare$n_forecasts >= 15, ],
+    data = more_forecasts[more_forecasts$ratio > 1 & more_forecasts$ratio <= 5, ],
+    aes(forecast_date, country, fill = ratio),
+    ##fill = "blue",
+    width = 0.9,
+    height = 0.8
+  ) +
+scale_fill_distiller(
+  palette = "YlOrRd", na.value = "white", direction = 1
+) +
+ggnewscale::new_scale_fill() +
+  geom_tile(
+    data = more_forecasts[more_forecasts$ratio > 5, ],
     aes(forecast_date, country),
-    fill = "blue",
+    fill = "#515bdc",
     width = 0.9,
     height = 0.8
   ) +
@@ -308,6 +313,18 @@ p1 <- ggplot() +
     legend.position = "top",
     legend.title = element_blank(),
     legend.key.width = unit(2, "lines")
+  ) +
+  geom_text(
+    data = more_forecasts[more_forecasts$ratio > 1 & more_forecasts$ratio <= 5, ],
+    aes(x = forecast_date, y = country, label = error_values),
+    size = 1.5,
+    fontface = "bold"
+  ) +
+  geom_text(
+    data = more_forecasts[more_forecasts$ratio <= 1, ],
+    aes(x = forecast_date, y = country, label = error_values),
+    size = 1.5,
+    fontface = "bold"
   ) +
   coord_cartesian(clip = "off")
 
