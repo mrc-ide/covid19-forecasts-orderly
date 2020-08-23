@@ -256,10 +256,23 @@ x <- group_by(weekly_compare, country) %>%
     n_forecasts = n(), n_less_than_1 = sum(ratio < 1, na.rm = TRUE)
   ) %>% ungroup()
 
+x$percent_less_than_1 <-  x$n_less_than_1 / x$n_forecasts
+
+x <- dplyr::arrange(x, desc(n_forecasts), desc(percent_less_than_1))
+
 weekly_compare <- left_join(weekly_compare, x)
-weekly_compare$country <- snakecase::to_title_case(weekly_compare$country)
-weekly_compare$country <- factor(weekly_compare$country)
-weekly_compare$country <- forcats::fct_reorder(weekly_compare$country, weekly_compare$n_forecasts)
+weekly_compare$country <-  factor(
+  weekly_compare$country, levels = x$country, ordered = TRUE
+)
+## weekly_compare$country <- factor(
+##   weekly_compare$country, levels=rev(levels(weekly_compare$country))
+## )
+##weekly_compare$country <- snakecase::to_title_case(weekly_compare$country)
+##weekly_compare$country <- factor(weekly_compare$country)
+
+
+
+weekly_compare$country[weekly_compare$country == "Czech Republic"] <- "Czechia"
 weekly_compare$label <- glue::glue(
   "{weekly_compare$n_less_than_1} / {weekly_compare$n_forecasts}"
 )
@@ -270,7 +283,22 @@ weekly_compare$weekly_null_err <- signif(weekly_compare$weekly_null_err, 3)
 weekly_compare$error_values <- glue(
   "{weekly_compare$weekly_rel_err}/{weekly_compare$weekly_null_err}"
 )
+
+weekly_compare$percent_less_than_1 <-
+  scales::percent(weekly_compare$percent_less_than_1, accuracy = 0.1)
+
 more_forecasts <- weekly_compare[weekly_compare$n_forecasts >= 15, ]
+
+
+more_forecasts$country <- droplevels(more_forecasts$country)
+
+p2 <- ggplot(
+  more_forecasts, aes(x = 0.1, y = country, label = percent_less_than_1)
+) + geom_text() +
+  scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
+  scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
+  theme_void() +
+  theme(plot.margin = unit(c(0, 0, 0, 0), "pt"))
 
 p1 <- ggplot() +
   theme_classic() +
@@ -317,16 +345,19 @@ ggnewscale::new_scale_fill() +
   geom_text(
     data = more_forecasts[more_forecasts$ratio > 1 & more_forecasts$ratio <= 5, ],
     aes(x = forecast_date, y = country, label = error_values),
-    size = 1.5,
+    size = 2,
     fontface = "bold"
   ) +
   geom_text(
     data = more_forecasts[more_forecasts$ratio <= 1, ],
     aes(x = forecast_date, y = country, label = error_values),
-    size = 1.5,
+    size = 2,
     fontface = "bold"
   ) +
-  coord_cartesian(clip = "off")
+scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
+coord_cartesian(clip = "off")
+
+p <- p1 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
 
 ggsave("comparison_with_baseline_error.png", p1)
 
