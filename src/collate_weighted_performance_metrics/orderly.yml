@@ -1,0 +1,97 @@
+script: collate_performace_metrics_ensb.R
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+parameters:
+- window
+- week_ending
+artefacts:
+  data:
+    description: Model performance metrics
+    filenames:
+    - wtd_all_prev_weeks_error.csv
+    - wtd_prev_week_error.csv
+    - unwtd_pred_error.csv
+packages:
+- dplyr
+- purrr
+depends:
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-03-29")
+    use:
+      unwtd_pred_error_2020-03-29.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-04-05")
+    use:
+      unwtd_pred_error_2020-04-05.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-04-12")
+    use:
+      unwtd_pred_error_2020-04-12.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-04-19")
+    use:
+      unwtd_pred_error_2020-04-19.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-04-26")
+    use:
+      unwtd_pred_error_2020-04-26.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-05-03")
+    use:
+      unwtd_pred_error_2020-05-03.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-05-10")
+    use:
+      unwtd_pred_error_2020-05-10.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-05-17")
+    use:
+      unwtd_pred_error_2020-05-17.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-05-24")
+    use:
+      unwtd_pred_error_2020-05-24.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-05-31")
+    use:
+      unwtd_pred_error_2020-05-31.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-06-07")
+    use:
+      unwtd_pred_error_2020-06-07.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-06-14")
+    use:
+      unwtd_pred_error_2020-06-14.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-06-21")
+    use:
+      unwtd_pred_error_2020-06-21.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-06-28")
+    use:
+      unwtd_pred_error_2020-06-28.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-07-05")
+    use:
+      unwtd_pred_error_2020-07-05.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-07-12")
+    use:
+      unwtd_pred_error_2020-07-12.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-07-19")
+    use:
+      unwtd_pred_error_2020-07-19.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-07-26")
+    use:
+      unwtd_pred_error_2020-07-26.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-08-02")
+    use:
+      unwtd_pred_error_2020-08-02.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-08-09")
+    use:
+      unwtd_pred_error_2020-08-09.csv: unwtd_pred_error.csv
