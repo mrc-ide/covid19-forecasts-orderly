@@ -1,19 +1,15 @@
 ## Generate orderly.yml for collate_model_outputs
 x <- list(
   script = "collate_performace_metrics_ensb.R",
-  environment = list(covid_19_path = "COVID19_INPUT_PATH"),
-  parameters = c("window", "week_ending"),
   artefacts = list(
     data = list(
     description = "Model performance metrics",
     filenames = list(
-      "wtd_all_prev_weeks_error.csv",
-      "wtd_prev_week_error.csv",
       "unwtd_pred_error.csv"
     )
   )
  ),
- packages = c("dplyr", "purrr")
+ packages = c("dplyr", "purrr", "readr")
 )
 weeks <- list(
   "2020-03-29", "2020-04-05",

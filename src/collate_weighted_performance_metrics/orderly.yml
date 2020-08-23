@@ -1,19 +1,13 @@
 script: collate_performace_metrics_ensb.R
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-parameters:
-- window
-- week_ending
 artefacts:
   data:
     description: Model performance metrics
     filenames:
-    - wtd_all_prev_weeks_error.csv
-    - wtd_prev_week_error.csv
     - unwtd_pred_error.csv
 packages:
 - dplyr
 - purrr
+- readr
 depends:
 - produce_performance_metrics_ensemble:
     id: latest(parameter:week_ending == "2020-03-29")
