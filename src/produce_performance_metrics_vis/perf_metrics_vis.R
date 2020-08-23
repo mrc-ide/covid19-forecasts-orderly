@@ -359,8 +359,54 @@ coord_cartesian(clip = "off")
 
 p <- p1 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
 
-ggsave("comparison_with_baseline_error.png", p1)
+ggsave("comparison_with_baseline_error.png", p)
 
+
+
+########## Version 2 with one scale
+p3 <- ggplot() +
+  theme_classic() +
+  geom_tile(
+    data = more_forecasts[more_forecasts$ratio <= 5, ],
+    aes(forecast_date, country, fill = ratio),
+    width = 0.9,
+    height = 0.8
+  ) +
+scale_fill_distiller(
+  palette = "YlOrRd", na.value = "white", direction = 1
+) +
+  geom_tile(
+    data = more_forecasts[more_forecasts$ratio > 5, ],
+    aes(forecast_date, country),
+    fill = "#515bdc",
+    width = 0.9,
+    height = 0.8
+  ) +
+  xlab("") + ylab("") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.key.width = unit(2, "lines")
+  ) +
+  geom_text(
+    data = more_forecasts[more_forecasts$ratio > 1 & more_forecasts$ratio <= 5, ],
+    aes(x = forecast_date, y = country, label = error_values),
+    size = 2,
+    fontface = "bold"
+  ) +
+  geom_text(
+    data = more_forecasts[more_forecasts$ratio <= 1, ],
+    aes(x = forecast_date, y = country, label = error_values),
+    size = 2,
+    fontface = "bold"
+  ) +
+scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
+coord_cartesian(clip = "off")
+
+p <- p3 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
+
+ggsave("comparison_with_baseline_error_single_scale.png", p)
 
 
 p1 <- ggplot() +
