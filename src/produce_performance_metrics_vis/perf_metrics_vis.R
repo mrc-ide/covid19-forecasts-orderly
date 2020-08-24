@@ -113,35 +113,60 @@ x50_all$log_median_pred <- log(x50_all$median_pred, 10)
 ymax <- max(x50_all$log_median_pred, x50_all$log_obs, na.rm = TRUE)
 ymax <- ceiling(ymax)
 
-bin_start <- seq(1, ymax, by = 0.5)
+bin_start <- seq(0, ymax, by = 0.5)
 bin_end  <- bin_start + 0.5
-bin_start <- c(-Inf, bin_start)
-bin_end <- c(0, bin_end)
+##bin_start <- c(-Inf, bin_start)
+##bin_end <- c(0, bin_end)
 
-x50all$obs_category <- apply(
-  mat,
+x50_all$obs_category <- apply(
+  x50_all,
   1,
   function(row) {
     idx <- map2_lgl(
-      bin_start, bin_end, function(x, y) between(row[["obs"]], x, y)
+      bin_start, bin_end, function(x, y) between(row[["log_obs"]], x, y)
     )
     idx <- Position(isTRUE, idx)
     glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
   }
 )
-x50$xcategory <- xcategory
-ycategory <- apply(
-  mat,
+
+
+x50_all$pred_category <- apply(
+  x50_all,
   1,
   function(row) {
     idx <- map2_lgl(
-      bin_start, bin_end, function(x, y) between(row[["median_pred"]], x, y)
+      bin_start, bin_end, function(x, y) between(row[["log_median_pred"]], x, y)
     )
     idx <- Position(isTRUE, idx)
     glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
   }
 )
-x50$ycategory <- ycategory
+
+
+categories <- glue::glue("[{bin_start}, {bin_end})")
+y <- dplyr::count(x50_all, pred_category, obs_category)
+
+normalised <- map_dfr(
+  categories,
+  function(category) {
+    x <- y[y$obs_category == category, ]
+    x$proportion <- x$n / sum(x$n)
+    x
+  }
+)
+
+y$pred_category <- factor(
+  y$pred_category, levels = categories, ordered = TRUE
+)
+
+y$obs_category <- factor(
+  y$obs_category, levels = categories, ordered = TRUE
+)
+
+
+ggplot(normalised, aes(pred_category, obs_category, fill = proportion)) +
+  geom_tile(width = 0.5, height = 0.5)
 
 
 ######################################################################
