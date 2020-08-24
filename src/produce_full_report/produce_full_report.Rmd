@@ -41,9 +41,9 @@ knitr::opts_chunk$set(
 
 # Introduction 
 
-As of 16^th^ August 2020,  more than
-21,000,000 cases of COVID-19 have been reported across the world, 
-with more than 761,000 deaths [@whositrep]. 
+As of 23^rd^ August 2020,  more than
+23,000,000 cases of COVID-19 have been reported across the world, 
+with more than 800,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths
@@ -79,7 +79,7 @@ Imperial College COVID-19 response team is available
 [here](https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/covid-19/report-23-united-states/).
 The United States of America has therefore been excluded from the
 analysis presented in this report and is not included in the results
-presented in the section on North America.
+presented in the section on North & Central America.
 
 
 
@@ -87,10 +87,10 @@ presented in the section on North America.
 knitr::include_graphics("figs/epicurve_pline.png")
 ```
 *Figure 1.* (A) The reported number of deaths due to COVID-19 in
-Africa, Asia, Europe, North America, and South America. (B) The number
+Africa, Asia, Europe, North & Central America, and South America. (B) The number
 of countries with active transmission (at least 100
 deaths reported, and at least *ten* deaths observed in each of the past
-two weeks) in Africa, Asia, Europe, North America, and South America.
+two weeks) in Africa, Asia, Europe, North & Central America, and South America.
 
 
 
@@ -103,9 +103,8 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week beginning 16^th^ August 2020, 
-the number of countries/regions included based on these thresholds is 
-69.
+two weeks. For the week beginning 23^rd^ August 2020, 
+the number of countries/regions included based on these thresholds is 69.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
@@ -249,7 +248,7 @@ knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_2.png")
 
 ```
 *Figure 5.* Reported daily deaths and current forecasts based on the ensemble
-model. For each country in North America with active transmission (see Methods),
+model. For each country in North & Central America with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
 for the week ahead are shown in red (median and 95% CrI). Vertical
 dashed line shows the start of the week (Monday). Projections for countries marked with
@@ -296,7 +295,7 @@ and 3, see Methods). The reporting of deaths and cases in Brazil is currently ch
 knitr::include_graphics("figs/rt_phase_si_2.png")
 ```
 *Figure 7.* Estimates of transmissibility in countries with active
-transmission for the week ending 16^th^ August 2020. A country is defined
+transmission for the week ending 23^rd^ August 2020. A country is defined
 to be in the declining phase if the 97.5^th^ quantile of the effective
 reproduction number is below 1. It is defined to be in the growing
 phase if the 2.5^th^ quantile of the effective reproduction number is
@@ -357,7 +356,7 @@ knitr::include_graphics("figs/ensemble_rt_North America_si_2_boxplot.png")
 
 ```
 *Figure 11.*: Latest estimates of effective reproduction numbers by country
-(median, inter-quartile range and 95% CrI) for each country in North America
+(median, inter-quartile range and 95% CrI) for each country in North & Central America
 with sustained transmission. Estimates of $R_t$ for countries marked with
 a * are based on an unweighted ensemble of Models 1, 2 and 3.
 Results from individual models are shown
@@ -395,7 +394,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-16^th^ August, the observed number of deaths in the week before,
+23^rd^ August, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -749,7 +748,7 @@ knitr::include_graphics("figs/Europe_si_2_page_4.png")
 ```
 
 
-*Figure 15.* Projections (7-day ahead) for the week starting 16^th^ August 2020 from individual models
+*Figure 15.* Projections (7-day ahead) for the week starting 23^rd^ August 2020 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -769,7 +768,7 @@ knitr::include_graphics("figs/Asia_si_2_page_2.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_3.png")
 ```
-*Figure 16.* Projections (7-day ahead) for the week starting 16^th^ August 2020 from individual models (Models 1, 2
+*Figure 16.* Projections (7-day ahead) for the week starting 23^rd^ August 2020 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -787,7 +786,7 @@ knitr::include_graphics("figs/Africa_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/Africa_si_2_page_2.png")
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 16^th^ August 2020 from individual models (Models 1, 2
+*Figure 17.* Projections (7-day ahead) for the week starting 23^rd^ August 2020 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -802,8 +801,8 @@ knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_2.png")
 ```
-*Figure 18.* Projections (7-day ahead) for the week starting 16^th^ August 2020 from individual models (Models 1, 2
-and 3) for each country in North America with
+*Figure 18.* Projections (7-day ahead) for the week starting 23^rd^ August 2020 from individual models (Models 1, 2
+and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -818,7 +817,7 @@ knitr::include_graphics("figs/South America_si_2_page_1.png")
 knitr::include_graphics("figs/South America_si_2_page_2.png")
 ```
 *Figure 19.* Projections (7-day ahead) for the week starting
-16^th^ August 2020 from individual models (Models 1, 2
+23^rd^ August 2020 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -832,7 +831,7 @@ results should be interpreted with caution.
 knitr::include_graphics("figs/Oceania_si_2_page_1.png")
 ```
 *Figure 20.* Projections (7-day ahead) for the week starting
-16^th^ August 2020 from individual models (Models 1, 2
+23^rd^ August 2020 from individual models (Models 1, 2
 and 3) for each country in Oceania with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -847,7 +846,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-16^th^ August 2020. 
+23^rd^ August 2020. 
 
 
 #### Asia
@@ -859,7 +858,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 22.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-16^th^ August 2020. 
+23^rd^ August 2020. 
 
 
 #### Africa
@@ -871,7 +870,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-16^th^ August 2020. 
+23^rd^ August 2020. 
 
 
 #### North & Central America
@@ -881,9 +880,9 @@ active transmission (see Methods) for the week starting
 knitr::include_graphics("figs/rt_si_2_North America.png")
 ```
 *Figure 24.* Estimates of $R_t$ from individual models for each country in
-North America with
+North & Central America with
 active transmission (see Methods) for the week starting
-16^th^ August 2020. 
+23^rd^ August 2020. 
 
 
 
@@ -896,7 +895,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 25.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-16^th^ August 2020. 
+23^rd^ August 2020. 
 
 #### Oceania
 
@@ -907,7 +906,7 @@ knitr::include_graphics("figs/rt_si_2_Oceania.png")
 *Figure 26.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-16^th^ August 2020. 
+23^rd^  August 2020. 
 
 ## Code 
 
@@ -950,6 +949,6 @@ Some countries have been excluded from the analysis despite meeting
 the threshold because the number of deaths per day did not allow
 reliable inference. A complete list of corrections applied to the data downloaded
 from ECDC is available
-[here](https://github.com/mrc-ide/covid19-forecasts-orderly/blob/main/src/prepare_ecdc_data/R/corrections_16August.R). 
+[here](https://github.com/mrc-ide/covid19-forecasts-orderly/blob/main/src/prepare_ecdc_data/R/corrections_23August.R). 
 All corrections are based on the numbers reported by the World Health
 Organization (https://covid19.who.int) or Worldometer (https://www.worldometers.info).

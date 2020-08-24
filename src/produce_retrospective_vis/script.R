@@ -84,10 +84,10 @@ pline <- ggplot() +
   scale_x_date(
     breaks = seq(
       from = as.Date("2020-03-01"),
-      to = as.Date("2020-08-09"),
+      to = as.Date("2020-08-24"),
       by = "3 weeks"
     ),
-    limits = c(as.Date("2020-03-01"), as.Date("2020-08-17"))
+    limits = c(as.Date("2020-03-01"), as.Date("2020-08-24"))
   ) +
   coord_cartesian(clip = 'off') +
   theme_classic() +
@@ -131,10 +131,10 @@ epicurve <- ggplot() +
   scale_x_date(
     breaks = seq(
       from = as.Date("2020-03-01"),
-      to = as.Date("2020-08-17"),
+      to = as.Date("2020-08-24"),
       by = "3 weeks"
     ),
-    limits = c(as.Date("2020-03-01"), as.Date("2020-08-17"))
+    limits = c(as.Date("2020-03-01"), as.Date("2020-08-24"))
   ) +
   theme_classic() +
   theme(legend.position = "top", legend.title = element_blank()) +

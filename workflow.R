@@ -19,7 +19,8 @@ weeks <- list(
   "2020-06-28",
   "2020-08-02",
   "2020-08-09",
-  "2020-08-16"
+  "2020-08-16",
+  "2020-08-23"
 )
 
 for (week in weeks) {
@@ -28,6 +29,7 @@ for (week in weeks) {
   m1 <- orderly::orderly_run(
     "run_rti0", parameters = parameter, use_draft = use_draft
   )
+
   orderly::orderly_commit(m1)
   orderly::orderly_push_archive("run_rti0", m1)
 }
