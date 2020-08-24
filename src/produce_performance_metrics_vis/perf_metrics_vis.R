@@ -83,7 +83,7 @@ unwtd_pred_error_daily <- dplyr::left_join(
   unwtd_pred_error_daily, unweighted_rt_qntls
 )
 
-#####################################################################
+
 w_use_strategy <- list(
   ##wtd_prev_week = wtd_prev_week_error,
   ##wtd_all_prev_weeks = wtd_all_prev_weeks_error,
@@ -98,6 +98,52 @@ d_use_strategy <- list(
 
 weekly <- w_use_strategy[[strategy]]
 daily <- d_use_strategy[[strategy]]
+
+
+
+
+#####################################################################
+#####################################################################
+########## Observed vs Median Predicitons Density ###################
+#####################################################################
+#####################################################################
+x50_all <- select(daily, country, obs, median_pred)
+x50_all$log_obs <- log(x50_all$obs, 10)
+x50_all$log_median_pred <- log(x50_all$median_pred, 10)
+ymax <- max(x50_all$log_median_pred, x50_all$log_obs, na.rm = TRUE)
+ymax <- ceiling(ymax)
+
+bin_start <- seq(1, ymax, by = 0.5)
+bin_end  <- bin_start + 0.5
+bin_start <- c(-Inf, bin_start)
+bin_end <- c(0, bin_end)
+
+x50all$obs_category <- apply(
+  mat,
+  1,
+  function(row) {
+    idx <- map2_lgl(
+      bin_start, bin_end, function(x, y) between(row[["obs"]], x, y)
+    )
+    idx <- Position(isTRUE, idx)
+    glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
+  }
+)
+x50$xcategory <- xcategory
+ycategory <- apply(
+  mat,
+  1,
+  function(row) {
+    idx <- map2_lgl(
+      bin_start, bin_end, function(x, y) between(row[["median_pred"]], x, y)
+    )
+    idx <- Position(isTRUE, idx)
+    glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
+  }
+)
+x50$ycategory <- ycategory
+
+
 ######################################################################
 ######################################################################
 #######################  Daily Figures ###############################
