@@ -53,6 +53,7 @@ all_metrics <- function(obs, pred) {
     prop_in_50 = assessr::prop_in_ci(obs, qntls[["25%"]], qntls[["75%"]]),
     prop_in_975 = assessr::prop_in_ci(obs, qntls[["2.5%"]], qntls[["97.5%"]]),
     empirical_p = empirical_probability(obs, pred),
-    poisson_p = poisson_probability(obs, pred)
+    poisson_p = poisson_probability(obs, pred),
+    median_pred = qntls[["50%"]]
   )
 }

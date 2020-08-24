@@ -8,8 +8,8 @@ x <- list(
     data = list(
     description = "Model performance metrics",
     filenames = list(
-      "wtd_all_prev_weeks_error.csv",
-      "wtd_prev_week_error.csv",
+      ##"wtd_all_prev_weeks_error.csv",
+      ##"wtd_prev_week_error.csv",
       "unwtd_pred_error.csv"
     )
   )
@@ -62,6 +62,9 @@ dependancies <- c(dependancies2, dependancies5)
 
 x$depends <- dependancies
 
-con <- file("src/produce_performance_metrics_ensemble/orderly.yml", "w")
+con <- file(
+  here::here("src/produce_performance_metrics_ensemble/orderly.yml"),
+  "w"
+)
 yaml::write_yaml(x, con)
 close(con)

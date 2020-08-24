@@ -23,6 +23,7 @@ weeks <- list(
   "2020-07-26",
   "2020-08-02",
   "2020-08-09"
+  ##"2020-08-16"
 
 )
 
@@ -103,7 +104,7 @@ a <- orderly::orderly_run("src/produce_full_report")
 
 for (week_ending in weeks) {
   message("################ ", week_ending, " #############################")
-  source("write_wtd_perf_metrics_dependancies.R")
+  source("orderly-helper-scripts/write_dependencies_weighted_performance.R")
   parameter <- list(week_ending = week_ending, window = 1)
   m1 <- orderly::orderly_run(
     "src/produce_performance_metrics_ensemble/",
@@ -112,6 +113,9 @@ for (week_ending in weeks) {
   orderly::orderly_commit(m1)
 }
 
+source("orderly-helper-scripts/write_dependencies_collate_weighted_perf.R")
+m1 <- orderly::orderly_run("src/collate_weighted_performance_metrics/")
+orderly::orderly_commit(m1)
 
 aa <- orderly::orderly_run(
   "produce_performace_metrics",

@@ -9,8 +9,6 @@ artefacts:
   data:
     description: Model performance metrics
     filenames:
-    - wtd_all_prev_weeks_error.csv
-    - wtd_prev_week_error.csv
     - unwtd_pred_error.csv
 packages:
 - dplyr
@@ -20,7 +18,7 @@ packages:
 - purrr
 depends:
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-08-09")
+    id: latest(parameter:week_ending == "2020-08-16")
     use:
       unwtd_ensemble_model_predictions.rds: ensemble_model_predictions.rds
 - prepare_ecdc_data:
