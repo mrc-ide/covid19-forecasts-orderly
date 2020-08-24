@@ -107,14 +107,17 @@ daily <- d_use_strategy[[strategy]]
 ########## Observed vs Median Predicitons Density ###################
 #####################################################################
 #####################################################################
-x50_all <- select(daily, country, obs, median_pred)
+x50_all <- select(unwtd_pred_error_daily, country, obs, median_pred)
+x50_all <- distinct(x50_all)
+x50_all <- filter(x50_all, obs >= 0)
+
 x50_all$log_obs <- log(x50_all$obs, 10)
 x50_all$log_median_pred <- log(x50_all$median_pred, 10)
 ymax <- max(x50_all$log_median_pred, x50_all$log_obs, na.rm = TRUE)
 ymax <- ceiling(ymax)
 
-bin_start <- seq(0, ymax, by = 0.5)
-bin_end  <- bin_start + 0.5
+bin_start <- seq(0, 4000, by = 100)
+bin_end  <- bin_start + 100
 ##bin_start <- c(-Inf, bin_start)
 ##bin_end <- c(0, bin_end)
 
@@ -123,7 +126,7 @@ x50_all$obs_category <- apply(
   1,
   function(row) {
     idx <- map2_lgl(
-      bin_start, bin_end, function(x, y) between(row[["log_obs"]], x, y)
+      bin_start, bin_end, function(x, y) between(row[["obs"]], x, y)
     )
     idx <- Position(isTRUE, idx)
     glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
@@ -136,7 +139,7 @@ x50_all$pred_category <- apply(
   1,
   function(row) {
     idx <- map2_lgl(
-      bin_start, bin_end, function(x, y) between(row[["log_median_pred"]], x, y)
+      bin_start, bin_end, function(x, y) between(row[["median_pred"]], x, y)
     )
     idx <- Position(isTRUE, idx)
     glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
@@ -156,11 +159,11 @@ normalised <- map_dfr(
   }
 )
 
-y$pred_category <- factor(
+normalised$pred_category <- factor(
   y$pred_category, levels = categories, ordered = TRUE
 )
 
-y$obs_category <- factor(
+normalised$obs_category <- factor(
   y$obs_category, levels = categories, ordered = TRUE
 )
 
