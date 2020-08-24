@@ -46,7 +46,7 @@ observed_tall <- split(
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
 
-weekly_incidence$forecast_date[weekly_incidence$forecast_date == as.Date("2020-03-09")] <- as.Date("2020-03-08")
+##weekly_incidence$forecast_date[weekly_incidence$forecast_date == as.Date("2020-03-09")] <- as.Date("2020-03-08")
 
 ######################################################################
 ######################################################################
@@ -235,12 +235,21 @@ pcv_main <- ggplot() +
   theme(legend.position = "top", legend.title = element_blank())
 
 ggsave("rmae_vs_weekly_cv_main_countries.png", pcv_main)
-##############
+
+######################################################################
+######################################################################
+######################################################################
+########### Comparison with baseline error ###########################
+######################################################################
+######################################################################
+######################################################################
 
 null_error <- readRDS("null_model_error.rds")
 x <- dplyr::left_join(daily, null_error, by = c("date" = "dates", "country"))
 weekly_compare <- group_by(x, forecast_date, country, si) %>%
-  summarise(weekly_rel_err = mean(mae), weekly_null_err = mean(null_error)) %>%
+  summarise(
+    weekly_rel_err = mean(mae), weekly_null_err = mean(null_error)
+  ) %>%
   ungroup()
 weekly_compare$ratio <- weekly_compare$weekly_rel_err / weekly_compare$weekly_null_err
 
@@ -264,18 +273,9 @@ weekly_compare <- left_join(weekly_compare, x)
 weekly_compare$country <-  factor(
   weekly_compare$country, levels = x$country, ordered = TRUE
 )
-## weekly_compare$country <- factor(
-##   weekly_compare$country, levels=rev(levels(weekly_compare$country))
-## )
-##weekly_compare$country <- snakecase::to_title_case(weekly_compare$country)
-##weekly_compare$country <- factor(weekly_compare$country)
-
-
 
 weekly_compare$country[weekly_compare$country == "Czech Republic"] <- "Czechia"
-weekly_compare$label <- glue::glue(
-  "{weekly_compare$n_less_than_1} / {weekly_compare$n_forecasts}"
-)
+
 labels <- unique(weekly_compare$forecast_date)
 
 weekly_compare$weekly_rel_err <- signif(weekly_compare$weekly_rel_err, 3)
@@ -294,7 +294,7 @@ more_forecasts$country <- droplevels(more_forecasts$country)
 
 p2 <- ggplot(
   more_forecasts, aes(x = 0.1, y = country, label = percent_less_than_1)
-) + geom_text() +
+) + geom_text(size = 3) +
   scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
   scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
   theme_void() +
@@ -308,10 +308,6 @@ p1 <- ggplot() +
     width = 0.9,
     height = 0.8
   ) +
-  ## geom_text(
-  ##   data = weekly_compare[weekly_compare$country %in% countries, ],
-  ##    aes(x = "2020-08-09", y = country, label = label)
-  ## ) +
   scale_fill_distiller(
     palette = "Greens", na.value = "white", direction = -1
   ) +
@@ -320,7 +316,6 @@ p1 <- ggplot() +
   geom_tile(
     data = more_forecasts[more_forecasts$ratio > 1 & more_forecasts$ratio <= 5, ],
     aes(forecast_date, country, fill = ratio),
-    ##fill = "blue",
     width = 0.9,
     height = 0.8
   ) +
@@ -343,18 +338,15 @@ ggnewscale::new_scale_fill() +
     legend.key.width = unit(2, "lines")
   ) +
   geom_text(
-    data = more_forecasts[more_forecasts$ratio > 1 & more_forecasts$ratio <= 5, ],
+    data = more_forecasts,
     aes(x = forecast_date, y = country, label = error_values),
     size = 2,
     fontface = "bold"
   ) +
-  geom_text(
-    data = more_forecasts[more_forecasts$ratio <= 1, ],
-    aes(x = forecast_date, y = country, label = error_values),
-    size = 2,
-    fontface = "bold"
-  ) +
-scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
+scale_y_discrete(
+  limits = rev(levels(more_forecasts$country)),
+  labels = snakecase::to_title_case(rev(levels(more_forecasts$country)))
+) +
 coord_cartesian(clip = "off")
 
 p <- p1 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
@@ -362,12 +354,15 @@ p <- p1 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
 ggsave("comparison_with_baseline_error.png", p)
 
 
-
-########## Version 2 with one scale
+######################################################################
+######################################################################
+########### Version 2 with one scale #################################
+######################################################################
+######################################################################
 p3 <- ggplot() +
   theme_classic() +
   geom_tile(
-    data = more_forecasts[more_forecasts$ratio <= 5, ],
+    data = more_forecasts[more_forecasts$ratio <=5, ],
     aes(forecast_date, country, fill = ratio),
     width = 0.9,
     height = 0.8
@@ -390,48 +385,44 @@ scale_fill_distiller(
     legend.key.width = unit(2, "lines")
   ) +
   geom_text(
-    data = more_forecasts[more_forecasts$ratio > 1 & more_forecasts$ratio <= 5, ],
+    data = more_forecasts,
     aes(x = forecast_date, y = country, label = error_values),
     size = 2,
     fontface = "bold"
   ) +
-  geom_text(
-    data = more_forecasts[more_forecasts$ratio <= 1, ],
-    aes(x = forecast_date, y = country, label = error_values),
-    size = 2,
-    fontface = "bold"
-  ) +
-scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
+scale_y_discrete(
+  limits = rev(levels(more_forecasts$country)),
+  labels = snakecase::to_title_case(rev(levels(more_forecasts$country)))
+) +
 coord_cartesian(clip = "off")
 
 p <- p3 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
 
 ggsave("comparison_with_baseline_error_single_scale.png", p)
 
+######################################################################
+######################################################################
+########## Version 3 with borders ####################################
+######################################################################
+######################################################################
 
-p1 <- ggplot() +
+p4 <- ggplot() +
   theme_classic() +
   geom_tile(
-    data = weekly_compare[weekly_compare$country %in% countries &
-                          weekly_compare$ratio <= 5 & weekly_compare$n_forecasts < 15, ],
-    aes(forecast_date, country, fill = ratio),
+    data = more_forecasts[more_forecasts$ratio <=5, ],
+    aes(forecast_date, country, fill = ratio, col = err_level),
     width = 0.9,
-    height = 0.8
-  ) +
-  geom_text(
-    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts < 15, ],
-     aes(x = "2020-08-09", y = country, label = label)
-  ) +
-  geom_text(
-    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$n_forecasts < 15, ],
-    aes(x = forecast_date, y = country, label = error_values),
+    height = 0.8,
     size = 1
   ) +
-  scale_fill_distiller(palette = "YlOrRd", na.value = "white", direction = 1) +
+  scale_fill_gradient2(midpoint = 1, mid = "#cce5cc") +
+  scale_colour_manual(
+    values = c(less_than_1 = "#004c00", greater_than_1 = "#400040")
+  ) +
   geom_tile(
-    data = weekly_compare[weekly_compare$country %in% countries & weekly_compare$ratio > 5 & weekly_compare$n_forecasts < 15, ],
+    data = more_forecasts[more_forecasts$ratio > 5, ],
     aes(forecast_date, country),
-    fill = "blue",
+    fill = "#515bdc",
     width = 0.9,
     height = 0.8
   ) +
@@ -442,30 +433,23 @@ p1 <- ggplot() +
     legend.title = element_blank(),
     legend.key.width = unit(2, "lines")
   ) +
-  coord_cartesian(clip = "off")
+  geom_text(
+    data = more_forecasts,
+    aes(x = forecast_date, y = country, label = error_values),
+    size = 2,
+    fontface = "bold"
+  ) +
+scale_y_discrete(
+  limits = rev(levels(more_forecasts$country)),
+  labels = snakecase::to_title_case(rev(levels(more_forecasts$country)))
+) +
+  guides(colour = "none") +
+coord_cartesian(clip = "off")
 
-  ggsave("comparison_with_baseline_error2.png", p1)
-## out <- select(weekly_compare, forecast_date, country, ratio) %>%
-##   spread(forecast_date, ratio)
+p <- p4 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
 
+ggsave("comparison_with_baseline_error_with_border.png", p)
 
-## gt(out) %>%
-##   fmt_number(
-##     columns = starts_with("2020"),
-##     decimals = 1
-##   ) %>%
-##     tab_style(
-##     style = cell_fill(color = "green"),
-##     locations = cells_body(
-##       columns = starts_with("2020") < 1,
-##       rows = TRUE
-##     )
-##   )
-
-##   gt::data_color(
-##     columns = vars(`2020-03-15`:`2020-08-02`),
-##     colors = scales::col_numeric(
-##       palette = c(
-##         "red", "orange", "green", "blue"),
-##       domain = c(0, 30))
-##   )
+######################################################################
+######################################################################
+######################################################################

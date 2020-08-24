@@ -14,7 +14,8 @@ packages:
   - ggforce
   - snakecase
   - glue
-  - cowplot
+  - patchwork
+  - ggnewscale
 
 ## use_si should be one of si_1 or si_2
 ## strategy must be one of wtd_prev_week, wtd_all_prev_weeks or unwtd
