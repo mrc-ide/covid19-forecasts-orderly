@@ -16,15 +16,12 @@ sims_per_rt <- 10
 n_sim <- 1000
 
 shape <- readRDS("cfr_shape_params.rds")
-cfr_samples <- rbeta(1000, shape1 = shape[1],shape2 = shape[2])
-
-
+cfr_samples <- rbeta(n_sim, shape1 = shape[1],shape2 = shape[2])
 
 indir <- dirname(covid_19_path)
 raw_data <- readRDS(
   glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
 )
-
 
 si_distrs <- readRDS("si_distrs.rds")
 si <- si_distrs[[use_si]]
@@ -50,53 +47,66 @@ countries <- setNames(
   names(unwtd_rt_estimates), names(unwtd_rt_estimates)
 )
 
+all_restimates <- list(
+  unweighted = unwtd_rt_estimates,
+  weighted_across_countries = wtd_rt_estimates_across_countries,
+  weighted_per_country = wtd_rt_estimates_per_country
+)
 
 
-unwtd_reff <- imap(
-  unwtd_rt_estimates,
-  function(rt, country) {
-    deaths_so_far <- sum(
-      deaths_to_use[deaths_to_use$dates <= week_ending, country]
-    )
-    pop <- population$pop_data2018[population$countries_and_territories == country]
-    deaths_per_capita <- deaths_so_far / pop
-    p <- proportion_susceptible(deaths_per_capita, cfr_samples)
-    list(
-      p_susceptible = p,
-      r_eff = rt$rt_samples * p
+all_reff <- map(
+  all_restimates,
+  function(restimate) {
+    imap(
+      restimate,
+      function(rt, country) {
+        deaths_so_far <- sum(
+          deaths_to_use[deaths_to_use$dates <= week_ending, country]
+        )
+        pop <- population$pop_data2018[population$countries_and_territories == country]
+        deaths_per_capita <- deaths_so_far / pop
+        p <- proportion_susceptible(deaths_per_capita, cfr_samples)
+        list(
+          p_susceptible = p,
+          r_eff = rt$rt_samples * p
+        )
+      }
     )
   }
 )
 
 
-unwtd_projections <- map(
-  countries,
-  function(country) {
-    message(country)
-    pop <- population$pop_data2018[population$countries_and_territories == country]
-    n_days <- length(
-      unwtd_rt_estimates[[country]]$weeks_combined
-    ) * 7
-    x <- deaths_to_use[[country]]
-    ##rt <- unwtd_rt_estimates[[country]]$rt_samples
-    rt <- unwtd_reff[[country]][["r_eff"]]
-    p <- unwtd_reff[[country]][["p_susceptible"]]
-    out <- purrr::map(
-      seq_len(sims_per_rt),
-      function(i) {
-        project_with_saturation(
-          deaths = x,
-          r_eff = rt,
-          p_susceptible = p,
-          si = si,
-          n_sim = n_sim,
-          n_days = n_days,
-          cfr = cfr_samples,
-          pop
-        )
+
+all_projections <- map(
+  all_reff,
+  function(reff) {
+    map(
+      countries,
+      function(country) {
+        message(country)
+        pop <- population$pop_data2018[population$countries_and_territories == country]
+        n_days <- length(
+          unwtd_rt_estimates[[country]]$weeks_combined
+        ) * 7
+        x <- deaths_to_use[[country]]
+        ##rt <- unwtd_rt_estimates[[country]]$rt_samples
+        rt <- reff[[country]][["r_eff"]]
+        p <- reff[[country]][["p_susceptible"]]
+        f <-  function() {
+          project_with_saturation(
+            deaths = x,
+            r_eff = rt,
+            p_susceptible = p,
+            si = si,
+            n_sim = n_sim,
+            n_days = n_days,
+            cfr = cfr_samples,
+            pop
+          )
+         }
+        out <- rerun(sims_per_rt, f())
       }
     )
-    ##do.call(what = "rbind", args = out)
   }
 )
 
