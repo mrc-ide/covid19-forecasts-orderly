@@ -33,3 +33,8 @@ depends:
       combined_rt_estimates.rds: combined_rt_estimates.rds
       combined_weighted_estimates_per_country.rds: combined_weighted_estimates_per_country.rds
       combined_weighted_estimates_across_countries.rds: combined_weighted_estimates_across_countries.rds
+  produce_epi_params:
+    id: latest
+    use:
+      si_distrs.rds: si_distrs.rds
+      cfr_shape_params.rds: cfr_shape_params.rds
