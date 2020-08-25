@@ -61,6 +61,97 @@ date_to_project_from <- as.Date(week_ending)
 sims_per_rt <- 10
 n_sim <- 1000
 
+CFR_esti <- c(1.38, 1.23, 1.53)/100
+# function to get parameters
+f1 <- function(shape){
+  res <- c(
+    shape[1]/(shape[1]+shape[2]),
+    qbeta(.025, shape1 = shape[1], shape2 = shape[2]),
+    qbeta(.975, shape1 = shape[1], shape2 = shape[2])
+  )
+  res <- sum((res*100-CFR_esti*100)^2)
+  return(res)
+}
+
+n <- 5e2
+Shape1 <- rep(seq(300,350,length.out = n),each = n )
+Shape2 <- rep(seq(22500,23500,length.out = n), n )
+res <- rep(NA,n*n)
+for (i in 1:(n*n)){
+  res[i] <- f1(c(Shape1[i],Shape2[i]))
+}
+f <- which(res == min(res))
+shape <- c(Shape1[f], Shape2[f])
+cfr_samples <- rbeta(1000, shape1 = shape[1],shape2 = shape[2])
+
+population <- readr::read_csv("ecdc_pop2018.csv")
+
+
+proportion_susceptible <- function(deaths_per_capita, cfr) {
+  1 - (deaths_per_capita / cfr)
+}
+
+unwtd_reff <- imap(
+  unwtd_rt_estimates,
+  function(rt, country) {
+    deaths_so_far <- sum(
+      deaths_to_use[deaths_to_use$dates <= week_ending, country]
+    )
+    pop <- population$pop_data2018[population$countries_and_territories == country]
+    deaths_per_capita <- deaths_so_far / pop
+    p <- proportion_susceptible(deaths_per_capita, cfr_samples)
+    list(
+      p_susceptible = p,
+      r_eff = rt$rt_samples * p
+    )
+  }
+)
+
+## ws T X 1 matrix where N is the number of simulations,
+## flip SI before calling this function
+## deaths N X T matrix where N is the number of simulations
+## R numeric.
+force_of_infection <- function(deaths, ws, R) {
+  (deaths %*% ws) * R
+}
+## deaths is a vector of deaths
+## r_eff = r_obs / p_susceptible
+## p_susceptible is the proportion susceptible at the point at which
+## we start projecting ahead.
+project_with_saturation <- function(deaths, r_eff, p_susceptible, si, n_sim = 100, n_days, cfr) {
+
+  deaths_obs <- sum(deaths)
+  I0 <- matrix(
+    deaths, ncol = length(deaths), nrow = n_sim, byrow = TRUE
+  )
+  day_max <- length(deaths) + n_days
+  si <- c(si, rep(0, day_max - length(si)))
+  out <- list(
+    r_effective = vector(mode = "list", length = n_days),
+    p_s = vector(mode = "list", length = n_days)
+  )
+  for (day in 1:n_days) {
+    R <- r_eff * p_susceptible
+    R <- sample(R, n_sim)
+    ws <- tail(rev(si), length(deaths) + day - 1)
+    ws <- matrix(
+      ws, ncol = 1,  nrow = length(deaths) + day - 1
+    )
+    lambda <- force_of_infection(I0, ws, R)
+    pred <- map_int(lambda, function(x) rpois(1, x))
+    I0 <- cbind(I0, pred)
+    deaths_so_far <- rowSums(I0)
+    deaths_per_cap <- deaths_so_far / pop
+    p_susceptible <- proportion_susceptible(deaths_per_cap, cfr)
+
+    out[["r_effective"]][[day]] <- R
+    out[["p_s"]][[day]] <- p_susceptible
+  }
+
+  out[["incid_and_pred"]] <- I0
+  out
+}
+
 unwtd_projections <- purrr::map(
   countries,
   function(country) {
@@ -69,7 +160,8 @@ unwtd_projections <- purrr::map(
       unwtd_rt_estimates[[country]]$weeks_combined
     ) * 7
     x <- tall_deaths[[country]]
-    rt <- unwtd_rt_estimates[[country]]$rt_samples
+    ##rt <- unwtd_rt_estimates[[country]]$rt_samples
+    rt <- unwtd_reff[[country]][[]]
     out <- purrr::map(
       seq_len(sims_per_rt),
       function(i) {
@@ -87,7 +179,7 @@ unwtd_projections <- purrr::map(
     )
     do.call(what = "rbind", args = out)
   }
-  )
+)
 
 wtd_across_all_projections <- purrr::map(
   countries,

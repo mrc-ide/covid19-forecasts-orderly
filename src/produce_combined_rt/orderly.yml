@@ -17,7 +17,6 @@ packages:
 - purrr
 - rincewind
 - ggpmisc
-- tidyr
 sources: R/utils.R
 depends:
 - produce_ensemble_outputs:
@@ -36,6 +35,14 @@ depends:
     id: latest(parameter:week_ending == "2020-03-29")
     use:
       ensemble_model_rt_samples_2020-03-29.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-04-05")
+    use:
+      ensemble_model_rt_samples_2020-04-05.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-04-12")
+    use:
+      ensemble_model_rt_samples_2020-04-12.rds: ensemble_model_rt_samples.rds
 - produce_weights_combined_rt:
     id: latest
     use:

@@ -19,7 +19,6 @@ x <- list(
  sources =  "R/utils.R"
 )
 
-
 week_starting <- as.Date("2020-03-08")
 
 weeks_needed <- seq(
@@ -60,7 +59,9 @@ x$depends <- c(dependances, dependancies5)
 
 
 
-con <- file("src/produce_combined_rt/orderly.yml", "w")
+con <- file(
+  here::here("src/produce_combined_rt/orderly.yml"), "w"
+)
 yaml::write_yaml(x, con)
 close(con)
 

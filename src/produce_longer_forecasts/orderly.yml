@@ -22,7 +22,10 @@ packages:
   - tidyr
   - incidence
   - rincewind
- 
+
+resources:
+  - ecdc_pop2018.csv
+
 depends:
   produce_combined_rt:
     id: latest(parameter:week_ending == week_ending)
