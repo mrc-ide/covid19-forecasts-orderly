@@ -110,59 +110,15 @@ all_projections <- map(
   }
 )
 
-wtd_across_all_projections <- purrr::map(
-  countries,
-  function(country) {
-    message(country)
-    n_days <- length(
-      wtd_rt_estimates_across_countries[[country]]$weeks_combined
-    ) * 7
-    x <- tall_deaths[[country]]
-    rt <- wtd_rt_estimates_across_countries[[country]]$rt_samples
-    out <- purrr::map(
-      seq_len(sims_per_rt),
-      function(i) {
-        projections::project(
-          x = x,
-          R = rt,
-          si = si,
-          n_sim = n_sim,
-          n_days = n_days,
-          R_fix_within = TRUE,
-          model = "poisson"
-        ) %>%
-          as.matrix() %>% t
+projections <- map(
+  all_projections,
+  function(pred) {
+    map(
+      pred,
+      function(country_pred) {
+        out <- map(country_pred, ~ .[["pred"]])
       }
     )
-    do.call(what = "rbind", args = out)
-  }
-)
-
-wtd_per_country_projections <- purrr::map(
-  countries,
-  function(country) {
-    message(country)
-    n_days <- length(
-      wtd_rt_estimates_per_country[[country]]$weeks_combined
-    ) * 7
-    x <- tall_deaths[[country]]
-    rt <- wtd_rt_estimates_per_country[[country]]$rt_samples
-    out <- purrr::map(
-      seq_len(sims_per_rt),
-      function(i) {
-        projections::project(
-          x = x,
-          R = rt,
-          si = si,
-          n_sim = n_sim,
-          n_days = n_days,
-          R_fix_within = TRUE,
-          model = "poisson"
-        ) %>%
-          as.matrix() %>% t
-      }
-    )
-    do.call(what = "rbind", args = out)
   }
 )
 

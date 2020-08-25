@@ -43,7 +43,7 @@ project_with_saturation <- function(deaths, r_eff, p_susceptible, si, n_sim = 10
     out[["r_effective"]][[day]] <- R
     out[["p_s"]][[day]] <- p_susceptible
   }
-
-  out[["incid_and_pred"]] <- I0
+  ncols_pred <- tail(seq_len(ncol(I0)), n_days)
+  out[["pred"]] <- I0[ , ncols_pred]
   out
 }
