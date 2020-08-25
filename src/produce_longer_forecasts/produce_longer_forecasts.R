@@ -117,10 +117,48 @@ projections <- map(
       pred,
       function(country_pred) {
         out <- map(country_pred, ~ .[["pred"]])
+        do.call(what = 'rbind', args = out)
       }
     )
   }
 )
+
+r_effective <- map(
+  all_projections,
+  function(pred) {
+    map(
+      pred,
+      function(country_pred) {
+        out <- map(country_pred, ~ .[["r_effective"]])
+        len <- length(out[[1]])
+        reff <- vector(mode = "list", length = len)
+        for (idx in 1:len) {
+          reff[[idx]] <- unlist(map(out, ~ .[[idx]]))
+        }
+        reff
+      }
+    )
+  }
+)
+
+p_s <- map(
+  all_projections,
+  function(pred) {
+    map(
+      pred,
+      function(country_pred) {
+        out <- map(country_pred, ~ .[["p_s"]])
+        len <- length(out[[1]])
+        ps <- vector(mode = "list", length = len)
+        for (idx in 1:len) {
+          ps[[idx]] <- unlist(map(out, ~ .[[idx]]))
+        }
+        ps
+      }
+    )
+  }
+)
+
 
 saveRDS(unwtd_projections, "unwtd_projections.rds")
 saveRDS(
