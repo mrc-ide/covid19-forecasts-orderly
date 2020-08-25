@@ -1,0 +1,14 @@
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
+script: script.R
+
+artefacts:
+  data:
+    description: Projections
+    filenames:
+      - si_distrs.rds
+      - cfr_shape_params.rds
+
+packages:
+  - purrr
