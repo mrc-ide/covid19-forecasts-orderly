@@ -120,7 +120,6 @@ combined2 <- purrr::keep(
 ## week_starting1 + another 7 days because you would have continued
 ## with Rt estimate for another 7 days
 f <- function(y) {
-
   df <- data.frame(
       week_starting1 = min(y$weeks_combined),
       week_starting2 = max(y$weeks_combined),
@@ -180,6 +179,11 @@ plots <- purrr::imap(
     )
 
     weights <- mutate_if(weights, is.numeric, ~ round(., 3))
+    weights <- gather(
+      weights, beta, weight, `beta across countries`:`beta per country`
+    ) %>%
+      filter(weight > 0) %>%
+      spread(`Week Starting`, weight)
 
     ymax <- ceiling(max(x[["97.5%"]]))
 
@@ -206,7 +210,9 @@ plots <- purrr::imap(
       ylim(0, ymax) +
       theme(legend.position = "top", legend.title = element_blank()) +
       scale_x_date(date_breaks = "1 week", limits = c(xmin, xmax)) +
-      geom_table(data = label, aes(x = x, y = y, label = tb))
+      geom_table(
+        data = label, aes(x = x, y = y, label = tb), size = 1.5
+      )
 
     p <- cowplot::plot_grid(p1, p2, ncol = 1, align = "hv")
     p

@@ -56,7 +56,9 @@ combine_with_previous <- function(df, country) {
 combine_with_previous_weighted <- function(df, weights, size = 10000) {
 
   out <- split(df, df$model)
-  idx <- sample(names(out), size = size, replace = TRUE, prob = weights)
+  idx <- sample(
+    names(out), size = size, replace = TRUE, prob = weights[names(out)]
+  )
   nsamples <- data.frame(table(idx))
   rt_samples <- imap_dfr(
     out,
