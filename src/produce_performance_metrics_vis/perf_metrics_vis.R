@@ -111,10 +111,10 @@ x50_all <- select(unwtd_pred_error_daily, country, obs, median_pred)
 x50_all <- distinct(x50_all)
 x50_all <- filter(x50_all, obs >= 0)
 
-x50_all$log_obs <- log(x50_all$obs, 10)
-x50_all$log_median_pred <- log(x50_all$median_pred, 10)
-ymax <- max(x50_all$log_median_pred, x50_all$log_obs, na.rm = TRUE)
-ymax <- ceiling(ymax)
+##x50_all$log_obs <- log(x50_all$obs, 10)
+##x50_all$log_median_pred <- log(x50_all$median_pred, 10)
+##ymax <- max(x50_all$log_median_pred, x50_all$log_obs, na.rm = TRUE)
+##ymax <- ceiling(ymax)
 
 bin_start <- seq(0, 4000, by = 100)
 bin_end  <- bin_start + 100
@@ -146,8 +146,11 @@ x50_all$pred_category <- apply(
   }
 )
 
+x50_all$pred_category[x50_all$median_pred >= 4100] <- "[4100, Inf)"
 
 categories <- glue::glue("[{bin_start}, {bin_end})")
+categories <- c(categories, "[4100, Inf)")
+
 y <- dplyr::count(x50_all, pred_category, obs_category)
 
 normalised <- map_dfr(
@@ -168,9 +171,25 @@ normalised$obs_category <- factor(
 )
 
 
-ggplot(normalised, aes(pred_category, obs_category, fill = proportion)) +
-  geom_tile(width = 0.5, height = 0.5)
+pdensity <- ggplot(
+  normalised, aes(obs_category, pred_category, fill = proportion)
+) +
+  geom_tile(width = 0.8, height = 0.8) +
+  scale_fill_distiller(
+    palette = "YlOrRd", direction = 1,
+    name = "Proportion in bin"
+  ) +
+  theme_minimal() +
+  xlab("Observed daily deaths") +
+  ylab("Median predictied daily deaths") +
+  theme(
+    legend.position = "top",
+    ##legend.title = element_blank(),
+    axis.text.x = element_text(angle = -90, hjust = 0),
+    legend.key.width = unit(2, "lines")
+  )
 
+ggsave("obs_predicted_2d_density.png", pdensity)
 
 ######################################################################
 ######################################################################
