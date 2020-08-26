@@ -172,7 +172,8 @@ pred_qntls <- map_depth(
     y <- data.frame(y)
     colnames(y) <- dates_pred
     y <- tibble::rownames_to_column(y, var = "qntl")
-    tidyr::gather(y, date, val, -qntl)
+    y <- tidyr::gather(y, date, val, -qntl)
+    tidyr::spread(y, qntl, val)
   }
 )
 
@@ -186,7 +187,6 @@ reff_qntls <- map_depth(
     )
     names(y) <- dates_pred
     out <- map_dfr(y, ~ quantile(., prob = prob), .id = "date")
-    tidyr::gather(out, qntl, val, -date)
   }
 )
 
@@ -199,12 +199,41 @@ ps_qntls <- map_depth(
       length.out = length(y), by = "1 day"
     )
     names(y) <- dates_pred
-    out <- map_dfr(y, ~ quantile(., prob = prob), .id = "date")
-    tidyr::gather(out, qntl, val, -date)
+    map_dfr(y, ~ quantile(., prob = prob), .id = "date")
   }
 )
 
-##pred_qntls <- map(pred_qntls, ~ dplyr::bind_rows(., .id = "country"))
+combined_plot <- function(obs, pred, ps, reff) {
+
+  p1 <- ggplot() +
+    geom_point(data = obs, aes(dates, deaths)) +
+    geom_ribbon(
+      data = pred, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+      alpha = 0.3
+    ) +
+    geom_line(
+      data = pred, aes(x = date, y = `50%`)
+    )
+  p2 <- ggplot() +
+    geom_ribbon(
+      data = reff, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+      alpha = 0.3
+    ) +
+    geom_line(
+      data = reff, aes(x = date, y = `50%`)
+    )
+
+  p3 <- ggplot() +
+    geom_ribbon(
+      data = ps, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+      alpha = 0.3
+    ) +
+    geom_line(
+      data = ps, aes(x = date, y = `50%`)
+    ) + ylim(0, 1)
+
+
+}
 
 saveRDS(unwtd_projections, "unwtd_projections.rds")
 saveRDS(
