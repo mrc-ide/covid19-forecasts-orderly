@@ -11,9 +11,15 @@ artefacts:
   data:
     description: Projections
     filenames:
-      - unwtd_projections.rds
-      - wtd_per_country_projections.rds
-      - wtd_across_all_projections.rds
+      - unweighted_pred_qntls.rds
+      - unweighted_reff_qntls.rds
+      - unweighted_ps_qntls.rds
+      - weighted_across_countries_pred_qntls.rds
+      - weighted_across_countries_ps_qntls.rds
+      - weighted_across_countries_reff_qntls.rds
+      - weighted_per_country_pred_qntls.rds
+      - weighted_per_country_ps_qntls.rds
+      - weighted_per_country_reff_qntls.rds
 
 packages:
   - purrr
@@ -24,6 +30,8 @@ packages:
   - rincewind
   - ggplot2
   - patchwork
+  - glue
+  - snakecase
 
 resources:
   - ecdc_pop2018.csv

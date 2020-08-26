@@ -254,11 +254,48 @@ combined_plot <- function(obs, pred, ps, reff) {
 
 }
 
-saveRDS(unwtd_projections, "unwtd_projections.rds")
-saveRDS(
-  wtd_per_country_projections, "wtd_per_country_projections.rds"
+walk(
+  1:3,
+  function(idx) {
+    walk(
+      countries,
+      function(country) {
+        pred <- pred_qntls[[idx]][[country]]
+        ps <- ps_qntls[[idx]][[country]]
+        reff <- reff_qntls[[idx]][[country]]
+        obs <- deaths_to_use[, c("dates", country)]
+        obs$deaths <- obs[[country]]
+
+        pred$date <- as.Date(pred$date)
+        ps$date <- as.Date(ps$date)
+        reff$date <- as.Date(reff$date)
+        obs$dates <- as.Date(obs$dates)
+        p <- combined_plot(obs, pred, ps, reff)
+        x <- snakecase::to_title_case(names(pred_qntls)[idx])
+        p <- p +
+          plot_annotation(
+            title = glue::glue("{x} projections for {country}")
+          )
+        x <- snakecase::to_snake_case(x)
+        outfile <- glue::glue("figures/{x}_{country}_{week_ending}.png")
+        ggsave(outfile, p)
+      }
+    )
+  }
 )
 
-saveRDS(
-  wtd_across_all_projections, "wtd_across_all_projections.rds"
+iwalk(
+  pred_qntls,
+  function(x, y) saveRDS(x, glue::glue("{y}_pred_qntls.rds"))
+)
+
+
+iwalk(
+  ps_qntls,
+  function(x, y) saveRDS(x, glue::glue("{y}_ps_qntls.rds"))
+)
+
+iwalk(
+  reff_qntls,
+  function(x, y) saveRDS(x, glue::glue("{y}_reff_qntls.rds"))
 )
