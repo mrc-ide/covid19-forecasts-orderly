@@ -47,3 +47,54 @@ project_with_saturation <- function(deaths, r_eff, p_susceptible, si, n_sim = 10
   out[["pred"]] <- I0[ , ncols_pred]
   out
 }
+
+combined_plot <- function(obs, pred, ps, reff) {
+
+  p1 <- ggplot() +
+    geom_point(data = obs, aes(dates, deaths)) +
+    geom_ribbon(
+      data = pred, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+      alpha = 0.3
+    ) +
+    geom_line(
+      data = pred, aes(x = date, y = `50%`)
+    ) +
+    ylab("Daily Deaths") +
+    xlab("") +
+    theme(axis.text.x = element_blank())
+
+  p2 <- ggplot() +
+    geom_ribbon(
+      data = reff, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+      alpha = 0.3
+    ) +
+    geom_line(
+      data = reff, aes(x = date, y = `50%`)
+    ) +
+    ylim(0, NA) +
+    geom_hline(yintercept = 1, col = "red", linetype = "dashed") +
+    ylab("Effective reproduction number") +
+    xlab("") +
+    theme(axis.ticks.x = element_blank())
+
+
+  p3 <- ggplot() +
+    geom_ribbon(
+      data = ps, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+      alpha = 0.3
+    ) +
+    geom_line(
+      data = ps, aes(x = date, y = `50%`)
+    ) + ylim(0, 1) +
+    xlab("") +
+    ylab("Proportion susceptible")
+
+  p <- p1 + p2 + p3 + plot_layout(nrow = 3) +
+    plot_annotation(tag_levels = 'A') &
+        scale_x_date(
+      date_breaks = "2 weeks", limits = c(as.Date("2020-03-01"), NA)
+    ) &
+    theme_minimal()
+  p
+
+}

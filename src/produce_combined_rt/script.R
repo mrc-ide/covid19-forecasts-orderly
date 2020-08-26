@@ -133,7 +133,7 @@ f <- function(y) {
   ndays <- as.numeric(df$week_starting2 - df$week_starting1) + 7
   df <- df[rep(seq_len(nrow(df)), each = ndays), ]
   df$forecast_week <- seq(
-    from = df$week_starting1[1],
+    from = df$week_starting1[1] + 1,
     length.out = ndays,
     by = "1 day"
   )
@@ -150,7 +150,7 @@ plots <- purrr::imap(
           df <- df[rep(seq_len(nrow(df)), each = 7), ]
           df$week_starting <- df$forecast_week
           df$forecast_week <- seq(
-            from = df$forecast_week[1],
+            from = df$forecast_week[1] + 1,
             length.out = 7,
             by = "1 day"
           )
@@ -162,12 +162,12 @@ plots <- purrr::imap(
     weighted_per  <- f(combined_weighted_estimates[[country]])
 
     weights_all <- data.frame(
-      weights = combined_weighted_estimates2[[country]][["weights"]]
+      weights = combined_weighted_estimates2[[country]][["frequency"]]
     )
     weights_all <- tibble::rownames_to_column(weights_all, var = "Week Starting")
 
     weights_per <- data.frame(
-      weights = combined_weighted_estimates[[country]][["weights"]]
+      weights = combined_weighted_estimates[[country]][["frequency"]]
     )
     weights_per <- tibble::rownames_to_column(weights_per, var = "Week Starting")
     weights <- left_join(
@@ -178,16 +178,17 @@ plots <- purrr::imap(
         "beta across countries", "beta per country"
     )
 
-    weights <- mutate_if(weights, is.numeric, ~ round(., 3))
+    ##weights <- mutate_if(weights, is.numeric, ~ round(., 3))
     weights <- gather(
       weights, beta, weight, `beta across countries`:`beta per country`
     ) %>%
       filter(weight > 0) %>%
-      spread(`Week Starting`, weight)
+      spread(`Week Starting`, weight, fill = 0)
 
     ymax <- ceiling(max(x[["97.5%"]]))
 
     p1 <- plot_weekly_iqr(x) +
+      ##scale_x_date(breaks = unique(x$forecast_week)) +
       coord_cartesian(clip = "off") +
       ylim(0, ymax)
 
@@ -205,11 +206,14 @@ plots <- purrr::imap(
     ytable <- ymax
     label <- tibble(x = xtable, y = ytable, tb = list(weights))
 
+    ##weeks <- df$week_starting1
+    ##weeks <- df$week_starting1[seq(1, length(weeks), by = 2)]
+
     p2 <- plot_combined_iqr(both) +
       coord_cartesian(clip = "off") +
       ylim(0, ymax) +
       theme(legend.position = "top", legend.title = element_blank()) +
-      scale_x_date(date_breaks = "1 week", limits = c(xmin, xmax)) +
+      scale_x_date(date_breaks = "2 weeks", limits = c(xmin, xmax)) +
       geom_table(
         data = label, aes(x = x, y = y, label = tb), size = 1.5
       )

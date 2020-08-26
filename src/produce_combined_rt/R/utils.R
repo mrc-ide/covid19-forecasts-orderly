@@ -76,7 +76,7 @@ combine_with_previous_weighted <- function(df, weights, size = 10000) {
     combined_rt = combined_qntls,
     weeks_combined = names(out),
     weights = weights,
-    frequency = nsamples$Freq,
+    frequency = setNames(nsamples$Freq, nsamples$idx),
     rt_samples = sample(x = rt_samples[[use_si]], size = 1000)
   )
 }
@@ -118,6 +118,8 @@ plot_combined_iqr <- function(df) {
 
 plot_weekly_iqr <- function(df) {
 
+  weeks <- df$week_starting
+  weeks <- df$week_starting[seq(1, length(weeks), by = 2)]
   p <- ggplot() +
   geom_ribbon(
     data = df,
@@ -132,7 +134,7 @@ plot_weekly_iqr <- function(df) {
     ),
     size = 1.1
   ) + theme_minimal() +
-    scale_x_date(date_breaks = "1 week") +
+    scale_x_date(breaks = weeks, minor_breaks = NULL) +
     xlab("Forecast Week") +
     ylab("Weekly Effective Reproduction Number") +
     geom_hline(yintercept = 1, linetype = "dashed") +

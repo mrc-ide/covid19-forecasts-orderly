@@ -54,7 +54,9 @@ x$depends <- c(dependances, dependancies5)
 
 
 
-con <- file("src/produce_weights_combined_rt/orderly.yml", "w")
+con <- file(
+  here::here("src/produce_weights_combined_rt/orderly.yml"), "w"
+)
 yaml::write_yaml(x, con)
 close(con)
 
