@@ -1,7 +1,7 @@
 ## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"))
 ## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
-
+prob <- c(0.025, 0.25, 0.50, 0.75, 0.975)
 population <- readr::read_csv("ecdc_pop2018.csv")
 unwtd_rt_estimates <- readRDS("combined_rt_estimates.rds")
 wtd_rt_estimates_across_countries <- readRDS(
@@ -74,7 +74,6 @@ all_reff <- map(
     )
   }
 )
-
 
 
 all_projections <- map(
@@ -159,6 +158,53 @@ p_s <- map(
   }
 )
 
+pred_qntls <- map_depth(
+  projections,
+  2,
+  function(mat) {
+    dates_pred <- seq(
+      from = as.Date(week_ending) + 1,
+      length.out = ncol(mat), by = "1 day"
+    )
+    y <- apply(
+      mat, 2, quantile, prob = prob
+    )
+    y <- data.frame(y)
+    colnames(y) <- dates_pred
+    y <- tibble::rownames_to_column(y, var = "qntl")
+    tidyr::gather(y, date, val, -qntl)
+  }
+)
+
+reff_qntls <- map_depth(
+  r_effective,
+  2,
+  function(y) {
+    dates_pred <- seq(
+      from = as.Date(week_ending) + 1,
+      length.out = length(y), by = "1 day"
+    )
+    names(y) <- dates_pred
+    out <- map_dfr(y, ~ quantile(., prob = prob), .id = "date")
+    tidyr::gather(out, qntl, val, -date)
+  }
+)
+
+ps_qntls <- map_depth(
+  p_s,
+  2,
+  function(y) {
+    dates_pred <- seq(
+      from = as.Date(week_ending) + 1,
+      length.out = length(y), by = "1 day"
+    )
+    names(y) <- dates_pred
+    out <- map_dfr(y, ~ quantile(., prob = prob), .id = "date")
+    tidyr::gather(out, qntl, val, -date)
+  }
+)
+
+##pred_qntls <- map(pred_qntls, ~ dplyr::bind_rows(., .id = "country"))
 
 saveRDS(unwtd_projections, "unwtd_projections.rds")
 saveRDS(
