@@ -213,7 +213,11 @@ combined_plot <- function(obs, pred, ps, reff) {
     ) +
     geom_line(
       data = pred, aes(x = date, y = `50%`)
-    )
+    ) +
+    ylab("Daily Deaths") +
+    xlab("") +
+    theme(axis.text.x = element_blank())
+
   p2 <- ggplot() +
     geom_ribbon(
       data = reff, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
@@ -221,7 +225,13 @@ combined_plot <- function(obs, pred, ps, reff) {
     ) +
     geom_line(
       data = reff, aes(x = date, y = `50%`)
-    )
+    ) +
+    ylim(0, NA) +
+    geom_hline(yintercept = 1, col = "red", linetype = "dashed") +
+    ylab("Effective reproduction number") +
+    xlab("") +
+    theme(axis.ticks.x = element_blank())
+
 
   p3 <- ggplot() +
     geom_ribbon(
@@ -230,8 +240,17 @@ combined_plot <- function(obs, pred, ps, reff) {
     ) +
     geom_line(
       data = ps, aes(x = date, y = `50%`)
-    ) + ylim(0, 1)
+    ) + ylim(0, 1) +
+    xlab("") +
+    ylab("Proportion susceptible")
 
+  p <- p1 + p2 + p3 + plot_layout(nrow = 3) +
+    plot_annotation(tag_levels = 'A') &
+        scale_x_date(
+      date_breaks = "1 week", limits = c(as.Date("2020-03-01"), NA)
+    ) &
+    theme_minimal()
+  p
 
 }
 
