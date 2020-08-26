@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-04-05", use_si = "si_2"))
 ## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
 prob <- c(0.025, 0.25, 0.50, 0.75, 0.975)
@@ -11,6 +11,12 @@ wtd_rt_estimates_per_country <- readRDS(
   "combined_weighted_estimates_per_country.rds"
 )
 
+#######
+names(unwtd_rt_estimates)[names(unwtd_rt_estimates) == "Czech_Republic"] <- "Czechia"
+names(wtd_rt_estimates_across_countries)[names(wtd_rt_estimates_across_countries) == "Czech_Republic"] <- "Czechia"
+names(wtd_rt_estimates_per_country)[names(wtd_rt_estimates_per_country) == "Czech_Republic"] <- "Czechia"
+
+######
 date_to_project_from <- as.Date(week_ending)
 sims_per_rt <- 10
 n_sim <- 1000
@@ -27,15 +33,7 @@ si_distrs <- readRDS("si_distrs.rds")
 si <- si_distrs[[use_si]]
 
 deaths_to_use <- raw_data[["D_active_transmission"]]
-
-
-tall_deaths <- tidyr::gather(
-  deaths_to_use, key = country, value = deaths, -dates
-) %>%
-  split(.$country) %>%
-  purrr::map(
-  ~ rincewind:::ts_to_incid(ts = ., date_col = "dates", case_col = "deaths")
-)
+colnames(deaths_to_use)[colnames(deaths_to_use) == "Czech_Republic"] <- "Czechia"
 
 
 

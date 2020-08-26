@@ -8,7 +8,7 @@ weeks <- list(
   "2020-08-09"
 )
 use_si <- "si_2"
-use_draft <- TRUE
+use_draft <- FALSE
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
@@ -17,19 +17,19 @@ for (week in weeks) {
   a <-  orderly::orderly_run(
     "produce_weights_combined_rt", parameters = parameter, use_draft = FALSE
   )
-  ##orderly::orderly_commit(a
+  orderly::orderly_commit(a)
 
   source("orderly-helper-scripts/write_dependencies_combined_rt.R")
   m1 <- orderly::orderly_run(
     "produce_combined_rt", parameters = parameter, use_draft = use_draft
   )
-  ##orderly::orderly_commit(m1)
+  orderly::orderly_commit(m1)
   ##orderly::orderly_push_archive(name = "produce_combined_rt", id = m1)
 
   m2 <- orderly::orderly_run(
     "produce_longer_forecasts", parameters = parameter, use_draft = use_draft
   )
-  ##orderly::orderly_commit(m2)
+  orderly::orderly_commit(m2)
   #orderly::orderly_push_archive(
   #  name = "produce_longer_forecasts", id = m2
   #)
