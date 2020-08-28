@@ -163,18 +163,20 @@ normalised <- map_dfr(
 )
 
 normalised$pred_category <- factor(
-  y$pred_category, levels = categories, ordered = TRUE
+  normalised$pred_category, levels = categories, ordered = TRUE
 )
 
 normalised$obs_category <- factor(
-  y$obs_category, levels = categories, ordered = TRUE
+  normalised$obs_category, levels = categories, ordered = TRUE
 )
 
 
 pdensity <- ggplot(
   normalised, aes(obs_category, pred_category, fill = proportion)
 ) +
-  geom_tile(width = 0.8, height = 0.8) +
+  geom_tile(width = 0.9, height = 0.9) +
+  scale_x_discrete(drop = FALSE) +
+  scale_y_discrete(drop = FALSE) +
   scale_fill_distiller(
     palette = "YlOrRd", direction = 1,
     name = "Proportion in bin"
@@ -190,6 +192,13 @@ pdensity <- ggplot(
   )
 
 ggsave("obs_predicted_2d_density.png", pdensity)
+
+normalised <- select(normalised, -n) %>%
+  spread(pred_category, proportion, fill = 0)
+
+readr::write_csv(normalised, "obs_predicted_2d_density.csv")
+
+
 
 ######################################################################
 ######################################################################
