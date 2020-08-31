@@ -20,7 +20,8 @@ weeks <- list(
   "2020-08-02",
   "2020-08-09",
   "2020-08-16",
-  "2020-08-23"
+  "2020-08-23",
+  "2020-08-30"
 )
 
 for (week in weeks) {
@@ -31,7 +32,7 @@ for (week in weeks) {
   )
 
   orderly::orderly_commit(m1)
-  orderly::orderly_push_archive("run_rti0", m1)
+  ##orderly::orderly_push_archive("run_rti0", m1)
 }
 
 for (week in weeks) {
@@ -52,7 +53,7 @@ for (week in weeks) {
     "DeCa_model", parameters = parameter, use_draft = use_draft
   )
   orderly::orderly_commit(m3)
-  orderly::orderly_push_archive(name = "DeCa_model", id = m3)
+  ##orderly::orderly_push_archive(name = "DeCa_model", id = m3)
 }
 
 for (week in weeks) {
@@ -62,7 +63,7 @@ for (week in weeks) {
     "process_individual_models", parameters = parameter, use_draft = use_draft
   )
   orderly::orderly_commit(m3)
-  orderly::orderly_push_archive("process_individual_models", m3)
+  ##orderly::orderly_push_archive("process_individual_models", m3)
 }
 
 for (week in weeks) {
@@ -72,7 +73,7 @@ for (week in weeks) {
     "produce_ensemble_outputs", parameters = parameter, use_draft = use_draft
   )
   orderly::orderly_commit(unwtd)
-  orderly::orderly_push_archive("produce_ensemble_outputs", unwtd)
+  ##orderly::orderly_push_archive("produce_ensemble_outputs", unwtd)
 }
 
 a <- orderly::orderly_run("src/format_model_outputs/")
