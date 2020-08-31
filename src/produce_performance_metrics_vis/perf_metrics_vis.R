@@ -482,16 +482,101 @@ weekly_rel_err <- group_by(x, forecast_date, country) %>%
 
 weekly_rel_err$forecast_date <- factor(weekly_rel_err$forecast_date)
 
-ggplot(weekly_rel_err) +
-  geom_point(
+filter(weekly_rel_err, country %in% main_text_countries) %>%
+ggplot() +
+  geom_half_violin(
     aes(country, weekly_rel_null),
-    col = "red"
+    fill = "red", alpha = 0.3, side = "l"
   ) +
-  geom_point(
+  geom_half_violin(
     aes(country, weekly_rel_pred),
-    col = "blue"
+    fill = "blue", alpha = 0.3, side = "r"
   ) +
-  theme_minimal()  +
-  ggforce::facet_wrap_paginate(~forecast_date, ncol = 2, nrow = 3, scales = "free_y", page = 1)
+  theme_minimal() +
+  xlab("") +
+  ylab("Mean relative error")
+  ##ggforce::facet_wrap_paginate(~country, ncol = 2, nrow = 3, scales = "free_y", page = 1)
+
+npages <- ceiling(length(unique(weekly_rel_err$country)) / 18)
+
+walk(
+  1:npages,
+  function(page) {
+    p <- ggplot(weekly_rel_err) +
+      geom_half_violin(
+        aes(country, weekly_rel_null),
+        fill = "red", alpha = 0.3, side = "l"
+      ) +
+      geom_half_violin(
+        aes(country, weekly_rel_pred),
+        fill = "blue", alpha = 0.3, side = "r"
+      ) +
+      theme_minimal() +
+      xlab("") +
+      ylab("Mean relative error") +
+      theme(strip.text = element_blank()) +
+      ggforce::facet_wrap_paginate(
+        ~country, ncol = 3, nrow = 6, scales = "free", page = page
+      )
+
+    outfile <- glue("error_comparison_{page}.png")
+    ggsave(outfile, p)
+  }
+)
+
+## Across all countries
+weekly_rel_err$forecast_date <- as.Date(weekly_rel_err$forecast_date)
+
+x <- group_by(weekly_rel_err, country) %>%
+  summarise_if(is.numeric, mean) %>%
+  ungroup()
+
+x <- gather(x, var, val, -country)
+
+x1 <- x[x$country %in% x$country[1:50], ]
+x2 <- x[x$country %in% x$country[51:99], ]
+
+p1 <- ggplot(x1, aes(country, val, col = var)) +
+  geom_point() +
+  ##scale_y_log10() +
+  theme_minimal() +
+  xlab("") +
+  ylab("Mean relative error") +
+  theme(
+    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
+    legend.position = "top", legend.title = element_blank()
+  )
+
+p2 <- ggplot(x2, aes(country, val, col = var)) +
+  geom_point() +
+  ##scale_y_log10() +
+  theme_minimal() +
+  xlab("") +
+  ylab("Mean relative error") +
+  theme(
+    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
+    legend.position = "none", legend.title = element_blank()
+  )
 
 
+p <- p1 + p2 + plot_layout(ncol = 1)
+
+## Across all weeks
+x <- group_by(weekly_rel_err, forecast_date) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  ungroup()
+
+x <- gather(x, var, val, -forecast_date)
+
+
+p1 <- ggplot(x, aes(forecast_date, val, col = var)) +
+  geom_point() +
+  ##scale_y_log10() +
+  theme_minimal() +
+  xlab("") +
+  ylab("Mean relative error") +
+  theme(
+    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
+    legend.position = "top", legend.title = element_blank()
+  ) +
+  scale_x_date(date_breaks = "1 week")

@@ -36,20 +36,85 @@ saveRDS(si_distrs, "si_distrs.rds")
 ### Table 3, page 19
 ### Other possible sources:
 ### https://doi.org/10.2807/1560-7917.ES.2020.25.31.2001383
-age_cfr <- list(
-  "[15-44)" = c(0.03, 0.03, 0.04) / 100,
-  "[45-64)" = c(0.52, 0.49, 0.55) / 100,
-  "[65-74)" = c(3.13, 2.65, 3.61) / 100,
-  "75+" = c(11.64, 9.22, 14.06) / 100
+
+infections <- data.frame(
+  age_group = c("[15-44)", "[45-64)", "[65-74)", "75+"),
+  mu = c(1536000, 895000, 181000, 166000),
+  sigma = 1000 * c(
+  (1635 - 1437) / 2,
+  (953 - 837) / 2,
+  (209 - 153) / 2,
+  (201 - 131) / 2
+  )
+)
+c19_deaths <- data.frame(
+  age_group = c("[15-44)", "[45-64)", "[65-74)", "75+"),
+  deaths = c(524, 4657, 5663, 19330)
 )
 
+ifr_distr <- map(
+  infections$age_group,
+  function(age_group) {
+    mu <- infections$mu[infections$age_group == age_group]
+    sigma <- infections$sigma[infections$age_group == age_group]
+    x <- rnorm(1e4, mean = mu, sd = sigma)
+    while (any(x < 0)) x <- rnorm(1e4, mean = mu, sd = sigma)
+    c19_deaths$deaths[c19_deaths$age_group == age_group] / x
+  }
+)
+names(ifr_distr) <- infections$age_group
+pop_by_age <- read_excel(
+  "PopulationAgeSex-20200831015935.xlsx", sheet = 2
+)
+colnames(pop_by_age) <- pop_by_age[1, ]
+pop_by_age <- pop_by_age[-1, ]
 
+## First re-organise the population in the desired age brakets
+locations <- setNames(
+  unique(pop_by_age$Location), unique(pop_by_age$Location)
+)
+
+pop_pyramid <- map(
+  locations,
+  function(location) {
+    x <- pop_by_age[pop_by_age$Location == location, ]
+    x <- mutate_at(x, vars(`0-4`:`100+`), as.numeric)
+
+    out <- data.frame(
+      location = location,
+      "[0-15)" = rowSums(select(x, `0-4`:`10-14`)),
+      "[15-44)" = rowSums(select(x, `5-9`:`40-44`)),
+      "[45-64)" = rowSums(select(x, `45-49`:`60-64`)),
+      "[65-74)" = rowSums(select(x, `65-69`:`70-74`)),
+      "75+" = rowSums(select(x, `75-79`:`100+`)),
+      ##total = rowSums(select(x, `0-4`:`100+`)),
+      check.names = FALSE
+    )
+    out <- gather(out, age_group, pop, -location)
+    out$prop <- out$pop / sum(out$pop)
+    out
+  }
+)
+
+pop_wtd_ifr <- map(
+  pop_pyramid,
+  function(pop) {
+    out <- slider::slide(
+      pop, ~ ifr_distr[[as.character(.x$age_group)]] * .x$prop
+      )
+    out[[5]] + out[[2]] + out[[3]] + out[[4]]
+  }
+)
+
+pop_wtd_ifr_qntls <- map_dfr(
+  pop_wtd_ifr, ~ quantile(., na.rm = TRUE), .id = "location"
+)
 
 CFR_esti <- c(1.38, 1.23, 1.53)/100
 # function to get parameters
 f1 <- function(shape){
   res <- c(
-    shape[1]/(shape[1]+shape[2]),
+    shape[1]/(shape[1]+ shape[2]),
     qbeta(.025, shape1 = shape[1], shape2 = shape[2]),
     qbeta(.975, shape1 = shape[1], shape2 = shape[2])
   )

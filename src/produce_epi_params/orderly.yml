@@ -10,5 +10,9 @@ artefacts:
       - si_distrs.rds
       - cfr_shape_params.rds
 
+resources:
+  - PopulationAgeSex-20200831015935.xlsx
+  
 packages:
   - purrr
+  - readxl
