@@ -63,10 +63,12 @@ null_model_error <- map_dfr(
         prev_week <- model_input[model_input$dates %in% (week - 7), country]
         null_pred <- matrix(mean(prev_week), ncol = 10000, nrow = 7)
         baseline <- assessr::mae(obs = obs, pred = null_pred)
+        baseline_rel <- assessr::rel_mae(obs = obs, pred = null_pred)
         data.frame(
           week_starting = week_starting,
           dates = week,
           null_error = baseline,
+          rel_null_error = baseline_rel,
           prev_week_avg = mean(prev_week)
         )
       }

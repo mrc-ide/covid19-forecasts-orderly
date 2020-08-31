@@ -347,7 +347,7 @@ ggsave("rmae_vs_weekly_cv_main_countries.png", pcv_main)
 ######################################################################
 
 null_error <- readRDS("null_model_error.rds")
-x <- dplyr::left_join(daily, null_error, by = c("date" = "dates", "country"))
+x <- left_join(daily, null_error, by = c("date" = "dates", "country"))
 weekly_compare <- group_by(x, forecast_date, country, si) %>%
   summarise(
     weekly_rel_err = mean(mae), weekly_null_err = mean(null_error)
@@ -369,7 +369,7 @@ x <- group_by(weekly_compare, country) %>%
 
 x$percent_less_than_1 <-  x$n_less_than_1 / x$n_forecasts
 
-x <- dplyr::arrange(x, desc(n_forecasts), desc(percent_less_than_1))
+x <- dplyr::arrange(x, desc(percent_less_than_1))
 
 weekly_compare <- left_join(weekly_compare, x)
 weekly_compare$country <-  factor(
@@ -390,17 +390,27 @@ weekly_compare$percent_less_than_1 <-
   scales::percent(weekly_compare$percent_less_than_1, accuracy = 0.1)
 
 more_forecasts <- weekly_compare[weekly_compare$n_forecasts >= 15, ]
-
-
 more_forecasts$country <- droplevels(more_forecasts$country)
+more_forecasts$country <- forcats::fct_reorder(
+  more_forecasts$country, more_forecasts$percent_less_than_1, max
+)
+
+
+
+## rel_error <- group_by(daily, forecast_date, country) %>%
+##   summarise(rel_error = mean(rel_mae, na.rm = TRUE)) %>%
+##   ungroup()
+## rel_error$forecast_date <- as.factor(rel_error$forecast_date)
+## more_forecasts <- left_join(more_forecasts, rel_error)
 
 p2 <- ggplot(
-  more_forecasts, aes(x = 0.1, y = country, label = percent_less_than_1)
+  more_forecasts, aes(x = 0.01, y = country, label = percent_less_than_1)
 ) + geom_text(size = 3) +
   scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
-  scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
+  scale_y_discrete(limits = levels(more_forecasts$country)) +
   theme_void() +
-  theme(plot.margin = unit(c(0, 0, 0, 0), "pt"))
+  coord_cartesian(clip = "off")
+  ##theme(plot.margin = unit(c(0, 0, 0, 1), "pt"))
 
 p1 <- ggplot() +
   theme_classic() +
@@ -446,7 +456,7 @@ ggnewscale::new_scale_fill() +
     fontface = "bold"
   ) +
 scale_y_discrete(
-  limits = rev(levels(more_forecasts$country)),
+  limits = levels(more_forecasts$country),
   labels = snakecase::to_title_case(rev(levels(more_forecasts$country)))
 ) +
 coord_cartesian(clip = "off")
@@ -458,100 +468,30 @@ ggsave("comparison_with_baseline_error.png", p)
 
 ######################################################################
 ######################################################################
-########### Version 2 with one scale #################################
+##################### Relative Error #################################
 ######################################################################
 ######################################################################
-p3 <- ggplot() +
-  theme_classic() +
-  geom_tile(
-    data = more_forecasts[more_forecasts$ratio <=5, ],
-    aes(forecast_date, country, fill = ratio),
-    width = 0.9,
-    height = 0.8
-  ) +
-scale_fill_distiller(
-  palette = "YlOrRd", na.value = "white", direction = 1
-) +
-  geom_tile(
-    data = more_forecasts[more_forecasts$ratio > 5, ],
-    aes(forecast_date, country),
-    fill = "#515bdc",
-    width = 0.9,
-    height = 0.8
-  ) +
-  xlab("") + ylab("") +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5),
-    legend.position = "top",
-    legend.title = element_blank(),
-    legend.key.width = unit(2, "lines")
-  ) +
-  geom_text(
-    data = more_forecasts,
-    aes(x = forecast_date, y = country, label = error_values),
-    size = 2,
-    fontface = "bold"
-  ) +
-scale_y_discrete(
-  limits = rev(levels(more_forecasts$country)),
-  labels = snakecase::to_title_case(rev(levels(more_forecasts$country)))
-) +
-coord_cartesian(clip = "off")
+x <- left_join(daily, null_error, by = c("date" = "dates", "country"))
+x <- select(x, forecast_date, country, rel_null_error, rel_mae)
 
-p <- p3 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
+weekly_rel_err <- group_by(x, forecast_date, country) %>%
+  summarise(
+    weekly_rel_null = mean(rel_null_error),
+    weekly_rel_pred = mean(rel_mae)
+  ) %>% ungroup()
 
-ggsave("comparison_with_baseline_error_single_scale.png", p)
+weekly_rel_err$forecast_date <- factor(weekly_rel_err$forecast_date)
 
-######################################################################
-######################################################################
-########## Version 3 with borders ####################################
-######################################################################
-######################################################################
-
-p4 <- ggplot() +
-  theme_classic() +
-  geom_tile(
-    data = more_forecasts[more_forecasts$ratio <=5, ],
-    aes(forecast_date, country, fill = ratio, col = err_level),
-    width = 0.9,
-    height = 0.8,
-    size = 1
+ggplot(weekly_rel_err) +
+  geom_point(
+    aes(country, weekly_rel_null),
+    col = "red"
   ) +
-  scale_fill_gradient2(midpoint = 1, mid = "#cce5cc") +
-  scale_colour_manual(
-    values = c(less_than_1 = "#004c00", greater_than_1 = "#400040")
+  geom_point(
+    aes(country, weekly_rel_pred),
+    col = "blue"
   ) +
-  geom_tile(
-    data = more_forecasts[more_forecasts$ratio > 5, ],
-    aes(forecast_date, country),
-    fill = "#515bdc",
-    width = 0.9,
-    height = 0.8
-  ) +
-  xlab("") + ylab("") +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5),
-    legend.position = "top",
-    legend.title = element_blank(),
-    legend.key.width = unit(2, "lines")
-  ) +
-  geom_text(
-    data = more_forecasts,
-    aes(x = forecast_date, y = country, label = error_values),
-    size = 2,
-    fontface = "bold"
-  ) +
-scale_y_discrete(
-  limits = rev(levels(more_forecasts$country)),
-  labels = snakecase::to_title_case(rev(levels(more_forecasts$country)))
-) +
-  guides(colour = "none") +
-coord_cartesian(clip = "off")
+  theme_minimal()  +
+  ggforce::facet_wrap_paginate(~forecast_date, ncol = 2, nrow = 3, scales = "free_y", page = 1)
 
-p <- p4 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
 
-ggsave("comparison_with_baseline_error_with_border.png", p)
-
-######################################################################
-######################################################################
-######################################################################

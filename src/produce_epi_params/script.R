@@ -31,6 +31,19 @@ saveRDS(si_distrs, "si_distrs.rds")
 ############### CFR Parameters
 #####################################################################
 #####################################################################
+### Age-disaggregated IFR
+### https://www.medrxiv.org/content/10.1101/2020.08.12.20173690v2.full.pdf
+### Table 3, page 19
+### Other possible sources:
+### https://doi.org/10.2807/1560-7917.ES.2020.25.31.2001383
+age_cfr <- list(
+  "[15-44)" = c(0.03, 0.03, 0.04) / 100,
+  "[45-64)" = c(0.52, 0.49, 0.55) / 100,
+  "[65-74)" = c(3.13, 2.65, 3.61) / 100,
+  "75+" = c(11.64, 9.22, 14.06) / 100
+)
+
+
 
 CFR_esti <- c(1.38, 1.23, 1.53)/100
 # function to get parameters
@@ -45,10 +58,10 @@ f1 <- function(shape){
 }
 
 n <- 5e2
-Shape1 <- rep(seq(300,350,length.out = n),each = n )
-Shape2 <- rep(seq(22500,23500,length.out = n), n )
-res <- rep(NA,n*n)
-for (i in 1:(n*n)){
+Shape1 <- rep(seq(300,350,length.out = n), each = n)
+Shape2 <- rep(seq(22500,23500,length.out = n), n)
+res <- rep(NA, n * n)
+for (i in 1:(n * n)){
   res[i] <- f1(c(Shape1[i],Shape2[i]))
 }
 f <- which(res == min(res))
