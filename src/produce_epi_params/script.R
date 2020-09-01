@@ -70,16 +70,37 @@ colnames(pop_by_age) <- pop_by_age[1, ]
 pop_by_age <- pop_by_age[-1, ]
 
 ## First re-organise the population in the desired age brakets
+## Fix names so that names in ECDC match with those in population
+## estimates excel sheet
+pop_by_age$Location[pop_by_age$Location == "Bolivia (Plurinational State of)"] <- "Bolivia"
+pop_by_age$Location[pop_by_age$Location == "Côte d'Ivoire"] <- "Cote_dIvoire"
+pop_by_age$Location[pop_by_age$Location == "Iran (Islamic Republic of)"] <- "Iran"
+pop_by_age$Location[pop_by_age$Location == "Lao People's Democratic Republic"] <- "Laos"
+pop_by_age$Location[pop_by_age$Location == "Republic of Moldova"] <- "Moldova"
+pop_by_age$Location[pop_by_age$Location == "State of Palestine"] <- "Palestine"
+pop_by_age$Location[pop_by_age$Location == "Russian Federation"] <- "Russia"
+pop_by_age$Location[pop_by_age$Location == "Republic of Korea"] <- "South Korea"
+pop_by_age$Location[pop_by_age$Location == "Syrian Arab Republic"] <- "Syria"
+pop_by_age$Location[pop_by_age$Location == "China, Taiwan Province of China"] <- "Taiwan"
+pop_by_age$Location[pop_by_age$Location == "Venezuela (Bolivarian Republic of)"] <- "Venezuela"
+pop_by_age$Location[pop_by_age$Location == "Viet Nam"] <- "Vietnam"
+## Kosovo is not present in the population estimates
+## We use the age distribution of its nearest neighbor
+df <- pop_by_age[pop_by_age$Location == "Serbia", ]
+df$Location <- "kosovo"
+pop_by_age <- rbind(pop_by_age, df)
+
+
 locations <- setNames(
   unique(pop_by_age$Location), unique(pop_by_age$Location)
 )
+
 
 pop_pyramid <- map(
   locations,
   function(location) {
     x <- pop_by_age[pop_by_age$Location == location, ]
     x <- mutate_at(x, vars(`0-4`:`100+`), as.numeric)
-
     out <- data.frame(
       location = location,
       "[0-15)" = rowSums(select(x, `0-4`:`10-14`)),
@@ -114,15 +135,13 @@ saveRDS(pop_wtd_ifr, "population_weighted_ifr.rds")
 
 continent <- readr::read_csv("country_continent.csv") %>%
   janitor::clean_names()
+continent$countries_and_territories <- tolower(continent$countries_and_territories)
 
-
+pop_wtd_ifr_qntls$location <- snakecase::to_snake_case(pop_wtd_ifr_qntls$location)
 pop_wtd_ifr_qntls <- left_join(
   pop_wtd_ifr_qntls, continent, by = c("location" = "countries_and_territories")
 )
 pop_wtd_ifr_qntls <- na.omit(pop_wtd_ifr_qntls)
-pop_wtd_ifr_qntls$location <- forcats::fct_reorder(
-  pop_wtd_ifr_qntls$location, pop_wtd_ifr_qntls$continent, min
-)
 
 pop_wtd_ifr_qntls$color <- case_when(
   pop_wtd_ifr_qntls$continent == "Africa" ~ "#000000",
@@ -132,6 +151,7 @@ pop_wtd_ifr_qntls$color <- case_when(
   pop_wtd_ifr_qntls$continent == "South America" ~ "#0072B2",
   pop_wtd_ifr_qntls$continent == "Oceania" ~ "#D55E00"
 )
+pop_wtd_ifr_qntls$location <- snakecase::to_title_case(pop_wtd_ifr_qntls$location)
 pop_wtd_ifr_qntls$label <- glue(
   "<i style='color:{pop_wtd_ifr_qntls$color}'>{pop_wtd_ifr_qntls$location}</i>"
 )
@@ -141,11 +161,12 @@ pop_wtd_ifr_qntls$label <- forcats::fct_reorder(
 
 p <- ggplot(pop_wtd_ifr_qntls) +
   geom_point(
-    aes(label, `50%`, col = continent)
+    aes(label, `50%`, col = color)
   ) +
   geom_linerange(
-    aes(x = label, ymin = `25%`, ymax = `75%`, col = continent)
+    aes(x = label, ymin = `25%`, ymax = `75%`, col = color)
   ) +
+  scale_color_identity() +
   theme_minimal() +
   theme(
     axis.text.x = element_markdown(
