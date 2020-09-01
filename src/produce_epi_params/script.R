@@ -110,6 +110,62 @@ pop_wtd_ifr_qntls <- map_dfr(
   pop_wtd_ifr, ~ quantile(., na.rm = TRUE), .id = "location"
 )
 
+saveRDS(pop_wtd_ifr, "population_weighted_ifr.rds")
+
+continent <- readr::read_csv("country_continent.csv") %>%
+  janitor::clean_names()
+
+
+pop_wtd_ifr_qntls <- left_join(
+  pop_wtd_ifr_qntls, continent, by = c("location" = "countries_and_territories")
+)
+pop_wtd_ifr_qntls <- na.omit(pop_wtd_ifr_qntls)
+pop_wtd_ifr_qntls$location <- forcats::fct_reorder(
+  pop_wtd_ifr_qntls$location, pop_wtd_ifr_qntls$continent, min
+)
+
+pop_wtd_ifr_qntls$color <- case_when(
+  pop_wtd_ifr_qntls$continent == "Africa" ~ "#000000",
+  pop_wtd_ifr_qntls$continent == "Asia" ~ "#E69F00",
+  pop_wtd_ifr_qntls$continent == "Europe" ~ "#56B4E9",
+  pop_wtd_ifr_qntls$continent == "North America" ~ "#009E73",
+  pop_wtd_ifr_qntls$continent == "South America" ~ "#0072B2",
+  pop_wtd_ifr_qntls$continent == "Oceania" ~ "#D55E00"
+)
+pop_wtd_ifr_qntls$label <- glue(
+  "<i style='color:{pop_wtd_ifr_qntls$color}'>{pop_wtd_ifr_qntls$location}</i>"
+)
+pop_wtd_ifr_qntls$label <- forcats::fct_reorder(
+  pop_wtd_ifr_qntls$label, pop_wtd_ifr_qntls$continent, min
+)
+
+p <- ggplot(pop_wtd_ifr_qntls) +
+  geom_point(
+    aes(label, `50%`, col = continent)
+  ) +
+  geom_linerange(
+    aes(x = label, ymin = `25%`, ymax = `75%`, col = continent)
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_markdown(
+      lineheight = 1.2, angle = -90, hjust = 0, vjust = 0
+    ),
+    legend.position = "top",
+    legend.title = element_blank()
+  ) +
+  xlab("") +
+  ylab("Infection fatality ratio")
+
+ggsave("ifr_per_country.png", p)
+
+#####################################################################
+#####################################################################
+############### CFR Parameters
+############### No population weighting
+#####################################################################
+#####################################################################
+
 CFR_esti <- c(1.38, 1.23, 1.53)/100
 # function to get parameters
 f1 <- function(shape){

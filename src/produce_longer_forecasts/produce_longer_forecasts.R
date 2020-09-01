@@ -21,8 +21,10 @@ date_to_project_from <- as.Date(week_ending)
 sims_per_rt <- 10
 n_sim <- 1000
 
-shape <- readRDS("cfr_shape_params.rds")
-cfr_samples <- rbeta(n_sim, shape1 = shape[1],shape2 = shape[2])
+##shape <- readRDS("cfr_shape_params.rds")
+##cfr_samples <- rbeta(n_sim, shape1 = shape[1],shape2 = shape[2])
+ifr_samples <- readRDS("population_weighted_ifr.rds")
+names(ifr_samples) <- snakecase::to_snake_case((names(ifr_samples)))
 
 indir <- dirname(covid_19_path)
 raw_data <- readRDS(
@@ -58,12 +60,14 @@ all_reff <- map(
     imap(
       restimate,
       function(rt, country) {
+        message(country)
         deaths_so_far <- sum(
           deaths_to_use[deaths_to_use$dates <= week_ending, country]
         )
         pop <- population$pop_data2018[population$countries_and_territories == country]
         deaths_per_capita <- deaths_so_far / pop
-        p <- proportion_susceptible(deaths_per_capita, cfr_samples)
+        ifr <- ifr_samples[[tolower(country)]]
+        p <- proportion_susceptible(deaths_per_capita, ifr)
         list(
           p_susceptible = p,
           r_eff = rt$rt_samples * p
@@ -89,6 +93,7 @@ all_projections <- map(
         ##rt <- unwtd_rt_estimates[[country]]$rt_samples
         rt <- reff[[country]][["r_eff"]]
         p <- reff[[country]][["p_susceptible"]]
+        ifr <- ifr_samples[[tolower(country)]]
         f <-  function() {
           project_with_saturation(
             deaths = x,
@@ -97,7 +102,7 @@ all_projections <- map(
             si = si,
             n_sim = n_sim,
             n_days = n_days,
-            cfr = cfr_samples,
+            cfr = ifr,
             pop
           )
          }

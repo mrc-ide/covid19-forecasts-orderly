@@ -50,4 +50,4 @@ depends:
     id: latest
     use:
       si_distrs.rds: si_distrs.rds
-      cfr_shape_params.rds: cfr_shape_params.rds
+      population_weighted_ifr.rds: population_weighted_ifr.rds
