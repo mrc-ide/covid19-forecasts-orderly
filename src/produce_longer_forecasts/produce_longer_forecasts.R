@@ -170,7 +170,7 @@ pred_qntls <- map_depth(
       length.out = ncol(mat), by = "1 day"
     )
     y <- apply(
-      mat, 2, quantile, prob = prob
+      mat, 2, quantile, prob = prob, na.rm = FALSE
     )
     y <- data.frame(y)
     colnames(y) <- dates_pred
@@ -202,7 +202,7 @@ ps_qntls <- map_depth(
       length.out = length(y), by = "1 day"
     )
     names(y) <- dates_pred
-    map_dfr(y, ~ quantile(., prob = prob), .id = "date")
+    map_dfr(y, ~ quantile(., prob = prob, na.rm = FALSE), .id = "date")
   }
 )
 

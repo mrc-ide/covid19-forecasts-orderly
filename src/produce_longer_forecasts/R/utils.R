@@ -1,5 +1,7 @@
 proportion_susceptible <- function(deaths_per_capita, cfr) {
-  1 - (deaths_per_capita / cfr)
+  x <- 1 - (deaths_per_capita / cfr)
+  x[x < 0] <- 0
+  x
 }
 
 ## ws T X 1 matrix where N is the number of simulations,
@@ -34,6 +36,10 @@ project_with_saturation <- function(deaths, r_eff, p_susceptible, si, n_sim = 10
       ws, ncol = 1,  nrow = length(deaths) + day - 1
     )
     lambda <- force_of_infection(I0, ws, R)
+    if (any(is.na(lambda)) | any(lambda < 0)) {
+      message("ws at this point is", paste(ws, collapse = "\n"))
+      stop("Force of infection is NA on day ", day)
+    }
     pred <- map_int(lambda, function(x) rpois(1, x))
     I0 <- cbind(I0, pred)
     deaths_so_far <- rowSums(I0)
