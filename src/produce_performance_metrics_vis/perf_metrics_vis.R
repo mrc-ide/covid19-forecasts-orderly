@@ -46,6 +46,10 @@ observed_tall <- split(
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
 
+continent <- readr::read_csv("country_continent.csv") %>%
+  janitor::clean_names()
+
+
 ##weekly_incidence$forecast_date[weekly_incidence$forecast_date == as.Date("2020-03-09")] <- as.Date("2020-03-08")
 
 ######################################################################
@@ -172,10 +176,12 @@ normalised$obs_category <- factor(
 )
 
 
-pdensity <- ggplot(
-  normalised, aes(obs_category, pred_category, fill = proportion)
-) +
-  geom_tile(width = 0.9, height = 0.9) +
+pdensity <- ggplot() +
+  geom_tile(
+    data = normalised,
+    aes(obs_category, pred_category, fill = proportion),
+    width = 0.9, height = 0.9
+  ) +
   scale_x_discrete(drop = FALSE) +
   scale_y_discrete(drop = FALSE) +
   scale_fill_distiller(
@@ -192,7 +198,14 @@ pdensity <- ggplot(
     legend.key.width = unit(2, "lines")
   )
 
-ggsave("obs_predicted_2d_density.png", pdensity)
+y <- data.frame(pred_category = categories, obs_category = categories)
+pdensity2 <- pdensity +
+  geom_point(
+    data = y, aes(obs_category, pred_category), shape = "cross"
+  ) +
+  scale_shape_identity()
+
+ggsave("obs_predicted_2d_density.png", pdensity2)
 
 normalised <- select(normalised, -n) %>%
   spread(pred_category, proportion, fill = 0)
@@ -207,7 +220,9 @@ readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 ######################################################################
 ######################################################################
 
-pdaily <- ggplot(daily, aes(obs, rel_mae, col = phase)) +
+pdaily <- ggplot(
+  daily, aes(obs, rel_mae, col = phase)
+) +
   geom_point() +
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
@@ -297,23 +312,28 @@ pmain <- ggplot() +
 ggsave("rmae_vs_weekly_incid_main_countries.png", pmain)
 
 ######################################################################
-
+weekly$phase_label <- snakecase::to_title_case(
+  weekly$phase, parsing_option = 0
+)
 
 pcv_all <- ggplot(
-  weekly, aes(weekly_cv, rel_mae, col = phase)
+  weekly, aes(weekly_cv, rel_mae, col = phase_label)
 ) + geom_point() +
     scale_y_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
+      breaks = scales::trans_breaks("log10", function(x) 10^x),
+      labels = scales::trans_format("log10", scales::math_format(10^.x))
     ) +
     scale_x_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
+      breaks = scales::trans_breaks("log10", function(x) 10^x),
+      labels = scales::trans_format("log10", scales::math_format(10^.x))
   ) +
   theme_minimal() +
-  xlab("(log) Weekly coefficient of variation") +
+  xlab("(log) Coefficient of variation of incidence)") +
   ylab("(log) Relative mean error") +
-  theme(legend.position = "top", legend.title = element_blank())
+  theme(
+    legend.position = "top",
+    legend.title = element_blank()
+  )
 
 ggsave("rmae_vs_weekly_cv_all_countries.png", pcv_all)
 
@@ -348,20 +368,25 @@ ggsave("rmae_vs_weekly_cv_main_countries.png", pcv_main)
 ######################################################################
 
 null_error <- readRDS("null_model_error.rds")
-x <- left_join(daily, null_error, by = c("date" = "dates", "country"))
-weekly_compare <- group_by(x, forecast_date, country, si) %>%
+
+weekly_compare <- left_join(
+  daily, null_error, by = c("date" = "dates", "country")
+) %>%
+  group_by(forecast_date, country, si) %>%
   summarise(
     weekly_rel_err = mean(mae), weekly_null_err = mean(null_error)
   ) %>%
   ungroup()
-weekly_compare$ratio <- weekly_compare$weekly_rel_err / weekly_compare$weekly_null_err
 
+weekly_compare$country[weekly_compare$country == "Czech Republic"] <- "Czechia"
+weekly_compare$ratio <- weekly_compare$weekly_rel_err / weekly_compare$weekly_null_err
 weekly_compare$forecast_date <- factor(weekly_compare$forecast_date)
-x <- dplyr::count(weekly_compare, country)
-countries <- x$country
 weekly_compare$err_level <- ifelse(
   weekly_compare$ratio >= 1, "greater_than_1", "less_than_1"
 )
+
+##x <- dplyr::count(weekly_compare, country)
+##countries <- x$country
 
 x <- group_by(weekly_compare, country) %>%
   summarise(
@@ -369,15 +394,14 @@ x <- group_by(weekly_compare, country) %>%
   ) %>% ungroup()
 
 x$percent_less_than_1 <-  x$n_less_than_1 / x$n_forecasts
-
 x <- dplyr::arrange(x, desc(percent_less_than_1))
 
 weekly_compare <- left_join(weekly_compare, x)
-weekly_compare$country <-  factor(
+
+weekly_compare$country <- factor(
   weekly_compare$country, levels = x$country, ordered = TRUE
 )
 
-weekly_compare$country[weekly_compare$country == "Czech Republic"] <- "Czechia"
 
 labels <- unique(weekly_compare$forecast_date)
 
@@ -390,11 +414,14 @@ weekly_compare$error_values <- glue(
 weekly_compare$percent_less_than_1 <-
   scales::percent(weekly_compare$percent_less_than_1, accuracy = 0.1)
 
+
 more_forecasts <- weekly_compare[weekly_compare$n_forecasts >= 15, ]
 more_forecasts$country <- droplevels(more_forecasts$country)
-more_forecasts$country <- forcats::fct_reorder(
-  more_forecasts$country, more_forecasts$percent_less_than_1, max
-)
+
+
+
+
+
 
 
 
@@ -408,7 +435,7 @@ p2 <- ggplot(
   more_forecasts, aes(x = 0.01, y = country, label = percent_less_than_1)
 ) + geom_text(size = 3) +
   scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
-  scale_y_discrete(limits = levels(more_forecasts$country)) +
+  scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
   theme_void() +
   coord_cartesian(clip = "off")
   ##theme(plot.margin = unit(c(0, 0, 0, 1), "pt"))
@@ -422,7 +449,12 @@ p1 <- ggplot() +
     height = 0.8
   ) +
   scale_fill_distiller(
-    palette = "Greens", na.value = "white", direction = -1
+    palette = "Greens", na.value = "white", direction = -1,
+    guide = guide_colourbar(
+      title = "Model Error/Baseline Error < 1",
+      title.position = "left",
+      order = 1
+    )
   ) +
   ggnewscale::new_scale_fill() +
 
@@ -433,7 +465,12 @@ p1 <- ggplot() +
     height = 0.8
   ) +
 scale_fill_distiller(
-  palette = "YlOrRd", na.value = "white", direction = 1
+  palette = "YlOrRd", na.value = "white", direction = 1,
+  guide = guide_colourbar(
+    title = "Model Error/Baseline Error > 1",
+    title.position = "right",
+    order = 2
+  )
 ) +
 ggnewscale::new_scale_fill() +
   geom_tile(
@@ -447,7 +484,6 @@ ggnewscale::new_scale_fill() +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 0.5),
     legend.position = "top",
-    legend.title = element_blank(),
     legend.key.width = unit(2, "lines")
   ) +
   geom_text(
@@ -457,7 +493,7 @@ ggnewscale::new_scale_fill() +
     fontface = "bold"
   ) +
 scale_y_discrete(
-  limits = levels(more_forecasts$country),
+  limits = rev(levels(more_forecasts$country)),
   labels = snakecase::to_title_case(rev(levels(more_forecasts$country)))
 ) +
 coord_cartesian(clip = "off")
@@ -478,8 +514,6 @@ x <- select(x, forecast_date, country, rel_null_error, rel_mae)
 x <- gather(x, var, val, -forecast_date, -country)
 x <- dplyr::distinct(x)
 
-continent <- readr::read_csv("country_continent.csv") %>%
-  janitor::clean_names()
 
 by_country <- group_by(x, country, var) %>%
   summarise(
@@ -657,3 +691,78 @@ p1 <- ggplot(x, aes(forecast_date, val, col = var)) +
     legend.position = "top", legend.title = element_blank()
   ) +
   scale_x_date(date_breaks = "1 week")
+
+######################################################################
+############### Proportion of observations in in 50% CrI
+############### Proportion of observations in in 95% CrI
+######################################################################
+######################################################################
+######################################################################
+prop_by_country <- group_by(daily, country) %>%
+  summarise(
+    `Proportion in 50% CrI` = mean(prop_in_50),
+    `Proportion in 95% CrI` = mean(prop_in_975)
+  ) %>% ungroup()
+
+prop_by_country <- left_join(
+  prop_by_country, continent, by = c("country" = "countries_and_territories")
+)
+prop_by_country$country <- snakecase::to_title_case(prop_by_country$country)
+
+prop_by_country$country <- fct_reorder(
+  prop_by_country$country, prop_by_country$`Proportion in 50% CrI`, max
+)
+
+prop_by_country <- gather(
+  prop_by_country, var, val, `Proportion in 50% CrI`:`Proportion in 95% CrI`
+)
+
+p <- ggplot(prop_by_country, aes(country, val, shape = var)) +
+  geom_point() +
+  geom_hline(yintercept = c(0.5, 0.975), linetype = "dashed") +
+  facet_wrap(~continent, scales = "free_x") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
+    legend.position = "top",
+    legend.title = element_blank(),
+    strip.text = element_text(size = 12, face = "bold")
+  ) +
+  xlab("") +
+  ylim(0, 1) +
+  ylab("Proportion of observations in 50%/95% CrI")
+
+
+ggsave("proportion_in_CrI_by_country.png", p)
+
+
+
+
+prop_by_week <- group_by(daily, forecast_date) %>%
+  summarise(
+    `Proportion in 50% CrI` = mean(prop_in_50),
+    `Proportion in 95% CrI` = mean(prop_in_975)
+  ) %>% ungroup()
+
+
+prop_by_week <- gather(
+  prop_by_week, var, val, `Proportion in 50% CrI`:`Proportion in 95% CrI`
+)
+
+p <- ggplot(prop_by_week, aes(forecast_date, val, shape = var)) +
+  geom_point() +
+  geom_hline(yintercept = c(0.5, 0.975), linetype = "dashed") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
+    legend.position = "top",
+    legend.title = element_blank()
+  ) +
+  scale_x_date(breaks = prop_by_week$forecast_date) +
+  xlab("") +
+  ylim(0, 1) +
+  ylab("Proportion of observations in 50%/95% CrI")
+
+
+ggsave("proportion_in_CrI_by_week.png", p)
+
