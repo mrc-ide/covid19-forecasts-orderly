@@ -6,7 +6,7 @@ x <- list(
   artefacts = list(
     data = list(
     description = "Weights for combined Rt estimates",
-    filenames = c("across_countries.rds", "per_country.rds")
+    filenames = c("across_countries.rds", "per_country.rds", "country_weeks.rds")
   )
  ),
  packages = c(

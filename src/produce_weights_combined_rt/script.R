@@ -44,7 +44,7 @@ country_weeks <- purrr::map(
 )
 
 country_weeks <- keep(country_weeks, ~ length(.) > 0)
-
+saveRDS(country_weeks, "country_weeks.rds")
 ## week_ending is the week for which we already have observation,
 ## so that we can minimise the error for this week.
 betas <- seq(0, 5, by = 0.1)

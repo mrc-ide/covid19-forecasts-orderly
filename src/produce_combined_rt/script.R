@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-05-31", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
 run_info <- orderly::orderly_run_info()
@@ -11,30 +11,30 @@ across_countries_beta <- readRDS("across_countries_beta.rds")
 
 countries <- unique(latest$country)
 names(countries) <- countries
-
-rt_samples <- purrr::map_dfr(infiles, readRDS)
+infiles <- grep("country_weeks", infiles, value = TRUE, invert = TRUE)
+rt_samples <- map_dfr(infiles, readRDS)
 week_ending <- as.Date(week_ending)
 rt_samples$model <- as.Date(rt_samples$model)
 
 
-country_weeks <- purrr::map(
-  countries,
-  function(country) {
-    weeks <- unique(
-      rt_samples[rt_samples$country == country, "model"]
-    )
-    consecutive_weeks <- list()
-    prev_week <- week_ending
-    while (prev_week %in% weeks) {
-      message(country, " in ", prev_week)
-      consecutive_weeks <- append(consecutive_weeks, prev_week)
-      prev_week <- prev_week - 7
-    }
-    consecutive_weeks
-  }
-)
+## country_weeks <- purrr::map(
+##   countries,
+##   function(country) {
+##     weeks <- unique(
+##       rt_samples[rt_samples$country == country, "model"]
+##     )
+##     consecutive_weeks <- list()
+##     prev_week <- week_ending
+##     while (prev_week %in% weeks) {
+##       message(country, " in ", prev_week)
+##       consecutive_weeks <- append(consecutive_weeks, prev_week)
+##       prev_week <- prev_week - 7
+##     }
+##     consecutive_weeks
+##   }
+## )
 
-
+country_weeks <- readRDS("country_weeks.rds")
 ##country_weeks <- purrr::keep(country_weeks, ~ length(.) > 1)
 
 week_iqr <- purrr::imap(

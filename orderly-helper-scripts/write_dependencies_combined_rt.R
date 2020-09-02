@@ -49,7 +49,8 @@ dependancies5 <- list(
       id = "latest",
       use = list(
         "across_countries_beta.rds" =  "across_countries.rds",
-        "per_country_beta.rds" = "per_country.rds"
+        "per_country_beta.rds" = "per_country.rds",
+        "country_weeks.rds" = "country_weeks.rds"
       )
     )
   )
