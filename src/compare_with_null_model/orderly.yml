@@ -4,7 +4,9 @@ artefacts:
   data:
     description: Comparison with null model
     filenames:
-      - rmae_vs_weekly_cv_main_countries.png
+      - ratio_vs_delta.png
+      - si_comparison_with_baseline_error.png
+      - comparison_with_baseline_error.png
   
 packages:
   - dplyr
