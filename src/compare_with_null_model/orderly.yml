@@ -1,0 +1,41 @@
+script: compare_with_null_model.R
+
+artefacts:
+  data:
+    description: Comparison with null model
+    filenames:
+      - rmae_vs_weekly_cv_main_countries.png
+  
+packages:
+  - dplyr
+  - tidyr
+  - ggplot2
+  - ggpubr
+  - ggforce
+  - snakecase
+  - glue
+  - patchwork
+  - ggnewscale
+  - purrr
+
+## use_si should be one of si_1 or si_2
+parameters:
+  - use_si
+
+  
+depends:        
+  - prepare_ecdc_data:
+      id: latest
+      use:
+        model_input.rds: latest_deaths_wide_no_filter.rds        
+        
+  - collate_weighted_performance_metrics:
+      id: latest
+      use:
+        unwtd_pred_error.csv: unwtd_pred_error.csv
+
+  - produce_baseline_error:
+      id: latest
+      use:
+        null_model_error.rds: null_model_error.rds
+        weekly_incidence.rds: weekly_incidence.rds
