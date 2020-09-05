@@ -159,26 +159,71 @@ pop_wtd_ifr_qntls$label <- forcats::fct_reorder(
   pop_wtd_ifr_qntls$label, pop_wtd_ifr_qntls$continent, min
 )
 
-p <- ggplot(pop_wtd_ifr_qntls) +
+pop_wtd_ifr_qntls1 <- pop_wtd_ifr_qntls[1:90, ]
+pop_wtd_ifr_qntls1 <- droplevels(pop_wtd_ifr_qntls1)
+
+pop_wtd_ifr_qntls2 <- pop_wtd_ifr_qntls[91:183, ]
+pop_wtd_ifr_qntls2 <- droplevels(pop_wtd_ifr_qntls2)
+
+p1 <- ggplot(pop_wtd_ifr_qntls1) +
   geom_point(
     aes(label, `50%`, col = color)
   ) +
   geom_linerange(
     aes(x = label, ymin = `25%`, ymax = `75%`, col = color)
   ) +
-  scale_color_identity() +
   theme_minimal() +
   theme(
     axis.text.x = element_markdown(
-      lineheight = 1.2, angle = -90, hjust = 0, vjust = 0
+      angle = -90, hjust = 0, vjust = 0, size = 6
     ),
-    legend.position = "top",
+    axis.title.y = element_text(size =6),
+    legend.position = "none",
     legend.title = element_blank()
   ) +
   xlab("") +
-  ylab("Infection fatality ratio")
+  ylab("Infection fatality ratio") +
+  scale_color_identity() +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1))
 
-ggsave("ifr_per_country.png", p)
+
+
+p2 <- ggplot(pop_wtd_ifr_qntls2) +
+  geom_point(
+    aes(label, `50%`, col = color)
+  ) +
+  geom_linerange(
+    aes(x = label, ymin = `25%`, ymax = `75%`, col = color)
+  ) +
+  theme_minimal() +
+    theme(
+    axis.text.x = element_markdown(
+      angle = -90, hjust = 0, vjust = 0, size = 6
+    ),
+    axis.title.y = element_text(size =6),
+    legend.position = "none",
+    legend.title = element_blank()
+  ) +
+  xlab("") +
+  ylab("Infection fatality ratio") +
+  scale_color_identity() +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1))
+
+
+
+p <- p1 + p2 + plot_layout(ncol = 1) #&
+
+
+ggsave(
+  filename = "ifr_per_country.png",
+  plot = p,
+  device = agg_png,
+  width = 25,
+  height = 12,
+  units = "cm",
+  res = 300,
+  scaling = 0.9
+)
 
 #####################################################################
 #####################################################################
