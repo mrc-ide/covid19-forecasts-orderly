@@ -1,4 +1,4 @@
-##orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-06-14", use_si = "si_2"))
 ## infiles <- list.files(pattern = "*.rds")
 
 run_info <- orderly::orderly_run_info()
@@ -31,13 +31,17 @@ country_weeks <- purrr::map(
     weeks <- map(
       rt_samples, ~ .[.$country == country, "model"][1]
     )
+    weeks <- keep(weeks, ~ !is.na(.))
     weeks <- as.Date(unlist(weeks, recursive = FALSE))
+
     consecutive_weeks <- list()
     prev_week <- week_ending
+    counter <- 1
     while (prev_week %in% weeks) {
       message(country, " in ", prev_week)
-      consecutive_weeks <- append(consecutive_weeks, prev_week)
+      consecutive_weeks[[counter]] <- prev_week
       prev_week <- prev_week - 7
+      counter <- counter + 1
     }
     consecutive_weeks
   }
