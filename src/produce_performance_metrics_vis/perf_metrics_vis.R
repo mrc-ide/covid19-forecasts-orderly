@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = FALSE, parameters = list(use_si = "si_2", strategy = "unwtd"))
+## use_draft = FALSE, parameters = list(use_si = "si_2"))
 ######### Performance metrics
 observed <- readRDS("model_input.rds")
 
@@ -74,9 +74,133 @@ null_error <- readRDS("null_model_error.rds")
 unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
   dplyr::filter(si == use_si)
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
-unwtd_pred_error$strategy <- "Unweighted"
+##unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
 unwtd_pred_error_daily <- unwtd_pred_error
+
+######################################################################
+######################################################################
+################## Error by country ##################################
+######################################################################
+######################################################################
+by_date <- group_by(unwtd_pred_error_daily, forecast_date) %>%
+  summarise_if(
+    is.numeric,
+    ~ list(low = quantile(.x, probs = 0.025, na.rm = TRUE),
+       med  = quantile(.x, probs = 0.50, na.rm = TRUE),
+       high = quantile(.x, probs = 0.975, na.rm = TRUE))
+   ) %>%
+  ungroup()
+
+rel_mae <- select(
+  unwtd_pred_error_daily, forecast_date, country, rel_mae
+) %>% group_by(forecast_date) %>%
+    summarise(
+      low = quantile(rel_mae, probs = 0.025, na.rm = TRUE),
+      med  = quantile(rel_mae, probs = 0.50, na.rm = TRUE),
+      high = quantile(rel_mae, probs = 0.975, na.rm = TRUE),
+      mu = mean(rel_mae, na.rm = TRUE),
+      sigma = sd(rel_mae, na.rm = TRUE)
+    ) %>%
+  ungroup()
+
+
+
+p <- ggplot(rel_mae) +
+  geom_point(aes(forecast_date, med)) +
+  geom_linerange(aes(x = forecast_date, ymin =  low, ymax = high)) +
+  theme_minimal() +
+  scale_x_date(breaks = rel_mae$forecast_date) +
+  xlab("") +
+  ylab("Relative Error") +
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0))
+
+ggsave("relative_error_by_week.png", p)
+readr::write_csv(rel_mae, "relative_error_by_week.csv")
+
+rel_mae <- select(
+  unwtd_pred_error_daily, forecast_date, country, rel_mae
+) %>% group_by(country) %>%
+    summarise(
+      low = quantile(rel_mae, probs = 0.025, na.rm = TRUE),
+      med  = quantile(rel_mae, probs = 0.50, na.rm = TRUE),
+      high = quantile(rel_mae, probs = 0.975, na.rm = TRUE),
+      mu = mean(rel_mae, na.rm = TRUE),
+      sigma = sd(rel_mae, na.rm = TRUE)
+    ) %>%
+  ungroup()
+
+rel_mae <- rel_mae[rel_mae$country != "Kyrgyzstan", ]
+rel_mae <- left_join(
+  rel_mae, continent, by = c("country" = "countries_and_territories")
+)
+rel_mae$country <- snakecase::to_title_case(rel_mae$country)
+
+
+
+rel_mae$color <- case_when(
+  rel_mae$continent == "Africa" ~ "#000000",
+  rel_mae$continent == "Asia" ~ "#E69F00",
+  rel_mae$continent == "Europe" ~ "#56B4E9",
+  rel_mae$continent == "North America" ~ "#009E73",
+  rel_mae$continent == "South America" ~ "#0072B2",
+  rel_mae$continent == "Oceania" ~ "#D55E00"
+)
+rel_mae$label <- glue(
+  "<i style='color:{rel_mae$color}'>{rel_mae$country}</i>"
+)
+
+rel_mae$label <- forcats::fct_reorder(
+  rel_mae$label, rel_mae$continent, min
+)
+
+rel_mae1 <- filter(rel_mae, continent %in% c("Africa", "Asia"))
+rel_mae1 <- droplevels(rel_mae1)
+
+rel_mae2 <- filter(rel_mae, !continent %in% c("Africa", "Asia"))
+rel_mae2 <- droplevels(rel_mae2)
+
+p1 <- ggplot(rel_mae1) +
+  geom_point(aes(label, med, col = color)) +
+  geom_linerange(
+    aes(x = label, ymin =  low, ymax = high, col = color)
+  ) +
+  theme_minimal() +
+  xlab("") +
+  ylab("(log) Relative Error") +
+  scale_color_identity() +
+  theme(
+    axis.text.x = element_markdown(
+      angle = -90, hjust = 0, vjust = 0, size = 6
+    ),
+    axis.title.y = element_text(size = 6),
+    legend.position = "none",
+    legend.title = element_blank()
+  )
+
+p2 <- ggplot(rel_mae2) +
+  geom_point(aes(label, med, col = color)) +
+  geom_linerange(
+    aes(x = label, ymin =  low, ymax = high, col = color)
+  ) +
+  theme_minimal() +
+  xlab("") +
+  ylab("(log) Relative Error") +
+  scale_color_identity() +
+  theme(
+    axis.text.x = element_markdown(
+      angle = -90, hjust = 0, vjust = 0, size = 6
+    ),
+    axis.title.y = element_text(size = 6),
+    legend.position = "none",
+    legend.title = element_blank()
+  )
+
+p <- p1 + p2 + plot_layout(ncol = 1) & scale_y_log10()
+ggsave("relative_error_by_country.png", p)
+
+readr::write_csv(rel_mae, "relative_error_by_country.csv")
+
 
 #####################################################################
 #####################################################################

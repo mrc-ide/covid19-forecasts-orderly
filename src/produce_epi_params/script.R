@@ -181,7 +181,7 @@ p1 <- ggplot(pop_wtd_ifr_qntls1) +
     axis.text.x = element_markdown(
       angle = -90, hjust = 0, vjust = 0, size = 6
     ),
-    axis.title.y = element_text(size =6),
+    axis.title.y = element_text(size = 6),
     legend.position = "none",
     legend.title = element_blank()
   ) +

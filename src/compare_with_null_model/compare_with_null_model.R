@@ -272,3 +272,94 @@ p <- ggplot(df, aes(ratio, delta)) +
 ggsave("ratio_vs_delta.png", p)
 ##x <- dplyr::count(weekly_compare, country)
 ##countries <- x$country
+
+
+######################################################################
+######################################################################
+######################################################################
+############## SI Text Figure
+############## Model Relative Error
+##############
+######################################################################
+######################################################################
+######################################################################
+weekly_compare <- group_by(
+  unwtd_pred_error, forecast_date, country, si
+) %>% summarise(weekly_rel_err = mean(rel_mae)) %>%
+  ungroup()
+
+by_country <- group_by(weekly_compare, country) %>%
+  summarise(mu_by_country = signif(mean(weekly_rel_err), 3)) %>%
+  ungroup()
+
+by_date <- group_by(weekly_compare, forecast_date) %>%
+  summarise(mu_by_date = signif(mean(weekly_rel_err), 3)) %>%
+  ungroup()
+
+n_forecasts <- count(weekly_compare, country)
+
+weekly_compare <- left_join(weekly_compare, n_forecasts)
+weekly_compare <- left_join(weekly_compare, by_country)
+weekly_compare <- left_join(weekly_compare, by_date)
+
+weekly_compare$country <- factor(
+  weekly_compare$country,
+  levels = better_than_null$country,
+  ordered = TRUE
+)
+weekly_compare$forecast_date <- factor(weekly_compare$forecast_date)
+
+more_forecasts <- weekly_compare[weekly_compare$n >= 15, ]
+more_forecasts$country <- droplevels(more_forecasts$country)
+
+
+less_forecasts <- weekly_compare[weekly_compare$n < 15 & weekly_compare$n > 3, ]
+less_forecasts$country <- droplevels(less_forecasts$country)
+
+
+
+p1 <- ggplot() +
+  theme_classic() +
+  geom_tile(
+    data = more_forecasts[more_forecasts$weekly_rel_err <= 1, ],
+    aes(forecast_date, country, fill = weekly_rel_err),
+    width = 0.9,
+    height = 0.8
+  ) +
+  scale_fill_distiller(
+    palette = "Spectral", na.value = "white", direction = -1,
+    guide = guide_colourbar(
+      title = "Relative Error",
+      title.position = "left",
+      order = 1
+    )
+  ) +
+  xlab("") + ylab("") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    legend.position = "bottom",
+    legend.key.width = unit(2, "lines")
+  ) +
+scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
+coord_cartesian(clip = "off")
+
+p2 <- ggplot(
+  more_forecasts,
+  aes(x = 0.01, y = country, label = mu_by_country)
+) + geom_text(size = 2.5) +
+  scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
+  scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
+  theme_void() +
+  coord_cartesian(clip = "off")
+
+
+p3 <- ggplot(
+  more_forecasts,
+  aes(x = forecast_date, y = 0.01, label = mu_by_date)
+) + geom_text(size = 2) +
+  scale_y_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
+  theme_void() +
+  coord_cartesian(clip = "off")
+
+
+p <- p3 / (p1 | p2)
