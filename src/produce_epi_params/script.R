@@ -159,10 +159,14 @@ pop_wtd_ifr_qntls$label <- forcats::fct_reorder(
   pop_wtd_ifr_qntls$label, pop_wtd_ifr_qntls$continent, min
 )
 
-pop_wtd_ifr_qntls1 <- pop_wtd_ifr_qntls[1:90, ]
+pop_wtd_ifr_qntls1 <- filter(
+  pop_wtd_ifr_qntls, continent %in% c("Africa", "Asia")
+)
 pop_wtd_ifr_qntls1 <- droplevels(pop_wtd_ifr_qntls1)
 
-pop_wtd_ifr_qntls2 <- pop_wtd_ifr_qntls[91:183, ]
+pop_wtd_ifr_qntls2 <- filter(
+  pop_wtd_ifr_qntls, !continent %in% c("Africa", "Asia")
+)
 pop_wtd_ifr_qntls2 <- droplevels(pop_wtd_ifr_qntls2)
 
 p1 <- ggplot(pop_wtd_ifr_qntls1) +

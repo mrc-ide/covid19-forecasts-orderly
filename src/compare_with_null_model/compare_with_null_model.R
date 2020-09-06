@@ -139,7 +139,7 @@ ggnewscale::new_scale_fill() +
   geom_text(
     data = more_forecasts,
     aes(x = forecast_date, y = country, label = error_values),
-    size = 2,
+    size = 1.5,
     fontface = "bold"
   ) +
 scale_y_discrete(
@@ -150,7 +150,7 @@ coord_cartesian(clip = "off")
 
 p2 <- ggplot(
   more_forecasts, aes(x = 0.01, y = country, label = percent_less_than_1)
-) + geom_text(size = 3) +
+) + geom_text(size = 2.5) +
   scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
   scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
   theme_void() +
@@ -158,7 +158,15 @@ p2 <- ggplot(
 
 p <- p1 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
 
-ggsave("comparison_with_baseline_error.png", p)
+ggsave(
+  filename = "comparison_with_baseline_error.png",
+  plot = p
+  ## device = agg_png,
+  ## width = 7.5,
+  ## height = 7.5,
+  ## units = "in",
+  ## scaling = 1.2
+)
 
 ######################################################################
 ######################################################################
@@ -219,7 +227,7 @@ ggnewscale::new_scale_fill() +
   geom_text(
     data = less_forecasts,
     aes(x = forecast_date, y = country, label = error_values),
-    size = 2,
+    size = 1.5,
     fontface = "bold"
   ) +
 scale_y_discrete(
@@ -230,7 +238,7 @@ coord_cartesian(clip = "off")
 
 p2 <- ggplot(
   less_forecasts, aes(x = 0.01, y = country, label = percent_less_than_1)
-) + geom_text(size = 3) +
+) + geom_text(size = 2.5) +
   scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
   scale_y_discrete(limits = rev(levels(less_forecasts$country))) +
   theme_void() +

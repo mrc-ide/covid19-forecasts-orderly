@@ -25,3 +25,5 @@ packages:
   - janitor
   - dplyr
   - tidyr
+  - patchwork
+  - ragg
