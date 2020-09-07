@@ -321,7 +321,7 @@ less_forecasts$country <- droplevels(less_forecasts$country)
 p1 <- ggplot() +
   theme_classic() +
   geom_tile(
-    data = more_forecasts[more_forecasts$weekly_rel_err <= 1, ],
+    data = more_forecasts,
     aes(forecast_date, country, fill = weekly_rel_err),
     width = 0.9,
     height = 0.8
@@ -353,13 +353,17 @@ p2 <- ggplot(
   coord_cartesian(clip = "off")
 
 
-p3 <- ggplot(
-  more_forecasts,
-  aes(x = forecast_date, y = 0.01, label = mu_by_date)
-) + geom_text(size = 2) +
-  scale_y_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
+p3 <- ggplot(more_forecasts, aes(x = forecast_date, y = 0.1)) +
+  geom_tile(fill = "white", width = 0.9, height = 0.8) +
+  geom_text(
+    aes(x = forecast_date, y = 0.4, label = mu_by_date), size = 2) +
+  ##scale_y_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
   theme_void() +
   coord_cartesian(clip = "off")
 
+layout <- c(area(1, 1, 3, 1), area(2, 1, 3, 3), area(2, 4, 3, 4))
+##p <- p3 + p1 + p2 + plot_layout(design = layout)
 
-p <- p3 / (p1 | p2)
+p <- p3 + p1 + plot_layout(ncol = 1, heights = c(1, 10))
+
+p + p2 + plot_layout(ncol = 2, heights = c(1, 0.9))
