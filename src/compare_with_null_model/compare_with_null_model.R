@@ -289,11 +289,11 @@ weekly_compare <- group_by(
   ungroup()
 
 by_country <- group_by(weekly_compare, country) %>%
-  summarise(mu_by_country = signif(mean(weekly_rel_err), 3)) %>%
+  summarise(mu_by_country = mean(weekly_rel_err)) %>%
   ungroup()
 
 by_date <- group_by(weekly_compare, forecast_date) %>%
-  summarise(mu_by_date = signif(mean(weekly_rel_err), 3)) %>%
+  summarise(mu_by_date = mean(weekly_rel_err)) %>%
   ungroup()
 
 n_forecasts <- count(weekly_compare, country)
@@ -301,6 +301,22 @@ n_forecasts <- count(weekly_compare, country)
 weekly_compare <- left_join(weekly_compare, n_forecasts)
 weekly_compare <- left_join(weekly_compare, by_country)
 weekly_compare <- left_join(weekly_compare, by_date)
+##weekly_compare <- mutate_if(weekly_compare, is.numeric, ~ signif(., 2))
+
+## Format all numeric values so that a
+## fixed number of digits are displayed
+weekly_compare$weekly_rel_err_label <- format(
+  round(weekly_compare$weekly_rel_err, 2), nsmall = 2
+)
+
+weekly_compare$mu_by_country <- format(
+  round(weekly_compare$mu_by_country, 2), nsmall = 2
+)
+
+weekly_compare$mu_by_date <- format(
+  round(weekly_compare$mu_by_date, 2), nsmall = 2
+)
+
 
 weekly_compare$country <- factor(
   weekly_compare$country,
@@ -316,12 +332,17 @@ more_forecasts$country <- droplevels(more_forecasts$country)
 less_forecasts <- weekly_compare[weekly_compare$n < 15 & weekly_compare$n > 3, ]
 less_forecasts$country <- droplevels(less_forecasts$country)
 
+ymax <- max(as.integer(more_forecasts$country)) + 1
+xmax <- max(as.integer(more_forecasts$forecast_date)) + 1
+
+g <- function(x) snakecase::to_title_case(as.character(x))
+
 
 
 p1 <- ggplot() +
   theme_classic() +
   geom_tile(
-    data = more_forecasts,
+    data = more_forecasts[more_forecasts$weekly_rel_err < 2, ],
     aes(forecast_date, country, fill = weekly_rel_err),
     width = 0.9,
     height = 0.8
@@ -334,36 +355,42 @@ p1 <- ggplot() +
       order = 1
     )
   ) +
+
+  ggnewscale::new_scale_fill() +
+  geom_tile(
+    data = more_forecasts[more_forecasts$weekly_rel_err >= 2, ],
+    aes(forecast_date, country),
+    fill = "#b2b2ff",
+    width = 0.9,
+    height = 0.8
+  ) +
+
   xlab("") + ylab("") +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 0.5),
     legend.position = "bottom",
-    legend.key.width = unit(2, "lines")
+    legend.key.width = unit(2, "lines"),
+    plot.margin = margin(t = 8, r = 8, b = 0, l = 0, unit = "pt")
   ) +
-scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
-coord_cartesian(clip = "off")
-
-p2 <- ggplot(
-  more_forecasts,
-  aes(x = 0.01, y = country, label = mu_by_country)
-) + geom_text(size = 2.5) +
-  scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
-  scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
-  theme_void() +
-  coord_cartesian(clip = "off")
-
-
-p3 <- ggplot(more_forecasts, aes(x = forecast_date, y = 0.1)) +
-  geom_tile(fill = "white", width = 0.9, height = 0.8) +
+  scale_y_discrete(
+    limits = rev(levels(more_forecasts$country)),
+    labels = g
+  ) +
   geom_text(
-    aes(x = forecast_date, y = 0.4, label = mu_by_date), size = 2) +
-  ##scale_y_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
-  theme_void() +
+    data = more_forecasts,
+    aes(x = forecast_date, y = ymax, label = mu_by_date),
+    size = 2, fontface = "bold"
+  ) +
+  geom_text(
+    data = more_forecasts,
+    aes(x = xmax, y = country, label = mu_by_country),
+    size = 2, fontface = "bold"
+  ) +
+  geom_text(
+    data = more_forecasts,
+    aes(x = forecast_date, y = country, label = weekly_rel_err_label),
+    size = 2, fontface = "bold"
+  ) +
   coord_cartesian(clip = "off")
 
-layout <- c(area(1, 1, 3, 1), area(2, 1, 3, 3), area(2, 4, 3, 4))
-##p <- p3 + p1 + p2 + plot_layout(design = layout)
-
-p <- p3 + p1 + plot_layout(ncol = 1, heights = c(1, 10))
-
-p + p2 + plot_layout(ncol = 2, heights = c(1, 0.9))
+ggsave(filename = "relative_error_heatmap.png", plot = p1)
