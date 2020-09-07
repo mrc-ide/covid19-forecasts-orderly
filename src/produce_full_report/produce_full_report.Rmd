@@ -172,6 +172,13 @@ knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_4.png")
 
 ```
 
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_5.png")
+
+```
+
 *Figure 2.* Reported daily deaths and current forecasts based on the ensemble
 model. For each European country with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
@@ -202,11 +209,6 @@ knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
 
 ```
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_4.png")
-
-```
 *Figure 3.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Asia with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
@@ -447,6 +449,91 @@ the reporting. For instance, an increase in the ratio gives an
 indication that cases reporting is decreasing. If all cases
 (including asymptomatic cases) and death were reported, then the ratio defined
 would be equivalent to the infection fatality ratio (IFR).
+### Europe
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Europe_page_1.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Europe_page_2.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Europe_page_3.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Europe_page_4.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Europe_page_5.png")
+```
+
+### Asia
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Asia_page_1.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Asia_page_2.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Asia_page_3.png")
+```
+
+### Africa
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Africa_page_1.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Africa_page_2.png")
+```
+
+
+### North & Central America 
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_North America_page_1.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_North America_page_2.png")
+```
+
+### South America
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_South America_page_1.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_South America_page_2.png")
+```
+
+### Oceania
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Oceania_page_1.png")
+```
+*Figure 14.*: Temporal trends in the ratio of reported
+deaths to reported cases 10 days prior (medians and 95% CIs, solid
+lines and bands respectively).
+Also plotted are the reported deaths (red dots) and reported cases
+(black dots). 
+The reported number of deaths and cases have
+been re-scaled so
+that the maximum recorded numbers of deaths or cases (with a mean 10-day
+delay) reaches 1. 
+
+*Note that if deaths exceed the number of reported cases 10 days
+before, we set the ratio at 1 (95% CI 1-1)*
+
 <br><br>
 ## Case Ascertainment
 
@@ -654,7 +741,6 @@ the ensemble model is built from Models 1, 2 and 3.
 knitr::include_graphics("figs/Europe_si_2_page_1.png")
 ```
 
-
 ```{r}
 knitr::include_graphics("figs/Europe_si_2_page_2.png")
 ```
@@ -667,6 +753,9 @@ knitr::include_graphics("figs/Europe_si_2_page_3.png")
 knitr::include_graphics("figs/Europe_si_2_page_4.png")
 ```
 
+```{r}
+knitr::include_graphics("figs/Europe_si_2_page_5.png")
+```
 
 *Figure 15.* Projections (7-day ahead) for the week starting 7^th^ September 2020 from individual models
 for each country in Europe with active transmission (see Methods). 
@@ -687,10 +776,6 @@ knitr::include_graphics("figs/Asia_si_2_page_2.png")
 
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_3.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_4.png")
 ```
 *Figure 16.* Projections (7-day ahead) for the week starting 7^th^ September 2020 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
