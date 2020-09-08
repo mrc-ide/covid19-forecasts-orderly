@@ -1,68 +1,118 @@
-metrics_over_time <- function(df, si, countries, var, labels) {
+nice_country_name <- function(x) snakecase::to_title_case(as.character(x))
 
-  df <- df[df$si == si, ]
-  df <- df[df$country %in% countries, ]
-  df <- tidyr::gather(df, var, val, `rel_mae`:`poisson_p`)
-  df <- df[df$var %in% var, ]
+round_and_format <- function(x, digits = 2) {
+  format(round(x, digits), nsmall = digits)
+}
 
-  p <- ggplot(df, aes(days_since_100_deaths, val)) +
-    geom_point() +
-    facet_wrap(
-      ~var, scales = "free_y", ncol = 1, labeller = labeller(var = labels)
-    ) +
-    ##scale_x_date(date_breaks = "2 weeks") +
+
+prop_in_cri_heatmap <- function(df, CrI = "50%") {
+
+  df$forecast_date <- factor(df$forecast_date)
+  xmax <- max(as.numeric(df$forecast_date)) + 1
+  ymax <- max(as.numeric(factor(df$country))) + 1
+
+  p <- ggplot(df) +
+  geom_tile(
+    aes(forecast_date, country, fill = prop_in_CrI),
+    width = 0.8, height = 0.8
+  ) +
     theme_classic() +
-    xlab("Days since 100 deaths") +
-    ylab("")
+    scale_fill_distiller(
+      palette = "YlOrRd",
+      direction = 1,
+      breaks = c(0, 0.5, 1),
+      labels = c(0, 0.5, 1),
+      limits = c(0, 1),
+      name = glue("Proportion in {CrI} CrI")
+    ) +
+  geom_text(
+    aes(x = xmax, y = country, label = right_label),
+    parse = TRUE, size = 2
+  ) +
+  geom_text(
+    aes(x = forecast_date, y = ymax, label = top_label),
+    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0),
+    plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
+    legend.position = "bottom",
+    axis.line.x = element_blank()
+  ) +
+  scale_y_discrete(
+    limits = rev(levels(df$country)),
+    labels = nice_country_name
+  ) +
+  xlab("") +
+  ylab("") +
+  coord_cartesian(clip = "off")
 
   p
 }
 
-scaled_incid_and_metric <- function(incid,
-                                    metrics,
-                                    legend = TRUE,
-                                    xlab,
-                                    xticks) {
-  plot(
-    x = incid$days_since_100_deaths,
-    y = incid$moving_avg,
-    col = "blue",
-    type = "l",
-    axes = FALSE,
-    xlab = xlab,
-    ylab = "",
-    cex.axis = 1.5,
-    main = snakecase::to_title_case(incid$country[1])
-  )
-  axis(side = 1, lwd = 1.5, tick = xticks, labels = xticks)
-  axis(
-    side = 2, col = "blue", col.axis = "blue",
-    lwd = 1.5, at = c(0, 0.5, 1)
-  )
-  par(new = TRUE)
-  plot(
-    x = metrics$days_since_100_deaths,
-    y = metrics$val,
-    xaxt = "n", yaxt = "n",
-    ylab = "", xlab = "", col = "red", axes = FALSE
-  )
-  ## organise yticks which are otherwise all over the place
-  ymax <- ceiling(max(metrics$val))
-  message("ymax = ", ymax)
-  message(paste(seq(0, ymax, by = 1), collapse = " "))
-  axis(
-    side = 4,
-    at = seq(0, ymax, by = 1),
-    labels = seq(0, ymax, by = 1),
-    col = "red", col.axis = "red", lwd = 1.5
-  )
 
-  if (legend) {
-    legend(
-        "topleft",
-      c("Scaled Deaths", "Relative Error"),
-      col = c("blue", "red"), lty = c(1, 2)
+relative_error_heatmap <- function(df) {
+
+  df$forecast_date <- factor(df$forecast_date)
+  ymax <- max(as.integer(df$country)) + 1
+  xmax <- max(as.integer(df$forecast_date)) + 1
+
+  p <- ggplot() +
+    theme_classic() +
+    geom_tile(
+      data = df[df$rel_mae_mu < 2, ],
+      aes(forecast_date, country, fill = rel_mae_mu),
+      width = 0.9,
+      height = 0.8
+    ) +
+  scale_fill_distiller(
+    palette = "Spectral", na.value = "white", direction = -1,
+    guide = guide_colourbar(
+      title = "Relative Error",
+      title.position = "left",
+      title.vjust = 0.5,
+      order = 1
     )
-  }
+  ) +
+  ggnewscale::new_scale_fill() +
+  geom_tile(
+    data = df[df$rel_mae_mu >= 2, ],
+    aes(forecast_date, country),
+    fill = "#b2b2ff",
+    width = 0.9,
+    height = 0.8
+  ) +
+  xlab("") +
+  ylab("") +
+  geom_text(
+    data = df,
+    aes(x = xmax, y = country, label = right_label),
+    parse = TRUE, size = 2
+  ) +
+  geom_text(
+    data = df,
+    aes(x = forecast_date, y = ymax, label = top_label),
+    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
+  ) +
+  geom_text(
+    data = df,
+    aes(x = forecast_date, y = country, label = cell_label),
+    size = 1.8, parse = TRUE
+  ) +
+  scale_y_discrete(
+    limits = rev(levels(df$country)),
+    labels = nice_country_name
+  ) +
+  theme(
+    axis.text.x.bottom = element_text(
+      angle = 90, hjust = 0.5, vjust = 0.5, size = 6
+    ),
+    axis.text.y = element_text(size = 6),
+    plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
+    legend.position = "bottom",
+    axis.line.x = element_blank()
+  ) +
+  coord_cartesian(clip = "off")
 
+  p
 }
