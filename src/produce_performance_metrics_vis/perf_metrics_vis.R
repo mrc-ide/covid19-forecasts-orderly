@@ -46,24 +46,12 @@ observed_tall <- split(
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
 
-weekly_delta <- split(
-  weekly_incidence, weekly_incidence$country
-) %>%
-  map_dfr(
-    function(df) {
-      df <- arrange(df, forecast_date)
-      df$delta <- c(NA, diff(df$weekly_incid))
-      df
-    }
-  )
-
-
 continent <- readr::read_csv("country_continent.csv") %>%
   janitor::clean_names()
 
-null_error <- readRDS("null_model_error.rds")
 
-##weekly_incidence$forecast_date[weekly_incidence$forecast_date == as.Date("2020-03-09")] <- as.Date("2020-03-08")
+
+better_than_null <- readRDS("better_than_null.rds")
 
 ######################################################################
 ######################################################################
@@ -76,130 +64,134 @@ unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
 ##unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
-unwtd_pred_error_daily <- unwtd_pred_error
+
 
 ######################################################################
+################## Weekly Summary for each country ###################
 ######################################################################
-################## Error by country ##################################
-######################################################################
-######################################################################
-by_date <- group_by(unwtd_pred_error_daily, forecast_date) %>%
-  summarise_if(
-    is.numeric,
-    ~ list(low = quantile(.x, probs = 0.025, na.rm = TRUE),
-       med  = quantile(.x, probs = 0.50, na.rm = TRUE),
-       high = quantile(.x, probs = 0.975, na.rm = TRUE))
-   ) %>%
+weekly <- group_by(unwtd_pred_error, forecast_date, country) %>%
+  summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
   ungroup()
 
-rel_mae <- select(
-  unwtd_pred_error_daily, forecast_date, country, rel_mae
-) %>% group_by(forecast_date) %>%
-    summarise(
-      low = quantile(rel_mae, probs = 0.025, na.rm = TRUE),
-      med  = quantile(rel_mae, probs = 0.50, na.rm = TRUE),
-      high = quantile(rel_mae, probs = 0.975, na.rm = TRUE),
-      mu = mean(rel_mae, na.rm = TRUE),
-      sigma = sd(rel_mae, na.rm = TRUE)
-    ) %>%
+######################################################################
+################## Summary for each country ##########################
+######################################################################
+by_country <- group_by(unwtd_pred_error, country) %>%
+  summarise_if(is.numeric, list(c_mu = mean, c_sd = sd)) %>%
   ungroup()
 
-
-
-p <- ggplot(rel_mae) +
-  geom_point(aes(forecast_date, med)) +
-  geom_linerange(aes(x = forecast_date, ymin =  low, ymax = high)) +
-  theme_minimal() +
-  scale_x_date(breaks = rel_mae$forecast_date) +
-  xlab("") +
-  ylab("Relative Error") +
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0))
-
-ggsave("relative_error_by_week.png", p)
-readr::write_csv(rel_mae, "relative_error_by_week.csv")
-
-rel_mae <- select(
-  unwtd_pred_error_daily, forecast_date, country, rel_mae
-) %>% group_by(country) %>%
-    summarise(
-      low = quantile(rel_mae, probs = 0.025, na.rm = TRUE),
-      med  = quantile(rel_mae, probs = 0.50, na.rm = TRUE),
-      high = quantile(rel_mae, probs = 0.975, na.rm = TRUE),
-      mu = mean(rel_mae, na.rm = TRUE),
-      sigma = sd(rel_mae, na.rm = TRUE)
-    ) %>%
+######################################################################
+################## Summary for each week ##########################
+######################################################################
+by_week <- group_by(unwtd_pred_error, forecast_date) %>%
+  summarise_if(is.numeric, list(d_mu = mean, d_sd = sd)) %>%
   ungroup()
 
-rel_mae <- rel_mae[rel_mae$country != "Kyrgyzstan", ]
-rel_mae <- left_join(
-  rel_mae, continent, by = c("country" = "countries_and_territories")
-)
-rel_mae$country <- snakecase::to_title_case(rel_mae$country)
+n_forecast <- count(weekly, country)
+######################################################################
+######################################################################
+################## Proportion in 95% CrI by country ##################
+######################################################################
+######################################################################
+nice_country_name <- function(x) snakecase::to_title_case(as.character(x))
+
+round_and_format <- function(x, digits = 2) {
+  format(round(x, digits), nsmall = digits)
+}
 
 
+prop_in_cri_heatmap <- function(df, CrI = "50%") {
 
-rel_mae$color <- case_when(
-  rel_mae$continent == "Africa" ~ "#000000",
-  rel_mae$continent == "Asia" ~ "#E69F00",
-  rel_mae$continent == "Europe" ~ "#56B4E9",
-  rel_mae$continent == "North America" ~ "#009E73",
-  rel_mae$continent == "South America" ~ "#0072B2",
-  rel_mae$continent == "Oceania" ~ "#D55E00"
-)
-rel_mae$label <- glue(
-  "<i style='color:{rel_mae$color}'>{rel_mae$country}</i>"
-)
+  df$forecast_date <- factor(df$forecast_date)
+  xmax <- max(as.numeric(df$forecast_date)) + 1
+  ymax <- max(as.numeric(factor(df$country))) + 1
 
-rel_mae$label <- forcats::fct_reorder(
-  rel_mae$label, rel_mae$continent, min
-)
-
-rel_mae1 <- filter(rel_mae, continent %in% c("Africa", "Asia"))
-rel_mae1 <- droplevels(rel_mae1)
-
-rel_mae2 <- filter(rel_mae, !continent %in% c("Africa", "Asia"))
-rel_mae2 <- droplevels(rel_mae2)
-
-p1 <- ggplot(rel_mae1) +
-  geom_point(aes(label, med, col = color)) +
-  geom_linerange(
-    aes(x = label, ymin =  low, ymax = high, col = color)
+  p <- ggplot(df) +
+  geom_tile(
+    aes(forecast_date, country, fill = prop_in_50_mu),
+    width = 0.8, height = 0.8
   ) +
-  theme_minimal() +
-  xlab("") +
-  ylab("(log) Relative Error") +
-  scale_color_identity() +
-  theme(
-    axis.text.x = element_markdown(
-      angle = -90, hjust = 0, vjust = 0, size = 6
-    ),
-    axis.title.y = element_text(size = 6),
-    legend.position = "none",
-    legend.title = element_blank()
-  )
-
-p2 <- ggplot(rel_mae2) +
-  geom_point(aes(label, med, col = color)) +
-  geom_linerange(
-    aes(x = label, ymin =  low, ymax = high, col = color)
+    theme_classic() +
+    scale_fill_distiller(
+      palette = "Greens",
+      direction = 1,
+      breaks = c(0, 0.5, 1),
+      labels = c(0, 0.5, 1),
+      limits = c(0, 1),
+      name = glue("Proportion in {CrI} CrI")
+    ) +
+  geom_text(
+    aes(x = xmax, y = country, label = right_label),
+    parse = TRUE, size = 2
   ) +
-  theme_minimal() +
-  xlab("") +
-  ylab("(log) Relative Error") +
-  scale_color_identity() +
+  geom_text(
+    aes(x = forecast_date, y = ymax, label = top_label),
+    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
+  ) +
   theme(
-    axis.text.x = element_markdown(
-      angle = -90, hjust = 0, vjust = 0, size = 6
-    ),
-    axis.title.y = element_text(size = 6),
-    legend.position = "none",
-    legend.title = element_blank()
-  )
+    axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0),
+    plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
+    legend.position = "bottom",
+    axis.line.x = element_blank()
+  ) +
+  scale_y_discrete(
+    limits = rev(levels(df$country)),
+    labels = nice_country_name
+  ) +
+  xlab("") +
+  ylab("") +
+  coord_cartesian(clip = "off")
 
-p <- p1 + p2 + plot_layout(ncol = 1) & scale_y_log10()
-ggsave("relative_error_by_country.png", p)
+  p
+}
 
-readr::write_csv(rel_mae, "relative_error_by_country.csv")
+weekly <- left_join(weekly, n_forecast)
+weekly <- left_join(weekly, by_country)
+weekly <- left_join(weekly, by_week)
+
+weekly$top_label <- glue(
+  "{round_and_format(round(weekly$prop_in_50_d_mu))}",
+  " %+-% {round_and_format(weekly$prop_in_50_d_sd)}"
+)
+
+weekly$right_label <- glue(
+  "{round_and_format(round(weekly$prop_in_50_c_mu))}",
+  " %+-% {round_and_format(weekly$prop_in_50_c_sd)}"
+)
+
+weekly$country <- factor(
+  weekly$country,
+  levels = better_than_null$country, ordered = TRUE
+)
+
+more_forecasts <- weekly[weekly$n >= 15, ]
+more_forecasts$country <- droplevels(more_forecasts$country)
+
+less_forecasts <- weekly[weekly$n < 15 & weekly$n > 3, ]
+less_forecasts$country <- droplevels(less_forecasts$country)
+
+p1 <- prop_in_cri_heatmap(more_forecasts)
+p2 <- prop_in_cri_heatmap(less_forecasts)
+
+ggsave(
+  filename = "main_proportion_in_50_CrI.tiff",
+  plot = p1,
+  width = 7,
+  height = 7,
+  unit = "in",
+  dpi = 300,
+  compression = "lzw"
+)
+
+ggsave(
+  filename = "si_proportion_in_50_CrI.tiff",
+  plot = p2,
+  width = 7,
+  height = 7,
+  unit = "in",
+  dpi = 300,
+  compression = "lzw"
+)
 
 
 #####################################################################
@@ -768,3 +760,208 @@ p <- ggplot(prop_by_week, aes(forecast_date, val, shape = var)) +
 
 ggsave("proportion_in_CrI_by_week.png", p)
 
+
+
+
+######################################################################
+######################################################################
+######################################################################
+############## SI Text Figure
+############## Model Relative Error
+##############
+######################################################################
+######################################################################
+######################################################################
+weekly_compare <- group_by(
+  unwtd_pred_error, forecast_date, country, si
+) %>%
+  summarise(
+    weekly_rel_err_mu = mean(rel_mae),
+    weekly_rel_err_sd = sd(rel_mae)
+  ) %>%
+  ungroup()
+
+by_country <- group_by(unwtd_pred_error, country, si) %>%
+  summarise(
+    mu_by_country = mean(rel_mae),
+    sd_by_country = sd(rel_mae)
+  ) %>%
+  ungroup()
+
+by_date <- group_by(unwtd_pred_error, forecast_date, si) %>%
+  summarise(
+    mu_by_date = mean(rel_mae),
+    sd_by_date = sd(rel_mae)
+  ) %>%
+  ungroup()
+
+n_forecasts <- count(weekly_compare, country)
+
+weekly_compare <- left_join(weekly_compare, n_forecasts)
+weekly_compare <- left_join(weekly_compare, by_country)
+weekly_compare <- left_join(weekly_compare, by_date)
+## weekly_compare <- mutate_if(weekly_compare, is.numeric, ~ signif(., 2))
+
+## Format all numeric values so that a
+## fixed number of digits are displayed
+weekly_compare$weekly_rel_err_label <- format(
+  round(weekly_compare$weekly_rel_err, 2),
+  nsmall = 2
+)
+
+weekly_compare$mu_by_country <- format(
+  round(weekly_compare$mu_by_country, 2),
+  nsmall = 2
+)
+
+weekly_compare$mu_by_date <- format(
+  round(weekly_compare$mu_by_date, 2),
+  nsmall = 2
+)
+
+
+weekly_compare$country <- factor(
+  weekly_compare$country,
+  levels = better_than_null$country,
+  ordered = TRUE
+)
+weekly_compare$forecast_date <- factor(weekly_compare$forecast_date)
+
+more_forecasts <- weekly_compare[weekly_compare$n >= 15, ]
+more_forecasts$country <- droplevels(more_forecasts$country)
+
+
+less_forecasts <- weekly_compare[weekly_compare$n < 15 & weekly_compare$n > 3, ]
+less_forecasts$country <- droplevels(less_forecasts$country)
+
+ymax <- max(as.integer(more_forecasts$country)) + 1
+xmax <- max(as.integer(more_forecasts$forecast_date)) + 1
+
+
+
+
+
+p1 <- ggplot() +
+  theme_classic() +
+  geom_tile(
+    data = more_forecasts[more_forecasts$weekly_rel_err < 2, ],
+    aes(forecast_date, country, fill = weekly_rel_err),
+    width = 0.9,
+    height = 0.8
+  ) +
+  scale_fill_distiller(
+    palette = "Spectral", na.value = "white", direction = -1,
+    guide = guide_colourbar(
+      title = "Relative Error",
+      title.position = "left",
+      order = 1
+    )
+  ) +
+  ggnewscale::new_scale_fill() +
+  geom_tile(
+    data = more_forecasts[more_forecasts$weekly_rel_err >= 2, ],
+    aes(forecast_date, country),
+    fill = "#b2b2ff",
+    width = 0.9,
+    height = 0.8
+  ) +
+  xlab("") +
+  ylab("") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    legend.position = "bottom",
+    legend.key.width = unit(2, "lines"),
+    plot.margin = margin(t = 8, r = 8, b = 0, l = 0, unit = "pt")
+  ) +
+  scale_y_discrete(
+    limits = rev(levels(more_forecasts$country)),
+    labels = g
+  ) +
+  geom_text(
+    data = more_forecasts,
+    aes(x = forecast_date, y = ymax, label = mu_by_date),
+    size = 2, fontface = "bold"
+  ) +
+  geom_text(
+    data = more_forecasts,
+    aes(x = xmax, y = country, label = mu_by_country),
+    size = 2, fontface = "bold"
+  ) +
+  geom_text(
+    data = more_forecasts,
+    aes(x = forecast_date, y = country, label = weekly_rel_err_label),
+    size = 2, fontface = "bold"
+  ) +
+  coord_cartesian(clip = "off")
+
+ggsave(filename = "relative_error_heatmap.png", plot = p1)
+
+
+######################################################################
+######################################################################
+######################################################################
+############## SI Text Figure 2
+############## Model Relative Error
+############## Number of forecasts < 15 and > 3
+######################################################################
+######################################################################
+######################################################################
+
+ymax <- max(as.integer(less_forecasts$country)) + 1
+xmax <- max(as.integer(less_forecasts$forecast_date)) + 1
+
+
+p1 <- ggplot() +
+  theme_classic() +
+  geom_tile(
+    data = less_forecasts[less_forecasts$weekly_rel_err < 2, ],
+    aes(forecast_date, country, fill = weekly_rel_err),
+    width = 0.9,
+    height = 0.8
+  ) +
+  scale_fill_distiller(
+    palette = "Spectral", na.value = "white", direction = -1,
+    guide = guide_colourbar(
+      title = "Relative Error",
+      title.position = "left",
+      order = 1
+    )
+  ) +
+  ggnewscale::new_scale_fill() +
+  geom_tile(
+    data = less_forecasts[less_forecasts$weekly_rel_err >= 2, ],
+    aes(forecast_date, country),
+    fill = "#b2b2ff",
+    width = 0.9,
+    height = 0.8
+  ) +
+  xlab("") +
+  ylab("") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    legend.position = "bottom",
+    legend.key.width = unit(2, "lines"),
+    plot.margin = margin(t = 8, r = 8, b = 0, l = 0, unit = "pt")
+  ) +
+  scale_y_discrete(
+    limits = rev(levels(less_forecasts$country)),
+    labels = g
+  ) +
+  geom_text(
+    data = less_forecasts,
+    aes(x = forecast_date, y = ymax, label = mu_by_date),
+    size = 2, fontface = "bold"
+  ) +
+  geom_text(
+    data = less_forecasts,
+    aes(x = xmax, y = country, label = mu_by_country),
+    size = 2, fontface = "bold"
+  ) +
+  geom_text(
+    data = less_forecasts,
+    aes(x = forecast_date, y = country, label = weekly_rel_err_label),
+    size = 2, fontface = "bold"
+  ) +
+  coord_cartesian(clip = "off")
+
+ggsave(filename = "si_relative_error_heatmap.png", plot = p1)

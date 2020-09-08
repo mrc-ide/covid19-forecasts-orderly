@@ -4,23 +4,20 @@ artefacts:
   data:
     description: Comparison with null model
     filenames:
-      - ratio_vs_delta.png
-      - si_comparison_with_baseline_error.png
-      - comparison_with_baseline_error.png
-      - relative_error_heatmap.png
+      - log_ratio_vs_delta.tiff
+      - si_comparison_with_baseline_error.tiff
+      - comparison_with_baseline_error.tiff
+      - better_than_null.rds
   
 packages:
   - dplyr
   - tidyr
   - ggplot2
-  - ggpubr
   - ggforce
   - snakecase
   - glue
-  - patchwork
   - ggnewscale
   - purrr
-  - ragg
 
 ## use_si should be one of si_1 or si_2
 parameters:

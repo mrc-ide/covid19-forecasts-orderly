@@ -52,3 +52,7 @@ depends:
       use:
         unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
 
+  - compare_with_null_model:
+      id: latest
+      use:
+        better_than_null.rds: better_than_null.rds

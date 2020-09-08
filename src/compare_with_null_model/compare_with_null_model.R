@@ -33,7 +33,8 @@ unwtd_pred_error$country[unwtd_pred_error$country == "Czech Republic"] <- "Czech
 ######################################################################
 
 weekly_compare <- left_join(
- unwtd_pred_error, null_error, by = c("date" = "dates", "country")
+  unwtd_pred_error, null_error,
+  by = c("date" = "dates", "country")
 ) %>%
   group_by(forecast_date, country, si) %>%
   summarise(
@@ -53,22 +54,32 @@ weekly_compare$err_level <- ifelse(
 better_than_null <- group_by(weekly_compare, country) %>%
   summarise(
     n_forecasts = n(), n_less_than_1 = sum(ratio < 1, na.rm = TRUE)
-  ) %>% ungroup()
+  ) %>%
+  ungroup()
 
-better_than_null$percent_less_than_1 <-  better_than_null$n_less_than_1 /
+better_than_null$percent_less_than_1 <- better_than_null$n_less_than_1 /
   better_than_null$n_forecasts
 
 better_than_null <- arrange(better_than_null, desc(percent_less_than_1))
 
+## Save this so that all other figures can use this order of countries
+saveRDS(better_than_null, "better_than_null.rds")
+
 weekly_compare <- left_join(weekly_compare, better_than_null)
 
 weekly_compare$country <- factor(
-  weekly_compare$country, levels = better_than_null$country, ordered = TRUE
+  weekly_compare$country,
+  levels = better_than_null$country, ordered = TRUE
 )
 
 weekly_compare$forecast_date <- factor(weekly_compare$forecast_date)
-weekly_compare$weekly_rel_err <- signif(weekly_compare$weekly_rel_err, 3)
-weekly_compare$weekly_null_err <- signif(weekly_compare$weekly_null_err, 3)
+
+weekly_compare$weekly_rel_err <- signif(
+  weekly_compare$weekly_rel_err, 2
+)
+
+weekly_compare$weekly_null_err <- signif(weekly_compare$weekly_null_err, 2)
+
 weekly_compare$error_values <- glue(
   "{weekly_compare$weekly_rel_err}/{weekly_compare$weekly_null_err}"
 )
@@ -90,82 +101,89 @@ less_forecasts$country <- droplevels(less_forecasts$country)
 ############### 15 or more forecasts
 ######################################################################
 ######################################################################
-p1 <- ggplot() +
-  theme_classic() +
-  geom_tile(
-    data = more_forecasts[more_forecasts$ratio <= 1, ],
-    aes(forecast_date, country, fill = ratio),
-    width = 0.9,
-    height = 0.8
-  ) +
-  scale_fill_distiller(
-    palette = "Greens", na.value = "white", direction = -1,
-    guide = guide_colourbar(
-      title = "Model Error/Baseline Error < 1",
-      title.position = "left",
-      order = 1
-    )
-  ) +
-  ggnewscale::new_scale_fill() +
 
-  geom_tile(
-    data = more_forecasts[more_forecasts$ratio > 1 & more_forecasts$ratio <= 5, ],
-    aes(forecast_date, country, fill = ratio),
-    width = 0.9,
-    height = 0.8
-  ) +
-scale_fill_distiller(
-  palette = "YlOrRd", na.value = "white", direction = 1,
-  guide = guide_colourbar(
-    title = "Model Error/Baseline Error > 1",
-    title.position = "right",
-    order = 2
-  )
-) +
-ggnewscale::new_scale_fill() +
-  geom_tile(
-    data = more_forecasts[more_forecasts$ratio > 5, ],
-    aes(forecast_date, country),
-    fill = "#515bdc",
-    width = 0.9,
-    height = 0.8
-  ) +
-  xlab("") + ylab("") +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5),
-    legend.position = "top",
-    legend.key.width = unit(2, "lines")
-  ) +
-  geom_text(
-    data = more_forecasts,
-    aes(x = forecast_date, y = country, label = error_values),
-    size = 1.5,
-    fontface = "bold"
-  ) +
-scale_y_discrete(
-  limits = rev(levels(more_forecasts$country)),
-  labels = snakecase::to_title_case(rev(levels(more_forecasts$country)))
-) +
-coord_cartesian(clip = "off")
+compare_with_baseline <- function(df) {
+  xmax <- max(as.numeric(df$forecast_date)) + 1
+  p1 <- ggplot() +
+    theme_classic() +
+    geom_tile(
+      data = df[df$ratio <= 1, ],
+      aes(forecast_date, country, fill = ratio),
+      width = 0.9,
+      height = 0.8
+    ) +
+    scale_fill_distiller(
+      palette = "Greens", na.value = "white", direction = -1,
+      guide = guide_colourbar(
+        title = "Model Error/Baseline Error < 1",
+        title.position = "top",
+        title.hjust = 0.5,
+        order = 1
+      )
+    ) +
+    ggnewscale::new_scale_fill() +
+    geom_tile(
+      data = df[df$ratio > 1 & df$ratio <= 5, ],
+      aes(forecast_date, country, fill = ratio),
+      width = 0.9,
+      height = 0.8
+    ) +
+    scale_fill_distiller(
+      palette = "YlOrRd", na.value = "white", direction = 1,
+      guide = guide_colourbar(
+        title = "Model Error/Baseline Error > 1",
+        title.position = "top",
+        title.hjust = 0.5,
+        order = 2
+      )
+    ) +
+    ggnewscale::new_scale_fill() +
+    geom_tile(
+      data = df[df$ratio > 5, ],
+      aes(forecast_date, country),
+      fill = "#515bdc",
+      width = 0.9,
+      height = 0.8
+    ) +
+    xlab("") +
+    ylab("") +
+    theme(
+      axis.text.x = element_text(angle = 90, hjust = 0.5),
+      legend.position = "top",
+      legend.title = element_text(size = 8),
+##      legend.title.align = 0.5,
+      legend.key.width = unit(2, "lines"),
+      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt")
+    ) +
+    geom_text(
+      data = df,
+      aes(x = forecast_date, y = country, label = error_values),
+      size = 1.9,
+      fontface = "bold"
+    ) +
+    geom_text(
+      data = df,
+      aes(x = xmax, y = country, label = percent_less_than_1),
+      size = 2,
+      fontface = "bold"
+    ) +
+    scale_y_discrete(
+      limits = rev(levels(df$country)),
+      labels = snakecase::to_title_case(rev(levels(df$country)))
+    ) +
+    coord_cartesian(clip = "off")
+  p1
+}
 
-p2 <- ggplot(
-  more_forecasts, aes(x = 0.01, y = country, label = percent_less_than_1)
-) + geom_text(size = 2.5) +
-  scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
-  scale_y_discrete(limits = rev(levels(more_forecasts$country))) +
-  theme_void() +
-  coord_cartesian(clip = "off")
-
-p <- p1 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
-
+p1 <- compare_with_baseline(more_forecasts)
 ggsave(
-  filename = "comparison_with_baseline_error.png",
-  plot = p
-  ## device = agg_png,
-  ## width = 7.5,
-  ## height = 7.5,
-  ## units = "in",
-  ## scaling = 1.2
+  filename = "comparison_with_baseline_error.tiff",
+  plot = p1,
+  ##device = agg_tiff,
+  width = 8,
+  height = 7.5,
+  units = "in"
+  #scaling = 1.3
 )
 
 ######################################################################
@@ -177,77 +195,15 @@ ggsave(
 ######################################################################
 ######################################################################
 ######################################################################
+p2 <- compare_with_baseline(less_forecasts)
 
-p1 <- ggplot() +
-  theme_classic() +
-  geom_tile(
-    data = less_forecasts[less_forecasts$ratio <= 1, ],
-    aes(forecast_date, country, fill = ratio),
-    width = 0.9,
-    height = 0.8
-  ) +
-  scale_fill_distiller(
-    palette = "Greens", na.value = "white", direction = -1,
-    guide = guide_colourbar(
-      title = "Model Error/Baseline Error < 1",
-      title.position = "left",
-      order = 1
-    )
-  ) +
-  ggnewscale::new_scale_fill() +
-
-  geom_tile(
-    data = less_forecasts[less_forecasts$ratio > 1 & less_forecasts$ratio <= 5, ],
-    aes(forecast_date, country, fill = ratio),
-    width = 0.9,
-    height = 0.8
-  ) +
-scale_fill_distiller(
-  palette = "YlOrRd", na.value = "white", direction = 1,
-  guide = guide_colourbar(
-    title = "Model Error/Baseline Error > 1",
-    title.position = "right",
-    order = 2
-  )
-) +
-ggnewscale::new_scale_fill() +
-  geom_tile(
-    data = less_forecasts[less_forecasts$ratio > 5, ],
-    aes(forecast_date, country),
-    fill = "#515bdc",
-    width = 0.9,
-    height = 0.8
-  ) +
-  xlab("") + ylab("") +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5),
-    legend.position = "top",
-    legend.key.width = unit(2, "lines")
-  ) +
-  geom_text(
-    data = less_forecasts,
-    aes(x = forecast_date, y = country, label = error_values),
-    size = 1.5,
-    fontface = "bold"
-  ) +
-scale_y_discrete(
-  limits = rev(levels(less_forecasts$country)),
-  labels = snakecase::to_title_case(rev(levels(less_forecasts$country)))
-) +
-coord_cartesian(clip = "off")
-
-p2 <- ggplot(
-  less_forecasts, aes(x = 0.01, y = country, label = percent_less_than_1)
-) + geom_text(size = 2.5) +
-  scale_x_continuous(limits = c(0, 0.5), expand = c(0, 0)) +
-  scale_y_discrete(limits = rev(levels(less_forecasts$country))) +
-  theme_void() +
-  coord_cartesian(clip = "off")
-
-
-p <- p1 + p2 + plot_layout(ncol = 2, widths = c(3, 1))
-
-ggsave("si_comparison_with_baseline_error.png", p)
+ggsave(
+  filename = "si_comparison_with_baseline_error.tiff",
+  plot = p2,
+  width = 8,
+  height = 7.5,
+  units = "in"
+)
 
 ######################################################################
 ######################################################################
@@ -261,136 +217,21 @@ ggsave("si_comparison_with_baseline_error.png", p)
 weekly_compare$forecast_date <- as.Date(weekly_compare$forecast_date)
 df <- left_join(weekly_compare, weekly_delta)
 df <- df[df$weekly_incid > 0, ]
+df$log_ratio <- log(df$ratio, 10)
 
-p <- ggplot(df, aes(ratio, delta)) +
+p <- ggplot(df, aes(delta, ratio)) +
   geom_point() +
-  geom_vline(xintercept = 1, linetype = "dashed") +
+  geom_hline(yintercept = 1, linetype = "dashed") +
   theme_minimal() +
-  xlab("Model Error/Baseline Error") +
-  ylab("Weekly change in deaths")
+  ylab("log Model Error/Baseline Error") +
+  xlab("Weekly change in deaths") +
+  scale_y_log10(
+    breaks = scales::trans_breaks("log10", function(x) 10^x),
+    labels = scales::trans_format("log10", scales::math_format(10^.x))
+  )
 
-ggsave("ratio_vs_delta.png", p)
-##x <- dplyr::count(weekly_compare, country)
-##countries <- x$country
-
-
-######################################################################
-######################################################################
-######################################################################
-############## SI Text Figure
-############## Model Relative Error
-##############
-######################################################################
-######################################################################
-######################################################################
-weekly_compare <- group_by(
-  unwtd_pred_error, forecast_date, country, si
-) %>% summarise(weekly_rel_err = mean(rel_mae)) %>%
-  ungroup()
-
-by_country <- group_by(weekly_compare, country) %>%
-  summarise(mu_by_country = mean(weekly_rel_err)) %>%
-  ungroup()
-
-by_date <- group_by(weekly_compare, forecast_date) %>%
-  summarise(mu_by_date = mean(weekly_rel_err)) %>%
-  ungroup()
-
-n_forecasts <- count(weekly_compare, country)
-
-weekly_compare <- left_join(weekly_compare, n_forecasts)
-weekly_compare <- left_join(weekly_compare, by_country)
-weekly_compare <- left_join(weekly_compare, by_date)
-##weekly_compare <- mutate_if(weekly_compare, is.numeric, ~ signif(., 2))
-
-## Format all numeric values so that a
-## fixed number of digits are displayed
-weekly_compare$weekly_rel_err_label <- format(
-  round(weekly_compare$weekly_rel_err, 2), nsmall = 2
-)
-
-weekly_compare$mu_by_country <- format(
-  round(weekly_compare$mu_by_country, 2), nsmall = 2
-)
-
-weekly_compare$mu_by_date <- format(
-  round(weekly_compare$mu_by_date, 2), nsmall = 2
-)
+ggsave("log_ratio_vs_delta.tiff", p, width = 5, height = 5, unit = "in")
+## x <- dplyr::count(weekly_compare, country)
+## countries <- x$country
 
 
-weekly_compare$country <- factor(
-  weekly_compare$country,
-  levels = better_than_null$country,
-  ordered = TRUE
-)
-weekly_compare$forecast_date <- factor(weekly_compare$forecast_date)
-
-more_forecasts <- weekly_compare[weekly_compare$n >= 15, ]
-more_forecasts$country <- droplevels(more_forecasts$country)
-
-
-less_forecasts <- weekly_compare[weekly_compare$n < 15 & weekly_compare$n > 3, ]
-less_forecasts$country <- droplevels(less_forecasts$country)
-
-ymax <- max(as.integer(more_forecasts$country)) + 1
-xmax <- max(as.integer(more_forecasts$forecast_date)) + 1
-
-g <- function(x) snakecase::to_title_case(as.character(x))
-
-
-
-p1 <- ggplot() +
-  theme_classic() +
-  geom_tile(
-    data = more_forecasts[more_forecasts$weekly_rel_err < 2, ],
-    aes(forecast_date, country, fill = weekly_rel_err),
-    width = 0.9,
-    height = 0.8
-  ) +
-  scale_fill_distiller(
-    palette = "Spectral", na.value = "white", direction = -1,
-    guide = guide_colourbar(
-      title = "Relative Error",
-      title.position = "left",
-      order = 1
-    )
-  ) +
-
-  ggnewscale::new_scale_fill() +
-  geom_tile(
-    data = more_forecasts[more_forecasts$weekly_rel_err >= 2, ],
-    aes(forecast_date, country),
-    fill = "#b2b2ff",
-    width = 0.9,
-    height = 0.8
-  ) +
-
-  xlab("") + ylab("") +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5),
-    legend.position = "bottom",
-    legend.key.width = unit(2, "lines"),
-    plot.margin = margin(t = 8, r = 8, b = 0, l = 0, unit = "pt")
-  ) +
-  scale_y_discrete(
-    limits = rev(levels(more_forecasts$country)),
-    labels = g
-  ) +
-  geom_text(
-    data = more_forecasts,
-    aes(x = forecast_date, y = ymax, label = mu_by_date),
-    size = 2, fontface = "bold"
-  ) +
-  geom_text(
-    data = more_forecasts,
-    aes(x = xmax, y = country, label = mu_by_country),
-    size = 2, fontface = "bold"
-  ) +
-  geom_text(
-    data = more_forecasts,
-    aes(x = forecast_date, y = country, label = weekly_rel_err_label),
-    size = 2, fontface = "bold"
-  ) +
-  coord_cartesian(clip = "off")
-
-ggsave(filename = "relative_error_heatmap.png", plot = p1)
