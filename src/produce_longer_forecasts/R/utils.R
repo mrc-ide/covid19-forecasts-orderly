@@ -27,10 +27,11 @@ project_with_saturation <- function(deaths, r_eff, p_susceptible, si, n_sim = 10
     r_effective = vector(mode = "list", length = n_days),
     p_s = vector(mode = "list", length = n_days)
   )
+  r_eff <- sample(r_eff, n_sim)
+  ##p_susceptible <- sample(p_susceptible, n_sim)
   for (day in 1:n_days) {
     message(day)
     R <- r_eff * p_susceptible
-    R <- sample(R, n_sim)
     ws <- tail(rev(si), length(deaths) + day - 1)
     ws <- matrix(
       ws, ncol = 1,  nrow = length(deaths) + day - 1

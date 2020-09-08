@@ -356,10 +356,10 @@ ggsave(
 #######################  Weekly Figures ##############################
 ######################################################################
 ######################################################################
-
+weekly <- left_join(weekly, weekly_incidence)
 ## All countries, Relative mean error on log scale and weekly incidence
 pall <- ggplot(
-  weekly, aes(weekly_incid, rel_mae, col = phase)
+  weekly, aes(weekly_incid, rel_mae_mu)
 ) + geom_point() +
   scale_y_log10(
     breaks = scales::trans_breaks("log10", function(x) 10^x),
@@ -377,44 +377,19 @@ pall <- ggplot(
 
 ggsave("rmae_vs_weekly_incid_all_countries.png", pall)
 
-## Main text countries,
-## Relative mean error on log scale and weekly incidence
-pmain <- ggplot() +
-  geom_point(
-    data = weekly[weekly$country %in% main_text_countries, ],
-    aes(weekly_incid, rel_mae, col = phase)
-  ) +
-  scale_y_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-  scale_x_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-
-  theme_minimal() +
-  xlab("Weekly Incidence") +
-  ylab("(log) Relative mean error") +
-  theme(legend.position = "top", legend.title = element_blank())
-
-ggsave("rmae_vs_weekly_incid_main_countries.png", pmain)
-
-######################################################################
-weekly$phase_label <- snakecase::to_title_case(
-  weekly$phase, parsing_option = 0
-)
+f <- scales::trans_breaks("log10", function(x) 10^x)
+g <- scales::trans_format("log10", scales::math_format(10^.x))
+breaks <- union(f(weekly$weekly_cv), f(weekly$rel_mae_mu))
+labels <- g(breaks)
 
 pcv_all <- ggplot(
-  weekly, aes(weekly_cv, rel_mae, col = phase_label)
+  weekly, aes(weekly_cv, rel_mae_mu)
 ) + geom_point() +
-    scale_y_log10(
-      breaks = scales::trans_breaks("log10", function(x) 10^x),
-      labels = scales::trans_format("log10", scales::math_format(10^.x))
-    ) +
-    scale_x_log10(
-      breaks = scales::trans_breaks("log10", function(x) 10^x),
-      labels = scales::trans_format("log10", scales::math_format(10^.x))
+  scale_y_log10(
+    breaks = breaks, labels = labels, limits = c(NA, 100)
+  ) +
+  scale_x_log10(
+    breaks = breaks, labels = labels, limits = c(NA, 100)
   ) +
   theme_minimal() +
   xlab("(log) Coefficient of variation of incidence)") +
@@ -427,292 +402,52 @@ pcv_all <- ggplot(
 ggsave("rmae_vs_weekly_cv_all_countries.png", pcv_all)
 
 
-pcv_main <- ggplot() +
-  geom_point(
-    data = weekly[weekly$country %in% main_text_countries, ],
-    aes(weekly_cv, rel_mae, col = phase),
-    size = 2
-  ) +
-    scale_y_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
-    ) +
-    scale_x_log10(
-    breaks = scales::trans_breaks("log10", function(x) 10^x),
-    labels = scales::trans_format("log10", scales::math_format(10^.x))
-  ) +
-  theme_minimal() +
-  xlab("(log) Weekly coefficient of variation") +
-  ylab("(log) Relative mean error") +
-  theme(legend.position = "top", legend.title = element_blank())
-
-ggsave("rmae_vs_weekly_cv_main_countries.png", pcv_main)
-
-
-
 ######################################################################
 ######################################################################
 ##################### Relative Error #################################
 ######################################################################
 ######################################################################
-
-x <- left_join(daily, null_error, by = c("date" = "dates", "country"))
-x <- select(x, forecast_date, country, rel_null_error, rel_mae)
-x <- gather(x, var, val, -forecast_date, -country)
-x <- dplyr::distinct(x)
-
-
-by_country <- group_by(x, country, var) %>%
-  summarise(
-    mu = mean(val, na.rm = TRUE),
-    sigma = sd(val, na.rm = TRUE),
-    median = quantile(val, probs = 0.5, na.rm = TRUE),
-    low = quantile(val, probs = 0.25, na.rm = TRUE),
-    high = quantile(val, probs = 0.75, na.rm = TRUE)
-  ) %>% ungroup()
-
-by_country <- left_join(
-  by_country, continent, by = c("country" = "countries_and_territories")
-)
-by_country$country <- forcats::fct_reorder(by_country$country, by_country$continent, min)
-
-
-by_week <- group_by(x, forecast_date, var) %>%
-  summarise(
-    mu = mean(val, na.rm = TRUE),
-    sigma = sd(val, na.rm = TRUE),
-    median = quantile(val, probs = 0.5, na.rm = TRUE),
-    low = quantile(val, probs = 0.25, na.rm = TRUE),
-    high = quantile(val, probs = 0.75, na.rm = TRUE)
-  ) %>% ungroup()
-
-p1 <- ggplot(by_week) +
-  geom_point(
-    aes(forecast_date, median, col = var),
-    position = position_dodge(width = 0.5)
-  ) +
-  geom_linerange(
-    aes(forecast_date, ymin = low, ymax = high, col = var),
-    position = position_dodge(width = 0.5)
-  ) +
-  ##facet_wrap(~continent, ncol = 1, scales = "free") +
-  theme_minimal() +
-  scale_x_date(date_breaks = "1 week") +
-  xlab("") + ylab("Relative error") +
-  theme(legend.position = "top", legend.title = element_blank())
-
-
-out <- select(by_country, country, var, high)
-out <- spread(out, var, high)
-countries <- droplevels(
-  out$country[out$rel_mae < 10 & out$rel_null_error < 10]
-)
-
-x1 <- by_country[by_country$country %in% countries, ]
-x1$country <- factor(x1$country)
+by_country <- by_country[by_country$country != "Kyrgyzstan", ]
 
 p1 <- ggplot(by_country) +
   geom_point(
-    aes(country, median, col = var),
-    position = position_dodge(width = 0.3)
+    aes(country, rel_mae_c_mu)
   ) +
   geom_linerange(
-    aes(country, ymin = low, ymax = high, col = var),
-    position = position_dodge(width = 0.3)
+    aes(
+      x = country,
+      ymin = rel_mae_c_mu - rel_mae_c_sd,
+      ymax = rel_mae_c_mu + rel_mae_c_sd)
   ) +
-  facet_wrap(~continent, ncol = 1, scales = "free") +
+  scale_x_discrete(labels = nice_country_name) +
+  ##facet_wrap(~continent, ncol = 1, scales = "free") +
   theme_minimal() +
   xlab("") + ylab("Relative error") +
-  theme(legend.position = "top", legend.title = element_blank())
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0)
+  )
+
+ggsave("relative_error_by_country.png", p1)
 
 
-x2 <- by_country[by_country$high >= 10, ]
-x2 <- by_country[by_country$country %in% x2$country, ]
-ggplot(x2) +
+p2 <- ggplot(by_week) +
   geom_point(
-    aes(country, median, col = var),
-    position = position_dodge(width = 0.1)
+    aes(forecast_date, rel_mae_d_mu)
   ) +
   geom_linerange(
-    aes(country, ymin = low, ymax = high, col = var),
-    position = position_dodge(width = 0.1)
+    aes(
+      x = forecast_date,
+      ymin = rel_mae_d_mu - rel_mae_d_sd,
+      ymax = rel_mae_d_mu + rel_mae_d_sd)
   ) +
-  facet_wrap(~continent, ncol = 1, scales = "free")
-
-
-by_country <- tidyr::gather(by_country, var, val, -country)
-vars <- c("null_050", "null_025", "null_975")
-x <- by_country[by_country$var %in% ]
-ggplot(x) +
-  geom_point(aes(country, ), col = "red") +
-  geom_linerange(
-    aes(country, ymin = null_025, ymax = weeklly_rel_null_975),
-    col = "red"
+  scale_x_date(
+    date_breaks = "1 week"
   ) +
-  geom_point(aes(country, weeklly_rel_pred_050), col = "blue") +
-  geom_linerange(
-    aes(country, ymin = weeklly_rel_pred_025, ymax = weeklly_rel_pred_975),
-    col = "blue"
-  ) + ylim(0, 50)
-
-
-weekly_rel_err$forecast_date <- factor(weekly_rel_err$forecast_date)
-
-
-
-## Across all countries
-weekly_rel_err$forecast_date <- as.Date(weekly_rel_err$forecast_date)
-
-x <- group_by(weekly_rel_err, country) %>%
-  summarise_if(is.numeric, list(mean, median, quantile), na.rm = TRUE) %>%
-  ungroup()
-
-x <- gather(weekly_rel_err, var, val, -country, -forecast_date)
-
-x1 <- x[x$country %in% x$country[1:50], ]
-x2 <- x[x$country %in% x$country[51:99], ]
-
-p1 <- ggplot(x, aes(as.factor(forecast_date), val, fill = var)) +
-  geom_boxplot(position = "dodge") +
-  ##scale_y_log10() +
+  ##facet_wrap(~continent, ncol = 1, scales = "free") +
   theme_minimal() +
-  xlab("") +
-  ylab("Mean relative error") +
+  xlab("") + ylab("Relative error") +
   theme(
-    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
-    legend.position = "top", legend.title = element_blank()
-  ) +
-  ylim(0, 5)
-
-
-ggplot() +
-  geom_half_violin(
-    data = x[x$var == "weekly_rel_pred", ],
-    aes(as.factor(forecast_date), val),
-    side = "l", alpha = 0.3, fill = "blue"
-  ) +
-  geom_half_violin(
-    data = x[x$var == "weekly_rel_null", ],
-    aes(as.factor(forecast_date), val),
-    side = "r", alpha = 0.3, fill = "red"
-  ) +
-
-  theme_minimal() +
-  xlab("") +
-  ylab("Mean relative error") +
-  theme(
-    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
-    legend.position = "top", legend.title = element_blank()
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0)
   )
 
-p2 <- ggplot(x2, aes(country, val, col = var)) +
-  geom_point() +
-  ##scale_y_log10() +
-  theme_minimal() +
-  xlab("") +
-  ylab("Mean relative error") +
-  theme(
-    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
-    legend.position = "none", legend.title = element_blank()
-  )
-
-
-p <- p1 + p2 + plot_layout(ncol = 1)
-
-## Across all weeks
-x <- group_by(weekly_rel_err, forecast_date) %>%
-  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
-  ungroup()
-
-x <- gather(x, var, val, -forecast_date)
-
-
-p1 <- ggplot(x, aes(forecast_date, val, col = var)) +
-  geom_point() +
-  ##scale_y_log10() +
-  theme_minimal() +
-  xlab("") +
-  ylab("Mean relative error") +
-  theme(
-    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
-    legend.position = "top", legend.title = element_blank()
-  ) +
-  scale_x_date(date_breaks = "1 week")
-
-######################################################################
-############### Proportion of observations in in 50% CrI
-############### Proportion of observations in in 95% CrI
-######################################################################
-######################################################################
-######################################################################
-prop_by_country <- group_by(daily, country) %>%
-  summarise(
-    `Proportion in 50% CrI` = mean(prop_in_50),
-    `Proportion in 95% CrI` = mean(prop_in_975)
-  ) %>% ungroup()
-
-prop_by_country <- left_join(
-  prop_by_country, continent, by = c("country" = "countries_and_territories")
-)
-prop_by_country$country <- snakecase::to_title_case(prop_by_country$country)
-
-prop_by_country$country <- fct_reorder(
-  prop_by_country$country, prop_by_country$`Proportion in 50% CrI`, max
-)
-
-prop_by_country <- gather(
-  prop_by_country, var, val, `Proportion in 50% CrI`:`Proportion in 95% CrI`
-)
-
-p <- ggplot(prop_by_country, aes(country, val, shape = var)) +
-  geom_point() +
-  geom_hline(yintercept = c(0.5, 0.975), linetype = "dashed") +
-  facet_wrap(~continent, scales = "free_x") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
-    legend.position = "top",
-    legend.title = element_blank(),
-    strip.text = element_text(size = 12, face = "bold")
-  ) +
-  xlab("") +
-  ylim(0, 1) +
-  ylab("Proportion of observations in 50%/95% CrI")
-
-
-ggsave("proportion_in_CrI_by_country.png", p)
-
-
-
-
-prop_by_week <- group_by(daily, forecast_date) %>%
-  summarise(
-    `Proportion in 50% CrI` = mean(prop_in_50),
-    `Proportion in 95% CrI` = mean(prop_in_975)
-  ) %>% ungroup()
-
-
-prop_by_week <- gather(
-  prop_by_week, var, val, `Proportion in 50% CrI`:`Proportion in 95% CrI`
-)
-
-p <- ggplot(prop_by_week, aes(forecast_date, val, shape = var)) +
-  geom_point() +
-  geom_hline(yintercept = c(0.5, 0.975), linetype = "dashed") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0),
-    legend.position = "top",
-    legend.title = element_blank()
-  ) +
-  scale_x_date(breaks = prop_by_week$forecast_date) +
-  xlab("") +
-  ylim(0, 1) +
-  ylab("Proportion of observations in 50%/95% CrI")
-
-
-ggsave("proportion_in_CrI_by_week.png", p)
-
-
-
-
+ggsave("relative_error_by_.png", p2)
