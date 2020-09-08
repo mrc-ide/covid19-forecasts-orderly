@@ -41,9 +41,9 @@ knitr::opts_chunk$set(
 
 # Introduction 
 
-As of 30^th^ August 2020,  more than
-25,000,000 cases of COVID-19 have been reported across the world, 
-with more than 843,000 deaths [@whositrep]. 
+As of 7^th^ September 2020,  more than
+26,000,000 cases of COVID-19 have been reported across the world, 
+with more than 880,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths
@@ -103,7 +103,7 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week beginning 30^th^ August 2020, 
+two weeks. For the week beginning 7^th^ September 2020, 
 the number of countries/regions included based on these thresholds is 72.
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -172,6 +172,13 @@ knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_4.png")
 
 ```
 
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_5.png")
+
+```
+
 *Figure 2.* Reported daily deaths and current forecasts based on the ensemble
 model. For each European country with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
@@ -202,11 +209,6 @@ knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
 
 ```
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_4.png")
-
-```
 *Figure 3.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Asia with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
@@ -299,7 +301,7 @@ and 3, see Methods). The reporting of deaths and cases in Brazil is currently ch
 knitr::include_graphics("figs/rt_phase_si_2.png")
 ```
 *Figure 7.* Estimates of transmissibility in countries with active
-transmission for the week ending 30^th^ August 2020. A country is defined
+transmission for the week ending 7^th^ September 2020. A country is defined
 to be in the declining phase if the 97.5^th^ quantile of the effective
 reproduction number is below 1. It is defined to be in the growing
 phase if the 2.5^th^ quantile of the effective reproduction number is
@@ -398,7 +400,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-30^th^ August, the observed number of deaths in the week before,
+7^th^ September, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -447,8 +449,6 @@ the reporting. For instance, an increase in the ratio gives an
 indication that cases reporting is decreasing. If all cases
 (including asymptomatic cases) and death were reported, then the ratio defined
 would be equivalent to the infection fatality ratio (IFR).
-
-
 ### Europe
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -467,6 +467,10 @@ knitr::include_graphics("figs/reporting_ratio_Europe_page_3.png")
 knitr::include_graphics("figs/reporting_ratio_Europe_page_4.png")
 ```
 
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Europe_page_5.png")
+```
+
 ### Asia
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -479,10 +483,6 @@ knitr::include_graphics("figs/reporting_ratio_Asia_page_2.png")
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figs/reporting_ratio_Asia_page_3.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Asia_page_4.png")
 ```
 
 ### Africa
@@ -535,7 +535,6 @@ delay) reaches 1.
 before, we set the ratio at 1 (95% CI 1-1)*
 
 <br><br>
-
 ## Case Ascertainment
 
 Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
@@ -742,7 +741,6 @@ the ensemble model is built from Models 1, 2 and 3.
 knitr::include_graphics("figs/Europe_si_2_page_1.png")
 ```
 
-
 ```{r}
 knitr::include_graphics("figs/Europe_si_2_page_2.png")
 ```
@@ -755,8 +753,11 @@ knitr::include_graphics("figs/Europe_si_2_page_3.png")
 knitr::include_graphics("figs/Europe_si_2_page_4.png")
 ```
 
+```{r}
+knitr::include_graphics("figs/Europe_si_2_page_5.png")
+```
 
-*Figure 15.* Projections (7-day ahead) for the week starting 30^th^ August 2020 from individual models
+*Figure 15.* Projections (7-day ahead) for the week starting 7^th^ September 2020 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -776,11 +777,7 @@ knitr::include_graphics("figs/Asia_si_2_page_2.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_3.png")
 ```
-
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_4.png")
-```
-*Figure 16.* Projections (7-day ahead) for the week starting 30^th^ August 2020 from individual models (Models 1, 2
+*Figure 16.* Projections (7-day ahead) for the week starting 7^th^ September 2020 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -798,7 +795,7 @@ knitr::include_graphics("figs/Africa_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/Africa_si_2_page_2.png")
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 30^th^ August 2020 from individual models (Models 1, 2
+*Figure 17.* Projections (7-day ahead) for the week starting 7^th^ September 2020 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -813,7 +810,7 @@ knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_2.png")
 ```
-*Figure 18.* Projections (7-day ahead) for the week starting 30^th^ August 2020 from individual models (Models 1, 2
+*Figure 18.* Projections (7-day ahead) for the week starting 7^th^ September 2020 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -829,7 +826,7 @@ knitr::include_graphics("figs/South America_si_2_page_1.png")
 knitr::include_graphics("figs/South America_si_2_page_2.png")
 ```
 *Figure 19.* Projections (7-day ahead) for the week starting
-30^th^ August 2020 from individual models (Models 1, 2
+7^th^ September 2020 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -843,7 +840,7 @@ results should be interpreted with caution.
 knitr::include_graphics("figs/Oceania_si_2_page_1.png")
 ```
 *Figure 20.* Projections (7-day ahead) for the week starting
-30^th^ August 2020 from individual models (Models 1, 2
+7^th^ September 2020 from individual models (Models 1, 2
 and 3) for each country in Oceania with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -858,7 +855,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-30^th^ August 2020. 
+7^th^ September 2020. 
 
 
 #### Asia
@@ -870,7 +867,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 22.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-30^th^ August 2020. 
+7^th^ September 2020. 
 
 
 #### Africa
@@ -882,7 +879,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-30^th^ August 2020. 
+7^th^ September 2020. 
 
 
 #### North & Central America
@@ -894,7 +891,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 24.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-30^th^ August 2020. 
+7^th^ September 2020. 
 
 
 
@@ -907,7 +904,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 25.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-30^th^ August 2020. 
+7^th^ September 2020. 
 
 #### Oceania
 
