@@ -65,6 +65,7 @@ unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czech
 ##unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
 
+unwtd_pred_error <- unwtd_pred_error[unwtd_pred_error$country != "Kyrgyzstan", ]
 
 ######################################################################
 ################## Weekly Summary for each country ###################
@@ -94,14 +95,20 @@ weekly <- left_join(weekly, by_country)
 weekly <- left_join(weekly, by_week)
 
 weekly$top_label <- glue(
-  "{round_and_format(round(weekly$prop_in_50_d_mu))}",
+  "{round_and_format(weekly$prop_in_50_d_mu)}",
   " %+-% {round_and_format(weekly$prop_in_50_d_sd)}"
 )
 
 weekly$right_label <- glue(
-  "{round_and_format(round(weekly$prop_in_50_c_mu))}",
+  "{round_and_format(weekly$prop_in_50_c_mu)}",
   " %+-% {round_and_format(weekly$prop_in_50_c_sd)}"
 )
+
+weekly$cell_label <- glue(
+  "{round_and_format(weekly$prop_in_50_mu)}"
+  ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
+)
+
 
 weekly$country <- factor(
   weekly$country,
@@ -149,6 +156,28 @@ ggsave(
 ######################################################################
 ################## Proportion in 95% CrI by country ##################
 ######################################################################
+weekly$top_label <- glue(
+  "{round_and_format(weekly$prop_in_975_d_mu)}",
+  " %+-% {round_and_format(weekly$prop_in_975_d_sd)}"
+)
+
+weekly$right_label <- glue(
+  "{round_and_format(weekly$prop_in_975_c_mu)}",
+  " %+-% {round_and_format(weekly$prop_in_975_c_sd)}"
+)
+
+weekly$cell_label <- glue(
+  "{round_and_format(weekly$prop_in_975_mu)}"
+  ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
+)
+
+more_forecasts <- weekly[weekly$n >= 15, ]
+more_forecasts$country <- droplevels(more_forecasts$country)
+
+less_forecasts <- weekly[weekly$n < 15 & weekly$n > 3, ]
+less_forecasts$country <- droplevels(less_forecasts$country)
+
+
 
 x <- rename(more_forecasts, "prop_in_CrI" = "prop_in_975_mu")
 y <- rename(less_forecasts, "prop_in_CrI" = "prop_in_975_mu")
@@ -310,18 +339,18 @@ readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 ######################################################################
 ######################################################################
 weekly$top_label <- glue(
-  "{round_and_format(round(weekly$rel_mae_d_mu))}",
+  "{round_and_format(weekly$rel_mae_d_mu)}",
   " %+-% {round_and_format(weekly$rel_mae_d_sd)}"
 )
 
 weekly$right_label <- glue(
-  "{round_and_format(round(weekly$rel_mae_c_mu))}",
+  "{round_and_format(weekly$rel_mae_c_mu)}",
   " %+-% {round_and_format(weekly$rel_mae_c_sd)}"
 )
 
 weekly$cell_label <- glue(
-  "{round_and_format(round(weekly$rel_mae_mu))}",
-  " %+-% {round_and_format(weekly$rel_mae_sd)}"
+  "{round_and_format(weekly$rel_mae_mu)}"
+  ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
 )
 
 more_forecasts <- weekly[weekly$n >= 15, ]
@@ -407,7 +436,7 @@ ggsave("rmae_vs_weekly_cv_all_countries.png", pcv_all)
 ##################### Relative Error #################################
 ######################################################################
 ######################################################################
-by_country <- by_country[by_country$country != "Kyrgyzstan", ]
+
 
 p1 <- ggplot(by_country) +
   geom_point(

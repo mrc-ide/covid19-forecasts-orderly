@@ -10,7 +10,8 @@ x <- list(
   )
  ),
  packages = c(
-   "dplyr", "tidyr", "ggplot2", "purrr", "rincewind", "projections", "incidence"
+   "dplyr", "tidyr", "ggplot2", "purrr",
+   "rincewind", "projections", "incidence", "glue", "assessr"
  )
 )
 

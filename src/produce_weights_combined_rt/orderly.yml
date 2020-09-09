@@ -19,6 +19,8 @@ packages:
 - rincewind
 - projections
 - incidence
+- glue
+- assessr
 depends:
 - produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2020-03-08")
@@ -56,30 +58,6 @@ depends:
     id: latest(parameter:week_ending == "2020-05-03")
     use:
       ensemble_model_rt_samples_2020-05-03.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-10")
-    use:
-      ensemble_model_rt_samples_2020-05-10.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-17")
-    use:
-      ensemble_model_rt_samples_2020-05-17.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-24")
-    use:
-      ensemble_model_rt_samples_2020-05-24.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-31")
-    use:
-      ensemble_model_rt_samples_2020-05-31.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-07")
-    use:
-      ensemble_model_rt_samples_2020-06-07.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-14")
-    use:
-      ensemble_model_rt_samples_2020-06-14.rds: ensemble_model_rt_samples.rds
 - prepare_ecdc_data:
     id: latest
     use:

@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-06-14", use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-04-12", use_si = "si_2"))
 ## infiles <- list.files(pattern = "*.rds")
 
 run_info <- orderly::orderly_run_info()
@@ -12,12 +12,12 @@ names(infiles) <- gsub(
 
 rt_samples <- purrr::map(infiles, readRDS)
 observed <- readRDS("latest_deaths_wide_no_filter.rds")
-
+observed[["Czech_Republic"]] <- observed[["Czechia"]]
 week_ending <- as.Date(week_ending)
 week_prev <- week_ending - 7
 
 model_input <- readRDS(
-  glue::glue("{dirname(covid_19_path)}/model_inputs/data_{week_prev}.rds")
+  glue("{dirname(covid_19_path)}/model_inputs/data_{week_prev}.rds")
 )
 deaths_to_use <- model_input$D_active_transmission
 si <- EpiEstim::discr_si(0:30, model_input$si_mean[2], model_input$si_std[2])
@@ -25,7 +25,7 @@ si <- EpiEstim::discr_si(0:30, model_input$si_mean[2], model_input$si_std[2])
 ## countries included in the week_prev week of analysis
 countries <- setNames(model_input$Country, model_input$Country)
 
-country_weeks <- purrr::map(
+country_weeks <- map(
   countries,
   function(country) {
     weeks <- map(
@@ -33,15 +33,14 @@ country_weeks <- purrr::map(
     )
     weeks <- keep(weeks, ~ !is.na(.))
     weeks <- as.Date(unlist(weeks, recursive = FALSE))
-
-    consecutive_weeks <- list()
-    prev_week <- week_ending
-    counter <- 1
-    while (prev_week %in% weeks) {
-      message(country, " in ", prev_week)
-      consecutive_weeks[[counter]] <- prev_week
-      prev_week <- prev_week - 7
-      counter <- counter + 1
+    gaps <- as.numeric(diff(weeks))
+    if (all(gaps == 7)) consecutive_weeks <- weeks
+    else {
+      ## Find the first date which is more than 7 days
+      ## away from the next date
+      idx <- which(gaps != 7)[1]
+      idx <- idx + 1
+      consecutive_weeks <- tail(weeks, idx)
     }
     consecutive_weeks
   }
@@ -57,6 +56,7 @@ names(betas) <- betas
 combined_rts <- imap(
   country_weeks,
   function(weeks, country) {
+    message(country)
     map(
       betas,
       function(beta) {
@@ -64,6 +64,9 @@ combined_rts <- imap(
         weights <- exp(-beta * seq_along(weeks))
         weights <- weights / sum(weights)
         message(weights)
+        ## weeks goes from earlier to later; so reverse the weights
+        ## so that later weeks get higher weights
+        weights <- rev(weights)
         idx <- sample(
           x = weeks, size = 10000, replace = TRUE, prob = weights
         )
@@ -103,13 +106,16 @@ projections <- imap(
       function(rt_beta) {
         out <- rerun(
           10,
-          projections::project(incid, rt_beta$si_2, si, model = "poisson")
+          project(
+            incid, rt_beta$si_2, si, model = "poisson", R_fix_within = TRUE
+          )
         )
         do.call(what = 'cbind', args = out)
       }
     )
   }
 )
+
 dates_projected <- seq(week_prev + 1, length.out = 7, by = "1 day")
 
 error <- imap(

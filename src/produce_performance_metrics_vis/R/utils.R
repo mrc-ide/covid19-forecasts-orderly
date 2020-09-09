@@ -8,7 +8,7 @@ round_and_format <- function(x, digits = 2) {
 prop_in_cri_heatmap <- function(df, CrI = "50%") {
 
   df$forecast_date <- factor(df$forecast_date)
-  xmax <- max(as.numeric(df$forecast_date)) + 1
+  xmax <- max(as.numeric(df$forecast_date)) + 2
   ymax <- max(as.numeric(factor(df$country))) + 1
 
   p <- ggplot(df) +
@@ -33,13 +33,20 @@ prop_in_cri_heatmap <- function(df, CrI = "50%") {
     aes(x = forecast_date, y = ymax, label = top_label),
     parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
   ) +
+  geom_text(
+    aes(x = forecast_date, y = country, label = cell_label),
+    size = 1.8, parse = TRUE
+  ) +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0),
+    axis.text.x.bottom = element_text(
+      angle = 90, hjust = 0.5, vjust = 0.5, size = 6
+    ),
+    axis.text.y = element_text(size = 6),
     plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
     legend.position = "bottom",
     axis.line.x = element_blank()
   ) +
-  scale_y_discrete(
+    scale_y_discrete(
     limits = rev(levels(df$country)),
     labels = nice_country_name
   ) +
@@ -55,7 +62,7 @@ relative_error_heatmap <- function(df) {
 
   df$forecast_date <- factor(df$forecast_date)
   ymax <- max(as.integer(df$country)) + 1
-  xmax <- max(as.integer(df$forecast_date)) + 1
+  xmax <- max(as.integer(df$forecast_date)) + 2
 
   p <- ggplot() +
     theme_classic() +
