@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-05-31", use_si = "si_2"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
 run_info <- orderly::orderly_run_info()
@@ -13,8 +13,10 @@ countries <- unique(latest$country)
 names(countries) <- countries
 infiles <- grep("country_weeks", infiles, value = TRUE, invert = TRUE)
 rt_samples <- map_dfr(infiles, readRDS)
-week_ending <- as.Date(week_ending)
 rt_samples$model <- as.Date(rt_samples$model)
+
+week_ending <- as.Date(week_ending)
+
 
 
 ## country_weeks <- purrr::map(
@@ -37,12 +39,12 @@ rt_samples$model <- as.Date(rt_samples$model)
 country_weeks <- readRDS("country_weeks.rds")
 ##country_weeks <- purrr::keep(country_weeks, ~ length(.) > 1)
 
-week_iqr <- purrr::imap(
+week_iqr <- imap(
   country_weeks,
   function(weeks, country) {
-    rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, ]
-    x <- dplyr::group_by(rt, model) %>%
-      dplyr::summarise_if(
+    rt <- rt_samples[rt_samples$model %in% as.Date(weeks) & rt_samples$country == country, ]
+    x <- group_by(rt, model) %>%
+      summarise_if(
         is.numeric,
         ~ list(
   `2.5%` = quantile(., prob = 0.025),
@@ -50,7 +52,7 @@ week_iqr <- purrr::imap(
   `50%` = quantile(., prob = 0.50),
   `75%` = quantile(., prob = 0.75),
   `97.5%` = quantile(., prob = 0.975)
-  )) %>% dplyr::ungroup()
+  )) %>% ungroup()
 
     x <- tidyr::unnest(x, cols = c(si_1, si_2))
     x <- x[, c("model", use_si)]
@@ -216,8 +218,12 @@ plots <- purrr::imap(
       scale_x_date(date_breaks = "2 weeks", limits = c(xmin, xmax)) +
       geom_table(
         data = label, aes(x = x, y = y, label = tb), size = 1.5
+      ) +
+      theme(
+        axis.text.x.bottom = element_text(
+          angle = 90, vjust = 0, hjust = 0.5
+        )
       )
-
     p <- cowplot::plot_grid(p1, p2, ncol = 1, align = "hv")
     p
   }

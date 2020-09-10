@@ -15,7 +15,8 @@ force_of_infection <- function(deaths, ws, R) {
 ## r_eff = r_obs / p_susceptible
 ## p_susceptible is the proportion susceptible at the point at which
 ## we start projecting ahead.
-project_with_saturation <- function(deaths, r_eff, p_susceptible, si, n_sim = 100, n_days, cfr, pop) {
+project_with_saturation <- function(deaths, r_eff, p_susceptible, si,
+                                    n_sim = 100, n_days, cfr, pop) {
 
   deaths_obs <- sum(deaths)
   I0 <- matrix(
@@ -27,8 +28,14 @@ project_with_saturation <- function(deaths, r_eff, p_susceptible, si, n_sim = 10
     r_effective = vector(mode = "list", length = n_days),
     p_s = vector(mode = "list", length = n_days)
   )
-  r_eff <- sample(r_eff, n_sim)
+
   ##p_susceptible <- sample(p_susceptible, n_sim)
+  ## Sample once here, so that values are carried through a
+  ## single simulation
+  r_eff <- sample(r_eff, n_sim)
+  idx <- sample(length(cfr), n_sim)
+  cfr <- cfr[idx]
+  p_susceptible <- p_susceptible[idx]
   for (day in 1:n_days) {
     message(day)
     R <- r_eff * p_susceptible

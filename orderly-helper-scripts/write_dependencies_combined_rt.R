@@ -46,7 +46,7 @@ dependances <- purrr::map(
 dependancies5 <- list(
   list(
     produce_weights_combined_rt = list(
-      id = "latest",
+      id = glue::glue("latest(parameter:week_ending == \"{week_ending}\")"),
       use = list(
         "across_countries_beta.rds" =  "across_countries.rds",
         "per_country_beta.rds" = "per_country.rds",

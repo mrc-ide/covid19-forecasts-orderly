@@ -70,7 +70,7 @@ all_reff <- map(
         p <- proportion_susceptible(deaths_per_capita, ifr)
         list(
           p_susceptible = p,
-          r_eff = rt$rt_samples * p
+          r_eff = rt$rt_samples / p
         )
       }
     )
