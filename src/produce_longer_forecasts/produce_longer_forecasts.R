@@ -94,72 +94,28 @@ all_projections <- map(
         rt <- reff[[country]][["r_eff"]]
         p <- reff[[country]][["p_susceptible"]]
         ifr <- ifr_samples[[tolower(country)]]
-        f <-  function() {
-          project_with_saturation(
-            deaths = x,
-            r_eff = rt,
-            p_susceptible = p,
-            si = si,
-            n_sim = n_sim,
-            n_days = n_days,
-            cfr = ifr,
-            pop
-          )
-         }
-        out <- rerun(sims_per_rt, f())
+        project_with_saturation(
+          deaths = x,
+          r_eff = rt,
+          p_susceptible = p,
+          si = si,
+          n_days = n_days,
+          cfr = ifr,
+          pop,
+          n_sim = n_sim,
+          sims_per_rt = sims_per_rt
+        )
       }
     )
   }
 )
 
-projections <- map(
-  all_projections,
-  function(pred) {
-    map(
-      pred,
-      function(country_pred) {
-        out <- map(country_pred, ~ .[["pred"]])
-        do.call(what = 'rbind', args = out)
-      }
-    )
-  }
-)
+projections <- map_depth(all_projections, 2, ~ .[["pred"]])
 
-r_effective <- map(
-  all_projections,
-  function(pred) {
-    map(
-      pred,
-      function(country_pred) {
-        out <- map(country_pred, ~ .[["r_effective"]])
-        len <- length(out[[1]])
-        reff <- vector(mode = "list", length = len)
-        for (idx in 1:len) {
-          reff[[idx]] <- unlist(map(out, ~ .[[idx]]))
-        }
-        reff
-      }
-    )
-  }
-)
+r_effective <- map_depth(all_projections, 2, ~ .[["r_effective"]])
 
-p_s <- map(
-  all_projections,
-  function(pred) {
-    map(
-      pred,
-      function(country_pred) {
-        out <- map(country_pred, ~ .[["p_s"]])
-        len <- length(out[[1]])
-        ps <- vector(mode = "list", length = len)
-        for (idx in 1:len) {
-          ps[[idx]] <- unlist(map(out, ~ .[[idx]]))
-        }
-        ps
-      }
-    )
-  }
-)
+p_s <- map_depth(all_projections, 2, ~ .[["p_s"]])
+
 
 pred_qntls <- map_depth(
   projections,
