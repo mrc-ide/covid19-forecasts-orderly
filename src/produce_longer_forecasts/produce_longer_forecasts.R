@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-04-05", use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
 prob <- c(0.025, 0.25, 0.50, 0.75, 0.975)
@@ -26,16 +26,18 @@ n_sim <- 1000
 ifr_samples <- readRDS("population_weighted_ifr.rds")
 names(ifr_samples) <- snakecase::to_snake_case((names(ifr_samples)))
 
-indir <- dirname(covid_19_path)
-raw_data <- readRDS(
-  glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
-)
+## indir <- dirname(covid_19_path)
+## raw_data <- readRDS(
+##   glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
+## )
+##deaths_to_use <- raw_data[["D_active_transmission"]]
+latest_deaths_wide <- readRDS("latest_deaths_wide_no_filter.rds")
+deaths_to_use <- latest_deaths_wide[latest_deaths_wide$dates <= week_ending, ]
+colnames(deaths_to_use)[colnames(deaths_to_use) == "Czech_Republic"] <- "Czechia"
 
 si_distrs <- readRDS("si_distrs.rds")
 si <- si_distrs[[use_si]]
 
-deaths_to_use <- raw_data[["D_active_transmission"]]
-colnames(deaths_to_use)[colnames(deaths_to_use) == "Czech_Republic"] <- "Czechia"
 
 
 

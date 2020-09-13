@@ -51,3 +51,7 @@ depends:
     use:
       si_distrs.rds: si_distrs.rds
       population_weighted_ifr.rds: population_weighted_ifr.rds
+  prepare_ecdc_data:
+    id: latest
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds

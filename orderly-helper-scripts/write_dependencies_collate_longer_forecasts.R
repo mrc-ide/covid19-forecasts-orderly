@@ -17,7 +17,7 @@ x <- list(
 )
 
 week_starting <- as.Date("2020-03-29")
-week_ending <- as.Date("2020-07-12")
+week_ending <- as.Date("2020-08-09")
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
@@ -36,9 +36,9 @@ dependancies <- purrr::map(
       produce_longer_forecasts = list(
         id = query,
         use =  list(
-          "unwtd_projections.rds",
-          "wtd_per_country_projections.rds",
-          "wtd_across_all_projections.rds"
+          "unweighted_pred_qntls.rds",
+          "weighted_across_countries_pred_qntls.rds",
+          "weighted_per_country_pred_qntls.rds"
         )
       )
     )

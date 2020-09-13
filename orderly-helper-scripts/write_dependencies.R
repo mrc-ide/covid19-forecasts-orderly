@@ -5,10 +5,7 @@ x <- list(
     data = list(
     description = "Collated model outputs (quantiles)",
     filenames = c(
-      "unweighted_qntls.rds", "wtd_prev_week_qntls.rds",
-      "wtd_all_prev_weeks_qntls.rds", "unweighted_rt_qntls.rds",
-      "wtd_prev_week_rt_qntls.rds", "wtd_rt_all_prev_week_qntls.rds",
-      "wtd_prev_week_rt_samples.rds", "wtd_all_prev_week_rt_samples.rds",
+      "unweighted_qntls.rds", "unweighted_rt_qntls.rds",
       "unwtd_rt_samples.rds"
     )
   )
@@ -16,14 +13,9 @@ x <- list(
  packages = c("dplyr", "tidyr")
 )
 
-wtd_weeks <- seq(
-  from = as.Date("2020-03-15"),
-  to = as.Date("2020-08-09"),
-  by = "7 days"
-)
 unwtd_weeks <- seq(
   from = as.Date("2020-03-08"),
-  to = as.Date("2020-08-09"),
+  to = as.Date("2020-09-06"),
   by = "7 days"
 )
 
@@ -89,6 +81,6 @@ dependancies5 <- list(
 
 ##x$depends <- c(dependancies, dependancies2, dependancies5)
 x$depends <- c(dependancies2, dependancies5)
-con <- file("src/collate_model_outputs/orderly.yml", "w")
+con <- file(here::here("src/collate_model_outputs/orderly.yml"), "w")
 yaml::write_yaml(x, con)
 close(con)
