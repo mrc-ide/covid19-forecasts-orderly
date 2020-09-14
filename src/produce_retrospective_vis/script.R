@@ -1,4 +1,4 @@
-week_ending <- as.Date("2020-09-07")
+week_ending <- as.Date("2020-09-16")
 palette <- c(
   Africa = "#d21d24",
   `North America` = "#5adf79",
@@ -86,7 +86,7 @@ pline <- ggplot() +
     breaks = seq(
       from = as.Date("2020-03-01"),
       to = week_ending,
-      by = "3 weeks"
+      by = "4 weeks"
     ),
     limits = c(as.Date("2020-03-01"), week_ending)
   ) +
@@ -133,7 +133,7 @@ epicurve <- ggplot() +
     breaks = seq(
       from = as.Date("2020-03-01"),
       to = week_ending,
-      by = "3 weeks"
+      by = "4 weeks"
     ),
     limits = c(as.Date("2020-03-01"), week_ending)
   ) +

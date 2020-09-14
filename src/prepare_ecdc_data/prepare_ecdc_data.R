@@ -721,7 +721,7 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateR
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
 
 last_2monthsb <- head(last_2months, -1)
-who_Bolivia <- who[who$country == "Bolivia (Plurinational State of)" & who$date_reported %in% last_2monthsa, ]
+who_Bolivia <- who[who$country == "Bolivia (Plurinational State of)" & who$date_reported %in% last_2monthsb, ]
 ecdc_Bolivia <- raw_data[raw_data$`Countries.and.territories` == "Bolivia", ]
 ecdc_Bolivia <- ecdc_Bolivia[ecdc_Bolivia$DateRep %in% last_2monthsb, ]
 df <- dplyr::left_join(who_Bolivia, ecdc_Bolivia, by = c("date_reported" = "DateRep"))
@@ -730,8 +730,8 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
 
 dates_to_avg <- as.Date(c(
-  "2020-09-04", "2020-09-05", "2020-09-06",
-  "2020-09-08", "2020-09-09", "2020-09-10"
+  "2020-09-05", "2020-09-06",
+  "2020-09-07", "2020-09-09", "2020-09-10", "2020-09-11"
 ))
 
 ## Bolivia reports 1610 deaths on 7th september, setting it to the
@@ -748,19 +748,24 @@ bolivia_avg_deaths <- mean(
 ) %>% round
 
 
-raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-09-07"] <- bolivia_avg_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-09-07"] <- bolivia_avg_deaths
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-09-08"] <- bolivia_avg_cases
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-09-08"] <- bolivia_avg_deaths
 
 ## Similarly for Ecuador.
 ## average of deaths from 4th, 5th, 6th, 8th, 9th, 10 September
+dates_to_avg <- as.Date(c(
+  "2020-09-04", "2020-09-05", "2020-09-06",
+  "2020-09-09", "2020-09-10", "2020-09-11"
+))
+
 ecuador_avg_cases <- mean(
   raw_data$Cases[raw_data$`Countries.and.territories` == "Ecuador" &
                  raw_data$DateRep %in% dates_to_avg]
-)
+) %>% round
 ecuador_avg_deaths <- mean(
   raw_data$Deaths[raw_data$`Countries.and.territories` == "Ecuador" &
                  raw_data$DateRep %in% dates_to_avg]
-)
+) %>% round
 
 raw_data$Cases[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_cases
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_deaths
@@ -851,14 +856,11 @@ out <- saveRDS(
 ##   "Zambia", "Kyrgyzstan", "Oman", "Zimbabwe"
 ## )
 
-## exclude <- c(
-##   "Ethiopia",
-##   "Kazakhstan",
-##   "Kenya",
-##   "Oman",
-##   "United_States_of_America",
-##   "Yemen",
-##   "Syria"
-## )
-exclude <- c()
+exclude <- c(
+  "Kazakhstan",
+  "Oman",
+  "United_States_of_America",
+  "Syria",
+  "Zimbabwe"
+)
 saveRDS(exclude, "exclude.rds")
