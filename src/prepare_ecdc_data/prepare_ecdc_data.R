@@ -1,4 +1,4 @@
-week_finishing <- "2020-09-06"
+week_finishing <- "2020-09-13"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -571,23 +571,6 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$Da
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2020-08-20"] <- 8
 
 
-who_Bolivia <- who[who$country == "Bolivia (Plurinational State of)", ]
-ecdc_Bolivia <- raw_data[raw_data$`Countries.and.territories` == "Bolivia", ]
-who_Bolivia <- who_Bolivia[who_Bolivia$date_reported %in% ecdc_Bolivia$DateRep, ]
-df <- dplyr::left_join(who_Bolivia, ecdc_Bolivia, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-
-who_Israel <- who[who$country == "Israel", ]
-ecdc_Israel <- raw_data[raw_data$`Countries.and.territories` == "Israel", ]
-who_Israel <- who_Israel[who_Israel$date_reported %in% ecdc_Israel$DateRep, ]
-df <- dplyr::left_join(who_Israel, ecdc_Israel, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
 ######################################################################
 ######################################################################
 ######################################################################
@@ -673,7 +656,7 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$Date
 raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2020-09-06"] <- 37
 
 
-last_2months <- seq(from = as.Date("2020-07-01"), to = as.Date("2020-09-06"), by = "1 day")
+last_2months <- seq(from = as.Date("2020-07-01"), to = as.Date(week_finishing), by = "1 day")
 who_India <- who[who$country == "India" & who$date_reported %in% last_2months, ]
 ecdc_India <- raw_data[raw_data$`Countries.and.territories` == "India", ]
 ecdc_India <- ecdc_India[ecdc_India$DateRep %in% last_2months, ]
@@ -698,20 +681,90 @@ df <- dplyr::arrange(df, desc(date_reported))
 raw_data$Cases[raw_data$`Countries.and.territories` == "Philippines" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Philippines" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
 
+######################################################################
+######################################################################
+######################################################################
+######################################################################
+########## Corrections 13th September ################################
+######################################################################
+######################################################################
+######################################################################
 
-## uk_extra <- data.frame(
-##   DateRep = "2020-05-24",
-##   day = 24,
-##   month = 5,
-##   year = 2020,
-##   Cases = 0,
-##   Deaths = 282,
-##   `Countries.and.territories` = "United_Kingdom",
-##   geoId = "GB",
-##   countryterritoryCode = "GBR",
-##   popData2018 = 66488991,
-##   continent = "Europe"
-## )
+
+who_Bangladesh <- who[who$country == "Bangladesh" & who$date_reported %in% last_2months, ]
+ecdc_Bangladesh <- raw_data[raw_data$`Countries.and.territories` == "Bangladesh", ]
+ecdc_Bangladesh <- ecdc_Bangladesh[ecdc_Bangladesh$DateRep %in% last_2months, ]
+df <- dplyr::left_join(who_Bangladesh, ecdc_Bangladesh, by = c("date_reported" = "DateRep"))
+df <- dplyr::arrange(df, desc(date_reported))
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bangladesh" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bangladesh" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
+
+who_Morocco <- who[who$country == "Morocco" & who$date_reported %in% last_2months, ]
+ecdc_Morocco <- raw_data[raw_data$`Countries.and.territories` == "Morocco", ]
+ecdc_Morocco <- ecdc_Morocco[ecdc_Morocco$DateRep %in% last_2months, ]
+df <- dplyr::left_join(who_Morocco, ecdc_Morocco, by = c("date_reported" = "DateRep"))
+df <- dplyr::arrange(df, desc(date_reported))
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
+
+
+
+## WHO report 0 new cases and 0 new deaths for Israel from 10th to 13th
+## Sept. We take these values from ECDC
+last_2monthsa <- head(last_2months, -4)
+who_Israel <- who[who$country == "Israel" & who$date_reported %in% last_2monthsa, ]
+ecdc_Israel <- raw_data[raw_data$`Countries.and.territories` == "Israel", ]
+ecdc_Israel <- ecdc_Israel[ecdc_Israel$DateRep %in% last_2monthsa, ]
+df <- dplyr::left_join(who_Israel, ecdc_Israel, by = c("date_reported" = "DateRep"))
+df <- dplyr::arrange(df, desc(date_reported))
+raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
+
+last_2monthsb <- head(last_2months, -1)
+who_Bolivia <- who[who$country == "Bolivia (Plurinational State of)" & who$date_reported %in% last_2monthsa, ]
+ecdc_Bolivia <- raw_data[raw_data$`Countries.and.territories` == "Bolivia", ]
+ecdc_Bolivia <- ecdc_Bolivia[ecdc_Bolivia$DateRep %in% last_2monthsb, ]
+df <- dplyr::left_join(who_Bolivia, ecdc_Bolivia, by = c("date_reported" = "DateRep"))
+df <- dplyr::arrange(df, desc(date_reported))
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
+
+dates_to_avg <- as.Date(c(
+  "2020-09-04", "2020-09-05", "2020-09-06",
+  "2020-09-08", "2020-09-09", "2020-09-10"
+))
+
+## Bolivia reports 1610 deaths on 7th september, setting it to the
+## average of deaths from 4th, 5th, 6th, 8th, 9th, 10 September
+
+bolivia_avg_cases <- mean(
+  raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" &
+                 raw_data$DateRep %in% dates_to_avg]
+) %>% round
+
+bolivia_avg_deaths <- mean(
+  raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" &
+                 raw_data$DateRep %in% dates_to_avg]
+) %>% round
+
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-09-07"] <- bolivia_avg_cases
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-09-07"] <- bolivia_avg_deaths
+
+## Similarly for Ecuador.
+## average of deaths from 4th, 5th, 6th, 8th, 9th, 10 September
+ecuador_avg_cases <- mean(
+  raw_data$Cases[raw_data$`Countries.and.territories` == "Ecuador" &
+                 raw_data$DateRep %in% dates_to_avg]
+)
+ecuador_avg_deaths <- mean(
+  raw_data$Deaths[raw_data$`Countries.and.territories` == "Ecuador" &
+                 raw_data$DateRep %in% dates_to_avg]
+)
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_cases
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_deaths
+
 ## raw_data <- rbind(raw_data, uk_extra)
 
 
@@ -798,14 +851,14 @@ out <- saveRDS(
 ##   "Zambia", "Kyrgyzstan", "Oman", "Zimbabwe"
 ## )
 
-exclude <- c(
-  "Ethiopia",
-  "Kazakhstan",
-  "Kenya",
-  "Oman",
-  "United_States_of_America",
-  "Yemen",
-  "Syria"
-)
-
+## exclude <- c(
+##   "Ethiopia",
+##   "Kazakhstan",
+##   "Kenya",
+##   "Oman",
+##   "United_States_of_America",
+##   "Yemen",
+##   "Syria"
+## )
+exclude <- c()
 saveRDS(exclude, "exclude.rds")
