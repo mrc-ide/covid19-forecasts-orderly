@@ -373,10 +373,15 @@ plots <- split(x, x$continent) %>%
             guide = "legend",
             aesthetics = "color"
           ) +
+          scale_x_date(
+            date_breaks = "3 weeks",
+            limits = c(as.Date("2020-03-01"), NA)
+          ) +
           theme(
             legend.text = element_text(size = 20),
             legend.key.width = unit(3, "line"),
-            legend.key.height = unit(3, "line")
+            legend.key.height = unit(3, "line"),
+            axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0)
           )
 
         outfile <- glue::glue("reporting_ratio_{continent}_page_{page_num}.png")

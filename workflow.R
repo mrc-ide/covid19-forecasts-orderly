@@ -86,7 +86,8 @@ orderly::orderly_commit(a)
 a <- orderly::orderly_run("src/produce_retrospective_vis/")
 orderly::orderly_commit(a)
 
-a <- orderly::orderly_run("src/produce_visualisations/", parameters = list(week_ending_vis = week))
+a <- orderly::orderly_run("src/produce_visualisations/",
+                          parameters = list(week_ending_vis = week))
 orderly::orderly_commit(a)
 
 a <- orderly::orderly_run("src/produce_full_report")
