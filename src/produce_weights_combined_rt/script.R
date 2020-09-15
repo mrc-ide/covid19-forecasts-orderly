@@ -1,9 +1,11 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-04-12", use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-08-23", use_si = "si_2"))
 ## infiles <- list.files(pattern = "*.rds")
 
 run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
 
+exclude <- readRDS("exclude.rds")
+infiles <- grep("exclude", infiles, invert = TRUE, value = TRUE)
 infiles <- grep("latest", infiles, invert = TRUE, value = TRUE)
 
 names(infiles) <- gsub(
@@ -19,12 +21,16 @@ week_prev <- week_ending - 7
 model_input <- readRDS(
   glue("{dirname(covid_19_path)}/model_inputs/data_{week_prev}.rds")
 )
-deaths_to_use <- model_input$D_active_transmission
+##deaths_to_use <- model_input$D_active_transmission
+
+deaths_to_use <- observed[observed$dates <= week_prev, ]
 si <- EpiEstim::discr_si(0:30, model_input$si_mean[2], model_input$si_std[2])
 
 ## countries included in the week_prev week of analysis
 countries <- setNames(model_input$Country, model_input$Country)
-
+countries <- countries[! countries %in% exclude]
+message("################ Including countries ######################")
+message(paste(countries, collapse = "\n"))
 country_weeks <- map(
   countries,
   function(country) {
@@ -98,7 +104,7 @@ projections <- imap(
   combined_rts,
   function(rt, country) {
     message(country)
-    obs <- deaths_to_use[deaths_to_use$dates <= week_ending - 7, c("dates", country)]
+    obs <- deaths_to_use[, c("dates", country)]
     obs$deaths <- obs[[country]]
     incid <- rincewind:::ts_to_incid(obs, "dates", "deaths")
     map(

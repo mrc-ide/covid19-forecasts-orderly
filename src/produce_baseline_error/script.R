@@ -1,4 +1,6 @@
-##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-08-16", week_starting = "2020-03-08"))
+##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-09-07", week_starting = "2020-03-08"))
+weekly_cv <- function(vec) sd(vec) / mean(vec)
+
 week_starting <- as.Date(week_starting)
 week_ending <- as.Date(week_ending)
 
@@ -7,37 +9,9 @@ weeks <- seq(from = week_starting, to = week_ending, by = "7 days")
 model_input <- readRDS("model_input.rds")
 model_input <- model_input[model_input$dates > week_starting &
                            model_input$dates <= week_ending, ]
-tall <- tidyr::gather(model_input, country, deaths, -dates)
-
-weekly_cv <- function(vec) sd(vec) / mean(vec)
-
-weekly <- split(tall, tall$country) %>%
-  map_dfr(
-    function(x) {
-      dates <- slider::slide_period_vec(
-        x$dates, x$dates, "week", ~ .[1], .origin = week_starting
-      )
-      incid <- slider::slide_period_vec(
-        x$deaths, x$dates, "week", sum, .origin = week_starting
-        )
-      cv <- slider::slide_period_vec(
-        x$deaths, x$dates, "week", weekly_cv, .origin = week_starting
-      )
-      data.frame(
-        week_starting = dates,
-        weekly_incid = incid,
-        weekly_cv = cv,
-        country = x$country[1]
-      )
-  }, .id = "country"
-) ##%>% tidyr::spread(country, weekly_incid)
-
-### If our predicitons for a week were the average deaths in the last
-### week, what would the error we make?
-
 
 countries <- setNames(
-  unique(weekly$country), unique(weekly$country)
+  colnames(model_input)[-1], colnames(model_input)[-1]
 )
 
 weeks_day1 <- seq(
@@ -50,6 +24,40 @@ weeks <- map(
 
 names(weeks) <- weeks_day1
 
+tall <- tidyr::gather(model_input, country, deaths, -dates)
+
+weekly <- map_dfr(
+  countries,
+  function(country) {
+    message(country)
+    imap_dfr(
+      weeks,
+      function(week, week_starting) {
+        message(paste(week, collapse = " "))
+        incid <- model_input[model_input$dates %in% week, country]
+        cv <- weekly_cv(incid)
+        data.frame(
+          week_starting = week_starting,
+          dates = week,
+          weekly_incid = sum(incid),
+          weekly_cv = cv,
+          country = country
+        )
+      }
+    )
+  }, .id = "country"
+)
+
+## threshold for excluding countries
+by_country <- filter(weekly, weekly_cv > 0) %>%
+  group_by(country) %>%
+  summarise(cv = mean(weekly_cv, na.rm = TRUE)) %>%
+  ungroup()
+
+exclude <- filter(by_country, cv > 1.38) %>% pull(country)
+saveRDS(exclude, "exclude.rds")
+### If our predicitons for a week were the average deaths in the last
+### week, what would the error we make?
 null_model_error <- map_dfr(
   countries,
   function(country) {

@@ -8,6 +8,7 @@ artefacts:
     filenames:
       - null_model_error.rds
       - weekly_incidence.rds
+      - exclude.rds
 packages:
 - dplyr
 - tidyr

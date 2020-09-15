@@ -51,7 +51,18 @@ dependancies5 <- list(
   )
 )
 
-x$depends <- c(dependances, dependancies5)
+dependancies6 <- list(
+  list(
+    produce_baseline_error = list(
+      id = "latest",
+      use = list(
+        "exclude.rds" =  "exclude.rds"
+      )
+    )
+  )
+)
+
+x$depends <- c(dependances, dependancies5, dependancies6)
 
 
 
