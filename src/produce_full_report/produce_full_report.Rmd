@@ -448,6 +448,7 @@ the reporting. For instance, an increase in the ratio gives an
 indication that cases reporting is decreasing. If all cases
 (including asymptomatic cases) and death were reported, then the ratio defined
 would be equivalent to the infection fatality ratio (IFR).
+
 ### Europe
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -534,6 +535,8 @@ delay) reaches 1.
 before, we set the ratio at 1 (95% CI 1-1)*
 
 <br><br>
+
+
 ## Case Ascertainment
 
 Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
