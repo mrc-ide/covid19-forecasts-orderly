@@ -30,7 +30,7 @@ long_forecasts <- readRDS("unwtd_long_qntls.rds")
 country_long_pred <- reactive({
   
   pred <- long_forecasts[long_forecasts$country == input$country &
-                         long_forecasts$forecast_week == input$forecast_week, ]
+                         long_forecasts$forecast_week %in% input$forecast_week, ]
   pred$date <- as.Date(pred$date)
   pred
 })
@@ -38,7 +38,7 @@ country_long_pred <- reactive({
 country_pred <- reactive({
   
   pred <- ensb_qntls[ensb_qntls$country == input$country &
-                     ensb_qntls$proj == input$forecast_week, ]
+                     ensb_qntls$proj %in% input$forecast_week, ]
   pred$date <- as.Date(pred$date)
   pred
 })
@@ -64,7 +64,13 @@ selectInput(
   choices = countries, selected = "Brazil"
 )
 
-selectInput('forecast_week', label = 'Select a week', choices = forecast_weeks, selected = "2020-03-08")
+selectInput(
+  'forecast_week',
+  label = 'Select a week',
+  choices = forecast_weeks,
+  selected = "2020-03-08",
+  multiple = TRUE
+)
 
 
 ```
@@ -100,10 +106,10 @@ output$scatter <- renderPlotly({
   obs_country <- country_obs()
   p1a <- ggplot() +
     geom_point(data = obs_country, aes(dates, deaths)) +
-    geom_line(data = pred, aes(date, `50%`)) +
+    geom_line(data = pred, aes(date, `50%`, group = proj)) +
     geom_ribbon(
       data = pred,
-      aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+      aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = proj),
       alpha = 0.3
     ) +
     scale_x_date(
@@ -163,10 +169,12 @@ output$long <- renderPlotly({
   obs_country <- country_obs()
   p1b <- ggplot() +
     geom_point(data = obs_country, aes(dates, deaths)) +
-    geom_line(data = pred, aes(date, `50%`)) +
+    geom_line(data = pred, aes(date, `50%`, group = forecast_week)) +
     geom_ribbon(
       data = pred,
-      aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+      aes(
+        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_week
+      ),
       alpha = 0.3
     ) +
     scale_x_date(
