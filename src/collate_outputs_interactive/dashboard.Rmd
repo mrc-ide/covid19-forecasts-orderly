@@ -18,13 +18,28 @@ library(shiny)
 library(ggthemes)
 library(viridis)
 library(plotly)
+library(shinyWidgets)
+
 ensb_qntls <- readRDS("unweighted_qntls.rds")
 ensb_qntls <- ensb_qntls[ensb_qntls$si == "si_2", ]
 obs <- readRDS("model_input.rds")
-countries <- unique(ensb_qntls$country)
+countries <- sort(unique(ensb_qntls$country))
+names(countries) <- snakecase::to_title_case(countries)
+continents <- countrycode::countrycode(
+  names(countries), origin = "country.name", destination = "continent"
+  )
+## Organise as list of lists where the upper level is continent
+countries <- list(
+  Asia = countries[continents == "Asia"],
+  Europe = countries[continents == "Europe"],
+  Americas = countries[continents == "Americas"],
+  Africa = countries[continents == "Africa"],
+  Oceania = countries[continents == "Oceania"]
+)
 forecast_weeks <- seq(
   as.Date("2020-03-08"), to = as.Date("2020-09-06"), by = "7 days"
 )
+names(forecast_weeks) <- forecast_weeks
 long_forecasts <- readRDS("unwtd_long_qntls.rds")
 
 country_long_pred <- reactive({
@@ -61,34 +76,22 @@ Sidebar {.sidebar}
 # Define inputs
 selectInput(
   'country', label = 'Select a country',
-  choices = countries, selected = "Brazil"
+  choices = countries, selected = "Brazil",
+  multiple = FALSE
 )
 
-selectInput(
+pickerInput(
   'forecast_week',
   label = 'Select a week',
   choices = forecast_weeks,
   selected = "2020-03-08",
+  options = list(`actions-box` = TRUE),
   multiple = TRUE
 )
 
 
 ```
 
-Use the __Explore metros__ tab to explore neighborhood diversity for
-your chosen metropolitan area in 2010.  The red line on the
-scatterplot represents a locally-weighted estimate of how diversity
-varies in the metropolitan area by distance from its urban core or
-cores.  Click and drag on the scatterplot to highlight the
-corresponding Census tracts on the map below, and click on a Census
-tract on the map to generate a chart of race and ethnicity counts.
-
-
-Click the __Compare over time__ tab to examine how locally-weighted
-estimates of neighborhood diversity by distance from the urban core
-has varied between the 1990, 2000, and 2010 Censuses, and view maps of
-these shifts over time. To learn more about the project, click the
-__About__ tab.  
 
 Short-term forecasts
 ======================================================================

@@ -123,7 +123,7 @@ saveRDS(
 )
 
 combined2 <- purrr::keep(
-  combined_estimates, ~ length(.$weeks_combined) > 1
+  combined_estimates, ~ length(.$weeks_combined) > 0
 )
 
 ## Extend this for the days between week_starting2 and
