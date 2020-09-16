@@ -55,3 +55,8 @@ depends:
     id: latest
     use:
       latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
+  produce_baseline_error:
+    id: latest
+    use:
+      exclude.rds: exclude.rds
+      

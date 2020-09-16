@@ -4,6 +4,9 @@ dir.create("figures")
 run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
 
+exclude <- readRDS("exclude.rds")
+infiles <- grep("exclude", infiles, invert = TRUE, value = TRUE)
+
 infiles <- grep("beta", infiles, invert = TRUE, value = TRUE)
 latest <- readRDS(grep(week_ending, infiles, value = TRUE))
 per_country_beta <- readRDS("per_country_beta.rds")
@@ -11,6 +14,11 @@ across_countries_beta <- readRDS("across_countries_beta.rds")
 
 countries <- unique(latest$country)
 names(countries) <- countries
+countries <- countries[! countries %in% exclude]
+message("################ Including countries ######################")
+message(paste(countries, collapse = "\n"))
+
+
 infiles <- grep("country_weeks", infiles, value = TRUE, invert = TRUE)
 rt_samples <- map_dfr(infiles, readRDS)
 rt_samples$model <- as.Date(rt_samples$model)

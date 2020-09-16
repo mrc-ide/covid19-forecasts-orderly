@@ -44,10 +44,13 @@ si <- si_distrs[[use_si]]
 ## rt_estimates <- purrr::keep(
 ##   rt_estimates, ~ length(.$weeks_combined) > 1
 ## )
-
+exclude <- readRDS("exclude.rds")
 countries <- setNames(
   names(unwtd_rt_estimates), names(unwtd_rt_estimates)
 )
+countries <- countries[! countries %in% exclude]
+message("################ Including countries ######################")
+message(paste(countries, collapse = "\n"))
 
 all_restimates <- list(
   unweighted = unwtd_rt_estimates,
