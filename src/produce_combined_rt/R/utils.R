@@ -108,7 +108,9 @@ plot_combined_iqr <- function(df) {
     ylab("Combined Effective Reproduction Number") +
     geom_hline(yintercept = 1, linetype = "dashed") +
     theme(
-      axis.text.x = element_text(hjust = 0.8)
+      axis.text.x.bottom = element_text(
+        angle = 90, vjust = 0, hjust = 0.5
+      )
     )
 
   p
@@ -139,7 +141,9 @@ plot_weekly_iqr <- function(df) {
     ylab("Weekly Effective Reproduction Number") +
     geom_hline(yintercept = 1, linetype = "dashed") +
     theme(
-      axis.text.x = element_text(hjust = 0.8)
+      axis.text.x.bottom = element_text(
+        angle = 90, vjust = 0, hjust = 0.5
+      )
     )
 
 

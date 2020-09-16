@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-04-26", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
 run_info <- orderly::orderly_run_info()
@@ -155,7 +155,7 @@ plots <- purrr::imap(
   function(y, country) {
     x <- week_iqr[[country]]
     x <- split(x, x$forecast_week) %>%
-      purrr::map_dfr(
+      map_dfr(
         function(df) {
           df <- df[rep(seq_len(nrow(df)), each = 7), ]
           df$week_starting <- df$forecast_week
@@ -166,7 +166,7 @@ plots <- purrr::imap(
           )
           df
         }
-    )
+   )
     unwtd <- f(y)
     weighted_all <- f(combined_weighted_estimates2[[country]])
     weighted_per  <- f(combined_weighted_estimates[[country]])
@@ -183,23 +183,25 @@ plots <- purrr::imap(
     weights <- left_join(
       weights_per, weights_all, by = "Week Starting"
     )
-
-    colnames(weights)[2:3] <- c(
+    if (nrow(weights) > 0) {
+      colnames(weights)[2:3] <- c(
         "beta across countries", "beta per country"
-    )
+      )
 
-    ##weights <- mutate_if(weights, is.numeric, ~ round(., 3))
-    weights <- gather(
-      weights, beta, weight, `beta across countries`:`beta per country`
-    ) %>%
-      filter(weight > 0) %>%
-      spread(`Week Starting`, weight, fill = 0)
+      ##weights <- mutate_if(weights, is.numeric, ~ round(., 3))
+      weights <- gather(
+        weights, beta, weight, `beta across countries`:`beta per country`
+      ) %>%
+        filter(weight > 0) %>%
+        spread(`Week Starting`, weight, fill = 0)
+    }
 
     ymax <- ceiling(max(x[["97.5%"]]))
 
     p1 <- plot_weekly_iqr(x) +
       ##scale_x_date(breaks = unique(x$forecast_week)) +
       coord_cartesian(clip = "off") +
+      xlab("") +
       ylim(0, ymax)
 
     xmin <- min(x$forecast_week)
@@ -223,15 +225,14 @@ plots <- purrr::imap(
       coord_cartesian(clip = "off") +
       ylim(0, ymax) +
       theme(legend.position = "top", legend.title = element_blank()) +
-      scale_x_date(date_breaks = "2 weeks", limits = c(xmin, xmax)) +
-      geom_table(
-        data = label, aes(x = x, y = y, label = tb), size = 1.5
-      ) +
-      theme(
-        axis.text.x.bottom = element_text(
-          angle = 90, vjust = 0, hjust = 0.5
+      scale_x_date(date_breaks = "2 weeks", limits = c(xmin, xmax))
+
+    if (nrow(weights) > 0) {
+      p2 <- p2 +
+        geom_table(
+          data = label, aes(x = x, y = y, label = tb), size = 1.5
         )
-      )
+    }
     p <- cowplot::plot_grid(p1, p2, ncol = 1, align = "hv")
     p
   }
