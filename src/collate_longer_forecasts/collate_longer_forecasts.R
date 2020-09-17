@@ -1,75 +1,33 @@
+## orderly::orderly_develop_start(use_draft = "newer")
+## infiles <- list.files(pattern = "*.rds")
 dir.create("figures")
 run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
 
-unwtd <- grep("unweighted", infiles, value = TRUE)
+named_infiles <- function(infiles, pattern) {
+  x <- grep(pattern = pattern, x = infiles, value = TRUE)
+  names(x) <- gsub(
+  x = x, pattern = glue("{pattern}_"), replacement = ""
+  ) %>% gsub(x = ., pattern = ".rds", replacement = "")
+  x
+}
 
-names(unwtd) <- gsub(
-  x = unwtd, pattern = "unweighted_pred_qntls_", replacement = ""
-) %>% gsub(x = ., pattern = ".rds", replacement = "")
-
-wtd_across_all <- grep("weighted_across_countries", infiles, value = TRUE)
-
-names(wtd_across_all) <- gsub(
-  x = wtd_across_all, pattern = "weighted_across_countries_", replacement = ""
-) %>% gsub(x = ., pattern = ".rds", replacement = "")
-
-
-wtd_per_country <- grep("weighted_per_country", infiles, value = TRUE)
-
-names(wtd_per_country) <- gsub(
-  x = wtd_per_country, pattern = "weighted_per_country_", replacement = ""
-) %>% gsub(x = ., pattern = ".rds", replacement = "")
+unwtd <- named_infiles(infiles, pattern = "unweighted_pred_qntls")
+wtd_across_all <- named_infiles(
+  infiles, pattern = "weighted_across_countries_pred_qntls"
+)
+wtd_per_country <- named_infiles(
+  infiles, "weighted_per_country_pred_qntls"
+)
 
 
-infiles <- list(
+pred_qntls_infiles <- list(
   unwtd = unwtd,
   wtd_across_all = wtd_across_all,
   wtd_per_country = wtd_per_country
 )
 
-
-
-pred_qntls <- map_depth(infiles, 2, readRDS)
-
-## deaths_to_use <- readRDS("latest_deaths_wide_no_filter.rds")
-## main_text_countries <- c(
-##   "Brazil", "India", "Italy", "South_Africa", "United_States_of_America"
-## )
-
-## iwalk(
-##   pred_qntls,
-##   function(qntls, strategy) {
-##     imap(
-##       qntls,
-##       function(week, forecast_week) {
-##         imap(
-##           week,
-##           function(df, country) {
-##             if (! country %in% main_text_countries) return(NULL)
-##             obs <- deaths_to_use[, c("dates", country)]
-##             obs$dates <- as.Date(obs$dates)
-##             obs <- obs[obs$dates <= max(df$dates), ]
-##             obs$deaths <- obs[[country]]
-
-##             ymax <- 10 * (ceiling(max(obs$deaths, na.rm = TRUE)/10) * 10)
-##             df$val[df$val > ymax] <- NA
-##             df$`.lower`[df$`.lower` > ymax] <- NA
-##             df$`.upper`[df$`.upper` > ymax] <- NA
-
-##             p <- rincewind::plot_projections(obs, df)
-##             p <- p +
-##               ggtitle(
-##                 glue::glue("Projections for {country} for week starting {forecast_week}")
-##               )
-
-##             outfile <- glue("figures/{strategy}_{country}_{forecast_week}.png")
-##             message(outfile)
-##             ggsave(outfile, p)
-##       }
-##     )
-##   }
-## )})
+pred_qntls <- map_depth(pred_qntls_infiles, 2, readRDS)
 
 iwalk(
   pred_qntls,
@@ -78,6 +36,62 @@ iwalk(
       qntls, ~ bind_rows(., .id = "country"), .id = "forecast_week"
     )
     saveRDS(out, glue("{strategy}_projections_qntls.rds"))
+  }
+)
+
+
+unwtd <- named_infiles(infiles, pattern = "unweighted_ps_qntls")
+wtd_across_all <- named_infiles(
+  infiles, pattern = "weighted_across_countries_ps_qntls"
+)
+wtd_per_country <- named_infiles(
+  infiles, "weighted_per_country_ps_qntls"
+)
+
+
+ps_qntls_infiles <- list(
+  unwtd = unwtd,
+  wtd_across_all = wtd_across_all,
+  wtd_per_country = wtd_per_country
+)
+
+ps_qntls <- map_depth(ps_qntls_infiles, 2, readRDS)
+
+iwalk(
+  ps_qntls,
+  function(qntls, strategy) {
+    out <- map_dfr(
+      qntls, ~ bind_rows(., .id = "country"), .id = "forecast_week"
+    )
+    saveRDS(out, glue("{strategy}_ps_qntls.rds"))
+  }
+)
+
+
+unwtd <- named_infiles(infiles, pattern = "unweighted_reff_qntls")
+wtd_across_all <- named_infiles(
+  infiles, pattern = "weighted_across_countries_reff_qntls"
+)
+wtd_per_country <- named_infiles(
+  infiles, "weighted_per_country_reff_qntls"
+)
+
+
+reff_qntls_infiles <- list(
+  unwtd = unwtd,
+  wtd_across_all = wtd_across_all,
+  wtd_per_country = wtd_per_country
+)
+
+reff_qntls <- map_depth(reff_qntls_infiles, 2, readRDS)
+
+iwalk(
+  reff_qntls,
+  function(qntls, strategy) {
+    out <- map_dfr(
+      qntls, ~ bind_rows(., .id = "country"), .id = "forecast_week"
+    )
+    saveRDS(out, glue("{strategy}_reff_qntls.rds"))
   }
 )
 

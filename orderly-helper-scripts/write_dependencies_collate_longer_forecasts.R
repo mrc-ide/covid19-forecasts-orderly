@@ -7,7 +7,13 @@ x <- list(
     filenames = list(
       "unwtd_projections_qntls.rds",
       "wtd_across_all_projections_qntls.rds",
-      "wtd_per_country_projections_qntls.rds"
+      "wtd_per_country_projections_qntls.rds",
+      "unwtd_ps_qntls.rds",
+      "wtd_across_all_ps_qntls.rds",
+      "wtd_per_country_ps_qntls.rds",
+      "unwtd_reff_qntls.rds",
+      "wtd_across_all_reff_qntls.rds",
+      "wtd_per_country_reff_qntls.rds"
     )
   )
  ),
@@ -17,7 +23,7 @@ x <- list(
 )
 
 week_starting <- as.Date("2020-03-29")
-week_ending <- as.Date("2020-08-09")
+week_ending <- as.Date("2020-09-06")
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
@@ -38,7 +44,13 @@ dependancies <- purrr::map(
         use =  list(
           "unweighted_pred_qntls.rds",
           "weighted_across_countries_pred_qntls.rds",
-          "weighted_per_country_pred_qntls.rds"
+          "weighted_per_country_pred_qntls.rds",
+          "unweighted_reff_qntls.rds",
+          "unweighted_ps_qntls.rds",
+          "weighted_across_countries_ps_qntls.rds",
+          "weighted_across_countries_reff_qntls.rds",
+          "weighted_per_country_ps_qntls.rds",
+          "weighted_per_country_reff_qntls.rds"
         )
       )
     )
@@ -56,7 +68,7 @@ dependancies5 <- list(
     prepare_ecdc_data = list(
       id = "latest",
       use = list(
-        "latest_deaths_wide_no_filter.rds" =  "latest_deaths_wide_no_filter.rds"
+        "latest_deaths_wide_no_filter.rds" = "latest_deaths_wide_no_filter.rds"
       )
     )
   )
@@ -65,6 +77,8 @@ dependancies5 <- list(
 x$depends <- c(dependancies, dependancies5)
 
 
-con <- file("src/collate_longer_forecasts/orderly.yml", "w")
+con <- file(
+  here::here("src/collate_longer_forecasts/orderly.yml"), "w"
+)
 yaml::write_yaml(x, con)
 close(con)

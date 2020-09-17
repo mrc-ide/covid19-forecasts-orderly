@@ -41,12 +41,13 @@ source(
   "orderly-helper-scripts/write_dependencies_collate_combined_rt.R"
 )
 orderly::orderly_run("collate_combined_rt", use_draft = "newer")
-source("write_dependencies_collate_longer_forecasts.R")
-orderly::orderly_run(
-  "src/collate_longer_forecasts/", use_draft = TRUE
+
+source(
+  "orderly-helper-scripts/write_dependencies_collate_longer_forecasts.R"
 )
+orderly::orderly_run("src/collate_longer_forecasts/", use_draft = "newer")
 
 orderly::orderly_run(
-  "src/produce_longer_forecasts_viz/", use_draft = TRUE
+  "src/produce_longer_forecasts_viz/", use_draft = "newer"
 )
 

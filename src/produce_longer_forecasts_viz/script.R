@@ -1,85 +1,10 @@
-f <- function(pred, obs) {
-  y <- split(pred, pred$forecast_week)
-  cntry <- pred$country[1]
-  plots <- purrr::map(
-    y,
-    function(weekly) {
-      ##obs <- all_deaths[, c("dates", cntry)]
-      ##obs$deaths <- obs[[cntry]]
-      idx <- which(cumsum(obs$deaths) >= 100)[1]
-      xmin <- max(
-        obs$dates[idx], min(weekly$dates) - 21,
-        na.rm = TRUE
-      )
-      obs <- obs[obs$dates >= xmin, ]
-      obs <- obs[obs$dates <= max(weekly$dates) + 7, ]
-      if (nrow(obs) == 0) return(NULL)
-      ymax <- 2 * ceiling(max(obs$deaths, na.rm = TRUE) / 10) * 10
-      weekly$val[weekly$val > ymax] <- NA
-      weekly <- dplyr::mutate_if(
-        weekly, is.numeric, ~ ifelse(.x > ymax, ymax, .x)
-      )
-
-      nice_date <- strftime(weekly$forecast_week[1], "%d %b %Y")
-      message(
-        paste(
-          rev(
-            seq(
-              to = min(obs$dates), from = max(weekly$dates) + 7, length.out = 4
-            )
-          ),
-          collapse = " "
-        )
-      )
-      title <- glue::glue("Projections made on {nice_date}")
-      p <- ggplot() +
-        geom_point(
-          data = obs, aes(dates, deaths), col = "#663723", alpha = 0.5
-        ) +
-        geom_ribbon(
-          data = weekly[weekly$`.width` == 0.95, ],
-          aes(x = dates, ymin = .lower, ymax = .upper),
-          fill = "#cc6f47", alpha = 0.3
-        ) +
-        geom_ribbon(
-          data = weekly[weekly$`.width` == 0.75, ],
-          aes(x = dates, ymin = .lower, ymax = .upper),
-          fill = "#cc6f47", alpha = 0.5
-        ) +
-        geom_line(
-          data = weekly,
-          aes(x = dates, y = val), col = "#cc6f47", size = 1.2
-        ) +
-         theme_minimal() +
-        xlab("") +
-        ylab("") +
-        ggtitle(title) +
-        coord_cartesian(clip = "off") +
-        theme(plot.title = element_text(size = 10)) +
-        scale_x_date(
-          breaks = rev(
-            seq(
-              to = min(obs$dates), from = max(weekly$dates) + 7, length.out = 4
-            )
-          )
-        )
-      p
-    }
-  )
-
-  p <- cowplot::plot_grid(plotlist = plots, ncol = 3) +
-    draw_label(
-      "Daily Deaths",
-      x = 0, y = 0.5, angle = 90, size = 12, vjust = 1
-    )
-  p
-}
-
 dir.create("figures")
 
 pred_qntls <- readRDS("longer_projections_qntls.rds")
 pred_qntls$forecast_week <- as.Date(pred_qntls$forecast_week)
 
+exclude <- readRDS("exclude.rds")
+pred_qntls <- pred_qntls[!pred_qntls$country %in% exclude, ]
 all_deaths <- readRDS("latest_deaths_wide_no_filter.rds")
 all_deaths$Czech_Republic <- all_deaths$Czechia
 
@@ -90,89 +15,47 @@ x <- split(
 )
 
 x <- purrr::keep(x, ~ nrow(.) > 0)
-x <- purrr::map(x, ~ .[.$`.width` == 0.95, ])
-## purrr::iwalk(
-##   x,
-##   function(pred, cntry_week) {
-##     message(cntry_week)
-##     cntry <- strsplit(cntry_week, split = ":")[[1]][2]
-##     obs <- all_deaths[, c("dates", cntry)]
-##     obs <- obs[obs$dates <= max(pred$dates) + 7, ]
-##     obs$deaths <- obs[[cntry]]
-##     week_ending <- max(pred$forecast_week)
-##     ymax <- 2 * ceiling(max(obs$deaths, na.rm = TRUE) / 10) * 10
-##     pred$val[pred$val > ymax] <- NA
-##     pred <- dplyr::mutate_if(
-##       pred, is.numeric, ~ ifelse(.x > ymax, ymax, .x)
-##     )
-##     p <- ggplot() +
-##       geom_point(data = obs, aes(dates, deaths), col = "blue") +
-##       geom_ribbon(
-##         data = pred, aes(x = dates, ymin = .lower, ymax = .upper),
-##         alpha = 0.3
-##       ) +
-##       geom_line(
-##         data = pred, aes(dates, val), size = 1.2
-##       ) +
-##       theme_minimal() +
-##       scale_x_date(
-##         date_breaks = "2 weeks",
-##         limits = c(as.Date("2020-03-01"), NA),
-##       ) +
-##       theme(
-##         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
-##       ) +
-##       xlab("") +
-##       ylab("Daily Incidence")
-
-##     label <- glue::glue(
-##       "Projections for {cntry} from {week_ending} to {max(pred$dates)}"
-##     )
-##     p <- p + ggtitle(label)
-##     ggsave(glue::glue("figures/projections_{cntry_week}.png"), p)
-##   }
-## )
 
 
-## For a given country, overlapping projections
+
 x <- split(pred_qntls, pred_qntls$country)
-## For now, skip Kyrgyzstan
-x <- x[! names(x) %in% "Kyrgyzstan"]
 
-## x <- purrr::map(x, ~ .[.$`.width` == 0.95, ])
+npanels <- 6
+nrows <- 3
+ncols <- 2
+
 purrr::iwalk(
   x,
   function(pred, cntry) {
     message(cntry)
     pred <- pred[order(pred$forecast_week), ]
+    pred$date <- as.Date(pred$date)
     forecast_weeks <- unique(pred$forecast_week)
-    palette <- rep(c("#3d2115", "#8e4d31"), 2 * length(forecast_weeks))
-    palette <- palette[1:length(forecast_weeks)]
-    names(palette) <- forecast_weeks
 
     obs <- all_deaths[, c("dates", cntry)]
-    obs <- obs[obs$dates <= max(pred$dates) + 7, ]
+    obs <- obs[obs$dates <= max(pred$date) + 7, ]
     obs$deaths <- obs[[cntry]]
     week_ending <- max(pred$forecast_week)
     ymax <- 2 * ceiling(max(obs$deaths, na.rm = TRUE) / 10) * 10
-    pred$val[pred$val > ymax] <- NA
+    ##pred$val[pred$val > ymax] <- NA
     pred <- dplyr::mutate_if(
       pred, is.numeric, ~ ifelse(.x > ymax, ymax, .x)
     )
-    pred$forecast_week <- factor(pred$forecast_week)
+
     idx <- which(cumsum(obs$deaths) >= 100)[1]
     xmin <- obs$dates[idx]
+
+
+    palette <- rep(c("#3d2115", "#8e4d31"), 2 * length(forecast_weeks))
+    palette <- palette[1:length(forecast_weeks)]
+
+    pred$forecast_week <- factor(pred$forecast_week)
+    npages <- ceiling(length(forecast_weeks) / npanels)
+
     p <- ggplot() +
       geom_point(
-        data = obs, aes(dates, deaths), col = "#663723", alpha = 0.5
-      ) +
-      geom_ribbon(
-        data = pred[pred$`.width` == 0.95, ],
-        aes(x = dates, ymin = .lower, ymax = .upper, fill = forecast_week),
-        alpha = 0.4
-      ) +
-      geom_line(
-        data = pred, aes(dates, val, col = forecast_week), size = 1.2
+        data = obs,
+        aes(dates, deaths), col = "#663723", alpha = 0.5, size = 1
       ) +
       scale_fill_manual(values = palette, aesthetics = c("col", "fill")) +
       theme_minimal() +
@@ -184,17 +67,42 @@ purrr::iwalk(
       ) +
       xlab("") +
       ylab("Daily Incidence") +
-      theme(legend.position = "none")
-    label <- glue::glue("Projections for {cntry}")
+      theme(
+        legend.position = "none",
+        axis.text.y = element_text(size = 6)
+      )
+
+
+    label <- glue(
+      "Projections for {snakecase::to_title_case(cntry)}"
+    )
     p <- p + ggtitle(label)
 
-
-    p2 <- f(pred, obs)
-
-    ggsave(
-      glue::glue("figures/all_projections_facetted_{cntry}.png"), p2
-    )
-    ggsave(glue::glue("figures/all_projections_{cntry}.png"), p)
+    for (page in 1:npages) {
+      idx <- seq(to = page * npanels, length.out = npanels)
+      idx <- idx[idx <= length(forecast_weeks)]
+      weeks <- factor(forecast_weeks[idx])
+      df <- pred[pred$forecast_week %in% weeks, ]
+      p2 <- p +
+        geom_ribbon(
+        data = df,
+        aes(
+          x = date, ymin = `2.5%`, ymax = `97.5%`, fill = forecast_week
+        ),
+        alpha = 0.4
+      ) +
+      geom_line(
+        data = df,
+        aes(date, `50%`, col = forecast_week), size = 1.2
+      ) +
+      facet_wrap(
+        ~forecast_week, ncol = ncols, nrow = nrows##, scales = "free_y"
+      )
+      outfile <- glue::glue("figures/{cntry}_{page}.png")
+      message(outfile)
+      ggsave(outfile , p2)
+    }
   }
 )
+
 
