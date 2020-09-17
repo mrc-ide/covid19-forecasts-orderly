@@ -4,14 +4,14 @@ x <- list(
   artefacts = list(
     data = list(
     description = "Collated combined rt estimates (quantiles)",
-    filenames = "combined_rt_qntls.rds"
+    filenames = c("combined_rt_qntls.rds", "weekly_iqr.rds")
   )
  ),
- packages = c("dplyr", "tidyr", "ggdist")
+ packages = c("dplyr", "tidyr", "ggdist", "purrr", "ggplot2")
 )
 
-week_starting <- as.Date("2020-03-22")
-week_ending <- as.Date("2020-07-19")
+week_starting <- as.Date("2020-03-29")
+week_ending <- as.Date("2020-09-06")
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
@@ -29,7 +29,12 @@ dependancies <- purrr::map(
     y <- list(
       produce_combined_rt = list(
         id = query,
-        use =  list("combined_rt_estimates.rds", "weekly_iqr.rds")
+        use =  list(
+          "combined_rt_estimates.rds",
+          "weekly_iqr.rds"
+          ##"combined_weighted_estimates_per_country.rds",
+          ##"combined_weighted_estimates_across_countries.rds"
+        )
       )
     )
     infiles <- purrr::map(
@@ -43,6 +48,6 @@ dependancies <- purrr::map(
 
 x$depends <- dependancies
 
-con <- file("src/collate_combined_rt/orderly.yml", "w")
+con <- file(here::here("src/collate_combined_rt/orderly.yml"), "w")
 yaml::write_yaml(x, con)
 close(con)

@@ -1,3 +1,4 @@
+## orderly::orderly_develop_start(use_draft = "newer")
 plot_combined_iqr <- function(df) {
 
   weeks <- unique(df$forecast_week)
@@ -28,7 +29,7 @@ plot_combined_iqr <- function(df) {
     ylab("Combined Effective Reproduction Number") +
     geom_hline(yintercept = 1, linetype = "dashed") +
     theme(
-      axis.text.x = element_text(hjust = 0.8),
+      axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0),
       legend.position = "none"
     ) +
     scale_fill_manual(
@@ -57,11 +58,12 @@ plot_weekly_iqr <- function(df) {
   ) + theme_minimal() +
 
     ##xlab("Forecast Week") +
-    ylab("Weekly Effective Reproduction Number") +
-    geom_hline(yintercept = 1, linetype = "dashed") +
-    theme(
-      axis.text.x = element_text(hjust = 0.8)
-    )
+  ylab("Weekly Effective Reproduction Number") +
+  xlab("") +
+  geom_hline(yintercept = 1, linetype = "dashed") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 0, vjust = 0)
+  )
   p
 
 }
@@ -71,22 +73,44 @@ dir.create("figures")
 run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
 
-combined_rt_estimates <- purrr::map(
+combined_rt_estimates <- map(
   infiles[grep("combined_rt_estimates", infiles)], readRDS
 )
 
-weekly_iqr <- purrr::map(infiles[grep("weekly_iqr", infiles)], readRDS)
-weekly_iqr <- purrr::map_dfr(weekly_iqr, ~ dplyr::bind_rows(., .id = "country"))
+combined_rt_qntls <- map_depth(
+  combined_rt_estimates,
+  2,
+  function(l) {
+    l$weeks_combined <- as.Date(l$weeks_combined)
+    qntls <- data.frame(val = l$combined_rt, check.names = FALSE)
+    qntls <- tibble::rownames_to_column(qntls, "quantile")
+    qntls <- spread(qntls, quantile, val)
+    out <- data.frame(
+      week_starting = min(l$weeks_combined),
+      week_ending = max(l$weeks_combined)
+    )
+    cbind(out, qntls)
+  }
+)
+combined_rt_qntls <- map_dfr(
+  combined_rt_qntls, ~ bind_rows(., .id = "country")
+)
+saveRDS(combined_rt_qntls, "combined_rt_qntls.rds")
+
+weekly_iqr <- map(infiles[grep("weekly_iqr", infiles)], readRDS)
+weekly_iqr <- map_dfr(weekly_iqr, ~ dplyr::bind_rows(., .id = "country"))
+
+saveRDS(weekly_iqr, "weekly_iqr.rds")
 
 weekly_iqr <- split(weekly_iqr, weekly_iqr$country)
 
-plots <- purrr::imap(
+plots <- imap(
   weekly_iqr,
   function(y, country) {
     message(country)
     x <- dplyr::distinct(weekly_iqr[[country]])
     x <- split(x, x$forecast_week) %>%
-      purrr::map_dfr(
+      map_dfr(
         function(df) {
           df <- df[rep(seq_len(nrow(df)), each = 7), ]
           df$dates <- seq(
@@ -97,9 +121,9 @@ plots <- purrr::imap(
           df
         }
     )
-    cntry <- purrr::map(combined_rt_estimates, ~ .[[country]])
-    cntry <- purrr::keep(cntry, ~ ! is.null(.))
-    cntry_combined <- purrr::map_dfr(
+    cntry <- map(combined_rt_estimates, ~ .[[country]])
+    cntry <- keep(cntry, ~ ! is.null(.))
+    cntry_combined <- map_dfr(
       cntry, function(y) {
         df <- data.frame(
           week_starting1 = min(y$weeks_combined),
@@ -148,7 +172,7 @@ plots <- purrr::imap(
   }
 )
 
-purrr::iwalk(
+iwalk(
   plots,
   function(p, country) ggsave(glue::glue("figures/{country}.png"), p)
 )
