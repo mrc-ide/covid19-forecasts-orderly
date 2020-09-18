@@ -1,0 +1,34 @@
+script: script.R
+
+artefacts:
+  data:
+    description: Figures
+    filenames: figures/all_projections_India.png
+
+packages:
+  - purrr
+  - stringr
+  - projections
+  - tidyr
+  - incidence
+  - ggplot2
+  - rincewind
+  - cowplot
+  - glue
+ 
+depends:
+  collate_longer_forecasts:
+    id: "latest"
+    use:
+      longer_projections_qntls.rds: unwtd_projections_qntls.rds
+      ps_qntls.rds: unwtd_ps_qntls.rds
+      reff_qntls.rds: unwtd_reff_qntls.rds
+  prepare_ecdc_data:
+    id: "latest"
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
+  produce_baseline_error:
+    id: latest
+    use:
+      exclude.rds: exclude.rds
+      
