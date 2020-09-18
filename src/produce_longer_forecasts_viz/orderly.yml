@@ -14,12 +14,15 @@ packages:
   - ggplot2
   - rincewind
   - cowplot
+  - glue
  
 depends:
   collate_longer_forecasts:
     id: "latest"
     use:
       longer_projections_qntls.rds: unwtd_projections_qntls.rds
+      ps_qntls.rds: unwtd_ps_qntls.rds
+      reff_qntls.rds: unwtd_reff_qntls.rds
   prepare_ecdc_data:
     id: "latest"
     use:
