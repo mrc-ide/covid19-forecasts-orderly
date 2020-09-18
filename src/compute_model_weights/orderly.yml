@@ -13,6 +13,7 @@ packages:
   - purrr
   - readr
   - weighter
+  - ggplot2
 
 depends:
   produce_performace_metrics:

@@ -68,6 +68,7 @@ pbar <- ggplot(included, aes(week_starting)) +
 x <- dplyr::count(included, week_starting, continent_name)
 x$week_starting <- as.Date(x$week_starting)
 
+
 y <- dplyr::filter(x, week_starting == "2020-08-09")
 labels <- data.frame(
   x = as.Date("2020-06-24"),
@@ -75,6 +76,7 @@ labels <- data.frame(
 )
 
 labels <- dplyr::left_join(labels, y, by = c("label" = "continent_name"))
+
 
 pline <- ggplot() +
   geom_line(data = x, aes(week_starting, n, col = continent_name), size = 1.5) +

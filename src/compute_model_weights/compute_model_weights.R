@@ -5,7 +5,7 @@ grpd <- dplyr::group_by(model_metrics, model, forecast_date, country, si)
 
 likelihood <- dplyr::summarise(
   grpd, poisson_ll = prod(poisson_p), empirical_ll = prod(empirical_p)
-  ) %>% dplyr::ungroup()
+) %>% dplyr::ungroup()
 
 x <- split(likelihood, likelihood$forecast_date)
 
@@ -140,3 +140,59 @@ saveRDS(
 ##   ylab("Weight") +
 ##   xlab("Date of forecast") +
 ##   theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
+
+### Plots
+x <- purrr::map_dfr(
+  wts_curr_week, ~ .$si_2$DeCa_RtI0_sbkp, .id = "forecast_week"
+)
+x$forecast_week <- as.Date(x$forecast_week)
+
+palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7", "#999999")
+names(palette) <- c(
+  "Model 4", "Model 2", "Model 1", "Model 3", "Ensemble", "Weighted Ensemble"
+)
+x$model <- case_when(
+  x$model == "RtI0" ~ "Model 1",
+  x$model == "sbkp" ~ "Model 2",
+  x$model == "DeCa" ~ "Model 3"
+)
+
+p1 <- ggplot(
+  x, aes(forecast_week, wt_empirical, col = model)
+) + geom_point(size = 3) +
+  geom_hline(yintercept = 1/3) +
+  scale_x_date(date_breaks = "1 week", minor_breaks = NULL) +
+  theme_minimal() +
+  scale_color_manual(values = palette) +
+  xlab("Week of forecast") +
+  ylab("Model weight") +
+  theme(legend.position = "top", legend.title = element_blank())
+
+ggsave("weights_current_week.png", p1)
+
+x <- purrr::map_dfr(
+  wts_all_prev_weeks, ~ .$si_2$DeCa_RtI0_sbkp, .id = "forecast_week"
+)
+x$forecast_week <- as.Date(x$forecast_week)
+
+palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7", "#999999")
+names(palette) <- c(
+  "Model 4", "Model 2", "Model 1", "Model 3", "Ensemble", "Weighted Ensemble"
+)
+x$model <- case_when(
+  x$model == "RtI0" ~ "Model 1",
+  x$model == "sbkp" ~ "Model 2",
+  x$model == "DeCa" ~ "Model 3"
+)
+
+p1 <- ggplot(
+  x, aes(forecast_week, wt_empirical, col = model)
+) + geom_point(size = 3) +
+  geom_hline(yintercept = 1/3) +
+  scale_x_date(date_breaks = "1 week", minor_breaks = NULL) +
+  theme_minimal() +
+  scale_color_manual(values = palette) +
+  xlab("Week of forecast") +
+  ylab("Model weight") +
+  theme(legend.position = "top", legend.title = element_blank())
+ggsave("weights_all_prev_weeks.png", p1)

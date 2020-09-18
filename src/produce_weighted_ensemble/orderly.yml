@@ -1,8 +1,5 @@
 script: produce_weighted_ensemble.R
 
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-
 artefacts:
   - data:
       description: Ensemble Model Outputs
@@ -32,8 +29,21 @@ sources:
   - R/utils.R
   
 depends:
-  compute_model_weights:
-    id: latest
-    use:
-      weights_prev_week.rds: unnormalised_model_weights_using_prev_week.rds
-      weights_all_prev_weeks.rds: unnormalised_model_weights_using_all_prev_week.rds
+  - compute_model_weights:
+      id: latest
+      use:
+        weights_prev_week.rds: unnormalised_model_weights_using_prev_week.rds
+        weights_all_prev_weeks.rds: unnormalised_model_weights_using_all_prev_week.rds
+  - run_rti0:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+        RtI0_Std_results.rds: RtI0_latest_output.rds
+  - run_apeestim:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+        sbkp_Std_results.rds: apeestim_model_outputs.rds
+  - DeCa_model:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+        DeCa_Std_results.rds: DeCa_latest.rds
+      

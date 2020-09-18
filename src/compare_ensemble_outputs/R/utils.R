@@ -6,7 +6,7 @@ all_restimates_violin <- function(out) {
   geom_half_violin(scale = "width", width = 1.5) +
   geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
   facet_wrap(~country, ncol = 1, scales = "free_y") +
-  theme_classic() +
+  theme_minimal() +
   xlab("") +
   ylab("Effective Reproduction Number") +
   facet_wrap(
@@ -31,7 +31,7 @@ all_restimates_line <- function(out) {
   p <- ggplot(out) +
     geom_ribbon(
       aes(
-        x = dates,
+        x = days_since_100_deaths,
         ymin = `2.5%`,
         ymax = `97.5%`,
         group = forecast_date
@@ -40,7 +40,7 @@ all_restimates_line <- function(out) {
     ) +
     geom_ribbon(
       aes(
-        x = dates,
+        x = days_since_100_deaths,
         ymin = `25%`,
         ymax = `75%`,
         group = forecast_date
@@ -48,21 +48,19 @@ all_restimates_line <- function(out) {
       alpha = 0.5
     ) +
     geom_line(
-      aes(dates, `50%`, group = forecast_date)) +
+      aes(days_since_100_deaths, `50%`, group = forecast_date)) +
     geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
     facet_wrap(~country, ncol = 1, scales = "free_y") +
-    theme_classic() +
+    theme_minimal() +
     xlab("") +
     ylab("Effective Reproduction Number") +
-  scale_x_date(
-    limits = c(as.Date("2020-03-01"), NA), date_breaks = "2 weeks"
-  ) +
   facet_wrap(
     ~country,
     ncol = 1,
     scales = "free_y",
     labeller = labeller(country = snakecase::to_title_case)
-  )
+  ) +
+    theme(axis.text.x=element_text(angle = 90, hjust = 1))
 
   p
 }
@@ -73,18 +71,18 @@ all_forecasts <- function(obs, pred) {
   ggplot() +
       geom_point(
         data = obs,
-        aes(date, deaths),
+        aes(days_since_100_deaths, deaths),
         col = "black"
       ) +
       geom_line(
         data = pred,
-        aes(x = date, `50%`, group = proj, col = "#0072B2"),
+        aes(x = days_since_100_deaths, `50%`, group = proj, col = "#0072B2"),
         size = 1
       ) +
       geom_ribbon(
         data = pred,
         aes(
-          x = date,
+          x = days_since_100_deaths,
           ymin = `2.5%`,
           ymax = `97.5%`,
           group = proj,
@@ -95,7 +93,7 @@ all_forecasts <- function(obs, pred) {
       geom_ribbon(
         data = pred,
         aes(
-          x = date,
+          x = days_since_100_deaths,
           ymin = `25%`,
           ymax = `75%`,
           group = proj,
@@ -103,30 +101,22 @@ all_forecasts <- function(obs, pred) {
         ),
         alpha = 0.7
       ) +
-      theme_classic() +
+      theme_minimal() +
       theme(legend.position = "none", legend.title = element_blank()) +
       xlab("") +
       ylab("") +
-    scale_x_date(
-      limits = c(as.Date("2020-03-01"), NA), date_breaks = "2 weeks"
-    ) +
+    ## scale_x_date(
+    ##   limits = c(as.Date("2020-03-01"), NA),
+    ##   date_breaks = "2 weeks"
+    ## ) +
     facet_wrap(
       ~country,
       ncol = 1,
       scales = "free_y",
       labeller = labeller(country = snakecase::to_title_case)
-    )
+    ) +
+    theme(axis.text.x=element_text(angle = 90, hjust = 1))
 
 }
 
 
-cap_predictions <- function(pred) {
-
-  x <- split(pred, pred$country)
-  purrr::map_dfr(x, function(y) {
-    ymax <- 2 * ceiling(max(y$deaths) / 10) * 10
-    y$`50%`[y$`50%` > ymax] <- NA
-    dplyr::mutate_if(y, is.numeric, ~ ifelse(.x > ymax, ymax, .x))
-  }
- )
-}
