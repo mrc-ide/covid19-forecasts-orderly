@@ -4,7 +4,17 @@ artefacts:
   data:
     description: Model performance metrics
     filenames:
-      - metrics_by_strategy.png
+      - main_proportion_in_50_CrI.tiff
+      - si_proportion_in_50_CrI.tiff
+      - main_proportion_in_95_CrI.tiff
+      - si_proportion_in_95_CrI.tiff
+      - obs_predicted_2d_density.tiff
+      - main_relative_error_heatmap.tiff
+      - si_relative_error_heatmap.tiff
+      - rmae_vs_weekly_incid_all_countries.png
+      - rmae_vs_weekly_cv_all_countries.png
+      - relative_error_by_country.png
+      - relative_error_by_.png
   
 packages:
   - dplyr
@@ -14,17 +24,20 @@ packages:
   - ggforce
   - snakecase
   - glue
-  - cowplot
+  - patchwork
+  - ggnewscale
+  - purrr
 
 ## use_si should be one of si_1 or si_2
-## strategy must be one of wtd_prev_week, wtd_all_prev_weeks or unwtd
 parameters:
   - use_si
-  - strategy
 
 sources:
   - R/utils.R
-  
+
+resources:
+  - country_continent.csv
+
 depends:
   - produce_performace_metrics:
       id: latest
@@ -35,17 +48,24 @@ depends:
       id: latest
       use:
         model_input.rds: latest_deaths_wide_no_filter.rds        
+        
+  - collate_weighted_performance_metrics:
+      id: latest
+      use:
+        unwtd_pred_error.csv: unwtd_pred_error.csv
+
+  - produce_baseline_error:
+      id: latest
+      use:
+        null_model_error.rds: null_model_error.rds
+        weekly_incidence.rds: weekly_incidence.rds
 
   - collate_model_outputs:
       id: latest
       use:
-        wtd_prev_week_rt_qntls.rds: wtd_prev_week_rt_qntls.rds
-        wtd_rt_all_prev_week_qntls.rds: wtd_rt_all_prev_week_qntls.rds
         unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
-        
-  - produce_performance_metrics_ensemble:
+
+  - compare_with_null_model:
       id: latest
       use:
-        wtd_all_prev_weeks_error.csv: wtd_all_prev_weeks_error.csv
-        wtd_prev_week_error.csv: wtd_prev_week_error.csv
-        unwtd_pred_error.csv: unwtd_pred_error.csv
+        better_than_null.rds: better_than_null.rds

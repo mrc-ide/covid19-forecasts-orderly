@@ -17,6 +17,10 @@ weeks <- list(
   "2020-06-14",
   "2020-06-21",
   "2020-06-28",
+  "2020-07-05",
+  "2020-07-12",
+  "2020-07-19",
+  "2020-07-26",
   "2020-08-02",
   "2020-08-09",
   "2020-08-16",
@@ -102,12 +106,26 @@ a <- orderly::orderly_run("src/produce_full_report")
 ##   orderly::orderly_push_archive(unwtd)
 ## }
 
+for (week_ending in weeks) {
+  message("################ ", week_ending, " #############################")
+  source("orderly-helper-scripts/write_dependencies_weighted_performance.R")
+  parameter <- list(week_ending = week_ending, window = 1)
+  m1 <- orderly::orderly_run(
+    "src/produce_performance_metrics_ensemble/",
+    parameters = parameter, use_draft = use_draft
+  )
+  orderly::orderly_commit(m1)
+}
+
+source("orderly-helper-scripts/write_dependencies_collate_weighted_perf.R")
+m1 <- orderly::orderly_run("src/collate_weighted_performance_metrics/")
+orderly::orderly_commit(m1)
 
 aa <- orderly::orderly_run(
   "produce_performace_metrics",
-  parameters = list(exclude = "2020-06-14"), use_draft = use_draft
+  parameters = list(window = 1), use_draft = use_draft
 )
-orderly::orderly_commit(a)
+orderly::orderly_commit(aa)
 orderly::orderly_push_archive(a)
 
 
@@ -116,19 +134,22 @@ orderly::orderly_commit(a)
 orderly::orderly_push_archive(a)
 
 ## For the first week, we don't have weighted ensemble.
-weeks <- week[-1]
+weeks <- weeks[-1]
 
 for (week in weeks) {
   message("################ ", week, " #############################")
   parameter <- list(week_ending = week)
-  orderly::orderly_run(
+  wtd <- orderly::orderly_run(
     "produce_weighted_ensemble",
     parameters = parameter,
-    use_draft = TRUE
-  )
+    use_draft = FALSE
+    )
+  orderly::orderly_commit(wtd)
+  ##orderly::orderly_push_archive("produce_weighted_ensemble", wtd)
+
 }
 
-orderly::orderly_run("collate_model_outputs", use_draft = TRUE)
+orderly::orderly_run("collate_model_outputs", use_draft = use_draft)
 
 
 a <- orderly::orderly_run("compare_ensemble_outputs")

@@ -4,7 +4,7 @@ artefacts:
   data:
     description: Forecast comparisons
     filenames:
-      - main_forecasts_comparison.tiff
+      - Brazil_forecasts.png
   
 packages:
   - dplyr
@@ -15,6 +15,8 @@ packages:
   - snakecase
   - glue
   - cowplot
+  - rincewind
+  - purrr
 
 ## use_si should be one of si_1 or si_2
 parameters:
@@ -28,12 +30,10 @@ depends:
       id: latest
       use:
         unweighted_qntls.rds: unweighted_qntls.rds
-        wtd_prev_week_qntls.rds: wtd_prev_week_qntls.rds
-        wtd_all_prev_weeks_qntls.rds: wtd_all_prev_weeks_qntls.rds
         unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
-        wtd_prev_week_rt_qntls.rds: wtd_prev_week_rt_qntls.rds
-        wtd_rt_all_prev_week_qntls.rds: wtd_rt_all_prev_week_qntls.rds
         unwtd_rt_samples.rds: unwtd_rt_samples.rds
-        wtd_all_prev_week_rt_samples.rds: wtd_all_prev_week_rt_samples.rds
-        wtd_prev_week_rt_samples.rds: wtd_prev_week_rt_samples.rds
+  - prepare_ecdc_data:
+      id: latest
+      use:
+        model_input.rds: latest_deaths_wide_no_filter.rds
        

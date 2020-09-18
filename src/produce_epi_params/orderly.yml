@@ -1,0 +1,29 @@
+environment:
+  covid_19_path: COVID19_INPUT_PATH
+
+script: script.R
+
+artefacts:
+  data:
+    description: Projections
+    filenames:
+      - si_distrs.rds
+      - cfr_shape_params.rds
+      - population_weighted_ifr.rds
+
+resources:
+  - PopulationAgeSex-20200831015935.xlsx
+  - country_continent.csv
+  
+packages:
+  - purrr
+  - readxl
+  - ggplot2
+  - ggtext
+  - glue
+  - forcats
+  - janitor
+  - dplyr
+  - tidyr
+  - patchwork
+  - ragg

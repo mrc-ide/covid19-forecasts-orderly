@@ -170,7 +170,24 @@ purrr::iwalk(
   }
 )
 
-
+n_sim <- 10000
+rsamples_ape <- map(
+  r_apeestim,
+  function(r_country) {
+    out <- map(
+      r_country,
+      function(r_si) {
+        shape <- tail(
+          r_si[["best_set_ape"]][["alpha"]], 1
+        )
+        scale <- tail(
+          r_si[["best_set_ape"]][["beta"]], 1
+        )
+        rgamma(n_sim, shape = shape, scale = scale)
+      }
+    )
+  }
+)
 ## ## Save in format required
 out <- saveRDS(
   object = list(
@@ -183,7 +200,4 @@ out <- saveRDS(
   file = "apeestim_model_outputs.rds"
 )
 
-saveRDS(
-  object = r_apeestim,
-  file = "r_apeestim.rds"
-)
+saveRDS(object = r_apeestim, file = "r_apeestim.rds")

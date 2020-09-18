@@ -1,0 +1,20 @@
+script: script.R
+
+packages:
+- shiny
+- flexdashboard
+
+depends:
+- collate_model_outputs:
+    id: latest
+    use:
+      unweighted_qntls.rds: unweighted_qntls.rds
+      unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
+- prepare_ecdc_data:
+    id: latest
+    use:
+      model_input.rds: latest_deaths_wide_no_filter.rds
+- collate_longer_forecasts:
+    id: latest
+    use:
+      unwtd_long_qntls.rds: unwtd_projections_qntls.rds

@@ -1,0 +1,277 @@
+---
+title: "Short and medium term forecasts for COVID-19"
+runtime: shiny
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    theme: simplex
+
+---
+
+
+
+
+```{r setup, include=FALSE}
+
+library(shiny)
+library(ggthemes)
+library(viridis)
+library(plotly)
+library(shinyWidgets)
+
+ensb_qntls <- readRDS("unweighted_qntls.rds")
+ensb_qntls <- ensb_qntls[ensb_qntls$si == "si_2", ]
+obs <- readRDS("model_input.rds")
+countries <- sort(unique(ensb_qntls$country))
+names(countries) <- snakecase::to_title_case(countries)
+continents <- countrycode::countrycode(
+  names(countries), origin = "country.name", destination = "continent"
+  )
+## Organise as list of lists where the upper level is continent
+countries <- list(
+  Asia = countries[continents == "Asia"],
+  Europe = countries[continents == "Europe"],
+  Americas = countries[continents == "Americas"],
+  Africa = countries[continents == "Africa"],
+  Oceania = countries[continents == "Oceania"]
+)
+forecast_weeks <- seq(
+  as.Date("2020-03-08"), to = as.Date("2020-09-06"), by = "7 days"
+)
+names(forecast_weeks) <- forecast_weeks
+long_forecasts <- readRDS("unwtd_long_qntls.rds")
+
+country_long_pred <- reactive({
+  
+  pred <- long_forecasts[long_forecasts$country == input$country &
+                         long_forecasts$forecast_week %in% input$forecast_week, ]
+  pred$date <- as.Date(pred$date)
+  pred
+})
+
+country_pred <- reactive({
+  
+  pred <- ensb_qntls[ensb_qntls$country == input$country &
+                     ensb_qntls$proj %in% input$forecast_week, ]
+  pred$date <- as.Date(pred$date)
+  pred
+})
+
+country_obs <- reactive({
+  
+  out <- obs[, c("dates", input$country)]
+  out$deaths <- out[[input$country]]
+  out$dates <- as.Date(out$dates)
+  out
+})
+
+```
+
+Sidebar {.sidebar}
+======================================================================
+
+```{r}
+
+# Define inputs
+selectInput(
+  'country', label = 'Select a country',
+  choices = countries, selected = "Brazil",
+  multiple = FALSE
+)
+
+pickerInput(
+  'forecast_week',
+  label = 'Select a week',
+  choices = forecast_weeks,
+  selected = "2020-03-08",
+  options = list(`actions-box` = TRUE),
+  multiple = TRUE
+)
+
+
+```
+
+
+Short-term forecasts
+======================================================================
+
+Row
+-----------------------------------------------------------------------
+
+### Ensemble Model
+
+```{r}
+output$scatter <- renderPlotly({
+  
+  key <- country_pred()$country # This will uniquely identify tracts for Plotly
+  pred <- country_pred()
+  obs_country <- country_obs()
+  p1a <- ggplot() +
+    geom_point(data = obs_country, aes(dates, deaths)) +
+    geom_line(data = pred, aes(date, `50%`, group = proj)) +
+    geom_ribbon(
+      data = pred,
+      aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = proj),
+      alpha = 0.3
+    ) +
+    scale_x_date(
+      date_breaks = "2 weeks",
+      limits = c(as.Date("2020-03-01"), NA)
+    ) +
+    xlab("") +
+    ylab("Daily Deaths") +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x =
+        element_text(angle = 90, hjust = 0.5, vjust = 0)
+    )
+    
+  g <- ggplotly(p1a, source = 'source') %>% 
+    layout(dragmode = 'lasso', 
+           margin = list(l = 100), 
+           font = list(family = 'Open Sans', size = 16))
+  
+  build <- plotly_build(g)
+  
+  build
+    
+})  
+plotlyOutput('scatter', width = "80%")
+```
+
+Row 
+-----------------------------------------------------------------------
+
+### Individual Models
+
+```{r}
+
+
+```
+
+### Reproduction Number Estimates
+
+```{r}
+
+```
+
+Long-term forecasts
+============================================================================
+
+Row
+----------------------------------------------------------------------------
+
+### Forecasts
+
+```{r}
+
+output$long <- renderPlotly({
+  
+  pred <- country_long_pred()
+  obs_country <- country_obs()
+  p1b <- ggplot() +
+    geom_point(data = obs_country, aes(dates, deaths)) +
+    geom_line(data = pred, aes(date, `50%`, group = forecast_week)) +
+    geom_ribbon(
+      data = pred,
+      aes(
+        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_week
+      ),
+      alpha = 0.3
+    ) +
+    scale_x_date(
+      date_breaks = "2 weeks",
+      limits = c(as.Date("2020-03-01"), NA)
+    ) +
+    xlab("") +
+    ylab("Daily Deaths") +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x =
+        element_text(angle = 90, hjust = 0.5, vjust = 0)
+    )
+    
+  g <- ggplotly(p1b, source = 'source') %>% 
+    layout(dragmode = 'lasso', 
+           margin = list(l = 100), 
+           font = list(family = 'Open Sans', size = 16))
+  
+  build <- plotly_build(g)
+  
+  build
+    
+})  
+plotlyOutput('long', width = "80%")
+
+
+```
+
+Row
+-----------------------------------------------------------------------------
+
+### Reproduction Number Estimates
+
+```{r}
+
+
+
+```
+
+
+Model performance
+============================================================================
+
+
+
+
+<style>
+
+.section.sidebar {
+
+  background-color: white; 
+  font-family: "Open-Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+}
+
+.js-irs-0 .irs-bar {
+border-top-color: #1B065E;
+border-bottom-color: #1B065E;
+} 
+
+.js-irs-0 .irs-bar-edge {
+border-color: #1B065E;
+}
+
+.js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {
+background: #443A83;
+}
+
+.navbar-inverse {
+background-color: #1B065E;
+border-color: #1B065E;
+}
+
+.navbar-inverse .navbar-brand {
+color: #1B065E;
+}
+
+a:hover, a:focus {
+color: #440154;
+text-decoration: underline;
+}
+
+a {
+color: #443A83;
+text-decoration: none;
+}
+
+.navbar-inverse .navbar-nav>li>a {
+color: #a3a9ac;
+}
+
+</style>
+
+
+
+

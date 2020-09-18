@@ -5,15 +5,15 @@
 ## Returns an incidence object
 ts_to_incid <- function(ts, date_col, case_col) {
 
-    first_date <- min(ts[[date_col]])
-    last_date <- max(ts[[date_col]])
-    x <- tidyr::uncount(ts, weights = ts[[case_col]])
-    out <- incidence(
-        x[[date_col]],
-        first_date = first_date,
-        last_date = last_date
-    )
-    out
+  first_date <- min(ts[[date_col]])
+  last_date <- max(ts[[date_col]])
+  x <- tidyr::uncount(ts, weights = ts[[case_col]])
+  out <- incidence(
+    x[[date_col]],
+    first_date = first_date,
+    last_date = last_date
+  )
+  out
 }
 
 r_samples <- function(res, n = 10000) {

@@ -1,7 +1,9 @@
 probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
-output_files <- list.files(covid_19_path)
-output_files <- output_files[grepl(x = output_files, pattern = week_ending)]
-output_files <- output_files[!grepl(x = output_files, pattern = "sbsm")]
+
+run_info <- orderly::orderly_run_info()
+output_files <- run_info$depends$as
+output_files <- output_files[grep("weight", output_files, invert = TRUE)]
+
 names(output_files) <- gsub(
   pattern = ".rds", replacement = "", x = output_files
 )
@@ -10,15 +12,13 @@ message("For week ending ", week_ending)
 
 message("Output Files \n", paste(output_files, collapse = "\n"))
 
-model_outputs <- purrr::map(
-  output_files, ~ readRDS(paste0(covid_19_path, .))
-)
+model_outputs <- purrr::map(output_files, readRDS)
 
 ## Equal weighted models
 ## First Level is model, 2nd is country, 3rd is SI.
-idx <- grep(x = names(model_outputs), pattern = week_ending)
-outputs <- purrr::map(model_outputs[idx], ~ .[["Predictions"]])
-rt <- purrr::map(model_outputs[idx], ~ .[["R_last"]])
+
+outputs <- purrr::map(model_outputs, ~ .[["Predictions"]])
+rt <- purrr::map(model_outputs, ~ .[["R_last"]])
 names(outputs) <-  sapply(
   names(outputs), function(x) strsplit(x, "_")[[1]][1]
 )
@@ -167,9 +167,7 @@ ensemble_model_rt_samples <- purrr::map_dfr(
   week_ending,
   function(week) {
     message("Week is ", week)
-    idx <- grep(x = names(model_outputs), pattern = week)
-    message("Working on models ", names(model_outputs)[idx])
-    outputs <- purrr::map(model_outputs[idx], ~ .[["R_last"]])
+    outputs <- purrr::map(model_outputs, ~ .[["R_last"]])
     ## First Level is model, 2nd is country, 3rd is SI.
     ## TODO pick countries from inout
     countries <- names(outputs[[2]])

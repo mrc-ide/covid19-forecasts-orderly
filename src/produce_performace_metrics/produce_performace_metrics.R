@@ -2,6 +2,7 @@ run_info <- orderly::orderly_run_info()
 output_files <- run_info$depends$as
 output_files <- output_files[output_files != "model_input.rds"]
 
+
 ##output_files <- list.files(covid_19_path)
 ## Exclude the latest outputs as we don't have observed data for these
 ## output_files <- grep(
@@ -14,7 +15,14 @@ names(output_files) <- gsub(
 
 model_outputs <- purrr::map(output_files, readRDS)
 
+f <- function(vec, window) {
+  slider::slide_dbl(vec, ~mean(.x), .before = window, .after = window)
+}
+
 model_input <- readRDS("model_input.rds")
+model_input <- dplyr::mutate_if(
+  model_input, is.numeric, f, window = window
+)
 ## Czech_Republic is the same as Czechia
 model_input$Czech_Republic <- model_input$Czechia
 
@@ -34,8 +42,9 @@ model_predictions_error <- purrr::imap_dfr(
           function(y_si) {
             y_si <- as.matrix(y_si)
             dates2 <- as.Date(colnames(y_si))
-            obs <- dplyr::filter(
-              model_input, dates %in% dates2) %>% pull(cntry)
+            obs <- model_input[model_input$dates %in% dates2, cntry]
+            ## This is the week previous to the week for which
+            ## forcasts were made
             if (length(x) > 0) {
               metrics <- all_metrics(obs, y_si)
               metrics$date <- dates2
@@ -52,6 +61,7 @@ model_predictions_error <- purrr::imap_dfr(
   },
   .id = "model"
 )
+
 
 model_predictions_error <- tidyr::separate(
   model_predictions_error,
