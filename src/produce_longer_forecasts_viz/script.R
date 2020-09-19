@@ -152,7 +152,7 @@ iwalk(
         axis.text.y = element_text(size = 6)
       ) +
       ylim(0, ymax) +
-      geom_line(xintercept = 1, linetype = "dashed")
+      geom_hline(yintercept = 1, linetype = "dashed")
 
     if (length(forecast_weeks) >= 2) {
       p <- p +
@@ -192,6 +192,27 @@ iwalk(
           df
         }
       )
+    ## Scatter plot
+    x <- dplyr::left_join(
+      reff, weekly,
+      by = c("date"),
+      suffix = c("_short", "_long")
+    )
+
+    p <- ggplot(x, aes(`50%_short`, `50%_long`)) +
+      geom_point() +
+      ##ylim(0, ymax) +
+      ##xlim(0, ymax) +
+      geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+      theme_minimal() +
+      xlab("Weekly Effective Reproduction Number") +
+      ylab("Long-term Effective Reproduction Number")  +
+      coord_cartesian() +
+      expand_limits(x = 0, y = 0)
+
+    outfile <- glue("figures/{cntry}_short_and_long_rt_scatter.png")
+    ggsave(outfile , p)
+
 
     plots <- map(
       forecast_weeks,
