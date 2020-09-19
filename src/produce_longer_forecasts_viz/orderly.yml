@@ -31,4 +31,8 @@ depends:
     id: latest
     use:
       exclude.rds: exclude.rds
+  collate_model_outputs:
+    id: "latest"
+    use:
+      weekly_rt_qntls.rds: unweighted_rt_qntls.rds
       
