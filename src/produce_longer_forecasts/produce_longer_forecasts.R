@@ -213,3 +213,8 @@ iwalk(
   reff_qntls,
   function(x, y) saveRDS(x, glue::glue("{y}_reff_qntls.rds"))
 )
+
+iwalk(
+  projections,
+  function(x, y) saveRDS(x, glue::glue("{y}_projections.rds"))
+)

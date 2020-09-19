@@ -20,7 +20,10 @@ artefacts:
       - weighted_per_country_pred_qntls.rds
       - weighted_per_country_ps_qntls.rds
       - weighted_per_country_reff_qntls.rds
-
+      - unweighted_projections.rds
+      - weighted_across_countries_projections.rds
+      - weighted_per_country_projections.rds      
+      
 packages:
   - purrr
   - stringr
