@@ -29,13 +29,13 @@ for (week in weeks) {
 
   m2 <- orderly::orderly_run(
     "produce_longer_forecasts", parameters = parameter, use_draft = use_draft
-  )
-  ##orderly::orderly_commit(m2)
-  #orderly::orderly_push_archive(
-  #  name = "produce_longer_forecasts", id = m2
-  #)
-}
+    )
 
+  parameter <- list(week_ending = week, window = 1)
+  orderly::orderly_run(
+    "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
+  )
+}
 
 source(
   "orderly-helper-scripts/write_dependencies_collate_combined_rt.R"
@@ -51,3 +51,6 @@ orderly::orderly_run(
   "src/produce_longer_forecasts_viz/", use_draft = "newer"
 )
 
+week_starting <- as.Date(head(weeks, 1)[[1]])
+week_ending <- as.Date(tail(weeks, 1)[[1]])
+source("orderly-helper-scripts/write_dependencies_collate_longer_forecasts_perf.R")

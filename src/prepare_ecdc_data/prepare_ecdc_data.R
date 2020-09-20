@@ -2,250 +2,103 @@ week_finishing <- "2020-09-13"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
-  stringsAsFactors = FALSE
+  stringsAsFactors = FALSE,
+  na.strings = ""
 )
 raw_data <- dplyr::select(raw_data, -`Cumulative_number_for_14_days_of_COVID.19_cases_per_100000`)
-## colnames(raw_data) <- c(
-##   "DateRep", "day", "month", "year", "Cases", "Deaths", "Countries and territories",
-##   "geoId", "countryterritoryCode", "popData2018", "continent"
-## )
 
 raw_data <- dplyr::mutate_at(
     raw_data, vars("DateRep"), ~ as.Date(., format = "%d/%m/%Y")
-  ) %>%
-  ## Manual fixes.
-  ## For 2020-03-17, there are two rows for Somalia
-  ## one with 0 Cases and one with 1 Cases, Delete one of them
-  dplyr::filter(
-    !(Countries.and.territories == "Somalia" &
-      DateRep == "2020-03-17" & Cases == 0)
   ) %>% dplyr::filter(DateRep <= as.Date(week_finishing))
 
+
+######################################################################
+######################################################################
+########## Read in WHO data, and combined with ECDC data.
+########## Where number of deaths reported by WHO < 0, and deaths
+########## reported by ECDC are not, use ECDC data
+########## Similarly for case data
+######################################################################
+######################################################################
+
+who <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
+  janitor::clean_names()
+
+who$date_reported <- lubridate::ymd(who$date_reported)
+who$iso3c <- countrycode::countrycode(who$country, "country.name", "iso3c")
+
+raw_data <- select(raw_data, -geoId)
+who <- select(who, -country_code)
+
+both <- left_join(
+  raw_data, who,
+  by = c("DateRep" = "date_reported", "countryterritoryCode" = "iso3c")
+)
+
+
+## Where are the numbers different between the two data sources
+## head(both[both$Deaths != both$new_deaths, ])
+## First look at non-Nas, and then at Nas.
+## Namibia's geoId being Na is being treated as NA by R.
+##both <- select(both, -geoId)
+both_complete <- na.omit(both)
+both_incomplete <- both[!complete.cases(both), ]
+
+## Add Kosovo and Taiwan. They don't match because they don't have a
+## country code
+both_complete <- filter(
+  both_incomplete, `Countries.and.territories` %in% c("Kosovo", "Taiwan")
+) %>% rbind(both_complete)
+
+
+## Replace WHO data with ECDC data if WHO deaths are -ve
+both_complete$new_deaths <- ifelse(
+  both_complete$new_deaths < 0 & both_complete$Deaths >=0,
+  both_complete$Deaths,
+  both_complete$new_deaths
+)
+
+
+
+## Replace WHO data with ECDC data if WHO cases are NA as for Kosovo
+## and Taiwan
+both_complete$new_cases <- ifelse(
+  is.na(both_complete$new_cases),
+  both_complete$Cases,
+  both_complete$new_cases
+)
+
+
+## Replace WHO data with ECDC data if WHO deaths are NA
+both_complete$new_deaths <- ifelse(
+  is.na(both_complete$new_deaths),
+  both_complete$Deaths,
+  both_complete$new_deaths
+)
+
+any(both_complete$new_deaths < 0)
+
+## Replace WHO data with ECDC data if WHO cases are -ve
+both_complete$new_cases <- ifelse(
+  both_complete$new_cases < 0 & both_complete$Cases >=0,
+  both_complete$Cases,
+  both_complete$new_cases
+)
+any(both_complete$new_cases < 0)
+
+## Now we can replace ECDC data completely with WHO data, and drop
+## extra columns so that the rest of the code works without change
+both_complete$Cases <- both_complete$new_cases
+both_complete$Deaths <- both_complete$new_deaths
+raw_data <- both_complete[ , colnames(raw_data)]
+
+
+#################### Apply necessary corrections
 raw_data$Deaths[raw_data$DateRep == "2020-04-17" & raw_data$`Countries.and.territories` == "China"] <- 0
 ## 04th May 2020. Manual tweaks against worldometer
-raw_data$Deaths[raw_data$DateRep == "2020-05-01" & raw_data$`Countries.and.territories` == "Germany"] <- 156
-raw_data$Deaths[raw_data$DateRep == "2020-05-02" & raw_data$`Countries.and.territories` == "Germany"] <- 113
 raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Ireland"] <- 21
-raw_data$Deaths[raw_data$DateRep == "2020-04-27" & raw_data$`Countries.and.territories` == "Spain"] <- 331
-raw_data$Deaths[raw_data$DateRep == "2020-04-28" & raw_data$`Countries.and.territories` == "Spain"] <- 301
-raw_data$Deaths[raw_data$DateRep == "2020-05-22" & raw_data$`Countries.and.territories` == "Spain"] <- 53
-raw_data$Deaths[raw_data$DateRep == "2020-05-16" & raw_data$`Countries.and.territories` == "Afghanistan"] <- 17
 raw_data$Deaths[raw_data$DateRep == "2020-05-17" & raw_data$`Countries.and.territories` == "Afghanistan"] <- 15
-##raw_data$Deaths[raw_data$DateRep == "2020-05-02" & raw_data$`Countries.and.territories` == "Spain"] <- 276
-##raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Spain"] <- 164
-
-## Update 10th May - this row has been added in ECCDC data
-## spain_extra <- data.frame(
-##   DateRep = "2020-05-02",
-##   day = 2,
-##   month = 5,
-##   year = 2020,
-##   Cases = 2610,
-##   Deaths = 276,
-##   `Countries.and.territories` = "Spain",
-##   geoId = "ES",
-##   countryterritoryCode = "ESP",
-##   popData2018 = 46723749,
-##   continent = "Europe"
-## )
-## raw_data <- rbind(raw_data, spain_extra)
-
-## spain_extra <- data.frame(
-##   DateRep = "2020-05-10",
-##   day = 10,
-##   month = 5,
-##   year = 2020,
-##   Cases = 1880,
-##   Deaths = 143,
-##   `Countries.and.territories` = "Spain",
-##   geoId = "ES",
-##   countryterritoryCode = "ESP",
-##   popData2018 = 46723749,
-##   continent = "Europe"
-## )
-## raw_data <- rbind(raw_data, spain_extra)
-
-
-## spain_extra <- data.frame(
-##   DateRep = "2020-04-26",
-##   day = 26,
-##   month = 4,
-##   year = 2020,
-##   Cases = 3995,
-##   Deaths = 378,
-##   `Countries.and.territories` = "Spain",
-##   geoId = "ES",
-##   countryterritoryCode = "ESP",
-##   popData2018 = 46723749,
-##   continent = "Europe"
-## )
-## raw_data <- rbind(raw_data, spain_extra)
-
-## spain_extra <- data.frame(
-##   DateRep = "2020-05-17",
-##   day = 17,
-##   month = 5,
-##   year = 2020,
-##   Cases = 1214,
-##   Deaths = 87,
-##   `Countries.and.territories` = "Spain",
-##   geoId = "ES",
-##   countryterritoryCode = "ESP",
-##   popData2018 = 46723749,
-##   continent = "Europe"
-## )
-
-## spain_extra <- data.frame(
-##   DateRep = "2020-05-24",
-##   day = 24,
-##   month = 5,
-##   year = 2020,
-##   Cases = 482,
-##   Deaths = 74,
-##   `Countries.and.territories` = "Spain",
-##   geoId = "ES",
-##   countryterritoryCode = "ESP",
-##   popData2018 = 46723749,
-##   continent = "Europe"
-## )
-
-## Spain reports -1918 deaths and -373 cases on 25th May.
-## Fixing it to a average of cases/deaths from 22nd to 24th May and
-## 26th to 28th.
-dates_of_interest <- as.Date(c(
-  "2020-05-22", "2020-05-23", "2020-05-24",
-  "2020-05-26", "2020-05-27", "2020-05-28"
-))
-
-deaths_avg <- round(
-  mean(
-    raw_data$Deaths[raw_data$DateRep %in% dates_of_interest &
-                    raw_data$`Countries.and.territories` == "Spain"]
-  )
-)
-
-cases_avg <- round(
-  mean(
-    raw_data$Cases[raw_data$DateRep %in% dates_of_interest &
-                    raw_data$`Countries.and.territories` == "Spain"]
-  )
-)
-raw_data$Cases[raw_data$DateRep == "2020-05-25" & raw_data$`Countries.and.territories` == "Spain"] <- cases_avg
-raw_data$Deaths[raw_data$DateRep == "2020-05-25" & raw_data$`Countries.and.territories` == "Spain"] <- deaths_avg
-
-## Update 07-06-2020: This is now present in ECDC data
-## spain_extra <- data.frame(
-##   DateRep = "2020-05-31",
-##   day = 31,
-##   month = 5,
-##   year = 2020,
-##   Cases = 201,
-##   Deaths = 2,
-##   `Countries.and.territories` = "Spain",
-##   geoId = "ES",
-##   countryterritoryCode = "ESP",
-##   popData2018 = 46723749,
-##   continent = "Europe"
-## )
-
-## spain_extra <- data.frame(
-##   DateRep = "2020-06-07",
-##   day = 7,
-##   month = 6,
-##   year = 2020,
-##   Cases = 240,
-##   Deaths = 1,
-##   `Countries.and.territories` = "Spain",
-##   geoId = "ES",
-##   countryterritoryCode = "ESP",
-##   popData2018 = 46723749,
-##   continent = "Europe"
-## )
-
-## raw_data <- rbind(raw_data, spain_extra)
-
-## Corrections for Turkey
-raw_data$Deaths[raw_data$DateRep == "2020-05-28" & raw_data$`Countries.and.territories` == "Turkey"] <- 34
-raw_data$Deaths[raw_data$DateRep == "2020-05-29" & raw_data$`Countries.and.territories` == "Turkey"] <- 30
-
-## Corrections for Ukraine
-raw_data$Deaths[raw_data$DateRep == "2020-05-28" & raw_data$`Countries.and.territories` == "Ukraine"] <- 14
-raw_data$Deaths[raw_data$DateRep == "2020-05-29" & raw_data$`Countries.and.territories` == "Ukraine"] <- 11
-raw_data$Deaths[raw_data$DateRep == "2020-05-30" & raw_data$`Countries.and.territories` == "Ukraine"] <- 10
-raw_data$Deaths[raw_data$DateRep == "2020-05-31" & raw_data$`Countries.and.territories` == "Ukraine"] <- 17
-
-
-## Brazil: 06th and 07th from worldometers
-raw_data$Deaths[raw_data$DateRep == "2020-06-06" & raw_data$`Countries.and.territories` == "Brazil"] <- 910
-raw_data$Deaths[raw_data$DateRep == "2020-06-07" & raw_data$`Countries.and.territories` == "Brazil"] <- 542
-
-## Panama: ECDC has -ve deaths
-raw_data$Deaths[raw_data$DateRep == "2020-06-03" & raw_data$`Countries.and.territories` == "Panama"] <- 8
-raw_data$Deaths[raw_data$DateRep == "2020-06-04" & raw_data$`Countries.and.territories` == "Panama"] <- 5
-
-## Peru. 4th June has 260 deaths, which seems to be a sum of deaths on
-## 3rd and 4th
-raw_data$Deaths[raw_data$DateRep == "2020-06-03" & raw_data$`Countries.and.territories` == "Peru"] <- 127
-raw_data$Deaths[raw_data$DateRep == "2020-06-04" & raw_data$`Countries.and.territories` == "Peru"] <- 137
-
-## 15th June 2020. Colombia mismatch
-raw_data$Deaths[raw_data$DateRep == "2020-06-12" & raw_data$`Countries.and.territories` == "Colombia"] <- 55
-raw_data$Deaths[raw_data$DateRep == "2020-06-13" & raw_data$`Countries.and.territories` == "Colombia"] <- 57
-raw_data$Cases[raw_data$DateRep == "2020-06-12" & raw_data$`Countries.and.territories` == "Colombia"] <- 1530
-raw_data$Cases[raw_data$DateRep == "2020-06-13" & raw_data$`Countries.and.territories` == "Colombia"] <- 1646
-
-## 22nd June, corrections for India, Russia and Iraq
 raw_data$Deaths[raw_data$DateRep == "2020-06-17" & raw_data$`Countries.and.territories` == "India"] <- 675
-raw_data$Deaths[raw_data$DateRep == "2020-06-20" & raw_data$`Countries.and.territories` == "Iraq"] <- 69
-raw_data$Deaths[raw_data$DateRep == "2020-06-21" & raw_data$`Countries.and.territories` == "Iraq"] <- 88
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-19" & raw_data$`Countries.and.territories` == "Russia"] <- 182
-raw_data$Deaths[raw_data$DateRep == "2020-06-20" & raw_data$`Countries.and.territories` == "Russia"] <- 181
-raw_data$Deaths[raw_data$DateRep == "2020-06-21" & raw_data$`Countries.and.territories` == "Russia"] <- 161
-
-######################################################################
-######################################################################
-######################################################################
-########### Corrections 28th June ###################################
-######################################################################
-######################################################################
-######################################################################
-raw_data$Deaths[raw_data$DateRep == "2020-06-24" & raw_data$`Countries.and.territories` == "Argentina"] <- 33
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-26" & raw_data$`Countries.and.territories` == "Armenia"] <- 13
-raw_data$Deaths[raw_data$DateRep == "2020-06-25" & raw_data$`Countries.and.territories` == "Armenia"] <- 11
-raw_data$Deaths[raw_data$DateRep == "2020-06-24" & raw_data$`Countries.and.territories` == "Armenia"] <- 14
-raw_data$Deaths[raw_data$DateRep == "2020-06-23" & raw_data$`Countries.and.territories` == "Armenia"] <- 12
-
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-21" & raw_data$`Countries.and.territories` == "Azerbaijan"] <- 5
-raw_data$Deaths[raw_data$DateRep == "2020-06-20" & raw_data$`Countries.and.territories` == "Azerbaijan"] <- 4
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-21" & raw_data$`Countries.and.territories` == "Belarus"] <- 6
-raw_data$Deaths[raw_data$DateRep == "2020-06-20" & raw_data$`Countries.and.territories` == "Belarus"] <- 6
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-28" & raw_data$`Countries.and.territories` == "Democratic_Republic_of_the_Congo"] <- 4
-raw_data$Deaths[raw_data$DateRep == "2020-06-26" & raw_data$`Countries.and.territories` == "Democratic_Republic_of_the_Congo"] <- 0
-raw_data$Deaths[raw_data$DateRep == "2020-06-25" & raw_data$`Countries.and.territories` == "Democratic_Republic_of_the_Congo"] <- 7
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-26" & raw_data$`Countries.and.territories` == "Egypt"] <- 83
-raw_data$Deaths[raw_data$DateRep == "2020-06-25" & raw_data$`Countries.and.territories` == "Egypt"] <- 85
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-28" & raw_data$`Countries.and.territories` == "Iran"] <- 125
-raw_data$Deaths[raw_data$DateRep == "2020-06-27" & raw_data$`Countries.and.territories` == "Iran"] <- 109
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-28" & raw_data$`Countries.and.territories` == "Kazakhstan"] <- 15
-raw_data$Deaths[raw_data$DateRep == "2020-06-27" & raw_data$`Countries.and.territories` == "Kazakhstan"] <- 11
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-24" & raw_data$`Countries.and.territories` == "Peru"] <- 181
-raw_data$Deaths[raw_data$DateRep == "2020-06-23" & raw_data$`Countries.and.territories` == "Peru"] <- 178
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-25" & raw_data$`Countries.and.territories` == "Ukraine"] <- 16
-raw_data$Deaths[raw_data$DateRep == "2020-06-24" & raw_data$`Countries.and.territories` == "Ukraine"] <- 23
-
-raw_data$Deaths[raw_data$DateRep == "2020-06-26" & raw_data$`Countries.and.territories` == "United_States_of_America"] <-
-  raw_data$Deaths[raw_data$DateRep == "2020-06-26" & raw_data$`Countries.and.territories` == "United_States_of_America"] - 1854
-
 
 ### Replace -31 deaths in Italy with moving average
 dates_of_interest <- as.Date(c(
@@ -279,44 +132,8 @@ raw_data$Cases[raw_data$DateRep == "2020-07-01" & raw_data$`Countries.and.territ
     )
   ))
 
-raw_data$Deaths[raw_data$DateRep == "2020-07-04" & raw_data$`Countries.and.territories` == "Kazakhstan"] <- 26
-raw_data$Deaths[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "Kazakhstan"] <- 26
-
-raw_data$Deaths[raw_data$DateRep == "2020-07-04" & raw_data$`Countries.and.territories` == "Qatar"] <- 3
-raw_data$Deaths[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "Qatar"] <- 2
-
-raw_data$Deaths[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "Sudan"] <- 4
-
-raw_data$Deaths[raw_data$DateRep == "2020-07-01" & raw_data$`Countries.and.territories` == "Ukraine"] <- 12
-raw_data$Deaths[raw_data$DateRep == "2020-07-02" & raw_data$`Countries.and.territories` == "Ukraine"] <- 14
 raw_data$Deaths[raw_data$DateRep == "2020-07-04" & raw_data$`Countries.and.territories` == "Ukraine"] <- 27
 raw_data$Deaths[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "Ukraine"] <- 15
-
-raw_data$Cases[raw_data$DateRep == "2020-07-03" & raw_data$`Countries.and.territories` == "United_Kingdom"] <-
-  round(
-    mean(
-      c(raw_data$Cases[raw_data$DateRep == "2020-07-01" & raw_data$`Countries.and.territories` == "United_Kingdom"],
-        raw_data$Cases[raw_data$DateRep == "2020-07-02" & raw_data$`Countries.and.territories` == "United_Kingdom"],
-        raw_data$Cases[raw_data$DateRep == "2020-07-04" & raw_data$`Countries.and.territories` == "United_Kingdom"],
-        raw_data$Cases[raw_data$DateRep == "2020-07-05" & raw_data$`Countries.and.territories` == "United_Kingdom"]
-        )
-    )
-  )
-
-#####################################################################
-######################################################################
-######################################################################
-######################################################################
-########### Corrections 12th July ####################################
-######################################################################
-######################################################################
-######################################################################
-raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Algeria"] <- 8
-raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Algeria"] <- 8
-raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Haiti"] <- 7
-raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Haiti"] <- 5
-raw_data$Deaths[raw_data$DateRep == "2020-07-11" & raw_data$`Countries.and.territories` == "Ukraine"] <- 27
-raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.territories` == "Ukraine"] <- 11
 
 
 #####################################################################
@@ -327,74 +144,14 @@ raw_data$Deaths[raw_data$DateRep == "2020-07-12" & raw_data$`Countries.and.terri
 ######################################################################
 ######################################################################
 ######################################################################
-
-## For Argentina, we use the data from WHO.
-who <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
-  janitor::clean_names()
-
-who$date_reported <- lubridate::ymd(who$date_reported)
-
-who_argentina <- who[who$country == "Argentina", ]
-ecdc_argentina <- raw_data[raw_data$`Countries.and.territories` == "Argentina", ]
-who_argentina <- who_argentina[who_argentina$date_reported %in% ecdc_argentina$DateRep, ]
-df <- dplyr::left_join(who_argentina, ecdc_argentina, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Argentina"] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina"] <- df$new_deaths
-
-
-who_elsalv <- who[who$country == "El Salvador", ]
-ecdc_elsalv <- raw_data[raw_data$`Countries.and.territories` == "El_Salvador", ]
-who_elsalv <- who_elsalv[who_elsalv$date_reported %in% ecdc_elsalv$DateRep, ]
-df <- dplyr::left_join(who_elsalv, ecdc_elsalv, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "El_Salvador"] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "El_Salvador"] <- df$new_deaths
-
-
-## Canada
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2020-07-19"] <- 9
-
-## Chile
-## On 18th July, Chile reported 959 historical deaths
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Chile" & raw_data$DateRep == "2020-07-18"] <- 98
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Chile" & raw_data$DateRep == "2020-07-19"] <- 58
-
-## Egypt
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2020-07-13"] <- 89
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2020-07-14"] <- 77
-
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "El_Salvador" & raw_data$DateRep == "2020-07-15"] <- 8
-raw_data$Deaths[raw_data$`Countries.and.territories` == "El_Salvador" & raw_data$DateRep == "2020-07-16"] <- 12
-raw_data$Deaths[raw_data$`Countries.and.territories` == "El_Salvador" & raw_data$DateRep == "2020-07-19"] <- 11
 
 raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2020-07-15"] <- 71
 raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2020-07-16"] <- 20
 
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Honduras" & raw_data$DateRep == "2020-07-18"] <- 22
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Honduras" & raw_data$DateRep == "2020-07-19"] <- 34
-
-
-## For Russia, we use the data from WHO.
-
-who_russia <- who[who$country == "Russian Federation", ]
-ecdc_russia <- raw_data[raw_data$`Countries.and.territories` == "Russia", ]
-who_russia <- who_russia[who_russia$date_reported %in% ecdc_russia$DateRep, ]
-df <- dplyr::left_join(who_russia, ecdc_russia, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Russia" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Russia" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-last_week <- seq(from = as.Date("2020-07-12"), to = as.Date("2020-07-19"), by = "1 day")
-who_ukraine <- who[who$country == "Ukraine" & who$date_reported %in% last_week, ]
-ecdc_ukraine <- raw_data[raw_data$`Countries.and.territories` == "Ukraine", ]
-ecdc_ukraine <- ecdc_ukraine[ecdc_ukraine$DateRep %in% last_week, ]
-df <- dplyr::left_join(who_ukraine, ecdc_ukraine, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
 #####################################################################
 ######################################################################
 ######################################################################
@@ -403,56 +160,23 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$Dat
 ######################################################################
 ######################################################################
 ######################################################################
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Guatemala" & raw_data$DateRep == "2020-07-26"] <- 30
+
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-07-24"] <- 188
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2020-07-26"] <- 8
-raw_data$Cases[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2020-07-26"] <- 411
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-07-26"] <- 195
-raw_data$Cases[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-07-26"] <- 2316
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-07-25"] <- 215
-raw_data$Cases[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-07-25"] <- 2489
 
 
+## Soruce Wikipedia; ECDC reports 40 on one day and -12 on the previous day
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Kosovo" & raw_data$DateRep == "2020-08-06"] <- 15
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Kosovo" & raw_data$DateRep == "2020-08-05"] <- 13
 
-
-
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-########### Corrections 02nd August ##################################
-######################################################################
-######################################################################
-######################################################################
-
-last_week <- seq(from = as.Date("2020-07-26"), to = as.Date("2020-08-02"), by = "1 day")
-who_Guatemala <- who[who$country == "Guatemala" & who$date_reported %in% last_week, ]
-ecdc_Guatemala <- raw_data[raw_data$`Countries.and.territories` == "Guatemala", ]
-ecdc_Guatemala <- ecdc_Guatemala[ecdc_Guatemala$DateRep %in% last_week, ]
-df <- dplyr::left_join(who_Guatemala, ecdc_Guatemala, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Guatemala" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Guatemala" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Kosovo" & raw_data$DateRep == "2020-08-01"] <- 15
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Kosovo" & raw_data$DateRep == "2020-08-02"] <- 10
 
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Saudi_Arabia" & raw_data$DateRep == "2020-07-31"] <- 26
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Saudi_Arabia" & raw_data$DateRep == "2020-08-01"] <- 24
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Saudi_Arabia" & raw_data$DateRep == "2020-08-02"] <- 21
 
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Sudan" & raw_data$DateRep == "2020-08-02"] <- 6
-raw_data$Cases[raw_data$`Countries.and.territories` == "Sudan" & raw_data$DateRep == "2020-08-02"] <- 94
 
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Venezuela" & raw_data$DateRep == "2020-07-31"] <- 4
-raw_data$Cases[raw_data$`Countries.and.territories` == "Venezuela" & raw_data$DateRep == "2020-07-30"] <- 3
 ## Negative deaths reported in both WHO and ECDC, fixing against Worldometers
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Czechia" & raw_data$DateRep == "2020-07-05"] <- 0
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Czechia" & raw_data$DateRep == "2020-07-06"] <- 2
-
-
-
 ######################################################################
 ######################################################################
 ######################################################################
@@ -461,81 +185,9 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Czechia" & raw_data$Dat
 ######################################################################
 ######################################################################
 ######################################################################
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-08-09"] <- 63
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Ethiopia"& raw_data$DateRep == "2020-08-03"] <- 26
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Ethiopia"& raw_data$DateRep == "2020-08-04"] <- 26
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran"& raw_data$DateRep == "2020-08-07"] <- 174
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran"& raw_data$DateRep == "2020-08-08"] <- 156
-
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan"& raw_data$DateRep == "2020-08-01"] <- 19
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan"& raw_data$DateRep == "2020-08-02"] <- 8
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan"& raw_data$DateRep == "2020-08-03"] <- 8
-
-
-last_week <- seq(from = as.Date("2020-07-24"), to = as.Date("2020-08-09"), by = "1 day")
-who_Spain <- who[who$country == "Spain" & who$date_reported %in% last_week, ]
-ecdc_Spain <- raw_data[raw_data$`Countries.and.territories` == "Spain", ]
-ecdc_Spain <- ecdc_Spain[ecdc_Spain$DateRep %in% last_week, ]
-df <- dplyr::left_join(who_Spain, ecdc_Spain, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-## ECDC data does not have data for Spain for 9th August, add a row
-##last_row <- raw_data[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep == "2020-08-08", ]
-##last_row$DateRep <- "2020-08-09"
-##raw_data <- rbind(raw_data, last_row)
-raw_data$Cases[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-
-who_Kosovo <- who[who$country == "Kosovo[1]", ]
-ecdc_Kosovo <- raw_data[raw_data$`Countries.and.territories` == "Kosovo", ]
-who_Kosovo <- who_Kosovo[who_Kosovo$date_reported %in% ecdc_Kosovo$DateRep, ]
-df <- dplyr::left_join(who_Kosovo, ecdc_Kosovo, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Kosovo" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Kosovo" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-########### Corrections 16th August ¢##################################
-######################################################################
-######################################################################
-######################################################################
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-08-14"] <- 57
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-08-15"] <- 55
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2020-08-15"] <- 64
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-08-14"] <- 277
-
-
-last_week <- seq(from = as.Date("2020-08-08"), to = as.Date("2020-08-16"), by = "1 day")
-who_ukraine <- who[who$country == "Ukraine" & who$date_reported %in% last_week, ]
-ecdc_ukraine <- raw_data[raw_data$`Countries.and.territories` == "Ukraine", ]
-ecdc_ukraine <- ecdc_ukraine[ecdc_ukraine$DateRep %in% last_week, ]
-df <- dplyr::left_join(who_ukraine, ecdc_ukraine, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-
-last_week <- seq(from = as.Date("2020-07-24"), to = as.Date("2020-08-16"), by = "1 day")
-who_Spain <- who[who$country == "Spain" & who$date_reported %in% last_week, ]
-ecdc_Spain <- raw_data[raw_data$`Countries.and.territories` == "Spain", ]
-ecdc_Spain <- ecdc_Spain[ecdc_Spain$DateRep %in% last_week, ]
-df <- dplyr::left_join(who_Spain, ecdc_Spain, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-## ECDC data does not have data for Spain for 9th August, add a row
-##last_row <- raw_data[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep == "2020-08-08", ]
-##last_row$DateRep <- "2020-08-09"
-##raw_data <- rbind(raw_data, last_row)
-raw_data$Cases[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-
-
 
 ######################################################################
 ######################################################################
@@ -545,31 +197,8 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateR
 ######################################################################
 ######################################################################
 ######################################################################
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2020-08-19"] <- 11
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2020-08-20"] <- 13
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-08-20"] <- 153
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2020-08-21"] <- 139
-
 ## On 15 August, Emilia-Romagna added 154 deaths from March, April and May to its count.
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Italy" & raw_data$DateRep == "2020-08-16"] <- 4
-
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2020-08-19"] <- 2
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2020-08-20"] <- 2
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2020-08-18"] <- 23
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2020-08-19"] <- 33
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2020-08-20"] <- 29
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "North_Macedonia" & raw_data$DateRep == "2020-08-21"] <- 3
-raw_data$Deaths[raw_data$`Countries.and.territories` == "North_Macedonia" & raw_data$DateRep == "2020-08-22"] <- 3
-
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2020-08-19"] <- 11
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2020-08-20"] <- 8
-
 
 ######################################################################
 ######################################################################
@@ -583,151 +212,12 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateR
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2020-08-25"] <- 19
 
 ## source Worldometers
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-23"] <- 730
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-24"] <- 1809
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-25"] <- 1998
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-26"] <- 1943
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-27"] <- 2000
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-28"] <- 1597
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-29"] <- 1465
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-30"] <- 555
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-23"] <- 15
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-24"] <- 13
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-25"] <- 12
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-26"] <- 16
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-27"] <- 9
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-28"] <- 10
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-29"] <- 12
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-08-30"] <- 13
 
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2020-08-24"] <- 30
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2020-08-25"] <- 32
-
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2020-08-24"] <- 9
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2020-08-25"] <- 11
-
-
-
-who_Honduras <- who[who$country == "Honduras", ]
-ecdc_Honduras <- raw_data[raw_data$`Countries.and.territories` == "Honduras", ]
-who_Honduras <- who_Honduras[who_Honduras$date_reported %in% ecdc_Honduras$DateRep, ]
-df <- dplyr::left_join(who_Honduras, ecdc_Honduras, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Honduras" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Honduras" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-who_Iran <- who[who$country == "Iran (Islamic Republic of)", ]
-ecdc_Iran <- raw_data[raw_data$`Countries.and.territories` == "Iran", ]
-who_Iran <- who_Iran[who_Iran$date_reported %in% ecdc_Iran$DateRep, ]
-df <- dplyr::left_join(who_Iran, ecdc_Iran, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-who_Spain <- who[who$country == "Spain", ]
-ecdc_Spain <- raw_data[raw_data$`Countries.and.territories` == "Spain", ]
-who_Spain <- who_Spain[who_Spain$date_reported %in% ecdc_Spain$DateRep, ]
-df <- dplyr::left_join(who_Spain, ecdc_Spain, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-who_Ukraine <- who[who$country == "Ukraine", ]
-ecdc_Ukraine <- raw_data[raw_data$`Countries.and.territories` == "Ukraine", ]
-who_Ukraine <- who_Ukraine[who_Ukraine$date_reported %in% ecdc_Ukraine$DateRep, ]
-df <- dplyr::left_join(who_Ukraine, ecdc_Ukraine, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-########### Corrections 6th September ################################
-######################################################################
-######################################################################
-######################################################################
 raw_data$Cases[raw_data$`Countries.and.territories` == "Dominican_Republic" & raw_data$DateRep == "2020-09-05"] <- 20
 raw_data$Cases[raw_data$`Countries.and.territories` == "Dominican_Republic" & raw_data$DateRep == "2020-09-06"] <- 19
 
-raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2020-09-05"] <- 39
-raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2020-09-06"] <- 37
-
-
-last_2months <- seq(from = as.Date("2020-07-01"), to = as.Date(week_finishing), by = "1 day")
-who_India <- who[who$country == "India" & who$date_reported %in% last_2months, ]
-ecdc_India <- raw_data[raw_data$`Countries.and.territories` == "India", ]
-ecdc_India <- ecdc_India[ecdc_India$DateRep %in% last_2months, ]
-df <- dplyr::left_join(who_India, ecdc_India, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "India" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "India" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-who_Mexico <- who[who$country == "Mexico" & who$date_reported %in% last_2months, ]
-ecdc_Mexico <- raw_data[raw_data$`Countries.and.territories` == "Mexico", ]
-ecdc_Mexico <- ecdc_Mexico[ecdc_Mexico$DateRep %in% last_2months, ]
-df <- dplyr::left_join(who_Mexico, ecdc_Mexico, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-who_Philippines <- who[who$country == "Philippines", ]
-ecdc_Philippines <- raw_data[raw_data$`Countries.and.territories` == "Philippines", ]
-who_Philippines <- who_Philippines[who_Philippines$date_reported %in% ecdc_Philippines$DateRep, ]
-df <- dplyr::left_join(who_Philippines, ecdc_Philippines, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Philippines" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Philippines" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-########## Corrections 13th September ################################
-######################################################################
-######################################################################
-######################################################################
-
-
-who_Bangladesh <- who[who$country == "Bangladesh" & who$date_reported %in% last_2months, ]
-ecdc_Bangladesh <- raw_data[raw_data$`Countries.and.territories` == "Bangladesh", ]
-ecdc_Bangladesh <- ecdc_Bangladesh[ecdc_Bangladesh$DateRep %in% last_2months, ]
-df <- dplyr::left_join(who_Bangladesh, ecdc_Bangladesh, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Bangladesh" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Bangladesh" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-who_Morocco <- who[who$country == "Morocco" & who$date_reported %in% last_2months, ]
-ecdc_Morocco <- raw_data[raw_data$`Countries.and.territories` == "Morocco", ]
-ecdc_Morocco <- ecdc_Morocco[ecdc_Morocco$DateRep %in% last_2months, ]
-df <- dplyr::left_join(who_Morocco, ecdc_Morocco, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-
-
-## WHO report 0 new cases and 0 new deaths for Israel from 10th to 13th
-## Sept. We take these values from ECDC
-last_2monthsa <- head(last_2months, -4)
-who_Israel <- who[who$country == "Israel" & who$date_reported %in% last_2monthsa, ]
-ecdc_Israel <- raw_data[raw_data$`Countries.and.territories` == "Israel", ]
-ecdc_Israel <- ecdc_Israel[ecdc_Israel$DateRep %in% last_2monthsa, ]
-df <- dplyr::left_join(who_Israel, ecdc_Israel, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
-
-last_2monthsb <- head(last_2months, -1)
-who_Bolivia <- who[who$country == "Bolivia (Plurinational State of)" & who$date_reported %in% last_2monthsb, ]
-ecdc_Bolivia <- raw_data[raw_data$`Countries.and.territories` == "Bolivia", ]
-ecdc_Bolivia <- ecdc_Bolivia[ecdc_Bolivia$DateRep %in% last_2monthsb, ]
-df <- dplyr::left_join(who_Bolivia, ecdc_Bolivia, by = c("date_reported" = "DateRep"))
-df <- dplyr::arrange(df, desc(date_reported))
-raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep %in% df$date_reported] <- df$new_cases
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep %in% df$date_reported] <- df$new_deaths
 
 dates_to_avg <- as.Date(c(
   "2020-09-05", "2020-09-06",
@@ -770,16 +260,8 @@ ecuador_avg_deaths <- mean(
 raw_data$Cases[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_cases
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_deaths
 
-## raw_data <- rbind(raw_data, uk_extra)
 
 
-## 27th April: Ireland manually fixed in the csv.
-## ECDC Reported 234 deaths on 2020-04-26
-## which was a massive jump from 35 reported on 2020-04-25.
-## Fixed it to match numbers from Worldometer.
-
-## Save before applying theresholds as well so that we can compute
-## model performance metrics
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -792,10 +274,6 @@ saveRDS(
   file = "latest_deaths_wide_no_filter.rds"
 )
 
-## Excluding China which is included only because of the massive back-fill.
-## raw_data <- dplyr::filter(
-##   raw_data, !(Countries.and.territories == "China")
-## )
 ## Apply thresholds
 pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   purrr::keep(deaths_threshold) %>%
