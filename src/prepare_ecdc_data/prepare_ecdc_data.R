@@ -274,10 +274,6 @@ saveRDS(
   file = "latest_deaths_wide_no_filter.rds"
 )
 
-## Excluding China which is included only because of the massive back-fill.
-## raw_data <- dplyr::filter(
-##   raw_data, !(Countries.and.territories == "China")
-## )
 ## Apply thresholds
 pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   purrr::keep(deaths_threshold) %>%

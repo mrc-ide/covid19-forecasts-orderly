@@ -1,0 +1,26 @@
+script: script.R
+
+artefacts:
+  data:
+    description: Error for long projections
+    filenames: long_projections_error.rds
+
+parameters:
+- window
+- week_ending
+
+packages:
+  - purrr
+  - tidyr
+  - rincewind
+  - assessr
+ 
+depends:
+  produce_longer_forecasts:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      unweighted_projections.rds: unweighted_projections.rds
+  prepare_ecdc_data:
+    id: "latest"
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
