@@ -12,10 +12,11 @@ packages:
   - dplyr
   - tidyr
   - readr
+  - purrr
   
 sources:
   - R/utils.R
 
 resources:
-  - COVID-19-geographic-disbtribution-worldwide-2020-09-13.csv
+  - COVID-19-geographic-disbtribution-worldwide-2020-09-20.csv
   - WHO-COVID-19-global-data.csv
