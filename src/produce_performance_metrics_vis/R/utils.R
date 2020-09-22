@@ -140,7 +140,7 @@ long_relative_error_heatmap <- function(df) {
  p <- ggplot() +
     theme_classic() +
     geom_tile(
-      data = df[df$rel_mae <= 1, ],
+      data = df[df$rel_mae <= 2, ],
       aes(week_of_projection, country, fill = rel_mae),
       width = 0.9,
       height = 0.8
@@ -148,7 +148,7 @@ long_relative_error_heatmap <- function(df) {
   scale_fill_distiller(
     palette = "Greens", na.value = "white", direction = 1,
     guide = guide_colourbar(
-      title = "Model Error < 1",
+      title = "Model Error <= 2",
       title.position = "top",
       title.vjust = 0.5,
       order = 1
@@ -156,7 +156,7 @@ long_relative_error_heatmap <- function(df) {
   ) +
   ggnewscale::new_scale_fill() +
   geom_tile(
-    data = df[df$rel_mae > 1 & df$rel_mae <= 5, ],
+    data = df[df$rel_mae > 2 & df$rel_mae <= 5, ],
     aes(week_of_projection, country, fill = rel_mae),
     width = 0.9,
     height = 0.8
@@ -164,7 +164,7 @@ long_relative_error_heatmap <- function(df) {
   scale_fill_distiller(
     palette = "YlOrRd", na.value = "white", direction = 1,
     guide = guide_colourbar(
-      title = "1 < Model Error < 5",
+      title = "2 < Model Error <= 5",
       title.position = "top",
       title.hjust = 0.5,
       order = 2
