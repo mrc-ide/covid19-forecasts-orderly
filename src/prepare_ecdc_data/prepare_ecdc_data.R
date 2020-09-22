@@ -1,4 +1,4 @@
-week_finishing <- "2020-09-13"
+week_finishing <- "2020-09-20"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -260,6 +260,41 @@ ecuador_avg_deaths <- mean(
 raw_data$Cases[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_cases
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_deaths
 
+######################################################################
+### Corrections 20th September
+### https://rpp.pe/peru/actualidad/minsa-suma-3-658-decesos-a-cifra-de-muertes-por-la-covid-19-y-casos-positivos-ya-superan-el-medio-millon-noticia-1286372?ref=rpp
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-08-15"] <- 277
+## From ECDC
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-20"] <- 30
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-19"] <- 27
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-18"] <- 4
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-17"] <- 18
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-16"] <- 11
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-15"] <- 17
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-14"] <- 16
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-13"] <- 13
+
+raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
+  map_dfr(
+    function(df) {
+      if (all(df$Cases > 0)) return(df)
+      idx <- which(df$Cases < 0)
+      for (i in idx) {
+        date_neg <- df$DateRep[i]
+        dates_to_avg <- seq(
+          from = as.Date(date_neg) - 3,
+          to = as.Date(date_neg) + 3,
+          by = "1 day"
+        )
+        dates_to_avg <- dates_to_avg[dates_to_avg != as.Date(date_neg)]
+        dates_to_avg <- dates_to_avg[dates_to_avg <= max(as.Date(df$DateRep))]
+        df$Cases[i] <- round(
+          mean(df$Cases[df$DateRep %in% dates_to_avg])
+        )
+      }
+      df
+    }
+  )
 
 
 by_country_deaths_all <- dplyr::select(
@@ -278,6 +313,9 @@ saveRDS(
 pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   purrr::keep(deaths_threshold) %>%
   dplyr::bind_rows()
+
+## Still have some negative cases. Replace the negative case count
+## with an average of previous and later 3 days.
 
 by_country_deaths <- dplyr::select(
   pass, DateRep, Deaths, Countries.and.territories
