@@ -69,3 +69,8 @@ depends:
       id: latest
       use:
         better_than_null.rds: better_than_null.rds
+
+  - collate_longer_forecasts_metrics:
+      id: latest
+      use:
+        long_projections_error_weekly.rds: long_projections_error_weekly.rds

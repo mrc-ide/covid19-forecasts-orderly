@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = FALSE, parameters = list(use_si = "si_2"))
+## use_draft = "newer", parameters = list(use_si = "si_2"))
 ######### Performance metrics
 observed <- readRDS("model_input.rds")
 
@@ -67,61 +67,73 @@ unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
 
 unwtd_pred_error <- unwtd_pred_error[unwtd_pred_error$country != "Kyrgyzstan", ]
 
+n_forecast <- group_by(unwtd_pred_error, country) %>%
+  summarise(n = length(unique(forecast_date))) %>%
+  ungroup()
+
+more_than_15 <- n_forecast$country[n_forecast$n >= 15]
+less_than_15 <- n_forecast$country[n_forecast$n < 15 & n_forecast$n > 3]
+
+more_forecasts <- unwtd_pred_error[unwtd_pred_error$country %in% more_than_15, ]
+less_forecasts <- unwtd_pred_error[unwtd_pred_error$country %in% less_than_15, ]
+
+weekly_summary <- function(df) {
 ######################################################################
 ################## Weekly Summary for each country ###################
 ######################################################################
-weekly <- group_by(unwtd_pred_error, forecast_date, country) %>%
-  summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
-  ungroup()
+  weekly <- group_by(df, forecast_date, country) %>%
+    summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
+    ungroup()
 
 ######################################################################
 ################## Summary for each country ##########################
 ######################################################################
-by_country <- group_by(unwtd_pred_error, country) %>%
-  summarise_if(is.numeric, list(c_mu = mean, c_sd = sd)) %>%
-  ungroup()
+  by_country <- group_by(df, country) %>%
+    summarise_if(is.numeric, list(c_mu = mean, c_sd = sd)) %>%
+    ungroup()
 
 ######################################################################
 ################## Summary for each week ##########################
 ######################################################################
-by_week <- group_by(unwtd_pred_error, forecast_date) %>%
-  summarise_if(is.numeric, list(d_mu = mean, d_sd = sd)) %>%
-  ungroup()
+  by_week <- group_by(df, forecast_date) %>%
+    summarise_if(is.numeric, list(d_mu = mean, d_sd = sd)) %>%
+    ungroup()
 
-n_forecast <- count(weekly, country)
+  n_forecast <- count(weekly, country)
 
-weekly <- left_join(weekly, n_forecast)
-weekly <- left_join(weekly, by_country)
-weekly <- left_join(weekly, by_week)
+  weekly <- left_join(weekly, n_forecast)
+  weekly <- left_join(weekly, by_country)
+  weekly <- left_join(weekly, by_week)
 
-weekly$top_label <- glue(
-  "{round_and_format(weekly$prop_in_50_d_mu)}",
-  " %+-% {round_and_format(weekly$prop_in_50_d_sd)}"
-)
+  weekly$top_label <- glue(
+    "{round_and_format(weekly$prop_in_50_d_mu)}",
+    " %+-% {round_and_format(weekly$prop_in_50_d_sd)}"
+  )
 
-weekly$right_label <- glue(
-  "{round_and_format(weekly$prop_in_50_c_mu)}",
-  " %+-% {round_and_format(weekly$prop_in_50_c_sd)}"
-)
+  weekly$right_label <- glue(
+    "{round_and_format(weekly$prop_in_50_c_mu)}",
+    " %+-% {round_and_format(weekly$prop_in_50_c_sd)}"
+  )
 
-weekly$cell_label <- glue(
-  "{round_and_format(weekly$prop_in_50_mu)}"
-  ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
-)
+  weekly$cell_label <- glue(
+    "{round_and_format(weekly$prop_in_50_mu)}"
+    ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
+  )
 
-
-weekly$country <- factor(
-  weekly$country,
-  levels = better_than_null$country, ordered = TRUE
-)
-
-more_forecasts <- weekly[weekly$n >= 15, ]
-more_forecasts$country <- droplevels(more_forecasts$country)
-
-less_forecasts <- weekly[weekly$n < 15 & weekly$n > 3, ]
-less_forecasts$country <- droplevels(less_forecasts$country)
+  weekly$country <- factor(
+    weekly$country,
+    levels = better_than_null$country, ordered = TRUE
+  )
+  weekly$country <- droplevels(weekly$country)
+  weekly
+}
 
 
+more_forecasts <- weekly_summary(more_forecasts)
+less_forecasts <- weekly_summary(less_forecasts)
+overall <- weekly_summary(unwtd_pred_error)
+
+readr::write_csv(unwtd_pred_error, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
@@ -156,33 +168,40 @@ ggsave(
 ######################################################################
 ################## Proportion in 95% CrI by country ##################
 ######################################################################
-weekly$top_label <- glue(
-  "{round_and_format(weekly$prop_in_975_d_mu)}",
-  " %+-% {round_and_format(weekly$prop_in_975_d_sd)}"
+more_forecasts$top_label <- glue(
+  "{round_and_format(more_forecasts$prop_in_975_d_mu)}",
+  " %+-% {round_and_format(more_forecasts$prop_in_975_d_sd)}"
 )
 
-weekly$right_label <- glue(
-  "{round_and_format(weekly$prop_in_975_c_mu)}",
-  " %+-% {round_and_format(weekly$prop_in_975_c_sd)}"
+more_forecasts$right_label <- glue(
+  "{round_and_format(more_forecasts$prop_in_975_c_mu)}",
+  " %+-% {round_and_format(more_forecasts$prop_in_975_c_sd)}"
 )
 
-weekly$cell_label <- glue(
-  "{round_and_format(weekly$prop_in_975_mu)}"
-  ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
+more_forecasts$cell_label <- glue(
+  "{round_and_format(more_forecasts$prop_in_975_mu)}"
 )
-
-more_forecasts <- weekly[weekly$n >= 15, ]
-more_forecasts$country <- droplevels(more_forecasts$country)
-
-less_forecasts <- weekly[weekly$n < 15 & weekly$n > 3, ]
-less_forecasts$country <- droplevels(less_forecasts$country)
-
-
 
 x <- rename(more_forecasts, "prop_in_CrI" = "prop_in_975_mu")
 y <- rename(less_forecasts, "prop_in_CrI" = "prop_in_975_mu")
 
 p1 <- prop_in_cri_heatmap(x, CrI = "95%")
+
+
+less_forecasts$top_label <- glue(
+  "{round_and_format(less_forecasts$prop_in_975_d_mu)}",
+  " %+-% {round_and_format(less_forecasts$prop_in_975_d_sd)}"
+)
+
+less_forecasts$right_label <- glue(
+  "{round_and_format(less_forecasts$prop_in_975_c_mu)}",
+  " %+-% {round_and_format(less_forecasts$prop_in_975_c_sd)}"
+)
+
+less_forecasts$cell_label <- glue(
+  "{round_and_format(less_forecasts$prop_in_975_mu)}"
+)
+
 p2 <- prop_in_cri_heatmap(y, CrI = "95%")
 
 ggsave(
@@ -221,7 +240,7 @@ x50_all <- filter(x50_all, obs >= 0)
 ##ymax <- max(x50_all$log_median_pred, x50_all$log_obs, na.rm = TRUE)
 ##ymax <- ceiling(ymax)
 
-bin_start <- seq(0, 4000, by = 100)
+bin_start <- seq(0, 2000, by = 100)
 bin_end  <- bin_start + 100
 ##bin_start <- c(-Inf, bin_start)
 ##bin_end <- c(0, bin_end)
@@ -251,10 +270,10 @@ x50_all$pred_category <- apply(
   }
 )
 
-x50_all$pred_category[x50_all$median_pred >= 4100] <- "[4100, Inf)"
+x50_all$pred_category[x50_all$median_pred >= 2100] <- "[2100, Inf)"
 
 categories <- glue::glue("[{bin_start}, {bin_end})")
-categories <- c(categories, "[4100, Inf)")
+categories <- c(categories, "[2100, Inf)")
 
 y <- dplyr::count(x50_all, pred_category, obs_category)
 
@@ -338,28 +357,37 @@ readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 ######################################################################
 ######################################################################
 ######################################################################
-weekly$top_label <- glue(
-  "{round_and_format(weekly$rel_mae_d_mu)}",
-  " %+-% {round_and_format(weekly$rel_mae_d_sd)}"
+more_forecasts$top_label <- glue(
+  "{round_and_format(more_forecasts$rel_mae_d_mu)}",
+  " %+-% {round_and_format(more_forecasts$rel_mae_d_sd)}"
 )
 
-weekly$right_label <- glue(
-  "{round_and_format(weekly$rel_mae_c_mu)}",
-  " %+-% {round_and_format(weekly$rel_mae_c_sd)}"
+more_forecasts$right_label <- glue(
+  "{round_and_format(more_forecasts$rel_mae_c_mu)}",
+  " %+-% {round_and_format(more_forecasts$rel_mae_c_sd)}"
 )
 
-weekly$cell_label <- glue(
-  "{round_and_format(weekly$rel_mae_mu)}"
-  ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
+more_forecasts$cell_label <- glue(
+  "{round_and_format(more_forecasts$rel_mae_mu)}"
 )
-
-more_forecasts <- weekly[weekly$n >= 15, ]
-more_forecasts$country <- droplevels(more_forecasts$country)
-
-less_forecasts <- weekly[weekly$n < 15 & weekly$n > 3, ]
-less_forecasts$country <- droplevels(less_forecasts$country)
 
 p1 <- relative_error_heatmap(more_forecasts)
+
+
+less_forecasts$top_label <- glue(
+  "{round_and_format(less_forecasts$rel_mae_d_mu)}",
+  " %+-% {round_and_format(less_forecasts$rel_mae_d_sd)}"
+)
+
+less_forecasts$right_label <- glue(
+  "{round_and_format(less_forecasts$rel_mae_c_mu)}",
+  " %+-% {round_and_format(less_forecasts$rel_mae_c_sd)}"
+)
+
+less_forecasts$cell_label <- glue(
+  "{round_and_format(less_forecasts$rel_mae_mu)}"
+)
+
 p2 <- relative_error_heatmap(less_forecasts)
 
 ggsave(
@@ -385,7 +413,7 @@ ggsave(
 #######################  Weekly Figures ##############################
 ######################################################################
 ######################################################################
-weekly <- left_join(weekly, weekly_incidence)
+weekly <- left_join(overall, weekly_incidence)
 ## All countries, Relative mean error on log scale and weekly incidence
 pall <- ggplot(
   weekly, aes(weekly_incid, rel_mae_mu)
@@ -437,8 +465,7 @@ ggsave("rmae_vs_weekly_cv_all_countries.png", pcv_all)
 ######################################################################
 ######################################################################
 
-
-p1 <- ggplot(by_country) +
+p1 <- ggplot(overall) +
   geom_point(
     aes(country, rel_mae_c_mu)
   ) +
@@ -459,7 +486,7 @@ p1 <- ggplot(by_country) +
 ggsave("relative_error_by_country.png", p1)
 
 
-p2 <- ggplot(by_week) +
+p2 <- ggplot(overall) +
   geom_point(
     aes(forecast_date, rel_mae_d_mu)
   ) +
@@ -480,3 +507,129 @@ p2 <- ggplot(by_week) +
   )
 
 ggsave("relative_error_by_.png", p2)
+
+######################################################################
+######## Performance of longer forecasts #############################
+######################################################################
+######################################################################
+long_perf <- readRDS("long_projections_error_weekly.rds")
+more_forecasts <- long_perf[long_perf$country %in% more_than_15, ]
+less_forecasts <- long_perf[long_perf$country %in% less_than_15, ]
+
+weekly_summary_long <- function(df) {
+
+  by_country <- group_by(df, country) %>%
+    summarise_if(is.numeric, list(c_mu = mean, c_sd = sd)) %>%
+    ungroup()
+
+  by_week <- group_by(df, week_of_projection) %>%
+    summarise_if(is.numeric, list(w_mu = mean, w_sd = sd)) %>%
+    ungroup()
+
+  df <- left_join(df, by_country)
+  df <- left_join(df, by_week)
+
+  df$country <- factor(
+    df$country,
+    levels = better_than_null$country, ordered = TRUE
+  )
+  df$country <- droplevels(df$country)
+
+  df
+}
+
+more_forecasts <- weekly_summary_long(more_forecasts)
+less_forecasts <- weekly_summary_long(less_forecasts)
+
+more_forecasts$top_label <- glue(
+  "{round_and_format(more_forecasts$rel_mae_w_mu)}",
+  " %+-% {round_and_format(more_forecasts$rel_mae_w_sd)}"
+)
+
+more_forecasts$right_label <- glue(
+  "{round_and_format(more_forecasts$rel_mae_c_mu)}",
+  " %+-% {round_and_format(more_forecasts$rel_mae_c_sd)}"
+)
+
+more_forecasts$cell_label <- glue(
+  "{round_and_format(more_forecasts$rel_mae)}"
+)
+
+
+ggplot(
+  more_forecasts, aes(factor(week_of_projection), country, fill = rel_mae)
+) + geom_tile(width = 0.9, height = 0.9) +
+  scale_fill_distiller(palette = "Greens", direction = -1)
+
+relative_error_heatmap <- function(df) {
+
+  df$week_of_projection <- factor(
+    df$week_of_projection,
+    ordered = TRUE,
+    levels = 1:max(df$week_of_projection)
+  )
+
+  ymax <- max(as.integer(df$country)) + 1
+  xmax <- max(as.integer(df$week_of_projection)) + 2
+
+
+ p <- ggplot() +
+    theme_classic() +
+    geom_tile(
+      data = df[df$rel_mae < 2, ],
+      aes(week_of_projection, country, fill = rel_mae),
+      width = 0.9,
+      height = 0.8
+    ) +
+  scale_fill_distiller(
+    palette = "Spectral", na.value = "white", direction = -1,
+    guide = guide_colourbar(
+      title = "Relative Error",
+      title.position = "left",
+      title.vjust = 0.5,
+      order = 1
+    )
+  ) +
+  ggnewscale::new_scale_fill() +
+  geom_tile(
+    data = df[df$rel_mae >= 2, ],
+    aes(week_of_projection, country),
+    fill = "#b2b2ff",
+    width = 0.9,
+    height = 0.8
+  ) +
+  xlab("") +
+  ylab("") +
+  geom_text(
+    data = df,
+    aes(x = xmax, y = country, label = right_label),
+    parse = TRUE, size = 2
+  ) +
+  geom_text(
+    data = df,
+    aes(x = week_of_projection, y = ymax, label = top_label),
+    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
+  ) +
+  geom_text(
+    data = df,
+    aes(x = week_of_projection, y = country, label = cell_label),
+    size = 1.8, parse = TRUE
+  ) +
+  scale_y_discrete(
+    limits = rev(levels(df$country)),
+    labels = nice_country_name
+  ) +
+  scale_x_discrete(limits = levels(df$week_of_projection)) +
+  theme(
+    axis.text.x.bottom = element_text(
+      angle = 90, hjust = 0.5, vjust = 0.5, size = 6
+    ),
+    axis.text.y = element_text(size = 6),
+    plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
+    legend.position = "bottom",
+    axis.line.x = element_blank()
+  ) +
+  coord_cartesian(clip = "off")
+
+  p
+}
