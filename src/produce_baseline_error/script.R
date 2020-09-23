@@ -177,8 +177,8 @@ linear_model_error <- map_dfr(
         data.frame(
           week_starting = week_starting,
           dates = week,
-          lm_error = baseline,
-          rel_lm_error = baseline_rel
+          null_error = baseline,
+          rel_null_error = baseline_rel
         )
       }, .id = "forecast_week"
     )
