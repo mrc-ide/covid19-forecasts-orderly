@@ -16,6 +16,8 @@ packages:
 - assessr
 - slider
 - purrr
+- ggplot2
+- glue
 depends:
 - prepare_ecdc_data:
     id: latest

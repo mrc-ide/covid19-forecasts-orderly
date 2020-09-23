@@ -1,4 +1,5 @@
 ##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-09-07", week_starting = "2020-03-08"))
+dir.create("figures")
 weekly_cv <- function(vec) sd(vec) / mean(vec)
 
 week_starting <- as.Date(week_starting)
@@ -101,13 +102,13 @@ linear_model_predictions <- map(
         lmfit <- lm(y ~ x, data = df)
         coeffs <- lmfit$coefficients
         err_var <- sd(lmfit$residuals)
-        pred <- coeffs[["(Intercept)"]] + coeffs[["x"]] * (8:14)
+        pred <- coeffs[["(Intercept)"]] + (coeffs[["x"]] * (8:14))
         lm_pred <- matrix(pred, ncol = nsim, nrow = 7, byrow = FALSE)
         noise <- rnorm(nsim, mean = 0, sd = err_var)
         noise <- rep(noise, each = 7)
         noise <- matrix(noise, ncol = nsim, nrow = 7, byrow = FALSE)
 
-        round(lm_pred + noise)
+        lm_pred + noise
       }
     )
   }
@@ -141,24 +142,40 @@ linear_model_pred_qntls <- map_dfr(
   }, .id = "country"
 )
 
-## linear_model_pred_qntls$date <- as.Date(linear_model_pred_qntls$date)
+linear_model_pred_qntls$date <- as.Date(linear_model_pred_qntls$date)
 
-## ggplot() +
-##   geom_point(data = model_input, aes(dates, India)) +
-##   geom_line(
-##     data = linear_model_pred_qntls[linear_model_pred_qntls$country == "India", ],
-##     aes(x = date, y = `50%`, group = forecast_week), col = "blue"
-##   ) +
-##   geom_ribbon(
-##     data = linear_model_pred_qntls[linear_model_pred_qntls$country == "India", ],
-##     aes(x = date, ymin = `25%`, ymax = `75%`, group = forecast_week),
-##     alpha = 0.3,
-##     fill = "blue"
-##   ) +
-##   scale_x_date(
-##     date_breaks = "1 week",
-##     limits = c(as.Date("2020-07-01"), NA)
-##   )
+walk(
+  countries,
+  function(country) {
+    message(country)
+    df <- linear_model_pred_qntls[linear_model_pred_qntls$country == country, ]
+    model_input$deaths <- model_input[[country]]
+    p <- ggplot() +
+      geom_point(data = model_input, aes(dates, deaths)) +
+      geom_line(
+        data = df,
+        aes(x = date, y = `50%`, group = forecast_week), col = "blue"
+      ) +
+      geom_ribbon(
+        data = df,
+        aes(x = date, ymin = `25%`, ymax = `75%`, group = forecast_week),
+        alpha = 0.3,
+        fill = "blue"
+      ) +
+      scale_x_date(
+        date_breaks = "2 weeks",
+        limits = c(as.Date("2020-03-01"), NA)
+      ) +
+      theme_minimal() +
+      theme(
+        axis.text.x =
+          element_text(angle = 90, hjust = 0.5, vjust = 0)
+      ) + xlab("") + ylab("Daily Deaths")
+    ggsave(glue("figures/{country}_linear.png"), p)
+  }
+)
+
+
 
 
 linear_model_error <- map_dfr(
