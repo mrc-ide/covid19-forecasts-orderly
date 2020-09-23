@@ -7,6 +7,7 @@ artefacts:
     description: Null Model performance metrics
     filenames:
       - null_model_error.rds
+      - linear_model_error.rds      
       - weekly_incidence.rds
       - exclude.rds
 packages:
