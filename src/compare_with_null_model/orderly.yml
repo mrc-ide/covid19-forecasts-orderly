@@ -38,5 +38,5 @@ depends:
   - produce_baseline_error:
       id: latest
       use:
-        null_model_error.rds: null_model_error.rds
+        null_model_error.rds: linear_model_error.rds
         weekly_incidence.rds: weekly_incidence.rds
