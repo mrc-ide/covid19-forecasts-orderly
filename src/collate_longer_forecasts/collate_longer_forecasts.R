@@ -96,4 +96,36 @@ iwalk(
 )
 
 
+unwtd <- named_infiles(
+  infiles, pattern = "unweighted_reff_with_underreporting"
+)
+wtd_across_all <- named_infiles(
+  infiles, pattern = "weighted_across_countries_reff_with_underreporting"
+)
+wtd_per_country <- named_infiles(
+  infiles, "weighted_per_country_reff_with_underreporting"
+)
+
+
+reff_qntls_with_underreporting_infiles <- list(
+  unwtd = unwtd,
+  wtd_across_all = wtd_across_all,
+  wtd_per_country = wtd_per_country
+)
+
+reff_qntls_with_underreporting <- map_depth(
+  reff_qntls_with_underreporting_infiles, 2, readRDS
+)
+
+iwalk(
+  reff_qntls_with_underreporting,
+  function(qntls, strategy) {
+    out <- map_dfr(
+      qntls, ~ bind_rows(., .id = "country"), .id = "forecast_week"
+    )
+    saveRDS(out, glue("{strategy}_reff_qntls_with_underreporting.rds"))
+  }
+)
+
+
 
