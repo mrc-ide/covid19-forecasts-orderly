@@ -153,6 +153,7 @@ pop_wtd_ifr_qntls$color <- case_when(
   pop_wtd_ifr_qntls$continent == "South America" ~ "#0072B2",
   pop_wtd_ifr_qntls$continent == "Oceania" ~ "#D55E00"
 )
+
 pop_wtd_ifr_qntls$location <- snakecase::to_title_case(pop_wtd_ifr_qntls$location)
 pop_wtd_ifr_qntls$label <- glue(
   "<i style='color:{pop_wtd_ifr_qntls$color}'>{pop_wtd_ifr_qntls$location}</i>"
