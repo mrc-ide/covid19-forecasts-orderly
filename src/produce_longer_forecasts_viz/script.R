@@ -1,3 +1,4 @@
+## orderly::orderly_develop_start(use_draft = "newer")
 dir.create("figures")
 
 alternating_palette <- function(weeks, col1 = "#3d2115", col2 = "#8e4d31") {
@@ -345,5 +346,3 @@ purrr::iwalk(
     )
   }
 )
-
-

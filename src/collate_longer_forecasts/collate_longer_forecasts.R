@@ -120,9 +120,7 @@ reff_qntls_with_underreporting <- map_depth(
 iwalk(
   reff_qntls_with_underreporting,
   function(qntls, strategy) {
-    out <- map_dfr(
-      qntls, ~ bind_rows(., .id = "country"), .id = "forecast_week"
-    )
+    out <- bind_rows(qntls, .id = "forecast_week")
     saveRDS(out, glue("{strategy}_reff_qntls_with_underreporting.rds"))
   }
 )

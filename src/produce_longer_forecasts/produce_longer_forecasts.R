@@ -96,12 +96,17 @@ all_reff_underreporting <- map(
         pop <- population$pop_data2018[population$countries_and_territories == country]
         deaths_per_capita <- deaths_so_far / pop
         ifr <- ifr_samples[[tolower(country)]]
-        underreporting <- seq(10, 100, by = 10)
+        underreporting <- seq(from = 1, to = 100, by = 1)
         names(underreporting) <- underreporting
         map_dfr(
           underreporting,
           function(x) {
             p <- proportion_susceptible(x * deaths_per_capita, ifr)
+            r_saturation <- quantile(rt$rt_samples, probs = prob) %>%
+              data.frame(r_saturation = ., check.names = FALSE) %>%
+              tibble::rownames_to_column(var = "qntl") %>%
+              spread(qntl, r_saturation)
+            r_saturation$var <- "r_saturation"
 
             r_eff <- quantile(rt$rt_samples / p, probs = prob) %>%
               data.frame(r_eff = ., check.names = FALSE) %>%
@@ -115,7 +120,7 @@ all_reff_underreporting <- map(
               spread(qntl, p_s)
             p$var <- "p_s"
 
-            out <- rbind(r_eff, p)
+            out <- rbind(r_eff, p, r_saturation)
             out$deaths_per_million <- ceiling(deaths_per_capita * 1e6)
             out
 

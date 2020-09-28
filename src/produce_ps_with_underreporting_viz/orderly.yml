@@ -1,0 +1,19 @@
+script: script.R
+parameters: week_ending
+packages:
+  - purrr
+  - dplyr
+  - ggplot2
+  - ggforce
+depends:
+  - produce_longer_forecasts:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+        unweighted_reff.rds: unweighted_reff_with_underreporting.rds
+        weighted_across_countries_reff.rds: weighted_across_countries_reff_with_underreporting.rds
+        weighted_per_country_reff.rds: weighted_per_country_reff_with_underreporting.rds
+  - produce_epi_params:
+      id: latest
+      use:
+        pop_wtd_ifr_qntls.rds: pop_wtd_ifr_qntls.rds
+        

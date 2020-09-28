@@ -26,7 +26,7 @@ x <- list(
 )
 
 week_starting <- as.Date("2020-03-29")
-week_ending <- as.Date("2020-03-29")
+week_ending <- as.Date("2020-04-19")
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"

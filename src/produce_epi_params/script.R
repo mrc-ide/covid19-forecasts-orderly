@@ -143,6 +143,8 @@ pop_wtd_ifr_qntls <- left_join(
 )
 pop_wtd_ifr_qntls <- na.omit(pop_wtd_ifr_qntls)
 
+saveRDS(pop_wtd_ifr_qntls, "pop_wtd_ifr_qntls.rds")
+
 pop_wtd_ifr_qntls$color <- case_when(
   pop_wtd_ifr_qntls$continent == "Africa" ~ "#000000",
   pop_wtd_ifr_qntls$continent == "Asia" ~ "#E69F00",
