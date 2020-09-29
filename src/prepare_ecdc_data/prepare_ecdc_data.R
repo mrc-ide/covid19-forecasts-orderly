@@ -1,7 +1,6 @@
-week_finishing <- "2020-09-20"
-params <- parameters(week_finishing)
+params <- parameters(week_ending)
 raw_data <- read.csv(
-  parameters(week_finishing)$infile,
+  "ECDC-COVID-19-global-data.csv",
   stringsAsFactors = FALSE,
   na.strings = ""
 )
@@ -9,7 +8,7 @@ raw_data <- dplyr::select(raw_data, -`Cumulative_number_for_14_days_of_COVID.19_
 
 raw_data <- dplyr::mutate_at(
     raw_data, vars("DateRep"), ~ as.Date(., format = "%d/%m/%Y")
-  ) %>% dplyr::filter(DateRep <= as.Date(week_finishing))
+  ) %>% dplyr::filter(DateRep <= as.Date(week_ending))
 
 
 ######################################################################
@@ -331,7 +330,7 @@ by_country_cases <- dplyr::select(
   tidyr::spread(
     key = Countries.and.territories, value = Cases, fill = 0
   ) %>%
-  dplyr::filter(DateRep <= week_finishing)
+  dplyr::filter(DateRep <= week_ending)
 
 
 ## For consistency with Pierre's code, rename DateRep to dates
@@ -342,7 +341,7 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 x <- list(
-  date_week_finishing = week_finishing,
+  date_week_ending = week_ending,
   Threshold_criterion_4weeks = params$Threshold_criterion_4weeks,
   Threshold_criterion_7days = params$Threshold_criterion_7days,
   I_active_transmission = cases_to_use,
@@ -380,3 +379,25 @@ exclude <- c(
   "Zimbabwe"
 )
 saveRDS(exclude, "exclude.rds")
+
+
+################# Check data
+pass$DateRep <- as.Date(pass$DateRep)
+
+plots <- split(pass, pass$`Countries.and.territories`) %>%
+  map(
+    function(df) {
+      p <- ggplot(df) +
+        geom_point(aes(DateRep, Deaths)) +
+        facet_wrap(
+          ~`Countries.and.territories`, scales = "free_y", ncol = 1
+        ) +
+        scale_x_date(limits = c(as.Date("2020-03-01") , NA)) +
+        theme_minimal()
+    }
+  )
+
+
+pdf("epicurves.pdf")
+plots
+dev.off()
