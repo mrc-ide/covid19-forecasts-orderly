@@ -26,8 +26,29 @@ weeks <- list(
   "2020-08-16",
   "2020-08-23",
   "2020-08-30",
-  "2020-09-06"
+  "2020-09-06",
+  "2020-09-13",
+  "2020-09-20"
 )
+
+for (week in weeks) {
+  message("################ ", week, " #############################")
+  parameter <- list(week_ending = week)
+  m1 <- orderly::orderly_run(
+    "prepare_ecdc_data", parameters = parameter
+  )
+}
+
+
+for (week in weeks) {
+  message("################ ", week, " #############################")
+  parameter <- list(week_ending = week)
+  m2 <- orderly::orderly_run(
+    "run_apeestim", parameters = parameter, use_draft = use_draft
+  )
+  ##orderly::orderly_push_archive("run_apeestim", m2)
+}
+
 
 for (week in weeks) {
   message("################ ", week, " #############################")
@@ -36,20 +57,9 @@ for (week in weeks) {
     "run_rti0", parameters = parameter, use_draft = use_draft
   )
 
-  orderly::orderly_commit(m1)
+  ##orderly::orderly_commit(m1)
   ##orderly::orderly_push_archive("run_rti0", m1)
 }
-
-for (week in weeks) {
-  message("################ ", week, " #############################")
-  parameter <- list(week_ending = week)
-  m2 <- orderly::orderly_run(
-    "run_apeestim", parameters = parameter, use_draft = use_draft
-  )
-  orderly::orderly_commit(m2)
-  ##orderly::orderly_push_archive("run_apeestim", m2)
-}
-
 
 for (week in weeks) {
   message("################ ", week, " #############################")

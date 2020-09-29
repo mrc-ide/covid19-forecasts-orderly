@@ -13,14 +13,12 @@ if (short_run) {
 
 
 
-indir <- dirname(covid_19_path)
-raw_data <- readRDS(
-  glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
-)
+model_input <- readRDS("model_input.rds")
+deaths_to_use <- model_input$D_active_transmission
 
-deaths_to_use <- raw_data[["D_active_transmission"]]
 
-country <- raw_data$Country
+
+country <- model_input$Country
 N_geo <- length(country)
 SItrunc <- 20
 
@@ -37,14 +35,14 @@ sigma_prop <- rep(0.1, N_geo * 2)
 # initial incidence conditions
 if (N_geo > 1) {
   mu0 <- purrr::map(
-    raw_data$si_mean,
+    model_input$si_mean,
     function(mu) {
       as.numeric(log(colMeans(incidence_inference[, -1]) * mu))
     }
   )
 } else {
   mu0 <- purrr::map(
-    raw_data$si_mean,
+    model_input$si_mean,
     function(mu) {
       as.numeric(log(mean(incidence_inference[, -1]) * mu))
     }
@@ -61,8 +59,8 @@ theta0 <- purrr::map(mu0, ~ c(rep(1, N_geo), .))
 
 
 si_distrs <- purrr::map2(
-  raw_data$si_mean,
-  raw_data$si_std,
+  model_input$si_mean,
+  model_input$si_std,
   function(mu, std) {
     SI_gamma_dist_EpiEstim(
       mu = mu, si_std = std, SItrunc = SItrunc
@@ -148,7 +146,7 @@ I_pred <- purrr::map2(
       N_geo = N_geo,
       SI = si_distr
     )
-    names(out) <- raw_data$Country
+    names(out) <- model_input$Country
     out
   }
 )
@@ -157,7 +155,7 @@ Rt_last <- purrr::map(
   res,
   function(r) {
     out <- data.frame(r$theta[, 1:N_geo])
-    names(out) <- raw_data$Country
+    names(out) <- model_input$Country
     if (nrow(out) > 1e4) {
       f <- round(seq(1, nrow(out), length.out = 1e4))
       out <- out[f, ]
@@ -167,19 +165,19 @@ Rt_last <- purrr::map(
 )
 
 Rt_last <- purrr::map(
-  raw_data$Country,
+  model_input$Country,
   function(country) {
     purrr::map(Rt_last, ~ .[[country]])
   }
 )
-names(Rt_last) <- raw_data$Country
+names(Rt_last) <- model_input$Country
 
 dates_pred <- as.character(
   seq(t.proj.start, t.proj.start + 7 - 1, 1)
 )
 
 Predictions <- purrr::map(
-  raw_data$Country,
+  model_input$Country,
   function(country) {
     purrr::map(
       I_pred,
@@ -197,12 +195,12 @@ Predictions <- purrr::map(
   }
 )
 
-names(Predictions) <- raw_data$Country
+names(Predictions) <- model_input$Country
 
 Std_results <- list(
-  I_active_transmission = raw_data$I_active_transmission,
-  D_active_transmission = raw_data$D_active_transmission,
-  Country = raw_data$Country,
+  I_active_transmission = model_input$I_active_transmission,
+  D_active_transmission = model_input$D_active_transmission,
+  Country = model_input$Country,
   R_last = Rt_last,
   Predictions = Predictions
 )

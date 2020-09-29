@@ -1,10 +1,6 @@
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-
 script: ascertain.R
 
-parameters:
-  - week_ending
+parameters: week_ending
 
 packages:
   - Hmisc
@@ -34,3 +30,9 @@ artefacts:
       - cases_augmented.rds
       - weighted_cases_augm.rds
       - summary_DeathToRepoted_14days.csv
+
+depends:
+  - prepare_ecdc_data:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         model_input.rds: latest_model_input.rds

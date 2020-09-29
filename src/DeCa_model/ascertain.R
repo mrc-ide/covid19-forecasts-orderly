@@ -14,15 +14,11 @@ n_post <- 1e4
 SItrunc <- 30
 
 ## ------------------------------------------------------------------
-infile <- glue::glue(
-  "{dirname(covid_19_path)}/model_inputs/data_{week_ending}.rds"
-)
-input_data <- readRDS(file = infile)
+model_input <- readRDS("model_input.rds")
+ascertainr_deaths <- model_input$D_active_transmission
+ascertainr_cases <- model_input$I_active_transmission
 
-ascertainr_deaths <- input_data$D_active_transmission
-ascertainr_cases <- input_data$I_active_transmission
-
-countries <- purrr::set_names(input_data$Country, input_data$Country)
+countries <- purrr::set_names(model_input$Country, model_input$Country)
 
 
 # week_ending <- d$week_ending
@@ -485,8 +481,8 @@ r_estim <- purrr::map(
     )
     obs <- c(abs(ascertainr_deaths[[country]]), pred)
     purrr::map2(
-      input_data$si_mean,
-      input_data$si_std,
+      model_input$si_mean,
+      model_input$si_std,
       function(s_mean, s_sd) {
         si_distr <- gamma_dist_EpiEstim(
           si_mu = s_mean, si_std = s_sd, SItrunc = 30
@@ -513,9 +509,9 @@ r_estim <- purrr::map(
 )
 
 out <- list(
-  I_active_transmission = input_data$I_active_transmission,
-  D_active_transmission = input_data$D_active_transmission,
-  Country = input_data$Country,
+  I_active_transmission = model_input$I_active_transmission,
+  D_active_transmission = model_input$D_active_transmission,
+  Country = model_input$Country,
   R_last = r_estim,
   Predictions = predictions
 )
