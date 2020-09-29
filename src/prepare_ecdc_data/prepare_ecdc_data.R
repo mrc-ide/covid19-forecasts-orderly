@@ -1,4 +1,4 @@
-week_finishing <- "2020-09-20"
+week_finishing <- "2020-09-27"
 params <- parameters(week_finishing)
 raw_data <- read.csv(
   parameters(week_finishing)$infile,
@@ -377,6 +377,7 @@ exclude <- c(
   "Oman",
   "United_States_of_America",
   "Syria",
-  "Zimbabwe"
+  "Zimbabwe",
+  "Israel"
 )
 saveRDS(exclude, "exclude.rds")
