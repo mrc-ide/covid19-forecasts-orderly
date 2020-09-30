@@ -57,8 +57,13 @@ by_country <- filter(weekly, weekly_cv > 0) %>%
 
 exclude <- filter(by_country, cv > 1.38) %>% pull(country)
 saveRDS(exclude, "exclude.rds")
+countries <- countries[!countries %in% exclude]
 ### If our predicitons for a week were the average deaths in the last
 ### week, what would the error we make?
+nsim <- 4000
+window_past <- 10
+window_future <- 7
+
 null_model_error <- map_dfr(
   countries,
   function(country) {
@@ -69,8 +74,17 @@ null_model_error <- map_dfr(
         message(paste(week, collapse = " "))
         obs <- model_input[model_input$dates %in% week, country]
         if (length(obs) == 0) return(NULL)
-        prev_week <- model_input[model_input$dates %in% (week - 7), country]
-        null_pred <- matrix(mean(prev_week), ncol = 10000, nrow = 7)
+        dates_prev <- seq(
+          from = as.Date(week_starting) - window_past + 1,
+          to = as.Date(week_starting),
+          by = "1 day"
+        )
+        prev_week <- model_input[model_input$dates %in% dates_prev,
+                                 country]
+        if (length(prev_week) == 0) return(NULL)
+        if (length(prev_week) < window_past) return(NULL)
+
+        null_pred <- matrix(mean(prev_week), ncol = nsim, nrow = window_future)
         baseline <- assessr::mae(obs = obs, pred = null_pred)
         baseline_rel <- assessr::rel_mae(obs = obs, pred = null_pred)
         data.frame(
@@ -85,7 +99,38 @@ null_model_error <- map_dfr(
   }, .id = "country"
 )
 
-nsim <- 10000
+linear_model_fits <- map(
+  countries,
+  function(country) {
+    message(country)
+    imap(
+      weeks,
+      function(week, week_starting) {
+        message(paste(week, collapse = " "))
+        dates_prev <- seq(
+          from = as.Date(week_starting) - window_past + 1,
+          to = as.Date(week_starting),
+          by = "1 day"
+        )
+        prev_week <- model_input[model_input$dates %in% dates_prev,
+                                 country]
+        if (length(prev_week) == 0) return(NULL)
+        if (length(prev_week) < window_past) return(NULL)
+
+        if (all(prev_week == 0)) {
+          lm_pred <- matrix(0, ncol = window_future, nrow = nsim)
+          return(lm_pred)
+        }
+
+        ## fit a line
+        df <- data.frame(x = seq_along(prev_week), y = prev_week)
+        lmfit <- stan_lm(y ~ x, data = df, prior = NULL)
+        lmfit
+      }
+    )
+  }
+)
+
 
 linear_model_predictions <- map(
   countries,
@@ -95,20 +140,19 @@ linear_model_predictions <- map(
       weeks,
       function(week, week_starting) {
         message(paste(week, collapse = " "))
-        prev_week <- model_input[model_input$dates %in% (week - 7), country]
-        if (length(prev_week) == 0) return(NULL)
-        ## fit a line
-        df <- data.frame(x = seq_along(prev_week), y = prev_week)
-        lmfit <- lm(y ~ x, data = df)
-        coeffs <- lmfit$coefficients
-        err_var <- sd(lmfit$residuals)
-        pred <- coeffs[["(Intercept)"]] + (coeffs[["x"]] * (8:14))
-        lm_pred <- matrix(pred, ncol = nsim, nrow = 7, byrow = FALSE)
-        noise <- rnorm(nsim, mean = 0, sd = err_var)
-        noise <- rep(noise, each = 7)
-        noise <- matrix(noise, ncol = nsim, nrow = 7, byrow = FALSE)
-
-        lm_pred + noise
+        lmfit <- linear_model_fits[[country]][[week_starting]]
+        if (is.null(lmfit)) return(NULL)
+        if (is.matrix(lmfit)) return(lmfit)
+        newdata <- data.frame(
+          x = seq(
+            from = window_past + 1, length.out = window_future, by = 1
+          )
+        )
+        lm_pred <- posterior_predict(
+          lmfit, draws = nsim, newdata = newdata
+        )
+        ##lm_pred[lm_pred < 0] <-  0
+        lm_pred
       }
     )
   }
@@ -124,12 +168,12 @@ linear_model_pred_qntls <- map_dfr(
       function(week, week_starting) {
         pred <- linear_model_predictions[[country]][[week_starting]]
         if (is.null(pred)) return(NULL)
-        df <- apply(pred, 1, quantile, prob = seq(0, 1, by = 0.05))
+        df <- apply(pred, 2, quantile, prob = seq(0, 1, by = 0.05))
         df <- data.frame(df, check.names = FALSE)
         df <- tibble::rownames_to_column(df)
         dates_pred <- seq(
           from = as.Date(week_starting) + 1,
-          length.out = 7,
+          length.out = window_future,
           by = "1 day"
         )
         colnames(df) <-  c("qntl", as.character(dates_pred))
@@ -189,6 +233,7 @@ linear_model_error <- map_dfr(
         if (length(obs) == 0) return(NULL)
         lm_pred <- linear_model_predictions[[country]][[week_starting]]
         if (is.null(lm_pred)) return(NULL)
+        lm_pred <- t(lm_pred)
         baseline <- assessr::mae(obs = obs, pred = lm_pred)
         baseline_rel <- assessr::rel_mae(obs = obs, pred = lm_pred)
         data.frame(

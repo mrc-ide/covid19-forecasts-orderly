@@ -18,6 +18,7 @@ packages:
 - purrr
 - ggplot2
 - glue
+- rstanarm
 depends:
 - prepare_ecdc_data:
     id: latest

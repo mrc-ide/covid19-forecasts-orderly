@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = FALSE, parameters = list(use_si = "si_2"))
+## use_draft = "newer", parameters = list(use_si = "si_2"))
 null_error <- readRDS("null_model_error.rds")
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
@@ -158,7 +158,7 @@ compare_with_baseline <- function(df) {
     geom_text(
       data = df,
       aes(x = forecast_date, y = country, label = error_values),
-      size = 1.9,
+      size = 1.7,
       fontface = "bold"
     ) +
     geom_text(
