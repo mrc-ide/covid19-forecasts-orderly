@@ -363,6 +363,19 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
+exclude <- c(
+  "Kazakhstan",
+  "Oman",
+  "United_States_of_America",
+  "Syria",
+  "Zimbabwe",
+  "Spain",
+  "Kosovo"
+)
+saveRDS(exclude, "exclude.rds")
+
+Country <- Country[!Country %in% exclude]
+
 x <- list(
   date_week_ending = week_ending,
   Threshold_criterion_4weeks = params$Threshold_criterion_4weeks,
@@ -374,18 +387,11 @@ x <- list(
   si_std = params$si_std
 )
 
-out <- saveRDS(
-  object = x,
-  file = params$outfile
-)
 
 ## Also save it with a generic name to avoid having to configure the
 ## downstream tasks
 
-out <- saveRDS(
-  object = x,
-  file = "latest_model_input.rds"
-)
+out <- saveRDS(object = x, file = "latest_model_input.rds")
 
 
 ## exclude <- c(
@@ -394,14 +400,6 @@ out <- saveRDS(
 ##   "Zambia", "Kyrgyzstan", "Oman", "Zimbabwe"
 ## )
 
-exclude <- c(
-  "Kazakhstan",
-  "Oman",
-  "United_States_of_America",
-  "Syria",
-  "Zimbabwe"
-)
-saveRDS(exclude, "exclude.rds")
 
 
 ################# Check data

@@ -47,7 +47,14 @@ basic_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   if (commit) orderly_commit(unwtd)
 
   message("Performance metrics for ensemble model; week = ", week)
-  source("orderly-helper-scripts/write_dependencies_weighted_performance.R")
+  x <- dependencies_weighted_performance(week)
+  con <- file(
+    here::here("src/produce_performance_metrics_ensemble/orderly.yml"),
+    "w"
+  )
+  yaml::write_yaml(x, con)
+  close(con)
+
   parameter <- list(week_ending = week, window = 1)
   m1 <- orderly_run(
     "produce_performance_metrics_ensemble/",
@@ -84,45 +91,43 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 ## Collate week specific outputs
 collation_workflow <- function(weeks, use_draft = "newer", commit = FALSE) {
 
-  source("write_dependencies_collate_model_outputs.R")
+  source("orderly-helper-scripts/dependencies_collate_model_outputs.R")
   a <- orderly_run("collate_model_outputs", use_draft = use_draft)
   if (commit) orderly_commit(a)
 
   source(
-    "orderly-helper-scripts/write_dependencies_collate_weighted_perf.R"
+    "orderly-helper-scripts/dependencies_collate_weighted_perf.R"
   )
   m1 <- orderly_run("collate_weighted_performance_metrics/")
   if (commit) orderly_commit(m1)
 
 }
 
-post_collation_workflow <- function(use_draft = "newer", commit = FALSE) {
+post_collation_workflow <- function(latest_week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "produce_performance_metrics_vis", use_draft = use_draft
   )
   if (commit) orderly_commit(a)
+
+  source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
   a <- orderly_run(
     "compare_ensemble_outputs", use_draft = use_draft
   )
   if (commit) orderly_commit(a)
 }
 
+library(glue)
+library(orderly)
+source("orderly-helper-scripts/dependencies_weighted_performance.R")
 use_draft <- "newer"
 weeks <- seq(
   from = as.Date("2020-03-08"),
-  to = as.Date("2020-09-20"),
+  to = as.Date("2020-09-27"),
   by = "7 days"
 )
 
-
-aa <- orderly_run(
-  "produce_performace_metrics",
-  parameters = list(window = 1), use_draft = use_draft
-)
-orderly_commit(aa)
-orderly_push_archive(a)
-
+purrr::walk(weeks, function(x) basic_workflow(as.character(x)))
 
 
 
