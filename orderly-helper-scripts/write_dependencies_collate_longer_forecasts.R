@@ -13,7 +13,10 @@ x <- list(
       "wtd_per_country_ps_qntls.rds",
       "unwtd_reff_qntls.rds",
       "wtd_across_all_reff_qntls.rds",
-      "wtd_per_country_reff_qntls.rds"
+      "wtd_per_country_reff_qntls.rds",
+      "unwtd_reff_qntls_with_underreporting.rds",
+      "wtd_across_all_reff_qntls_with_underreporting.rds",
+      "wtd_per_country_reff_qntls_with_underreporting.rds"
     )
   )
  ),
@@ -23,7 +26,7 @@ x <- list(
 )
 
 week_starting <- as.Date("2020-03-29")
-week_ending <- as.Date("2020-09-06")
+week_ending <- as.Date("2020-04-19")
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
@@ -50,7 +53,10 @@ dependancies <- purrr::map(
           "weighted_across_countries_ps_qntls.rds",
           "weighted_across_countries_reff_qntls.rds",
           "weighted_per_country_ps_qntls.rds",
-          "weighted_per_country_reff_qntls.rds"
+          "weighted_per_country_reff_qntls.rds",
+          "unweighted_reff_with_underreporting.rds",
+          "weighted_across_countries_reff_with_underreporting.rds",
+          "weighted_per_country_reff_with_underreporting.rds"
         )
       )
     )

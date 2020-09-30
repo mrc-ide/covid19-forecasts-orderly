@@ -82,6 +82,55 @@ all_reff <- map(
   }
 )
 
+## What is the underreporting is x$?
+all_reff_underreporting <- map(
+  all_restimates,
+  function(restimate) {
+    imap_dfr(
+      restimate,
+      function(rt, country) {
+        message(country)
+        deaths_so_far <- sum(
+          deaths_to_use[deaths_to_use$dates <= week_ending, country]
+        )
+        pop <- population$pop_data2018[population$countries_and_territories == country]
+        deaths_per_capita <- deaths_so_far / pop
+        ifr <- ifr_samples[[tolower(country)]]
+        underreporting <- seq(from = 1, to = 100, by = 1)
+        names(underreporting) <- underreporting
+        map_dfr(
+          underreporting,
+          function(x) {
+            p <- proportion_susceptible(x * deaths_per_capita, ifr)
+            r_saturation <- quantile(rt$rt_samples, probs = prob) %>%
+              data.frame(r_saturation = ., check.names = FALSE) %>%
+              tibble::rownames_to_column(var = "qntl") %>%
+              spread(qntl, r_saturation)
+            r_saturation$var <- "r_saturation"
+
+            r_eff <- quantile(rt$rt_samples / p, probs = prob) %>%
+              data.frame(r_eff = ., check.names = FALSE) %>%
+              tibble::rownames_to_column(var = "qntl") %>%
+              spread(qntl, r_eff)
+            r_eff$var <- "r_eff"
+
+            p <- quantile(p, probs = prob) %>%
+              data.frame(p_s = ., check.names = FALSE) %>%
+              tibble::rownames_to_column(var = "qntl") %>%
+              spread(qntl, p_s)
+            p$var <- "p_s"
+
+            out <- rbind(r_eff, p, r_saturation)
+            out$deaths_per_million <- ceiling(deaths_per_capita * 1e6)
+            out
+
+          }, .id = "underreporting"
+        )
+      }, .id = "country"
+    )
+  }
+)
+
 
 all_projections <- map(
   all_reff,
@@ -120,6 +169,7 @@ projections <- map_depth(all_projections, 2, ~ .[["pred"]])
 r_effective <- map_depth(all_projections, 2, ~ .[["r_effective"]])
 
 p_s <- map_depth(all_projections, 2, ~ .[["p_s"]])
+
 
 
 pred_qntls <- map_depth(
@@ -166,6 +216,8 @@ ps_qntls <- map_depth(
     map_dfr(y, ~ quantile(., prob = prob, na.rm = FALSE), .id = "date")
   }
 )
+
+
 
 
 walk(
@@ -217,4 +269,9 @@ iwalk(
 iwalk(
   projections,
   function(x, y) saveRDS(x, glue::glue("{y}_projections.rds"))
+)
+
+iwalk(
+  all_reff_underreporting,
+  function(x, y) saveRDS(x, glue::glue("{y}_reff_with_underreporting.rds"))
 )

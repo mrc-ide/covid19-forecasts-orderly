@@ -22,7 +22,10 @@ artefacts:
       - weighted_per_country_reff_qntls.rds
       - unweighted_projections.rds
       - weighted_across_countries_projections.rds
-      - weighted_per_country_projections.rds      
+      - weighted_per_country_projections.rds
+      - unweighted_reff_with_underreporting.rds
+      - weighted_across_countries_reff_with_underreporting.rds      
+      - weighted_per_country_reff_with_underreporting.rds
       
 packages:
   - purrr
@@ -61,5 +64,4 @@ depends:
   produce_baseline_error:
     id: latest
     use:
-      exclude.rds: exclude.rds
-      
+      exclude.rds: exclude.rds      

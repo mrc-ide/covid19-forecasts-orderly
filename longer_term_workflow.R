@@ -29,7 +29,7 @@ for (week in weeks) {
 
   m2 <- orderly::orderly_run(
     "produce_longer_forecasts", parameters = parameter, use_draft = use_draft
-    )
+  )
 
   parameter <- list(week_ending = week, window = 1)
   orderly::orderly_run(
