@@ -63,6 +63,9 @@ ifr_distr <- map(
   }
 )
 names(ifr_distr) <- infections$age_group
+
+saveRDS(ifr_distr, "ifr_distr.rds")
+
 pop_by_age <- read_excel(
   "PopulationAgeSex-20200831015935.xlsx", sheet = 2
 )
@@ -116,6 +119,8 @@ pop_pyramid <- map(
     out
   }
 )
+
+saveRDS(pop_pyramid, "pop_pyramid.rds")
 
 pop_wtd_ifr <- map(
   pop_pyramid,

@@ -93,6 +93,29 @@ raw_data <- both_complete[ , colnames(raw_data)]
 
 
 #################### Apply necessary corrections
+
+raw_data$Cases[raw_data$DateRep == "2020-03-01" & raw_data$`Countries.and.territories` == "Spain"] <- 32
+raw_data$Cases[raw_data$DateRep == "2020-03-02" & raw_data$`Countries.and.territories` == "Spain"] <- 17
+raw_data$Cases[raw_data$DateRep == "2020-03-03" & raw_data$`Countries.and.territories` == "Spain"] <- 31
+raw_data$Cases[raw_data$DateRep == "2020-03-08" & raw_data$`Countries.and.territories` == "Spain"] <- 56
+raw_data$Cases[raw_data$DateRep == "2020-03-09" & raw_data$`Countries.and.territories` == "Spain"] <- 159
+raw_data$Cases[raw_data$DateRep == "2020-03-10" & raw_data$`Countries.and.territories` == "Spain"] <- 615
+
+raw_data$Deaths[raw_data$DateRep == "2020-03-11" & raw_data$`Countries.and.territories` == "Spain"] <- 7
+raw_data$Deaths[raw_data$DateRep == "2020-03-12" & raw_data$`Countries.and.territories` == "Spain"] <- 12
+raw_data$Deaths[raw_data$DateRep == "2020-03-13" & raw_data$`Countries.and.territories` == "Spain"] <- 37
+raw_data$Deaths[raw_data$DateRep == "2020-03-14" & raw_data$`Countries.and.territories` == "Spain"] <- 37
+raw_data$Deaths[raw_data$DateRep == "2020-03-15" & raw_data$`Countries.and.territories` == "Spain"] <- 15
+
+
+raw_data$Deaths[raw_data$DateRep == "2020-04-27" & raw_data$`Countries.and.territories` == "Spain"] <- 331
+raw_data$Deaths[raw_data$DateRep == "2020-04-28" & raw_data$`Countries.and.territories` == "Spain"] <- 301
+raw_data$Deaths[raw_data$DateRep == "2020-05-22" & raw_data$`Countries.and.territories` == "Spain"] <- 53
+
+
+
+
+
 raw_data$Deaths[raw_data$DateRep == "2020-04-17" & raw_data$`Countries.and.territories` == "China"] <- 0
 ## 04th May 2020. Manual tweaks against worldometer
 raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Ireland"] <- 21

@@ -1,3 +1,4 @@
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2020-03-15"))
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
 set.seed(1)
 dir.create("figures")
@@ -19,7 +20,7 @@ ascertainr_deaths <- model_input$D_active_transmission
 ascertainr_cases <- model_input$I_active_transmission
 
 countries <- purrr::set_names(model_input$Country, model_input$Country)
-
+countries <- countries[! countries %in% c("Spain", "Kosovo")]
 
 # week_ending <- d$week_ending
 
@@ -41,6 +42,8 @@ weighted_cases <- purrr::map(
    )
   }
 )
+
+
 saveRDS(weighted_cases, "weighted_cases.rds")
 ######################################################################
 ######################################################################
@@ -118,53 +121,14 @@ saveRDS(deaths_to_cases_qntls, "deaths_to_cases_qntls.rds")
 # c(mean(x),quantile(x,c(.025,.975)))
 # hist(rbeta(1e4,shape1 = shape1,shape2 = shape2))
 
-
-#parameters
-CFR_esti <- c(1.38, 1.23, 1.53)/100
-# function to get parameters
-f1 <- function(shape){
-  res <- c(
-    shape[1]/(shape[1]+shape[2]),
-    qbeta(.025, shape1 = shape[1], shape2 = shape[2]),
-    qbeta(.975, shape1 = shape[1], shape2 = shape[2])
-  )
-  res <- sum((res*100-CFR_esti*100)^2)
-  return(res)
-}
-
-n <- 5e2
-Shape1 <- rep(seq(300,350,length.out = n),each = n )
-Shape2 <- rep(seq(22500,23500,length.out = n), n )
-res <- rep(NA,n*n)
-for (i in 1:(n*n)){
-  res[i] <- f1(c(Shape1[i],Shape2[i]))
-}
-f <- which(res == min(res))
-params <- c(Shape1[f],Shape2[f])
-
-
-shape <- params
-
-x <- rbeta(n_post,shape1 = params[1],shape2 = params[2])
-# c(mean(x),quantile(x,c(.025,.975)))
-c(shape[1]/(shape[1]+shape[2]),
-           qbeta(.025, shape1 = shape[1], shape2 = shape[2]),
-           qbeta(.975, shape1 = shape[1], shape2 = shape[2]))
-(c(shape[1]/(shape[1]+shape[2]),
-           qbeta(.025, shape1 = shape[1], shape2 = shape[2]),
-           qbeta(.975, shape1 = shape[1], shape2 = shape[2])) - CFR_esti)*100
-
-# sum((c(mean(x),quantile(x,c(.025,.975)))*100-CFR_esti*100)^2)
-
-
-post_CFR <- x
-
+ifr <- readRDS("population_weighted_ifr.rds")
 
 ascertainment <- purrr::map(
   countries,
   function(country) {
+    message(country)
     ascertainr::ascertainment(
-      cfr_distr = post_CFR,
+      cfr_distr = ifr[[snakecase::to_title_case(country)]],
       death_to_case = deaths_to_cases[[country]]
     )
   }
@@ -209,14 +173,14 @@ episize_prev <- purrr::map(
   countries,
   function(country) {
     idx <- seq(
-      1, length(ascertainr_deaths[[country]]) - round(mu_delta)
+      1, length(ascertainr_deaths[[country]]) ##- round(mu_delta)
     )
     ascertainr::episize_before_mu(
       deaths = matrix(
         ascertainr_deaths[[country]][idx], ncol = 1
       ),
       mu_delta = mu_delta,
-      cfr_distr = post_CFR
+      cfr_distr = ifr[[snakecase::to_title_case(country)]]
     )
   }
 )
@@ -237,7 +201,7 @@ episize_prev_qntls <- purrr::imap_dfr(
   episize_prev,
   function(x, country) {
     idx <- seq(
-      1, length(ascertainr_deaths[[country]]) - round(mu_delta))
+      1, length(ascertainr_deaths[[country]])) ##- round(mu_delta))
     df <- quantiles_to_df(x)
     cbind(date = ascertainr_deaths[["dates"]][idx],df)
   }, .id = "country"
@@ -367,6 +331,8 @@ weighted_cases_augm <- purrr::map(
     out <- out[ , seq(to = ncol(out), length.out = 7)]
   }
 )
+
+
 saveRDS(weighted_cases_augm, "weighted_cases_augm.rds")
 ######################################################################
 ######################################################################
@@ -472,6 +438,7 @@ purrr::iwalk(
 
 
 t.window <- 10
+
 r_estim <- purrr::map(
   countries,
   function(country){
