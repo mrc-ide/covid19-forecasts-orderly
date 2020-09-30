@@ -13,12 +13,6 @@ x <- list(
  packages = c("dplyr", "tidyr")
 )
 
-unwtd_weeks <- seq(
-  from = as.Date("2020-03-08"),
-  to = as.Date("2020-09-06"),
-  by = "7 days"
-)
-
 ## dependancies <- purrr::map(
 ##   wtd_weeks,
 ##   function(week) {
@@ -45,7 +39,7 @@ unwtd_weeks <- seq(
 ## )
 
 dependancies2 <- purrr::map(
-  unwtd_weeks,
+  weeks,
   function(week) {
   y <- list(
     produce_ensemble_outputs = list(

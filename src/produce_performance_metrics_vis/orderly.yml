@@ -38,12 +38,7 @@ sources:
 resources:
   - country_continent.csv
 
-depends:
-  - prepare_ecdc_data:
-      id: latest(parameter:week_ending == "2020-09-20")
-      use:
-        model_input.rds: latest_deaths_wide_no_filter.rds        
-        
+depends:        
   - collate_weighted_performance_metrics:
       id: latest
       use:

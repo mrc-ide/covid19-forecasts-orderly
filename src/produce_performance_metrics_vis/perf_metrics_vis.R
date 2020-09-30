@@ -1,7 +1,6 @@
 ## orderly::orderly_develop_start(
 ## use_draft = "newer", parameters = list(use_si = "si_2"))
 ######### Performance metrics
-observed <- readRDS("model_input.rds")
 
 main_text_countries <- c(
   "Brazil", "India", "Italy", "Mexico", "United_States_of_America"
@@ -17,31 +16,7 @@ labels <- c(
   "empirical_p" = "Probability(obs|predictions)"
 )
 
-observed_tall <- tidyr::gather(observed, country, deaths, -dates)
 
-observed_tall <- split(
-  observed_tall, observed_tall$country
-) %>%
-  purrr::map_dfr(
-    function(df) {
-      df$deaths_scaled <- df$deaths / max(df$deaths)
-      cum_deaths <- cumsum(df$deaths)
-      idx <- which(cum_deaths >= 100)
-      if (length(idx) == 0) {
-        days_since_100_deaths <- rep(0, length(cum_deaths))
-      } else {
-        idx <- idx[1]
-        days_since_100_deaths <- c(
-          seq(to = -1, length.out = idx - 1, by = 1),
-          seq(
-            from = 1, length.out = length(cum_deaths) - idx + 1, by = 1
-          )
-        )
-      }
-      df$days_since_100_deaths <- days_since_100_deaths
-      df
-   }
-)
 
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
