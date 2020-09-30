@@ -44,11 +44,11 @@ dependancies2 <- list(
 ##   y
 ##  }
 ## )
-
+week_next <- as.Date(week_ending) + 7
 dependancies5 <- list(
   list(
     prepare_ecdc_data = list(
-      id = "latest",
+      id = glue::glue("latest(parameter:week_ending == \"{week_next}\")"),
       use = list(
         "model_input.rds" = "latest_deaths_wide_no_filter.rds"
       )
