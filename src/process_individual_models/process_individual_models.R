@@ -20,11 +20,7 @@ message("Processing ", paste(output_files, collapse = "\n"))
 
 model_outputs <- purrr::map(output_files, readRDS)
 
-model_input <- readRDS(
-  glue::glue(
-    "{dirname(covid_19_path)}/model_inputs/data_{week_ending}.rds"
-  )
-)
+model_input <- readRDS("model_input.rds")
 ## Filter model outputs from DeCa models to reflect the new
 ## threshold. Needed to be done only once.
 ## outdated <- output_files <- list(
