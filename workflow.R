@@ -72,23 +72,41 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 ## These functions have not been configured to pull in week-specific
 ## outputs, they will always pull in the latest runs of dependancies.
 report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
-  a <- orderly_run("format_model_outputs/", use_draft = use_draft)
-  if (commit) orderly_commit(a)
-
-  a <- orderly_run("produce_maps/", use_draft = use_draft)
-  if (commit) orderly_commit(a)
-
-  a <- orderly_run("produce_retrospective_vis/", use_draft = use_draft)
-  if (commit) orderly_commit(a)
 
   a <- orderly_run(
-    "produce_visualisations/",
-    parameters = list(week_ending_vis = week),
-    use_draft = use_draft
+    "format_model_outputs/",
+    use_draft = use_draft,
+    parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
 
-  a <- orderly_run("produce_full_report", use_draft = use_draft)
+  a <- orderly_run(
+    "produce_maps/",
+    use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+  if (commit) orderly_commit(a)
+
+  a <- orderly_run(
+    "produce_retrospective_vis/",
+    use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+  if (commit) orderly_commit(a)
+
+  ## a <- orderly_run(
+  ##   "produce_visualisations/",
+  ##   parameters = list(week_ending_vis = week),
+  ##   use_draft = use_draft
+  ## )
+  ## if (commit) orderly_commit(a)
+
+  a <- orderly_run(
+    "produce_full_report",
+    use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+
   if (commit) orderly_commit(a)
 }
 
