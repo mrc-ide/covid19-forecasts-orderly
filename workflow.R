@@ -46,6 +46,12 @@ basic_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   )
   if (commit) orderly_commit(unwtd)
 
+}
+
+## Performance assessment in week N requires observations for week N + 1
+## to be available. That is why these tasks cannot be run with the
+## weekly workflow
+performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   message("Performance metrics for ensemble model; week = ", week)
   x <- dependencies_weighted_performance(week)
   con <- file(
@@ -61,7 +67,6 @@ basic_workflow <- function(week, use_draft = "newer", commit = FALSE) {
     parameters = parameter, use_draft = use_draft
   )
   if (commit) orderly_commit(m1)
-
 }
 
 ## These functions have not been configured to pull in week-specific
@@ -106,13 +111,22 @@ collation_workflow <- function(weeks, use_draft = "newer", commit = FALSE) {
 post_collation_workflow <- function(latest_week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
-    "produce_performance_metrics_vis", use_draft = use_draft
+    "produce_performance_metrics_vis",
+    use_draft = use_draft,
+    parameters = list(use_si = "si_2")
   )
   if (commit) orderly_commit(a)
+  x <- collated_outputs_viz(latest_week)
+  con <- file(
+    here::here("src/compare_ensemble_outputs/orderly.yml"), "w"
+  )
+  yaml::write_yaml(x, con)
+  close(con)
 
-  source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
   a <- orderly_run(
-    "compare_ensemble_outputs", use_draft = use_draft
+    "compare_ensemble_outputs",
+    use_draft = use_draft,
+    parameters = list(use_si = "si_2")
   )
   if (commit) orderly_commit(a)
 }
@@ -120,14 +134,19 @@ post_collation_workflow <- function(latest_week, use_draft = "newer", commit = F
 library(glue)
 library(orderly)
 source("orderly-helper-scripts/dependencies_weighted_performance.R")
+source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
+
 use_draft <- "newer"
 weeks <- seq(
   from = as.Date("2020-03-08"),
   to = as.Date("2020-09-27"),
   by = "7 days"
 )
-
-purrr::walk(weeks, function(x) basic_workflow(as.character(x)))
+weeks <- as.character(weeks)
+purrr::walk(weeks, function(x) basic_workflow(x))
+purrr::walk(weeks, function(x) performance_workflow(x))
+collation_workflow(weeks)
+post_collation_workflow(tail(weeks, 1))
 
 
 

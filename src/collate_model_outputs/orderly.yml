@@ -130,48 +130,6 @@ depends:
       unwtd_ensemble_daily_qntls_2020-07-19.rds: ensemble_daily_qntls.rds
       unwtd_ensemble_model_rt_2020-07-19.rds: ensemble_model_rt.rds
       unwtd_ensemble_model_rt_samples_2020-07-19.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-07-26")
-    use:
-      unwtd_ensemble_daily_qntls_2020-07-26.rds: ensemble_daily_qntls.rds
-      unwtd_ensemble_model_rt_2020-07-26.rds: ensemble_model_rt.rds
-      unwtd_ensemble_model_rt_samples_2020-07-26.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-08-02")
-    use:
-      unwtd_ensemble_daily_qntls_2020-08-02.rds: ensemble_daily_qntls.rds
-      unwtd_ensemble_model_rt_2020-08-02.rds: ensemble_model_rt.rds
-      unwtd_ensemble_model_rt_samples_2020-08-02.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-08-09")
-    use:
-      unwtd_ensemble_daily_qntls_2020-08-09.rds: ensemble_daily_qntls.rds
-      unwtd_ensemble_model_rt_2020-08-09.rds: ensemble_model_rt.rds
-      unwtd_ensemble_model_rt_samples_2020-08-09.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-08-16")
-    use:
-      unwtd_ensemble_daily_qntls_2020-08-16.rds: ensemble_daily_qntls.rds
-      unwtd_ensemble_model_rt_2020-08-16.rds: ensemble_model_rt.rds
-      unwtd_ensemble_model_rt_samples_2020-08-16.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-08-23")
-    use:
-      unwtd_ensemble_daily_qntls_2020-08-23.rds: ensemble_daily_qntls.rds
-      unwtd_ensemble_model_rt_2020-08-23.rds: ensemble_model_rt.rds
-      unwtd_ensemble_model_rt_samples_2020-08-23.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-08-30")
-    use:
-      unwtd_ensemble_daily_qntls_2020-08-30.rds: ensemble_daily_qntls.rds
-      unwtd_ensemble_model_rt_2020-08-30.rds: ensemble_model_rt.rds
-      unwtd_ensemble_model_rt_samples_2020-08-30.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-09-06")
-    use:
-      unwtd_ensemble_daily_qntls_2020-09-06.rds: ensemble_daily_qntls.rds
-      unwtd_ensemble_model_rt_2020-09-06.rds: ensemble_model_rt.rds
-      unwtd_ensemble_model_rt_samples_2020-09-06.rds: ensemble_model_rt_samples.rds
 - prepare_ecdc_data:
     id: latest
     use:

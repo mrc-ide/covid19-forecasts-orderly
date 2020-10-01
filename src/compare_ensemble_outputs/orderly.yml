@@ -25,7 +25,7 @@ depends:
     use:
       unweighted_qntls.rds: unweighted_qntls.rds
       unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
-  prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-09-20")
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-07-19")
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
