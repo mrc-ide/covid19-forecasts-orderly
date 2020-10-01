@@ -8,7 +8,7 @@ collated_outputs_viz <- function(latest_week) {
     filenames = list("Brazil_forecasts.png")
   )
   ),
-  parameters = list("use_si"),
+  parameters = list("use_si", "latest_week"),
   sources = list("R/utils.R"),
   packages = c("dplyr", "purrr", "tidyr", "ggplot2", "ggpubr",
               "ggforce", "snakecase", "glue", "cowplot", "rincewind")

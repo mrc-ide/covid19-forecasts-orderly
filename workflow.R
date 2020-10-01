@@ -116,7 +116,7 @@ post_collation_workflow <- function(latest_week, use_draft = "newer", commit = F
   a <- orderly_run(
     "produce_performance_metrics_vis",
     use_draft = use_draft,
-    parameters = list(use_si = "si_2", latest_week = latest_week)
+    parameters = list(use_si = "si_2")
   )
   if (commit) orderly_commit(a)
   x <- collated_outputs_viz(latest_week)
@@ -129,7 +129,7 @@ post_collation_workflow <- function(latest_week, use_draft = "newer", commit = F
   a <- orderly_run(
     "compare_ensemble_outputs",
     use_draft = use_draft,
-    parameters = list(use_si = "si_2")
+    parameters = list(use_si = "si_2", latest_week = latest_week)
   )
   if (commit) orderly_commit(a)
 }
@@ -155,12 +155,16 @@ collation_workflow(weeks)
 
 ### Other tasks that need to be run with the latest data
 orderly_run(
-  "src/produce_baseline_error/",
+  "produce_baseline_error",
   use_draft = "newer",
   parameters = list(week_starting = head(weeks, 1),
-                    week_ending = tail(weeks, 1))
+                    week_ending = tail(weeks, 2)[1])
 )
 
 post_collation_workflow(tail(weeks, 1))
 
+orderly_run(
+  "compare_with_null_model",
+  use_draft = "newer", parameters = list(use_si = "si_2")
+)
 

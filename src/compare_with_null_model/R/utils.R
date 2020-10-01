@@ -115,7 +115,7 @@ compare_with_baseline <- function(df) {
     geom_text(
       data = df,
       aes(x = forecast_date, y = country, label = error_values),
-      size = 1.9,
+      size = 1.5,
       fontface = "bold"
     ) +
     geom_text(

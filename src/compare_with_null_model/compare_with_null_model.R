@@ -38,6 +38,7 @@ out <- data_prep(unwtd_pred_error, null_error)
 null_compare <- out[["weekly_compare"]]
 better_than_null <- out[["better_than_null"]]
 
+saveRDS(better_than_null, "better_than_null.rds")
 
 more_forecasts <- null_compare[null_compare$n_forecasts >= 15, ]
 more_forecasts$country <- droplevels(more_forecasts$country)
@@ -127,6 +128,7 @@ out <- data_prep(unwtd_pred_error, linear_error)
 null_compare <- out[["weekly_compare"]]
 better_than_null <- out[["better_than_null"]]
 
+saveRDS(better_than_null, "better_than_linear.rds")
 
 more_forecasts <- null_compare[null_compare$n_forecasts >= 15, ]
 more_forecasts$country <- droplevels(more_forecasts$country)

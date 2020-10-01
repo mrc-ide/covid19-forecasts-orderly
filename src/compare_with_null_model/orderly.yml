@@ -8,6 +8,8 @@ artefacts:
       - si_comparison_with_baseline_error.tiff
       - comparison_with_baseline_error.tiff
       - better_than_null.rds
+      - better_than_linear.rds
+      
   
 packages:
   - dplyr
@@ -22,17 +24,11 @@ packages:
 ## use_si should be one of si_1 or si_2
 parameters:
   - use_si
-  - latest_week
 
 sources:
   - R/utils.R
 
 depends:        
-  - prepare_ecdc_data:
-      id: latest(parameter:week_ending == latest_week)
-      use:
-        model_input.rds: latest_deaths_wide_no_filter.rds        
-        
   - collate_weighted_performance_metrics:
       id: latest
       use:
