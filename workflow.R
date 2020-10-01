@@ -100,10 +100,13 @@ collation_workflow <- function(weeks, use_draft = "newer", commit = FALSE) {
   a <- orderly_run("collate_model_outputs", use_draft = use_draft)
   if (commit) orderly_commit(a)
 
+  weeks <- head(weeks, -1)
   source(
     "orderly-helper-scripts/dependencies_collate_weighted_perf.R"
   )
-  m1 <- orderly_run("collate_weighted_performance_metrics/")
+  m1 <- orderly_run(
+    "collate_weighted_performance_metrics/", use_draft = use_draft
+  )
   if (commit) orderly_commit(m1)
 
 }
@@ -113,7 +116,7 @@ post_collation_workflow <- function(latest_week, use_draft = "newer", commit = F
   a <- orderly_run(
     "produce_performance_metrics_vis",
     use_draft = use_draft,
-    parameters = list(use_si = "si_2")
+    parameters = list(use_si = "si_2", latest_week = latest_week)
   )
   if (commit) orderly_commit(a)
   x <- collated_outputs_viz(latest_week)
@@ -137,18 +140,27 @@ source("orderly-helper-scripts/dependencies_weighted_performance.R")
 source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
 
 use_draft <- "newer"
+
 weeks <- seq(
   from = as.Date("2020-03-08"),
   to = as.Date("2020-09-27"),
   by = "7 days"
 )
+
 weeks <- as.character(weeks)
 purrr::walk(weeks, function(x) basic_workflow(x))
-purrr::walk(weeks, function(x) performance_workflow(x))
+purrr::walk(head(weeks, -1), function(x) performance_workflow(x))
 collation_workflow(weeks)
+
+
+### Other tasks that need to be run with the latest data
+orderly_run(
+  "src/produce_baseline_error/",
+  use_draft = "newer",
+  parameters = list(week_starting = head(weeks, 1),
+                    week_ending = tail(weeks, 1))
+)
+
 post_collation_workflow(tail(weeks, 1))
-
-
-
 
 

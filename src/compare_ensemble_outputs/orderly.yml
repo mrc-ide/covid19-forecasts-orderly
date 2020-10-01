@@ -6,6 +6,7 @@ artefacts:
     - Brazil_forecasts.png
 parameters:
 - use_si
+- latest_week
 sources:
 - R/utils.R
 packages:
@@ -26,6 +27,6 @@ depends:
       unweighted_qntls.rds: unweighted_qntls.rds
       unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-07-19")
+    id: latest(parameter:week_ending == latest_week)
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds

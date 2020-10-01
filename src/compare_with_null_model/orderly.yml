@@ -22,11 +22,14 @@ packages:
 ## use_si should be one of si_1 or si_2
 parameters:
   - use_si
+  - latest_week
 
-  
+sources:
+  - R/utils.R
+
 depends:        
   - prepare_ecdc_data:
-      id: latest(parameter:week_ending == "2020-09-20")
+      id: latest(parameter:week_ending == latest_week)
       use:
         model_input.rds: latest_deaths_wide_no_filter.rds        
         
@@ -38,5 +41,6 @@ depends:
   - produce_baseline_error:
       id: latest
       use:
-        null_model_error.rds: linear_model_error.rds
+        linear_model_error.rds: linear_model_error.rds
+        null_model_error.rds: null_model_error.rds        
         weekly_incidence.rds: weekly_incidence.rds
