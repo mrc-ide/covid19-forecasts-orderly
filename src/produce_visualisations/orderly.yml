@@ -30,8 +30,6 @@ artefacts:
 #        - reporting_ratio_North America_page_2.png
         - reporting_ratio_South America_page_1.png      
 
-environment:
-  covid_19_path: COVID19_INPUT_PATH
 
 packages:
   - ggplot2
@@ -50,30 +48,30 @@ resources:
   - country_continent.csv
 
 parameters:
-  - week_ending_vis
+  - week_ending
 
 depends:
   produce_ensemble_outputs:
-    id: latest(parameter:week_ending == week_ending_vis)
+    id: latest(parameter:week_ending == week_ending)
     use:
       ensemble_model_rt.rds: ensemble_model_rt.rds
       ensemble_model_rt_samples.rds: ensemble_model_rt_samples.rds
       ensemble_daily_qntls.rds: ensemble_daily_qntls.rds
 
   prepare_ecdc_data:
-    id: "latest"
+    id: latest(parameter:week_ending == week_ending)
     use:
       model_input.rds: latest_model_input.rds
       exclude.rds: exclude.rds
       
   process_individual_models:
-    id: "latest"
+    id: latest(parameter:week_ending == week_ending)
     use:
       daily_predictions_qntls.rds: daily_predictions_qntls.rds
       model_rt_qntls.rds: model_rt_qntls.rds
       
   DeCa_model:
-    id: latest(parameter:week_ending == week_ending_vis)
+    id: latest(parameter:week_ending == week_ending)
     use:
       deaths_to_cases_qntls.rds: deaths_to_cases_qntls.rds
       

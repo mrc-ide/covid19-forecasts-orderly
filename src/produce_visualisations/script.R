@@ -4,18 +4,9 @@ continents <- janitor::clean_names(continents)
 
 
 ## Observations in tall format
-model_input <- readRDS(
-  glue::glue(
-  "{dirname(covid_19_path)}/model_inputs/data_{week_ending_vis}.rds"
-  )
-)
+model_input <- readRDS("model_input.rds")
 obs_deaths <- model_input [["D_active_transmission"]]
-obs_deaths <- tidyr::gather(
-  obs_deaths,
-  country,
-  deaths,
-  -dates
-)
+obs_deaths <- tidyr::gather(obs_deaths, country, deaths, -dates)
 
 obs_deaths <- add_continents(obs_deaths, continents)
 
@@ -37,7 +28,7 @@ ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
 ## nice names
 daily_predictions_qntls <- readRDS("daily_predictions_qntls.rds")
 daily_predictions_qntls$model <- glue::glue(
-  "{daily_predictions_qntls$model}_{week_ending_vis}"
+  "{daily_predictions_qntls$model}_{week_ending}"
 )
 daily_predictions_qntls <- daily_predictions_qntls[! daily_predictions_qntls$country %in% exclude, ]
 daily_predictions_qntls <- tidyr::separate(
@@ -60,16 +51,11 @@ by_continent_si <- split(
   ensb_pred, list(ensb_pred$continent, ensb_pred$si),
   sep = "_"
 )
-
-plots <- purrr::map(
-  by_continent_si,
-  function(pred) {
-    pred$date <- as.Date(pred$date)
-    obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
-    projection_plot(obs, pred) + theme(legend.position = "none")
-  }
-)
-
+n_cntrs <- map_int(by_continent_si, ~ length(unique(.$country)))
+npanels <- 6
+nrows <- 3
+ncols <- 2
+n_pages <- ceiling(n_cntrs / npanels)
 nice_names <- snakecase::to_title_case(unique(ensb_pred$country))
 names(nice_names) <- unique(ensb_pred$country)
 nice_names[names(nice_names) %in% sbsm_countries] <-
@@ -78,34 +64,38 @@ nice_names[names(nice_names) %in% sbsm_countries] <-
 nice_names[! names(nice_names) %in% sbsm_countries] <-
   glue::glue("{nice_names[! names(nice_names) %in% sbsm_countries]}*")
 
+plots <- purrr::imap(
+  by_continent_si,
+  function(pred, continent_si) {
+    pred$date <- as.Date(pred$date)
+    obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
+    countries <- sort(unique(pred$country))
+    here_pages <- n_pages[[continent_si]]
+    out <- map(seq_len(here_pages), function(page) {
+      idx <- seq(to = page * npanels, length.out = npanels, by = 1)
+      idx <- idx[idx <= length(countries)]
+      cntry_local <- countries[idx]
+      obs_local <- obs[obs$country %in% cntry_local, ]
+      pred_local <- pred[pred$country %in% cntry_local, ]
+      p <- projection_plot(obs_local, pred_local) +
+        theme(legend.position = "none") +
+         facet_wrap(
+           ~country, scales = "free_y", ncol = ncols, nrow = nrows,
+           labeller = as_labeller(nice_names),
+           )
+      p
+    })
+    out
+  }
+)
 
-## 6 pages in each plot so.
-n_cntrs <- purrr::map_int(by_continent_si, ~ length(unique(.$country)))
-n_pages <- ceiling(n_cntrs / 6)
+
 purrr::iwalk(
   plots,
-  function(p, continent_si) {
-    here_pages <- n_pages[[continent_si]]
-    if (here_pages == 1) {
-      nrow <- NULL
-    } else {
-      nrow <- 3
-    }
-    purrr::walk(
-      seq_len(here_pages),
-      function(page_num) {
-        p <- p +
-          ggforce::facet_wrap_paginate(
-            ~country,
-            scales = "free_y",
-            labeller = as_labeller(
-              nice_names
-            ),
-            ncol = 2,
-            nrow = nrow,
-            page = page_num
-          )
-
+  function(ps, continent_si) {
+    purrr::iwalk(
+      ps,
+      function(p, page_num) {
         outfile <- glue::glue("ensmbl_pred_{continent_si}_page_{page_num}.png")
         message("Saving ", outfile)
         ggsave(
@@ -147,46 +137,40 @@ by_model_si <- split(
 
 by_model_si <- purrr::keep(by_model_si, ~ nrow(.) >= 1)
 
-plots <- purrr::map(
+plots <- purrr::imap(
   by_model_si,
-  function(pred) {
+  function(pred, continent_si) {
     pred$date <- as.Date(pred$date)
     obs <- obs_deaths[obs_deaths$country %in% pred$country, ]
-    projection_plot(obs, pred)
+    countries <- sort(unique(pred$country))
+    here_pages <- n_pages[[continent_si]]
+    out <- map(seq_len(here_pages), function(page) {
+      idx <- seq(to = page * npanels, length.out = npanels, by = 1)
+      idx <- idx[idx <= length(countries)]
+      cntry_local <- countries[idx]
+      obs_local <- obs[obs$country %in% cntry_local, ]
+      pred_local <- pred[pred$country %in% cntry_local, ]
+      p <- projection_plot(obs_local, pred_local) +
+        theme(legend.position = "none") +
+         facet_wrap(
+           ~country, scales = "free_y", ncol = ncols, nrow = nrows,
+           labeller = as_labeller(nice_names),
+           )
+      p
+    })
+    out
   }
 )
 
 #nice_names <- snakecase::to_title_case(unique(daily_predictions_qntls$country))
 #names(nice_names) <- unique(daily_predictions_qntls$country)
 ## 6 pages in each plot so.
-n_cntrs <- purrr::map_int(by_model_si, ~ length(unique(.$country)))
-n_pages <- ceiling(n_cntrs / 6)
-purrr::iwalk(
+iwalk(
   plots,
-  function(p, model_si) {
-    here_pages <- n_pages[[model_si]]
-
-    if (here_pages == 1) {
-      nrow <- NULL
-    } else {
-      nrow <- 3
-    }
-
-    purrr::walk(
-      seq_len(here_pages),
-      function(page_num) {
-        p <- p +
-          ggforce::facet_wrap_paginate(
-            ~country,
-            scales = "free_y",
-            labeller = as_labeller(
-              nice_names
-            ),
-            ncol = 2,
-            nrow = nrow,
-            page = page_num
-          )
-
+  function(ps, model_si) {
+    iwalk(
+      ps,
+      function(p, page_num) {
         outfile <- glue::glue("{model_si}_page_{page_num}.png")
         message("Saving ", outfile)
         ggsave(
@@ -336,20 +320,17 @@ x <- add_continents(x, continents)
 x$date <- as.Date(x$date)
 x$country <- snakecase::to_title_case(x$country)
 plots <- split(x, x$continent) %>%
-  purrr::imap(
+  imap(
     function(df, continent) {
-      npages <- ceiling(length(unique(df$country)) / 6)
-      ncol <- 2
-      if (npages == 1) {
-        ## from ggforce::facet_wrap_paginate:
-        ## If either ncol or nrow is NULL this function
-        ## will fall back to the standard facet_wrap functionality.
-        nrow <- NULL
-      } else {
-        nrow <- 3
-      }
+      countries <- unique(df$country)
+      npages <- ceiling(length(countries) / 6)
       for (page_num in seq_len(npages)) {
-        p <- ggplot(df) +
+        idx <- seq(to = page_num * npanels, length.out = npanels, by = 1)
+        idx <- idx[idx <= length(countries)]
+        cntry_local <- countries[idx]
+        df_local <- df[df$country %in% cntry_local, ]
+
+        p <- ggplot(df_local) +
           geom_point(aes(date, I_t_minus_meanDelay, color = "black")) +
           geom_point(aes(date, D_t, color = "red")) +
           geom_ribbon(
@@ -358,11 +339,7 @@ plots <- split(x, x$continent) %>%
             alpha = 0.3
           ) +
           geom_line(aes(date, median_ratio, color = "blue")) +
-          ## scale_y_continuous(sec.axis = sec_axis(~ . * max_y$max_cases)) +
-          ggforce::facet_wrap_paginate(
-            ~country,
-            ncol = ncol, nrow = nrow, page = page_num
-          ) +
+          facet_wrap(~country, ncol = ncols, nrow = nrows) +
           theme_project() +
           xlab("") +
           ylab("ratio D to C") +
