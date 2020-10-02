@@ -1,7 +1,6 @@
-week_finishing <- "2020-09-27"
-params <- parameters(week_finishing)
+params <- parameters(week_ending)
 raw_data <- read.csv(
-  parameters(week_finishing)$infile,
+  "ECDC-COVID-19-global-data.csv",
   stringsAsFactors = FALSE,
   na.strings = ""
 )
@@ -9,7 +8,7 @@ raw_data <- dplyr::select(raw_data, -`Cumulative_number_for_14_days_of_COVID.19_
 
 raw_data <- dplyr::mutate_at(
     raw_data, vars("DateRep"), ~ as.Date(., format = "%d/%m/%Y")
-  ) %>% dplyr::filter(DateRep <= as.Date(week_finishing))
+  ) %>% dplyr::filter(DateRep <= as.Date(week_ending))
 
 
 ######################################################################
@@ -94,6 +93,29 @@ raw_data <- both_complete[ , colnames(raw_data)]
 
 
 #################### Apply necessary corrections
+
+raw_data$Cases[raw_data$DateRep == "2020-03-01" & raw_data$`Countries.and.territories` == "Spain"] <- 32
+raw_data$Cases[raw_data$DateRep == "2020-03-02" & raw_data$`Countries.and.territories` == "Spain"] <- 17
+raw_data$Cases[raw_data$DateRep == "2020-03-03" & raw_data$`Countries.and.territories` == "Spain"] <- 31
+raw_data$Cases[raw_data$DateRep == "2020-03-08" & raw_data$`Countries.and.territories` == "Spain"] <- 56
+raw_data$Cases[raw_data$DateRep == "2020-03-09" & raw_data$`Countries.and.territories` == "Spain"] <- 159
+raw_data$Cases[raw_data$DateRep == "2020-03-10" & raw_data$`Countries.and.territories` == "Spain"] <- 615
+
+raw_data$Deaths[raw_data$DateRep == "2020-03-11" & raw_data$`Countries.and.territories` == "Spain"] <- 7
+raw_data$Deaths[raw_data$DateRep == "2020-03-12" & raw_data$`Countries.and.territories` == "Spain"] <- 12
+raw_data$Deaths[raw_data$DateRep == "2020-03-13" & raw_data$`Countries.and.territories` == "Spain"] <- 37
+raw_data$Deaths[raw_data$DateRep == "2020-03-14" & raw_data$`Countries.and.territories` == "Spain"] <- 37
+raw_data$Deaths[raw_data$DateRep == "2020-03-15" & raw_data$`Countries.and.territories` == "Spain"] <- 15
+
+
+raw_data$Deaths[raw_data$DateRep == "2020-04-27" & raw_data$`Countries.and.territories` == "Spain"] <- 331
+raw_data$Deaths[raw_data$DateRep == "2020-04-28" & raw_data$`Countries.and.territories` == "Spain"] <- 301
+raw_data$Deaths[raw_data$DateRep == "2020-05-22" & raw_data$`Countries.and.territories` == "Spain"] <- 53
+
+
+
+
+
 raw_data$Deaths[raw_data$DateRep == "2020-04-17" & raw_data$`Countries.and.territories` == "China"] <- 0
 ## 04th May 2020. Manual tweaks against worldometer
 raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "Ireland"] <- 21
@@ -331,7 +353,7 @@ by_country_cases <- dplyr::select(
   tidyr::spread(
     key = Countries.and.territories, value = Cases, fill = 0
   ) %>%
-  dplyr::filter(DateRep <= week_finishing)
+  dplyr::filter(DateRep <= week_ending)
 
 
 ## For consistency with Pierre's code, rename DateRep to dates
@@ -341,8 +363,21 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
+exclude <- c(
+  "Kazakhstan",
+  "Oman",
+  "United_States_of_America",
+  "Syria",
+  "Zimbabwe",
+  "Spain",
+  "Kosovo"
+)
+saveRDS(exclude, "exclude.rds")
+
+Country <- Country[!Country %in% exclude]
+
 x <- list(
-  date_week_finishing = week_finishing,
+  date_week_ending = week_ending,
   Threshold_criterion_4weeks = params$Threshold_criterion_4weeks,
   Threshold_criterion_7days = params$Threshold_criterion_7days,
   I_active_transmission = cases_to_use,
@@ -352,18 +387,11 @@ x <- list(
   si_std = params$si_std
 )
 
-out <- saveRDS(
-  object = x,
-  file = params$outfile
-)
 
 ## Also save it with a generic name to avoid having to configure the
 ## downstream tasks
 
-out <- saveRDS(
-  object = x,
-  file = "latest_model_input.rds"
-)
+out <- saveRDS(object = x, file = "latest_model_input.rds")
 
 
 ## exclude <- c(
@@ -372,12 +400,25 @@ out <- saveRDS(
 ##   "Zambia", "Kyrgyzstan", "Oman", "Zimbabwe"
 ## )
 
-exclude <- c(
-  "Kazakhstan",
-  "Oman",
-  "United_States_of_America",
-  "Syria",
-  "Zimbabwe",
-  "Israel"
-)
-saveRDS(exclude, "exclude.rds")
+
+
+################# Check data
+pass$DateRep <- as.Date(pass$DateRep)
+
+plots <- split(pass, pass$`Countries.and.territories`) %>%
+  map(
+    function(df) {
+      p <- ggplot(df) +
+        geom_point(aes(DateRep, Deaths)) +
+        facet_wrap(
+          ~`Countries.and.territories`, scales = "free_y", ncol = 1
+        ) +
+        scale_x_date(limits = c(as.Date("2020-03-01") , NA)) +
+        theme_minimal()
+    }
+  )
+
+
+pdf("epicurves.pdf")
+plots
+dev.off()

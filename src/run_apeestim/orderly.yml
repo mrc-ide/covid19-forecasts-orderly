@@ -1,10 +1,6 @@
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-
 script: run_apeestim.R
 
-parameters:
-  week_ending
+parameters: week_ending
 
 packages:
   - purrr
@@ -28,3 +24,13 @@ sources:
   - R/apePredPost.R
   - R/apeSpecific.R
   - R/util.R
+
+depends:
+  - prepare_ecdc_data:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         model_input.rds: latest_model_input.rds
+  - produce_epi_params:
+      id: latest
+      use:
+         si_distrs.rds: si_distrs.rds

@@ -1,39 +1,32 @@
 script: compare_ensemble_outputs.R
-
 artefacts:
   data:
-    description: Forecast comparisons
+    description: Forecasts collated
     filenames:
-      - Brazil_forecasts.png
-  
-packages:
-  - dplyr
-  - tidyr
-  - ggplot2
-  - ggpubr
-  - ggforce
-  - snakecase
-  - glue
-  - cowplot
-  - rincewind
-  - purrr
-
-## use_si should be one of si_1 or si_2
+    - Brazil_forecasts.png
 parameters:
-  - use_si
-
+- use_si
+- latest_week
 sources:
-  - R/utils.R
-  
+- R/utils.R
+packages:
+- dplyr
+- purrr
+- tidyr
+- ggplot2
+- ggpubr
+- ggforce
+- snakecase
+- glue
+- cowplot
+- rincewind
 depends:
-  - collate_model_outputs:
-      id: latest
-      use:
-        unweighted_qntls.rds: unweighted_qntls.rds
-        unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
-        unwtd_rt_samples.rds: unwtd_rt_samples.rds
-  - prepare_ecdc_data:
-      id: latest
-      use:
-        model_input.rds: latest_deaths_wide_no_filter.rds
-       
+- collate_model_outputs:
+    id: latest
+    use:
+      unweighted_qntls.rds: unweighted_qntls.rds
+      unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-09-27")
+    use:
+      model_input.rds: latest_deaths_wide_no_filter.rds

@@ -1,155 +1,188 @@
-use_draft <- "newer"
-weeks <- list(
-  "2020-03-08",
-  "2020-03-15",
-  "2020-03-22",
-  "2020-03-29",
-  "2020-04-05",
-  "2020-04-12",
-  "2020-04-19",
-  "2020-04-26",
-  "2020-05-03",
-  "2020-05-10",
-  "2020-05-17",
-  "2020-05-24",
-  "2020-05-31",
-  "2020-06-07",
-  "2020-06-14",
-  "2020-06-21",
-  "2020-06-28",
-  "2020-07-05",
-  "2020-07-12",
-  "2020-07-19",
-  "2020-07-26",
-  "2020-08-02",
-  "2020-08-09",
-  "2020-08-16",
-  "2020-08-23",
-  "2020-08-30",
-  "2020-09-06"
-)
-
-for (week in weeks) {
-  message("################ ", week, " #############################")
-  parameter <- list(week_ending = week, short_run = FALSE)
-  m1 <- orderly::orderly_run(
-    "run_rti0", parameters = parameter, use_draft = use_draft
-  )
-
-  orderly::orderly_commit(m1)
-  ##orderly::orderly_push_archive("run_rti0", m1)
-}
-
-for (week in weeks) {
-  message("################ ", week, " #############################")
+## set commit to FALSE and commit manually once you are happy with the
+## outputs
+basic_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   parameter <- list(week_ending = week)
-  m2 <- orderly::orderly_run(
-    "run_apeestim", parameters = parameter, use_draft = use_draft
+  message("Preparing data for week ", week)
+  m1 <- orderly_run(
+    "prepare_ecdc_data",
+    parameters = parameter
   )
-  orderly::orderly_commit(m2)
-  ##orderly::orderly_push_archive("run_apeestim", m2)
-}
+  if (commit) orderly_commit(m1)
 
-
-for (week in weeks) {
-  message("################ ", week, " #############################")
-  parameter <- list(week_ending = week)
-  m3 <- orderly::orderly_run(
-    "DeCa_model", parameters = parameter, use_draft = use_draft
+  message("Running Model 1, this will take long.")
+  parameter <- list(
+    week_ending = week, short_run = FALSE
   )
-  orderly::orderly_commit(m3)
-  ##orderly::orderly_push_archive(name = "DeCa_model", id = m3)
-}
-
-for (week in weeks) {
-  message("################ ", week, " #############################")
-  parameter <- list(week_ending = week)
-  m3 <- orderly::orderly_run(
-    "process_individual_models", parameters = parameter, use_draft = use_draft
-  )
-  orderly::orderly_commit(m3)
-  ##orderly::orderly_push_archive("process_individual_models", m3)
-}
-
-for (week in weeks) {
-  message("################ ", week, " #############################")
-  parameter <- list(week_ending = week)
-  unwtd <- orderly::orderly_run(
-    "produce_ensemble_outputs", parameters = parameter, use_draft = use_draft
-  )
-  orderly::orderly_commit(unwtd)
-  ##orderly::orderly_push_archive("produce_ensemble_outputs", unwtd)
-}
-
-a <- orderly::orderly_run("src/format_model_outputs/")
-orderly::orderly_commit(a)
-
-a <- orderly::orderly_run("src/produce_maps/")
-orderly::orderly_commit(a)
-
-a <- orderly::orderly_run("src/produce_retrospective_vis/")
-orderly::orderly_commit(a)
-
-a <- orderly::orderly_run("src/produce_visualisations/",
-                          parameters = list(week_ending_vis = week))
-orderly::orderly_commit(a)
-
-a <- orderly::orderly_run("src/produce_full_report")
-
-## for (week in weeks) {
-##   message("################ ", week, " #############################")
-##   parameter <- list(week_ending = week)
-##   unwtd <- orderly::orderly_run(
-##     "produce_ensemble_outputs", parameters = parameter, use_draft = use_draft
-##   )
-##   orderly::orderly_commit(unwtd)
-##   orderly::orderly_push_archive(unwtd)
-## }
-
-for (week_ending in weeks) {
-  message("################ ", week_ending, " #############################")
-  source("orderly-helper-scripts/write_dependencies_weighted_performance.R")
-  parameter <- list(week_ending = week_ending, window = 1)
-  m1 <- orderly::orderly_run(
-    "src/produce_performance_metrics_ensemble/",
+  m1 <- orderly_run(
+    "run_rti0",
     parameters = parameter, use_draft = use_draft
   )
-  orderly::orderly_commit(m1)
-}
+  if (commit) orderly_commit(m1)
 
-source("orderly-helper-scripts/write_dependencies_collate_weighted_perf.R")
-m1 <- orderly::orderly_run("src/collate_weighted_performance_metrics/")
-orderly::orderly_commit(m1)
-
-aa <- orderly::orderly_run(
-  "produce_performace_metrics",
-  parameters = list(window = 1), use_draft = use_draft
-)
-orderly::orderly_commit(aa)
-orderly::orderly_push_archive(a)
-
-
-a <- orderly::orderly_run("compute_model_weights", use_draft = use_draft)
-orderly::orderly_commit(a)
-orderly::orderly_push_archive(a)
-
-## For the first week, we don't have weighted ensemble.
-weeks <- weeks[-1]
-
-for (week in weeks) {
-  message("################ ", week, " #############################")
+  message("Running Model 2.")
   parameter <- list(week_ending = week)
-  wtd <- orderly::orderly_run(
-    "produce_weighted_ensemble",
-    parameters = parameter,
-    use_draft = FALSE
-    )
-  orderly::orderly_commit(wtd)
-  ##orderly::orderly_push_archive("produce_weighted_ensemble", wtd)
+  m2 <- orderly_run(
+    "run_apeestim",
+    parameters = parameter, use_draft = use_draft
+  )
+  if (commit) orderly_commit(m2)
+
+  message("Running Model 3.")
+  m3 <- orderly_run(
+    "DeCa_model",
+    parameters = parameter, use_draft = use_draft
+  )
+  if (commit) orderly_commit(m3)
+
+  indv <- orderly_run(
+    "process_individual_models",
+    parameters = parameter, use_draft = use_draft
+  )
+  if (commit) orderly_commit(indv)
+
+  unwtd <- orderly_run(
+    "produce_ensemble_outputs",
+    parameters = parameter, use_draft = use_draft
+  )
+  if (commit) orderly_commit(unwtd)
 
 }
 
-orderly::orderly_run("collate_model_outputs", use_draft = use_draft)
+## Performance assessment in week N requires observations for week N + 1
+## to be available. That is why these tasks cannot be run with the
+## weekly workflow
+performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
+  message("Performance metrics for ensemble model; week = ", week)
+  x <- dependencies_weighted_performance(week)
+  con <- file(
+    here::here("src/produce_performance_metrics_ensemble/orderly.yml"),
+    "w"
+  )
+  yaml::write_yaml(x, con)
+  close(con)
+
+  parameter <- list(week_ending = week, window = 1)
+  m1 <- orderly_run(
+    "produce_performance_metrics_ensemble/",
+    parameters = parameter, use_draft = use_draft
+  )
+  if (commit) orderly_commit(m1)
+}
+
+## These functions have not been configured to pull in week-specific
+## outputs, they will always pull in the latest runs of dependancies.
+report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
+
+  a <- orderly_run(
+    "format_model_outputs/",
+    use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+  if (commit) orderly_commit(a)
+
+  a <- orderly_run(
+    "produce_maps/",
+    use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+  if (commit) orderly_commit(a)
+
+  a <- orderly_run(
+    "produce_retrospective_vis/",
+    use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+  if (commit) orderly_commit(a)
+
+  ## a <- orderly_run(
+  ##   "produce_visualisations/",
+  ##   parameters = list(week_ending_vis = week),
+  ##   use_draft = use_draft
+  ## )
+  ## if (commit) orderly_commit(a)
+
+  a <- orderly_run(
+    "produce_full_report",
+    use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+
+  if (commit) orderly_commit(a)
+}
 
 
-a <- orderly::orderly_run("compare_ensemble_outputs")
+## Collate week specific outputs
+collation_workflow <- function(weeks, use_draft = "newer", commit = FALSE) {
+
+  source("orderly-helper-scripts/dependencies_collate_model_outputs.R")
+  a <- orderly_run("collate_model_outputs", use_draft = use_draft)
+  if (commit) orderly_commit(a)
+
+  weeks <- head(weeks, -1)
+  source(
+    "orderly-helper-scripts/dependencies_collate_weighted_perf.R"
+  )
+  m1 <- orderly_run(
+    "collate_weighted_performance_metrics/", use_draft = use_draft
+  )
+  if (commit) orderly_commit(m1)
+
+}
+
+post_collation_workflow <- function(latest_week, use_draft = "newer", commit = FALSE) {
+
+  a <- orderly_run(
+    "produce_performance_metrics_vis",
+    use_draft = use_draft,
+    parameters = list(use_si = "si_2")
+  )
+  if (commit) orderly_commit(a)
+  x <- collated_outputs_viz(latest_week)
+  con <- file(
+    here::here("src/compare_ensemble_outputs/orderly.yml"), "w"
+  )
+  yaml::write_yaml(x, con)
+  close(con)
+
+  a <- orderly_run(
+    "compare_ensemble_outputs",
+    use_draft = use_draft,
+    parameters = list(use_si = "si_2", latest_week = latest_week)
+  )
+  if (commit) orderly_commit(a)
+}
+
+library(glue)
+library(orderly)
+source("orderly-helper-scripts/dependencies_weighted_performance.R")
+source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
+
+use_draft <- "newer"
+
+weeks <- seq(
+  from = as.Date("2020-03-08"),
+  to = as.Date("2020-09-27"),
+  by = "7 days"
+)
+
+weeks <- as.character(weeks)
+purrr::walk(weeks, function(x) basic_workflow(x))
+purrr::walk(head(weeks, -1), function(x) performance_workflow(x))
+collation_workflow(weeks)
+
+
+### Other tasks that need to be run with the latest data
+orderly_run(
+  "produce_baseline_error",
+  use_draft = "newer",
+  parameters = list(week_starting = head(weeks, 1),
+                    week_ending = tail(weeks, 2)[1])
+)
+
+post_collation_workflow(tail(weeks, 1))
+
+orderly_run(
+  "compare_with_null_model",
+  use_draft = "newer", parameters = list(use_si = "si_2")
+)
+

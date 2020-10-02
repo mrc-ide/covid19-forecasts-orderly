@@ -22,8 +22,10 @@ packages:
 resources:
   - country-and-continent-codes-list.csv
 
+parameters: week_ending
+
 depends:
   prepare_ecdc_data:
-    id: "latest"
+    id: latest(parameter:week_ending == week_ending)
     use:
       model_input.rds: latest_model_input.rds

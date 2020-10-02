@@ -57,7 +57,8 @@ projection_plot <- function(obs, pred) {
     geom_point(data = obs, aes(dates, deaths)) +
     geom_line(
       data = pred,
-      aes(date, `50%`, col = proj, group = proj)
+      aes(date, `50%`, col = proj, group = proj),
+      size = 1.1
     ) +
     geom_ribbon(
       data = pred,

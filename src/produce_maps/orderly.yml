@@ -22,14 +22,17 @@ packages:
   - rnaturalearth
   - countrycode
   - ggrepel
- 
+
+parameters:
+  - week_ending
+
 depends:
   produce_ensemble_outputs:
-    id: "latest"
+    id: latest(parameter:week_ending == week_ending)
     use:
       ensemble_weekly_qntls.rds: ensemble_weekly_qntls.rds
       ensemble_model_rt.rds: ensemble_model_rt.rds 
   prepare_ecdc_data:
-    id: "latest"
+    id: latest(parameter:week_ending == week_ending)
     use:
       exclude.rds: exclude.rds

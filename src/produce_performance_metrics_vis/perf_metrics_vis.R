@@ -1,7 +1,6 @@
 ## orderly::orderly_develop_start(
 ## use_draft = "newer", parameters = list(use_si = "si_2"))
 ######### Performance metrics
-observed <- readRDS("model_input.rds")
 
 main_text_countries <- c(
   "Brazil", "India", "Italy", "Mexico", "United_States_of_America"
@@ -17,31 +16,7 @@ labels <- c(
   "empirical_p" = "Probability(obs|predictions)"
 )
 
-observed_tall <- tidyr::gather(observed, country, deaths, -dates)
 
-observed_tall <- split(
-  observed_tall, observed_tall$country
-) %>%
-  purrr::map_dfr(
-    function(df) {
-      df$deaths_scaled <- df$deaths / max(df$deaths)
-      cum_deaths <- cumsum(df$deaths)
-      idx <- which(cum_deaths >= 100)
-      if (length(idx) == 0) {
-        days_since_100_deaths <- rep(0, length(cum_deaths))
-      } else {
-        idx <- idx[1]
-        days_since_100_deaths <- c(
-          seq(to = -1, length.out = idx - 1, by = 1),
-          seq(
-            from = 1, length.out = length(cum_deaths) - idx + 1, by = 1
-          )
-        )
-      }
-      df$days_since_100_deaths <- days_since_100_deaths
-      df
-   }
-)
 
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
@@ -507,90 +482,3 @@ p2 <- ggplot(overall) +
   )
 
 ggsave("relative_error_by_.png", p2)
-
-######################################################################
-######## Performance of longer forecasts #############################
-######################################################################
-######################################################################
-long_perf <- readRDS("long_projections_error_weekly.rds")
-more_forecasts <- long_perf[long_perf$country %in% more_than_15, ]
-less_forecasts <- long_perf[long_perf$country %in% less_than_15, ]
-
-weekly_summary_long <- function(df) {
-
-  by_country <- group_by(df, country) %>%
-    summarise_if(is.numeric, list(c_mu = mean, c_sd = sd)) %>%
-    ungroup()
-
-  by_week <- group_by(df, week_of_projection) %>%
-    summarise_if(is.numeric, list(w_mu = mean, w_sd = sd)) %>%
-    ungroup()
-
-  df <- left_join(df, by_country)
-  df <- left_join(df, by_week)
-
-  df$country <- factor(
-    df$country,
-    levels = better_than_null$country, ordered = TRUE
-  )
-  df$country <- droplevels(df$country)
-
-  df
-}
-
-more_forecasts <- weekly_summary_long(more_forecasts)
-less_forecasts <- weekly_summary_long(less_forecasts)
-
-more_forecasts$top_label <- glue(
-  "{round_and_format(more_forecasts$rel_mae_w_mu)}",
-  " %+-% {round_and_format(more_forecasts$rel_mae_w_sd)}"
-)
-
-more_forecasts$right_label <- glue(
-  "{round_and_format(more_forecasts$rel_mae_c_mu)}",
-  " %+-% {round_and_format(more_forecasts$rel_mae_c_sd)}"
-)
-
-more_forecasts$cell_label <- glue(
-  "{round_and_format(more_forecasts$rel_mae)}"
-)
-
-
-
-p1 <- long_relative_error_heatmap(more_forecasts)
-
-less_forecasts$top_label <- glue(
-  "{round_and_format(less_forecasts$rel_mae_w_mu)}",
-  " %+-% {round_and_format(less_forecasts$rel_mae_w_sd)}"
-)
-
-less_forecasts$right_label <- glue(
-  "{round_and_format(less_forecasts$rel_mae_c_mu)}",
-  " %+-% {round_and_format(less_forecasts$rel_mae_c_sd)}"
-)
-
-less_forecasts$cell_label <- glue(
-  "{round_and_format(less_forecasts$rel_mae)}"
-)
-
-p2 <- long_relative_error_heatmap(less_forecasts)
-
-ggsave(
-  filename = "main_rel_error_long.tiff",
-  plot = p1,
-  width = 7,
-  height = 7,
-  unit = "in",
-  dpi = 300,
-  compression = "lzw"
-)
-
-ggsave(
-  filename = "si_rel_error_long.tiff",
-  plot = p2,
-  width = 7,
-  height = 7,
-  unit = "in",
-  dpi = 300,
-  compression = "lzw"
-)

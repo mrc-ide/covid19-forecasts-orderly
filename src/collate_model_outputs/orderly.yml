@@ -172,6 +172,24 @@ depends:
       unwtd_ensemble_daily_qntls_2020-09-06.rds: ensemble_daily_qntls.rds
       unwtd_ensemble_model_rt_2020-09-06.rds: ensemble_model_rt.rds
       unwtd_ensemble_model_rt_samples_2020-09-06.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-09-13")
+    use:
+      unwtd_ensemble_daily_qntls_2020-09-13.rds: ensemble_daily_qntls.rds
+      unwtd_ensemble_model_rt_2020-09-13.rds: ensemble_model_rt.rds
+      unwtd_ensemble_model_rt_samples_2020-09-13.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-09-20")
+    use:
+      unwtd_ensemble_daily_qntls_2020-09-20.rds: ensemble_daily_qntls.rds
+      unwtd_ensemble_model_rt_2020-09-20.rds: ensemble_model_rt.rds
+      unwtd_ensemble_model_rt_samples_2020-09-20.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-09-27")
+    use:
+      unwtd_ensemble_daily_qntls_2020-09-27.rds: ensemble_daily_qntls.rds
+      unwtd_ensemble_model_rt_2020-09-27.rds: ensemble_model_rt.rds
+      unwtd_ensemble_model_rt_samples_2020-09-27.rds: ensemble_model_rt_samples.rds
 - prepare_ecdc_data:
     id: latest
     use:

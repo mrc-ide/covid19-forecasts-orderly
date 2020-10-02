@@ -1,10 +1,7 @@
 dir.create("figures")
-indir <- dirname(covid_19_path)
-raw_data <- readRDS(
-  glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
-)
 
-deaths_to_use = data.frame(raw_data[["D_active_transmission"]])
+model_input <- readRDS("model_input.rds")
+deaths_to_use <- model_input$D_active_transmission
 
 ## Convert to incidence object
 tall_deaths <- gather(
@@ -18,24 +15,7 @@ tall_deaths <- gather(
     }
 )
 
-si_distrs <- purrr::map2(
-  raw_data[["si_mean"]],
-  raw_data[["si_std"]],
-  function(mu, sigma) {
-    reparams <- epitrix::gamma_mucv2shapescale(
-      mu = mu, cv = sigma / mu
-    )
-    miss_at_most <-0.001
-    cutoff <- ceiling(
-      qgamma(
-        1 - miss_at_most,
-        shape = reparams$shape,
-        scale = reparams$scale
-      )
-    )
-    EpiEstim::discr_si(k = 0:cutoff, mu = mu, sigma = sigma)
-  }
-)
+si_distrs <- readRDS("si_distrs.rds")
 
 ##apeestim
 inftvty <- purrr::map(
@@ -191,9 +171,9 @@ rsamples_ape <- map(
 ## ## Save in format required
 out <- saveRDS(
   object = list(
-    I_active_transmission = raw_data[["I_active_transmission"]],
-    D_active_transmission = raw_data[["D_active_transmission"]],
-    Country = raw_data[["Country"]],
+    I_active_transmission = model_input[["I_active_transmission"]],
+    D_active_transmission = model_input[["D_active_transmission"]],
+    Country = model_input[["Country"]],
     R_last = rsamples_ape,
     Predictions = ape_projections
   ),

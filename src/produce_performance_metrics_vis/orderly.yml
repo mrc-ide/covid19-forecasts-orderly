@@ -38,17 +38,7 @@ sources:
 resources:
   - country_continent.csv
 
-depends:
-  - produce_performace_metrics:
-      id: latest
-      use:
-        model_predictions_error.csv: model_predictions_error.csv
-        
-  - prepare_ecdc_data:
-      id: latest
-      use:
-        model_input.rds: latest_deaths_wide_no_filter.rds        
-        
+depends:        
   - collate_weighted_performance_metrics:
       id: latest
       use:
@@ -69,8 +59,3 @@ depends:
       id: latest
       use:
         better_than_null.rds: better_than_null.rds
-
-  - collate_longer_forecasts_metrics:
-      id: latest
-      use:
-        long_projections_error_weekly.rds: long_projections_error_weekly.rds

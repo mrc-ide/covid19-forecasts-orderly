@@ -1,5 +1,7 @@
 script: prepare_ecdc_data.R
 
+parameters: week_ending
+
 artefacts:
   - data:
       description: Input data for modeling 
@@ -13,10 +15,11 @@ packages:
   - tidyr
   - readr
   - purrr
+  - ggplot2
   
 sources:
   - R/utils.R
 
 resources:
-  - COVID-19-geographic-disbtribution-worldwide-2020-09-27.csv
+  - ECDC-COVID-19-global-data.csv
   - WHO-COVID-19-global-data.csv
