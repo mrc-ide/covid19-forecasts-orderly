@@ -1,4 +1,4 @@
-week_ending <- as.Date("2020-09-27")
+week_ending <- as.Date(week_ending)
 palette <- c(
   Africa = "#d21d24",
   `North America` = "#5adf79",
