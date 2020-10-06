@@ -1,5 +1,5 @@
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-15", short_run = TRUE))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-04-19", short_run = TRUE))
 set.seed(1)
 dir.create("figures")
 day.project <- 7
@@ -20,6 +20,8 @@ deaths_to_use <- model_input$D_active_transmission[, c("dates", model_input$Coun
 exclude <- readRDS("exclude.rds")
 country <- model_input$Country
 country <- country[! country %in% exclude]
+
+deaths_to_use <- deaths_to_use[ ,c("dates", country)]
 
 N_geo <- length(country)
 SItrunc <- 20
