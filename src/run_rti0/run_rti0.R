@@ -14,7 +14,7 @@ if (short_run) {
 
 
 model_input <- readRDS("model_input.rds")
-deaths_to_use <- model_input$D_active_transmission[, c("dates", model_input$Country)]
+deaths_to_use <- model_input$D_active_transmission
 
 
 exclude <- readRDS("exclude.rds")
@@ -150,7 +150,7 @@ I_pred <- purrr::map2(
       N_geo = N_geo,
       SI = si_distr
     )
-    names(out) <- model_input$Country
+    names(out) <- country
     out
   }
 )
@@ -159,7 +159,7 @@ Rt_last <- purrr::map(
   res,
   function(r) {
     out <- data.frame(r$theta[, 1:N_geo])
-    names(out) <- model_input$Country
+    names(out) <- country
     if (nrow(out) > 1e4) {
       f <- round(seq(1, nrow(out), length.out = 1e4))
       out <- out[f, ]
@@ -169,24 +169,24 @@ Rt_last <- purrr::map(
 )
 
 Rt_last <- purrr::map(
-  model_input$Country,
-  function(country) {
-    purrr::map(Rt_last, ~ .[[country]])
+  country,
+  function(cntry) {
+    purrr::map(Rt_last, ~ .[[cntry]])
   }
 )
-names(Rt_last) <- model_input$Country
+names(Rt_last) <- country
 
 dates_pred <- as.character(
   seq(t.proj.start, t.proj.start + 7 - 1, 1)
 )
 
 Predictions <- purrr::map(
-  model_input$Country,
-  function(country) {
+  country,
+  function(cntry) {
     purrr::map(
       I_pred,
       function(pred_si) {
-        out <- pred_si[[country]]
+        out <- pred_si[[cntry]]
         out <- as.data.frame(out[, 8:14])
         names(out) <- dates_pred
         if (nrow(out) > 1e4) {
@@ -199,12 +199,12 @@ Predictions <- purrr::map(
   }
 )
 
-names(Predictions) <- model_input$Country
+names(Predictions) <- country
 
 Std_results <- list(
   I_active_transmission = model_input$I_active_transmission,
   D_active_transmission = model_input$D_active_transmission,
-  Country = model_input$Country,
+  Country = country,
   R_last = Rt_last,
   Predictions = Predictions
 )
@@ -214,10 +214,7 @@ Std_results <- list(
 ##   file = paste0("RtI0_Std_results_week_end_", week_ending, ".rds")
 ## )
 
-saveRDS(
-  object = Std_results,
-  file = paste0("RtI0_latest_output.rds")
-)
+saveRDS(object = Std_results, file = paste0("RtI0_latest_output.rds"))
 
 #### Diagonistic Plots ##############################################
 ## pdf("likelihood.pdf")
