@@ -1,5 +1,5 @@
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-15", short_run = TRUE))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-10-04", short_run = FALSE))
 set.seed(1)
 dir.create("figures")
 day.project <- 7
