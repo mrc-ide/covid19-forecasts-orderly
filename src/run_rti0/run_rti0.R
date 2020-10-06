@@ -17,8 +17,10 @@ model_input <- readRDS("model_input.rds")
 deaths_to_use <- model_input$D_active_transmission[, c("dates", model_input$Country)]
 
 
-
+exclude <- readRDS("exclude.rds")
 country <- model_input$Country
+country <- country[! country %in% exclude]
+
 N_geo <- length(country)
 SItrunc <- 20
 

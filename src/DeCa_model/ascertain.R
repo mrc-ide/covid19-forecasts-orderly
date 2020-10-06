@@ -19,8 +19,9 @@ model_input <- readRDS("model_input.rds")
 ascertainr_deaths <- model_input$D_active_transmission
 ascertainr_cases <- model_input$I_active_transmission
 
+exclude <- readRDS("exclude.rds")
 countries <- purrr::set_names(model_input$Country, model_input$Country)
-countries <- countries[! countries %in% c("Spain", "Kosovo")]
+countries <- countries[! countries %in% exclude]
 
 # week_ending <- d$week_ending
 
@@ -481,11 +482,6 @@ out <- list(
   Country = model_input$Country,
   R_last = r_estim,
   Predictions = predictions
-)
-
-saveRDS(
-  object = out,
-  file = paste0('DeCa_Std_results_week_end_',week_ending,'.rds' )
 )
 
 saveRDS(object = out, file = paste0('DeCa_latest.rds'))

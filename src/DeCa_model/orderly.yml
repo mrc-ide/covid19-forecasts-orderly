@@ -40,3 +40,7 @@ depends:
       id: latest
       use:
          population_weighted_ifr.rds: population_weighted_ifr.rds
+  - produce_baseline_error:
+      id: latest(parameter:week_ending == "2020-09-27")
+      use:
+         exclude.rds: exclude.rds         

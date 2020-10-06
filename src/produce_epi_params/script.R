@@ -90,7 +90,7 @@ pop_by_age$Location[pop_by_age$Location == "Viet Nam"] <- "Vietnam"
 ## Kosovo is not present in the population estimates
 ## We use the age distribution of its nearest neighbor
 df <- pop_by_age[pop_by_age$Location == "Serbia", ]
-df$Location <- "kosovo"
+df$Location <- "Kosovo"
 pop_by_age <- rbind(pop_by_age, df)
 
 

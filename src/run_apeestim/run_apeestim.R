@@ -1,12 +1,15 @@
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-08"), use_draft = "newer")
 dir.create("figures")
 
 model_input <- readRDS("model_input.rds")
 deaths_to_use <- model_input$D_active_transmission
+exclude <- readRDS("exclude.rds")
 
 ## Convert to incidence object
 tall_deaths <- gather(
   deaths_to_use, key = country, value = deaths, -dates
 ) %>%
+  dplyr::filter(! country %in% exclude) %>%
   split(.$country) %>%
   map(
     function(x) {
@@ -15,6 +18,7 @@ tall_deaths <- gather(
     }
 )
 
+##tall_deaths <- tall_deaths[!tall_deaths$country %in% exclude, ]
 si_distrs <- readRDS("si_distrs.rds")
 
 ##apeestim
