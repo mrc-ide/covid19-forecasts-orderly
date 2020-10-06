@@ -363,15 +363,15 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
-exclude <- c(
-  "Kazakhstan",
-  "Oman",
-  "United_States_of_America",
-  "Syria",
-  "Zimbabwe",
-  "Spain",
-  "Kosovo"
-)
+## exclude <- c(
+##   "Kazakhstan",
+##   "Oman",
+##   ##"United_States_of_America",
+##   "Syria",
+##   "Zimbabwe",
+##   "Kosovo"
+## )
+exclude <- c()
 saveRDS(exclude, "exclude.rds")
 
 Country <- Country[!Country %in% exclude]
