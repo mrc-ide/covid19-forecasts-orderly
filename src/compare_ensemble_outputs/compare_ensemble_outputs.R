@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(use_si = "si_2", latest_week = "2020-09-27"), use_draft = "newer")
 ### This task produces the following visualtions:
 ### comparison of unweighted and weighted ensembles for each country
 ### all forecasts from unweighted ensemble
@@ -6,7 +6,7 @@
 ### last week
 ### all forecasts from weighted ensemble with weights coming from
 ###all previous weeks
-file_format <- ".png"
+file_format <- ".tiff"
 
 main_text_countries <- c(
   "Brazil", "India", "Italy", "South_Africa", "United_States_of_America"
@@ -56,7 +56,8 @@ countries <- setNames(
 ## countries <- list(main = main_text_countries)
 ## countries <- append(x = countries, values = unlist(si_countries))
 countries$Czech_Republic <- "Czechia"
-
+exclude <- readRDS("exclude.rds")
+countries <- countries[!countries %in% exclude]
 ######################################################################
 ############## Rt ####################################################
 ######################################################################
@@ -104,20 +105,26 @@ purrr::iwalk(
     p1 <- all_forecasts(obs, pred)
     p1 <- p1 +
       scale_x_continuous(
-        breaks = seq(0, xmax, 7), limits = c(0, xmax), minor_breaks = NULL
+        breaks = seq(0, xmax, 7),
+        limits = c(0, xmax),
+        minor_breaks = NULL
     )
 
     ## Remove x-axis ticks to have them on the bottom panel only
     p1 <- p1 +
       ylab("Daily Deaths") +
+      theme_manuscript() +
       theme(
-        strip.text = element_text(size = 20),
-        axis.text.y = element_text(size = 14),
+        strip.text = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
         axis.text.x = element_blank(),
-        axis.title = element_text(size = 14)
-   )
+        axis.title = element_text(size = 12),
+        axis.title.y = element_text(angle = 90),
+        legend.position = "none"
+      )
 
     p2 <- all_restimates_line(out) +
+      ylab("Effective Reproduction Number") +
       xlab("Days since 100 deaths")
 
     p2 <- p2 +
@@ -126,17 +133,20 @@ purrr::iwalk(
       )
 
     p2 <- p2 +
+      theme_manuscript() +
       theme(
         strip.text = element_blank(),
-        axis.text = element_text(size = 14),
-        axis.title = element_text(size = 14)
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        axis.title.y = element_text(angle = 90),
+        axis.text.x = element_text(angle = 90, hjust = 1)
       )
 
     p <- cowplot::plot_grid(
-      p1, p2, align  = "hv", rel_heights = c(1, 0.7), ncol = 1
+      p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
     )
     outfile <- glue::glue("{name}_forecasts{file_format}")
-    ggsave(outfile, p)
+    save_multiple(plot = p, filename = outfile)
   }
 )
 

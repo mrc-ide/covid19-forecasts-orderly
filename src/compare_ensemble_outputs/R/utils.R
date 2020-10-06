@@ -51,17 +51,12 @@ all_restimates_line <- function(out) {
       aes(days_since_100_deaths, `50%`, group = forecast_date)) +
     geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
     facet_wrap(~country, ncol = 1, scales = "free_y") +
-    theme_minimal() +
-    xlab("") +
-    ylab("Effective Reproduction Number") +
-  facet_wrap(
-    ~country,
-    ncol = 1,
-    scales = "free_y",
-    labeller = labeller(country = snakecase::to_title_case)
-  ) +
-    theme(axis.text.x=element_text(angle = 90, hjust = 1))
-
+    facet_wrap(
+      ~country,
+      ncol = 1,
+      scales = "free_y",
+      labeller = labeller(country = snakecase::to_title_case)
+    )
   p
 }
 
@@ -72,11 +67,13 @@ all_forecasts <- function(obs, pred) {
       geom_point(
         data = obs,
         aes(days_since_100_deaths, deaths),
-        col = "black"
+        col = "#663723"
       ) +
       geom_line(
         data = pred,
-        aes(x = days_since_100_deaths, `50%`, group = proj, col = "#0072B2"),
+        aes(
+          x = days_since_100_deaths, `50%`, group = proj, col = "#3d2115"
+        ),
         size = 1
       ) +
       geom_ribbon(
@@ -86,7 +83,7 @@ all_forecasts <- function(obs, pred) {
           ymin = `2.5%`,
           ymax = `97.5%`,
           group = proj,
-          fill = "#0072B2"
+          fill = "#3d2115"
         ),
         alpha = 0.3
       ) +
@@ -97,12 +94,10 @@ all_forecasts <- function(obs, pred) {
           ymin = `25%`,
           ymax = `75%`,
           group = proj,
-          fill = "#0072B2"
+          fill = "#3d2115"
         ),
-        alpha = 0.7
+        alpha = 0.5
       ) +
-      theme_minimal() +
-      theme(legend.position = "none", legend.title = element_blank()) +
       xlab("") +
       ylab("") +
     ## scale_x_date(
@@ -114,8 +109,8 @@ all_forecasts <- function(obs, pred) {
       ncol = 1,
       scales = "free_y",
       labeller = labeller(country = snakecase::to_title_case)
-    ) +
-    theme(axis.text.x=element_text(angle = 90, hjust = 1))
+    )
+
 
 }
 
