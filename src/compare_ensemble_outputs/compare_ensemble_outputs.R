@@ -137,98 +137,27 @@ purrr::iwalk(
       theme(
         strip.text = element_blank(),
         axis.text = element_text(size = 12),
-        axis.title = element_text(size = 12),
+        axis.title = element_text(size = 12, angle = 90, hjust = 1),
         axis.title.y = element_text(angle = 90),
-        axis.text.x = element_text(angle = 90, hjust = 1)
+        axis.title.x = element_text(angle = 0)
       )
 
     p <- cowplot::plot_grid(
       p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
     )
     outfile <- glue::glue("{name}_forecasts{file_format}")
-    save_multiple(plot = p, filename = outfile)
+    save_multiple(plot = p, filename = outfile, one_col = FALSE)
   }
 )
 
 
-
-
-
-
-
-
-### compare observed with predicted
-p <- ggplot(unweighted_qntls, aes(deaths, `50%`)) +
-  geom_bin2d(binwidth = 0.1) +
-  ## geom_abline(
-  ##   slope = 1,
-  ##   intercept = c(0, -0.30, 0.17),
-  ##   linetype = "dashed",
-  ##   col = "red"
-  ## ) +
-  scale_y_log10() +
-  scale_x_log10() +
-  scale_fill_continuous(low="lavenderblush", high="red") +
-  xlab("(log) Observed deaths") +
-  ylab("(log) Median predicted deaths") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  coord_cartesian(clip = 'off') +
-  theme(
-    strip.text = element_blank(),
-    axis.text = element_text(size = 14),
-    axis.title = element_text(size = 14)
-  )
-
-
-
-plow <- ggplot(unweighted_qntls, aes(deaths, `25%`)) +
-  geom_bin2d(binwidth = 0.1) +
-  ## geom_abline(
-  ##   slope = 1,
-  ##   intercept = c(0, -0.30, 0.17),
-  ##   linetype = "dashed",
-  ##   col = "red"
-  ## ) +
-  scale_y_log10() +
-  scale_x_log10() +
-  xlab("(log) Observed Deaths") +
-  ylab("(log) Median predicted Deaths") +
-  scale_fill_continuous(low="lavenderblush", high="red") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  coord_cartesian(clip = 'off') +
-  theme(
-    strip.text = element_blank(),
-    axis.text = element_text(size = 14),
-    axis.title = element_text(size = 14)
-  )
-
-
-phigh <- ggplot(unweighted_qntls, aes(deaths, `75%`)) +
-  geom_bin2d(binwidth = 0.1) +
-  ## geom_abline(
-  ##   slope = 1,
-  ##   intercept = c(0, -0.30, 0.17),
-  ##   linetype = "dashed",
-  ##   col = "red"
-  ## ) +
-  scale_y_log10() +
-  scale_x_log10() +
-  xlab("(log) Observed Deaths") +
-  ylab("(log) Median predicted Deaths") +
-  scale_fill_continuous(low="lavenderblush", high="red") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  coord_cartesian(clip = 'off') +
-  theme(
-    strip.text = element_blank(),
-    axis.text = element_text(size = 14),
-    axis.title = element_text(size = 14)
-  )
-
-
-
-ggsave("obs_vs_pred.png", p)
-ggsave("obs_vs_pred_25.png", plow)
-ggsave("obs_vs_pred_75.png", phigh)
+## For SI, png is fine.
+## infiles <- list.files(pattern = "*.tiff")
+## walk(
+##   infiles,
+##   function(infile) {
+##     img <- magick::image_read(infile)
+##     outfile <- stringr::str_replace(infile, "tiff", "png")
+##     magick::image_write(img, path = outfile, format = "png")
+##   }
+## )
