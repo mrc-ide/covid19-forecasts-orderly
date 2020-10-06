@@ -1,13 +1,6 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 dir.create("figures")
 
-alternating_palette <- function(weeks, col1 = "#3d2115", col2 = "#8e4d31") {
-
-  palette <- rep(c(col1, col2), 2 * length(weeks))
-  palette <- setNames(palette[1:length(weeks)], weeks)
-  palette
-
-}
 
 ## ggforce::facet_wrap_paginate fails on R 4.0 when the plot
 ## has less than nrow * ncol facets. Hence having to write my own
