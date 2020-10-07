@@ -3,7 +3,7 @@ artefacts:
   data:
     description: Forecasts collated
     filenames:
-    - Brazil_forecasts.png
+    - 2col_Belgium_forecasts.tiff
 parameters:
 - use_si
 - latest_week
@@ -27,6 +27,10 @@ depends:
       unweighted_qntls.rds: unweighted_qntls.rds
       unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-09-27")
+    id: latest(parameter:week_ending == latest_week)
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
+- produce_baseline_error:
+    id: latest(parameter:week_ending == latest_week)
+    use:
+      exclude.rds: exclude.rds

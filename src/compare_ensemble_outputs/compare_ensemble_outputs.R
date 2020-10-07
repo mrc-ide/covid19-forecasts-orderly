@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(use_si = "si_2", latest_week = "2020-09-27"), use_draft = "newer")
 ### This task produces the following visualtions:
 ### comparison of unweighted and weighted ensembles for each country
 ### all forecasts from unweighted ensemble
@@ -6,7 +6,7 @@
 ### last week
 ### all forecasts from weighted ensemble with weights coming from
 ###all previous weeks
-file_format <- ".png"
+file_format <- ".tiff"
 
 main_text_countries <- c(
   "Brazil", "India", "Italy", "South_Africa", "United_States_of_America"
@@ -56,7 +56,8 @@ countries <- setNames(
 ## countries <- list(main = main_text_countries)
 ## countries <- append(x = countries, values = unlist(si_countries))
 countries$Czech_Republic <- "Czechia"
-
+exclude <- readRDS("exclude.rds")
+countries <- countries[!countries %in% exclude]
 ######################################################################
 ############## Rt ####################################################
 ######################################################################
@@ -104,121 +105,61 @@ purrr::iwalk(
     p1 <- all_forecasts(obs, pred)
     p1 <- p1 +
       scale_x_continuous(
-        breaks = seq(0, xmax, 7), limits = c(0, xmax), minor_breaks = NULL
+        breaks = seq(0, xmax, 7),
+        limits = c(0, xmax),
+        minor_breaks = NULL
     )
 
     ## Remove x-axis ticks to have them on the bottom panel only
     p1 <- p1 +
       ylab("Daily Deaths") +
+      theme_manuscript() +
       theme(
-        strip.text = element_text(size = 20),
-        axis.text.y = element_text(size = 14),
+        strip.text = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
         axis.text.x = element_blank(),
-        axis.title = element_text(size = 14)
-   )
+        axis.title = element_text(size = 12),
+        axis.title.y = element_text(angle = 90),
+        legend.position = "none"
+      )
 
     p2 <- all_restimates_line(out) +
+      ylab("Effective Reproduction Number") +
       xlab("Days since 100 deaths")
 
     p2 <- p2 +
       scale_x_continuous(
-        breaks = seq(0, xmax, 7), limits = c(0, xmax), minor_breaks = NULL
+        breaks = seq(0, xmax, 14),
+        limits = c(0, xmax),
+        minor_breaks = NULL
       )
 
     p2 <- p2 +
+      theme_manuscript() +
       theme(
         strip.text = element_blank(),
-        axis.text = element_text(size = 14),
-        axis.title = element_text(size = 14)
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12, angle = 90, hjust = 1),
+        axis.title.y = element_text(angle = 90),
+        axis.title.x = element_text(angle = 0, hjust = 0.5)
       )
 
     p <- cowplot::plot_grid(
-      p1, p2, align  = "hv", rel_heights = c(1, 0.7), ncol = 1
+      p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
     )
     outfile <- glue::glue("{name}_forecasts{file_format}")
-    ggsave(outfile, p)
+    save_multiple(plot = p, filename = outfile, one_col = FALSE)
   }
 )
 
 
-
-
-
-
-
-
-### compare observed with predicted
-p <- ggplot(unweighted_qntls, aes(deaths, `50%`)) +
-  geom_bin2d(binwidth = 0.1) +
-  ## geom_abline(
-  ##   slope = 1,
-  ##   intercept = c(0, -0.30, 0.17),
-  ##   linetype = "dashed",
-  ##   col = "red"
-  ## ) +
-  scale_y_log10() +
-  scale_x_log10() +
-  scale_fill_continuous(low="lavenderblush", high="red") +
-  xlab("(log) Observed deaths") +
-  ylab("(log) Median predicted deaths") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  coord_cartesian(clip = 'off') +
-  theme(
-    strip.text = element_blank(),
-    axis.text = element_text(size = 14),
-    axis.title = element_text(size = 14)
-  )
-
-
-
-plow <- ggplot(unweighted_qntls, aes(deaths, `25%`)) +
-  geom_bin2d(binwidth = 0.1) +
-  ## geom_abline(
-  ##   slope = 1,
-  ##   intercept = c(0, -0.30, 0.17),
-  ##   linetype = "dashed",
-  ##   col = "red"
-  ## ) +
-  scale_y_log10() +
-  scale_x_log10() +
-  xlab("(log) Observed Deaths") +
-  ylab("(log) Median predicted Deaths") +
-  scale_fill_continuous(low="lavenderblush", high="red") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  coord_cartesian(clip = 'off') +
-  theme(
-    strip.text = element_blank(),
-    axis.text = element_text(size = 14),
-    axis.title = element_text(size = 14)
-  )
-
-
-phigh <- ggplot(unweighted_qntls, aes(deaths, `75%`)) +
-  geom_bin2d(binwidth = 0.1) +
-  ## geom_abline(
-  ##   slope = 1,
-  ##   intercept = c(0, -0.30, 0.17),
-  ##   linetype = "dashed",
-  ##   col = "red"
-  ## ) +
-  scale_y_log10() +
-  scale_x_log10() +
-  xlab("(log) Observed Deaths") +
-  ylab("(log) Median predicted Deaths") +
-  scale_fill_continuous(low="lavenderblush", high="red") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  coord_cartesian(clip = 'off') +
-  theme(
-    strip.text = element_blank(),
-    axis.text = element_text(size = 14),
-    axis.title = element_text(size = 14)
-  )
-
-
-
-ggsave("obs_vs_pred.png", p)
-ggsave("obs_vs_pred_25.png", plow)
-ggsave("obs_vs_pred_75.png", phigh)
+## For SI, png is fine.
+## infiles <- list.files(pattern = "*.tiff")
+## walk(
+##   infiles,
+##   function(infile) {
+##     img <- magick::image_read(infile)
+##     outfile <- stringr::str_replace(infile, "tiff", "png")
+##     magick::image_write(img, path = outfile, format = "png")
+##   }
+## )

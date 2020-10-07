@@ -34,3 +34,8 @@ depends:
       id: latest
       use:
          si_distrs.rds: si_distrs.rds
+  - produce_baseline_error:
+      id: latest(parameter:week_ending == "2020-09-27")
+      use:
+         exclude.rds: exclude.rds
+         
