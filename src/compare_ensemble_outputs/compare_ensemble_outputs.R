@@ -129,7 +129,9 @@ purrr::iwalk(
 
     p2 <- p2 +
       scale_x_continuous(
-        breaks = seq(0, xmax, 7), limits = c(0, xmax), minor_breaks = NULL
+        breaks = seq(0, xmax, 14),
+        limits = c(0, xmax),
+        minor_breaks = NULL
       )
 
     p2 <- p2 +
@@ -139,7 +141,7 @@ purrr::iwalk(
         axis.text = element_text(size = 12),
         axis.title = element_text(size = 12, angle = 90, hjust = 1),
         axis.title.y = element_text(angle = 90),
-        axis.title.x = element_text(angle = 0)
+        axis.title.x = element_text(angle = 0, hjust = 0.5)
       )
 
     p <- cowplot::plot_grid(

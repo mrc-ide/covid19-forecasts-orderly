@@ -123,7 +123,7 @@ collation_workflow <- function(weeks, use_draft = "newer", commit = FALSE) {
     "orderly-helper-scripts/dependencies_collate_weighted_perf.R"
   )
   m1 <- orderly_run(
-    "collate_weighted_performance_metrics/", use_draft = use_draft
+    "collate_weighted_performance_metrics", use_draft = use_draft
   )
   if (commit) orderly_commit(m1)
 
@@ -137,12 +137,12 @@ post_collation_workflow <- function(latest_week, use_draft = "newer", commit = F
     parameters = list(use_si = "si_2")
   )
   if (commit) orderly_commit(a)
-  x <- collated_outputs_viz(latest_week)
-  con <- file(
-    here::here("src/compare_ensemble_outputs/orderly.yml"), "w"
-  )
-  yaml::write_yaml(x, con)
-  close(con)
+  ## x <- collated_outputs_viz(latest_week)
+  ## con <- file(
+  ##   here::here("src/compare_ensemble_outputs/orderly.yml"), "w"
+  ## )
+  ## yaml::write_yaml(x, con)
+  ## close(con)
 
   a <- orderly_run(
     "compare_ensemble_outputs",

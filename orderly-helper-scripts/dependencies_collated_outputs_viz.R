@@ -31,6 +31,14 @@ collated_outputs_viz <- function(latest_week) {
           "model_input.rds" = "latest_deaths_wide_no_filter.rds"
         )
       )
+    ),
+    list(
+      produce_baseline_error = list(
+        id = glue("latest(parameter:week_ending == \"2020-09-27\")"),
+        use = list(
+          "exclude.rds" = "exclude.rds"
+        )
+      )
     )
   )
 
