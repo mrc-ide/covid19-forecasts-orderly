@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = "newer", parameters = list(use_si = "si_2", latest_week = "2020-09-27"))
+## use_draft = "newer", parameters = list(use_si = "si_2"))
 null_error <- readRDS("null_model_error.rds")
 linear_error <- readRDS("linear_model_error.rds")
 weekly_incidence <- readRDS("weekly_incidence.rds")
