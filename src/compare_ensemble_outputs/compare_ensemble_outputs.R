@@ -105,7 +105,7 @@ purrr::iwalk(
     p1 <- all_forecasts(obs, pred)
     p1 <- p1 +
       scale_x_continuous(
-        breaks = seq(0, xmax, 7),
+        breaks = seq(0, xmax, 14),
         limits = c(0, xmax),
         minor_breaks = NULL
     )
