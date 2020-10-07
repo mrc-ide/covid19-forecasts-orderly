@@ -3,19 +3,13 @@
 basic_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   parameter <- list(week_ending = week)
   message("Preparing data for week ", week)
-  m1 <- orderly_run(
-    "prepare_ecdc_data",
-    parameters = parameter
-  )
+  m1 <- orderly_run("prepare_ecdc_data", parameters = parameter)
   if (commit) orderly_commit(m1)
 
   message("Running Model 1, this will take long.")
-  parameter <- list(
-    week_ending = week, short_run = FALSE
-  )
+  parameter <- list(week_ending = week, short_run = FALSE)
   m1 <- orderly_run(
-    "run_rti0",
-    parameters = parameter, use_draft = use_draft
+    "run_rti0", parameters = parameter, use_draft = use_draft
   )
   if (commit) orderly_commit(m1)
 
@@ -94,12 +88,12 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   )
   if (commit) orderly_commit(a)
 
-  ## a <- orderly_run(
-  ##   "produce_visualisations/",
-  ##   parameters = list(week_ending_vis = week),
-  ##   use_draft = use_draft
-  ## )
-  ## if (commit) orderly_commit(a)
+  a <- orderly_run(
+    "produce_visualisations/",
+    parameters = list(week_ending = week),
+    use_draft = use_draft
+  )
+  if (commit) orderly_commit(a)
 
   a <- orderly_run(
     "produce_full_report",

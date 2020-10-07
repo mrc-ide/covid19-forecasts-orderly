@@ -296,6 +296,13 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-14"] <- 16
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-13"] <- 13
 
+## Source: https://www.lanacion.com.ar/sociedad/coronavirus-buenos-aires-cargo-casi-3200-muertos-nid2466920
+## Argentina added 2997 deaths to its total
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2020-10-03"] <- 354
+
+
+
+
 raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   map_dfr(
     function(df) {
