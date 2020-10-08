@@ -60,14 +60,26 @@ data_prep <- function(pred_err_df, null_err_df) {
 }
 
 compare_with_baseline <- function(df) {
-  xmax <- max(as.numeric(df$forecast_date)) + 1
+
+  x <- data.frame(
+    forecast_date = unique(df$forecast_date)
+  )
+  x$x <- seq(from = 1, by = 2, length.out = nrow(x))
+
+  df <- left_join(df, x)
+
+  df$x_labels <- strftime(
+    as.Date(df$forecast_date), format = "%d-%b"
+  )
+
+  xmax <- max(as.numeric(df$x)) + 1.5
+
   p1 <- ggplot() +
-    theme_classic() +
-    geom_tile(
+    geom_label(
       data = df[df$ratio <= 1, ],
-      aes(forecast_date, country, fill = ratio),
-      width = 0.9,
-      height = 0.8
+      aes(x, country, label = error_values, fill = ratio),
+      size = 1.5, label.padding = unit(0.05, "line"),
+      label.r = unit(0.01, "lines"), parse = TRUE
     ) +
     scale_fill_distiller(
       palette = "Greens", na.value = "white", direction = -1,
@@ -79,11 +91,11 @@ compare_with_baseline <- function(df) {
       )
     ) +
     ggnewscale::new_scale_fill() +
-    geom_tile(
+    geom_label(
       data = df[df$ratio > 1 & df$ratio <= 5, ],
-      aes(forecast_date, country, fill = ratio),
-      width = 0.9,
-      height = 0.8
+      aes(x, country, label = error_values, fill = ratio),
+      size = 1.5, label.padding = unit(0.05, "line"),
+      label.r = unit(0.01, "lines"), parse = TRUE
     ) +
     scale_fill_distiller(
       palette = "YlOrRd", na.value = "white", direction = 1,
@@ -95,28 +107,12 @@ compare_with_baseline <- function(df) {
       )
     ) +
     ggnewscale::new_scale_fill() +
-    geom_tile(
+    geom_label(
       data = df[df$ratio > 5, ],
-      aes(forecast_date, country),
+      aes(x, country, label = error_values),
       fill = "#515bdc",
-      width = 0.9,
-      height = 0.8
-    ) +
-    xlab("") +
-    ylab("") +
-    theme(
-      axis.text.x = element_text(angle = 90, hjust = 0.5),
-      legend.position = "top",
-      legend.title = element_text(size = 8),
-##      legend.title.align = 0.5,
-      legend.key.width = unit(2, "lines"),
-      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt")
-    ) +
-    geom_text(
-      data = df,
-      aes(x = forecast_date, y = country, label = error_values),
-      size = 1.5,
-      fontface = "bold"
+      size = 1.5, label.padding = unit(0.05, "line"),
+      label.r = unit(0.01, "lines"), parse = TRUE
     ) +
     geom_text(
       data = df,
@@ -124,9 +120,23 @@ compare_with_baseline <- function(df) {
       size = 2,
       fontface = "bold"
     ) +
+    scale_x_discrete(
+      breaks = unique(df$x),
+      labels = unique(df$x_labels)
+    ) +
     scale_y_discrete(
       limits = rev(levels(df$country)),
       labels = snakecase::to_title_case(rev(levels(df$country)))
+    ) +
+    xlab("") +
+    ylab("") +
+    theme_classic() +
+    theme(
+      axis.text.x = element_text(angle = 90, hjust = 0.5),
+      legend.position = "top",
+      legend.title = element_text(size = 8),
+      legend.key.width = unit(2, "lines"),
+      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt")
     ) +
     coord_cartesian(clip = "off")
   p1

@@ -40,11 +40,14 @@ better_than_null <- out[["better_than_null"]]
 
 saveRDS(better_than_null, "better_than_null.rds")
 
-more_forecasts <- null_compare[null_compare$n_forecasts >= 15, ]
+## This is so that we have as many countries as weeks to make a neat
+## square plot
+main_countries <- better_than_null$country[1:25]
+more_forecasts <- null_compare[null_compare$country %in% main_countries, ]
 more_forecasts$country <- droplevels(more_forecasts$country)
 
 
-less_forecasts <- null_compare[null_compare$n_forecasts < 15 & null_compare$n_forecasts > 3, ]
+less_forecasts <- null_compare[null_compare$n_forecasts < cutoff & null_compare$n_forecasts > 3, ]
 less_forecasts$country <- droplevels(less_forecasts$country)
 
 ######################################################################
@@ -56,14 +59,8 @@ less_forecasts$country <- droplevels(less_forecasts$country)
 
 
 p1 <- compare_with_baseline(more_forecasts)
-ggsave(
-  filename = "comparison_with_baseline_error.tiff",
-  plot = p1,
-  ##device = agg_tiff,
-  width = 8,
-  height = 7.5,
-  units = "in"
-  #scaling = 1.3
+rincewind::save_multiple(
+  filename = "comparison_with_baseline_error.tiff", plot = p1
 )
 
 ######################################################################
@@ -75,6 +72,7 @@ ggsave(
 ######################################################################
 ######################################################################
 ######################################################################
+
 p2 <- compare_with_baseline(less_forecasts)
 
 ggsave(
@@ -130,11 +128,11 @@ better_than_null <- out[["better_than_null"]]
 
 saveRDS(better_than_null, "better_than_linear.rds")
 
-more_forecasts <- null_compare[null_compare$n_forecasts >= 15, ]
+more_forecasts <- null_compare[null_compare$n_forecasts >= cutoff, ]
 more_forecasts$country <- droplevels(more_forecasts$country)
 
 
-less_forecasts <- null_compare[null_compare$n_forecasts < 15 & null_compare$n_forecasts > 3, ]
+less_forecasts <- null_compare[null_compare$n_forecasts < cutoff & null_compare$n_forecasts > 3, ]
 less_forecasts$country <- droplevels(less_forecasts$country)
 
 ######################################################################
