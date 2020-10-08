@@ -62,24 +62,26 @@ data_prep <- function(pred_err_df, null_err_df) {
 ## so that they can be forced further apart
 augment_data <- function(df, width = 1.5) {
 
-  x <- data.frame(
-    forecast_date = unique(df$forecast_date)
-  )
+  x <- data.frame(forecast_date = unique(df$forecast_date))
   x$x <- seq(from = 1, by = width, length.out = nrow(x))
-  x$x_labels <- strftime(
+  x_labels <- strftime(
     as.Date(x$forecast_date), format = "%d-%b"
   )
-
+  x_labels <- setNames(x_labels, x$x)
 
   y <- data.frame(country = rev(levels(df$country)))
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
-  y$y_labels <- as.character(y$country) %>%
+  y_labels <- as.character(y$country) %>%
     snakecase::to_title_case()
+  y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
 
-  df
+  list(
+    df = df, x_labels = x_labels, y_labels = y_labels
+  )
+
 }
 
 compare_with_baseline <- function(df) {
@@ -138,18 +140,9 @@ compare_with_baseline <- function(df) {
       fontface = "bold", fill = NA, label.color = NA, # remove background and outline
       label.padding = grid::unit(rep(0, 4), "pt") # remove padding
     ) +
-    scale_y_discrete(
-      ##limits = rev(levels(df$country)),
-      breaks = unique(df$y),
-      labels = unique(df$y_labels)
-    ) +
-    scale_x_discrete(
-      breaks = unique(df$x),
-      labels = unique(df$x_labels)
-    ) +
+    theme_minimal() +
     xlab("") +
     ylab("") +
-    theme_void() +
     theme(
       axis.text.x = element_text(angle = 90, hjust = 0.5),
       legend.position = "top",

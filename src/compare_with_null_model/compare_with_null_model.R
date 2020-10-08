@@ -47,7 +47,7 @@ more_forecasts <- null_compare[null_compare$country %in% main_countries, ]
 more_forecasts$country <- droplevels(more_forecasts$country)
 
 
-less_forecasts <- null_compare[null_compare$n_forecasts < cutoff & null_compare$n_forecasts > 3, ]
+less_forecasts <- null_compare[!null_compare$country %in% main_countries, ]
 less_forecasts$country <- droplevels(less_forecasts$country)
 
 ######################################################################
@@ -56,11 +56,27 @@ less_forecasts$country <- droplevels(less_forecasts$country)
 ############### 15 or more forecasts
 ######################################################################
 ######################################################################
-more_forecasts <- augment_data(more_forecasts)
+out <- augment_data(more_forecasts)
 
-p1 <- compare_with_baseline(more_forecasts)
+
+p1 <- compare_with_baseline(out[["df"]])
+
+p2 <- p1 +
+  theme(axis.line = element_blank()) +
+  scale_y_continuous(
+    breaks = unique(out[["df"]]$y),
+    labels = out[["y_labels"]],
+    minor_breaks = NULL
+  ) +
+  scale_x_continuous(
+    breaks = unique(out[["df"]]$x),
+    labels = out[["x_labels"]],
+    minor_breaks = NULL
+  )
+
+
 rincewind::save_multiple(
-  filename = "comparison_with_baseline_error.tiff", plot = p1
+  filename = "comparison_with_baseline_error.tiff", plot = p2
 )
 
 ######################################################################
