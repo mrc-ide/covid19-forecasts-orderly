@@ -175,5 +175,5 @@ p1 <- compare_with_baseline(
 )
 
 rincewind::save_multiple(
-  filename = "si_comparison_with_linear_error.tiff", plot = p2
+  filename = "si_comparison_with_linear_error.tiff", plot = p1
 )
