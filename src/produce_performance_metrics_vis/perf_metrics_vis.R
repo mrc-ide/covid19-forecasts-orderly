@@ -108,7 +108,7 @@ more_forecasts <- weekly_summary(more_forecasts)
 less_forecasts <- weekly_summary(less_forecasts)
 overall <- weekly_summary(unwtd_pred_error)
 
-readr::write_csv(unwtd_pred_error, "unwtd_pred_weekly_summary.csv")
+readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
@@ -119,27 +119,24 @@ y <- rename(less_forecasts, "prop_in_CrI" = "prop_in_50_mu")
 p1 <- prop_in_cri_heatmap(x)
 p2 <- prop_in_cri_heatmap(y)
 
-ggsave(
-  filename = "main_proportion_in_50_CrI.tiff",
-  plot = p1,
-  width = 7,
-  height = 7,
-  unit = "in",
-  dpi = 300,
-  compression = "lzw"
+rincewind::save_multiple(
+  plot = p1, filename = "main_proportion_in_50_CrI.tiff", two_col = FALSE
 )
 
-ggsave(
-  filename = "si_proportion_in_50_CrI.tiff",
-  plot = p2,
-  width = 7,
-  height = 7,
-  unit = "in",
-  dpi = 300,
-  compression = "lzw"
+rincewind::save_multiple(
+  plot = p2, filename = "si_proportion_in_50_CrI.tiff", two_col = FALSE
 )
 
-
+#### Overall metrics
+## > mean(unwtd_pred_error$prop_in_50)
+## [1] 0.580651
+## > sd(unwtd_pred_error$prop_in_50)
+## [1] 0.3271525
+## > mean(unwtd_pred_error$prop_in_975)
+## [1] 0.885443
+## > sd(unwtd_pred_error$prop_in_975)
+## [1] 0.2259728
+####
 ######################################################################
 ################## Proportion in 95% CrI by country ##################
 ######################################################################
@@ -179,24 +176,16 @@ less_forecasts$cell_label <- glue(
 
 p2 <- prop_in_cri_heatmap(y, CrI = "95%")
 
-ggsave(
+rincewind::save_multiple(
   filename = "main_proportion_in_95_CrI.tiff",
   plot = p1,
-  width = 7,
-  height = 7,
-  unit = "in",
-  dpi = 300,
-  compression = "lzw"
+  two_col = FALSE
 )
 
-ggsave(
+rincewind::save_multiple(
   filename = "si_proportion_in_95_CrI.tiff",
   plot = p2,
-  width = 7,
-  height = 7,
-  unit = "in",
-  dpi = 300,
-  compression = "lzw"
+  two_col = FALSE
 )
 
 
@@ -285,9 +274,9 @@ pdensity <- ggplot() +
     limits = c(0, 1),
     name = "Proportion in bin"
   ) +
-  theme_minimal() +
   xlab("Observed daily deaths") +
   ylab("Median predictied daily deaths") +
+  theme_minimal() +
   theme(
     legend.position = "top",
     legend.title = element_text(size = 6),
@@ -365,22 +354,13 @@ less_forecasts$cell_label <- glue(
 
 p2 <- relative_error_heatmap(less_forecasts)
 
-ggsave(
-  filename = "main_relative_error_heatmap.tiff",
-  plot = p1,
-  width = 7,
-  height = 5.2,
-  unit = "in",
-  compression = "lzw"
+rincewind::save_multiple(
+  filename = "main_relative_error_heatmap.tiff", plot = p1
 )
 
-ggsave(
+rincewind::save_multiple(
   filename = "si_relative_error_heatmap.tiff",
-  plot = p2,
-  width = 7,
-  height = 5.2,
-  unit = "in",
-  compression = "lzw"
+  plot = p2
 )
 
 ######################################################################
@@ -424,7 +404,7 @@ pcv_all <- ggplot(
     breaks = breaks, labels = labels, limits = c(NA, 100)
   ) +
   theme_minimal() +
-  xlab("(log) Coefficient of variation of incidence)") +
+  xlab("(log) Coefficient of variation of incidence") +
   ylab("(log) Relative mean error") +
   theme(
     legend.position = "top",
@@ -481,4 +461,11 @@ p2 <- ggplot(overall) +
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0)
   )
 
-ggsave("relative_error_by_.png", p2)
+ggsave("relative_error_overall.png", p2)
+
+
+## mean(overall$rel_mae_mu[is.finite(overall$rel_mae_mu)])
+## [1] 0.4768033
+## > sd(overall$rel_mae_mu[is.finite(overall$rel_mae_mu)])
+## [1] 0.4363448
+

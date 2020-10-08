@@ -4,17 +4,7 @@ artefacts:
   data:
     description: Model performance metrics
     filenames:
-      - main_proportion_in_50_CrI.tiff
-      - si_proportion_in_50_CrI.tiff
-      - main_proportion_in_95_CrI.tiff
-      - si_proportion_in_95_CrI.tiff
-      - obs_predicted_2d_density.tiff
-      - main_relative_error_heatmap.tiff
-      - si_relative_error_heatmap.tiff
-      - rmae_vs_weekly_incid_all_countries.png
-      - rmae_vs_weekly_cv_all_countries.png
-      - relative_error_by_country.png
-      - relative_error_by_.png
+      - 2col_si_relative_error_heatmap.tiff
   
 packages:
   - dplyr
@@ -27,6 +17,7 @@ packages:
   - patchwork
   - ggnewscale
   - purrr
+  - rincewind
 
 ## use_si should be one of si_1 or si_2
 parameters:

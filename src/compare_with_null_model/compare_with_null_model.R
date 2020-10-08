@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(
-## use_draft = "newer", parameters = list(use_si = "si_2", latest_week = "2020-09-27"))
+## use_draft = "newer", parameters = list(use_si = "si_2"))
 null_error <- readRDS("null_model_error.rds")
 linear_error <- readRDS("linear_model_error.rds")
 weekly_incidence <- readRDS("weekly_incidence.rds")
@@ -40,11 +40,14 @@ better_than_null <- out[["better_than_null"]]
 
 saveRDS(better_than_null, "better_than_null.rds")
 
-more_forecasts <- null_compare[null_compare$n_forecasts >= 15, ]
+## This is so that we have as many countries as weeks to make a neat
+## square plot
+main_countries <- better_than_null$country[1:25]
+more_forecasts <- null_compare[null_compare$country %in% main_countries, ]
 more_forecasts$country <- droplevels(more_forecasts$country)
 
 
-less_forecasts <- null_compare[null_compare$n_forecasts < 15 & null_compare$n_forecasts > 3, ]
+less_forecasts <- null_compare[!null_compare$country %in% main_countries, ]
 less_forecasts$country <- droplevels(less_forecasts$country)
 
 ######################################################################
@@ -53,17 +56,16 @@ less_forecasts$country <- droplevels(less_forecasts$country)
 ############### 15 or more forecasts
 ######################################################################
 ######################################################################
+out <- augment_data(more_forecasts)
 
 
-p1 <- compare_with_baseline(more_forecasts)
-ggsave(
+p1 <- compare_with_baseline(
+  out[["df"]], out[["x_labels"]], out[["y_labels"]]
+)
+
+rincewind::save_multiple(
   filename = "comparison_with_baseline_error.tiff",
-  plot = p1,
-  ##device = agg_tiff,
-  width = 8,
-  height = 7.5,
-  units = "in"
-  #scaling = 1.3
+  plot = p1, one_col = FALSE
 )
 
 ######################################################################
@@ -75,14 +77,15 @@ ggsave(
 ######################################################################
 ######################################################################
 ######################################################################
-p2 <- compare_with_baseline(less_forecasts)
+out <- augment_data(less_forecasts)
 
-ggsave(
-  filename = "si_comparison_with_baseline_error.tiff",
-  plot = p2,
-  width = 8,
-  height = 7.5,
-  units = "in"
+
+p1 <- compare_with_baseline(
+  out[["df"]], out[["x_labels"]], out[["y_labels"]]
+)
+
+rincewind::save_multiple(
+  filename = "si_comparison_with_baseline_error.tiff", plot = p1
 )
 
 ######################################################################
@@ -130,11 +133,11 @@ better_than_null <- out[["better_than_null"]]
 
 saveRDS(better_than_null, "better_than_linear.rds")
 
-more_forecasts <- null_compare[null_compare$n_forecasts >= 15, ]
+more_forecasts <- null_compare[null_compare$country %in% main_countries, ]
 more_forecasts$country <- droplevels(more_forecasts$country)
 
 
-less_forecasts <- null_compare[null_compare$n_forecasts < 15 & null_compare$n_forecasts > 3, ]
+less_forecasts <- null_compare[!null_compare$country %in% main_countries, ]
 less_forecasts$country <- droplevels(less_forecasts$country)
 
 ######################################################################
@@ -144,16 +147,15 @@ less_forecasts$country <- droplevels(less_forecasts$country)
 ######################################################################
 ######################################################################
 
+out <- augment_data(more_forecasts)
 
-p1 <- compare_with_baseline(more_forecasts)
-ggsave(
-  filename = "comparison_with_linear_error.tiff",
-  plot = p1,
-  ##device = agg_tiff,
-  width = 8,
-  height = 7.5,
-  units = "in"
-  #scaling = 1.3
+
+p1 <- compare_with_baseline(
+  out[["df"]], out[["x_labels"]], out[["y_labels"]]
+)
+
+rincewind::save_multiple(
+  filename = "comparison_with_linear_error.tiff", plot = p1
 )
 
 ######################################################################
@@ -165,12 +167,13 @@ ggsave(
 ######################################################################
 ######################################################################
 ######################################################################
-p2 <- compare_with_baseline(less_forecasts)
+out <- augment_data(less_forecasts)
 
-ggsave(
-  filename = "si_comparison_with_linear_error.tiff",
-  plot = p2,
-  width = 8,
-  height = 7.5,
-  units = "in"
+
+p1 <- compare_with_baseline(
+  out[["df"]], out[["x_labels"]], out[["y_labels"]]
+)
+
+rincewind::save_multiple(
+  filename = "si_comparison_with_linear_error.tiff", plot = p1
 )

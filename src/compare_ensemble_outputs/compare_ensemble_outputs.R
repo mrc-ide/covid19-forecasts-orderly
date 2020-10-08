@@ -105,7 +105,7 @@ purrr::iwalk(
     p1 <- all_forecasts(obs, pred)
     p1 <- p1 +
       scale_x_continuous(
-        breaks = seq(0, xmax, 7),
+        breaks = seq(0, xmax, 14),
         limits = c(0, xmax),
         minor_breaks = NULL
     )
@@ -115,11 +115,11 @@ purrr::iwalk(
       ylab("Daily Deaths") +
       theme_manuscript() +
       theme(
-        strip.text = element_text(size = 12),
-        axis.text.y = element_text(size = 12),
+        strip.text = element_text(size = 8),
+        axis.text.y = element_text(size = 8),
         axis.text.x = element_blank(),
-        axis.title = element_text(size = 12),
-        axis.title.y = element_text(angle = 90),
+        axis.title.x = element_text(size = 8),
+        axis.title.y = element_text(size = 8, angle = 90),
         legend.position = "none"
       )
 
@@ -138,10 +138,9 @@ purrr::iwalk(
       theme_manuscript() +
       theme(
         strip.text = element_blank(),
-        axis.text = element_text(size = 12),
-        axis.title = element_text(size = 12, angle = 90, hjust = 1),
-        axis.title.y = element_text(angle = 90),
-        axis.title.x = element_text(angle = 0, hjust = 0.5)
+        axis.text = element_text(size = 8),
+        axis.title.y = element_text(size = 8, angle = 90),
+        axis.title.x = element_text(size = 8, angle = 0, hjust = 0.5)
       )
 
     p <- cowplot::plot_grid(

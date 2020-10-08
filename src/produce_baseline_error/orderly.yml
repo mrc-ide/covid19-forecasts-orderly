@@ -1,7 +1,9 @@
 script: script.R
+## latest_week is the latest week for which we have observations
+## you can assess performance up to the week before the latest week
 parameters:
   - week_starting
-  - week_ending
+  - latest_week
 artefacts:
   data:
     description: Null Model performance metrics
@@ -21,6 +23,6 @@ packages:
 - rstanarm
 depends:
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == week_ending)
+    id: latest(parameter:week_ending == latest_week)
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds

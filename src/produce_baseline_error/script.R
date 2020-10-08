@@ -1,9 +1,9 @@
-##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-09-07", week_starting = "2020-03-08"))
+##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-09-27", week_starting = "2020-03-08"))
 dir.create("figures")
 weekly_cv <- function(vec) sd(vec) / mean(vec)
 
 week_starting <- as.Date(week_starting)
-week_ending <- as.Date(week_ending)
+week_ending <- as.Date(latest_week)
 
 weeks <- seq(from = week_starting, to = week_ending, by = "7 days")
 

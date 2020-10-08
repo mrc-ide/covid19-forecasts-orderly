@@ -46,7 +46,7 @@ data_prep <- function(pred_err_df, null_err_df) {
   weekly_compare$weekly_null_err <- signif(weekly_compare$weekly_null_err, 2)
 
   weekly_compare$error_values <- glue(
-    "{weekly_compare$weekly_rel_err}/{weekly_compare$weekly_null_err}"
+    "{weekly_compare$weekly_rel_err}<br>{weekly_compare$weekly_null_err}"
   )
 
   weekly_compare$percent_less_than_1 <-
@@ -56,18 +56,45 @@ data_prep <- function(pred_err_df, null_err_df) {
     weekly_compare = weekly_compare,
     better_than_null = better_than_null
   )
+}
+
+## Assign x and y levels to forecast weeks and countries respectively
+## so that they can be forced further apart
+augment_data <- function(df, width = 1.5) {
+
+  x <- data.frame(forecast_date = unique(df$forecast_date))
+  x$x <- seq(from = 1, by = width, length.out = nrow(x))
+  x_labels <- strftime(
+    as.Date(x$forecast_date), format = "%d-%b"
+  )
+  x_labels <- setNames(x_labels, x$x)
+
+  y <- data.frame(country = rev(levels(df$country)))
+  y$y <- seq(from = 1, by = width, length.out = nrow(y))
+
+  y_labels <- as.character(y$country) %>%
+    snakecase::to_title_case()
+  y_labels <- setNames(y_labels, y$y)
+
+  df <- left_join(df, x) %>% left_join(y)
+
+  list(
+    df = df, x_labels = x_labels, y_labels = y_labels
+  )
 
 }
 
-compare_with_baseline <- function(df) {
-  xmax <- max(as.numeric(df$forecast_date)) + 1
+compare_with_baseline <- function(df, x_labels, y_labels) {
+
+
+  xmax <- max(as.numeric(df$x)) + 2
+
   p1 <- ggplot() +
-    theme_classic() +
     geom_tile(
       data = df[df$ratio <= 1, ],
-      aes(forecast_date, country, fill = ratio),
-      width = 0.9,
-      height = 0.8
+      aes(x = x, y = y, fill = ratio),
+      width = 1.4,
+      height = 1.2
     ) +
     scale_fill_distiller(
       palette = "Greens", na.value = "white", direction = -1,
@@ -81,9 +108,9 @@ compare_with_baseline <- function(df) {
     ggnewscale::new_scale_fill() +
     geom_tile(
       data = df[df$ratio > 1 & df$ratio <= 5, ],
-      aes(forecast_date, country, fill = ratio),
-      width = 0.9,
-      height = 0.8
+      aes(x, y, fill = ratio),
+      width = 1.4,
+      height = 1.2
     ) +
     scale_fill_distiller(
       palette = "YlOrRd", na.value = "white", direction = 1,
@@ -97,38 +124,46 @@ compare_with_baseline <- function(df) {
     ggnewscale::new_scale_fill() +
     geom_tile(
       data = df[df$ratio > 5, ],
-      aes(forecast_date, country),
+      aes(x, y),
       fill = "#515bdc",
-      width = 0.9,
-      height = 0.8
+      width = 1.4,
+      height = 1.2
     ) +
+    geom_richtext(
+      data = df, aes(x = x, y = y, label = error_values), size = 1.7,
+      fontface = "bold", fill = NA, label.color = NA, # remove background and outline
+      label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+    ) +
+    geom_richtext(
+      data = df,
+      aes(x = xmax, y = y, label = percent_less_than_1), size = 2,
+      fontface = "bold", fill = NA, label.color = NA, # remove background and outline
+      label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+    ) +
+    scale_y_continuous(
+      breaks = sort(unique(df$y)),
+      labels = y_labels,
+      minor_breaks = NULL
+    ) +
+    scale_x_continuous(
+      breaks = sort(unique(df$x)),
+      labels = x_labels,
+      minor_breaks = NULL
+    ) +
+    theme_minimal() +
     xlab("") +
     ylab("") +
     theme(
       axis.text.x = element_text(angle = 90, hjust = 0.5),
       legend.position = "top",
       legend.title = element_text(size = 8),
-##      legend.title.align = 0.5,
       legend.key.width = unit(2, "lines"),
-      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt")
-    ) +
-    geom_text(
-      data = df,
-      aes(x = forecast_date, y = country, label = error_values),
-      size = 1.5,
-      fontface = "bold"
-    ) +
-    geom_text(
-      data = df,
-      aes(x = xmax, y = country, label = percent_less_than_1),
-      size = 2,
-      fontface = "bold"
-    ) +
-    scale_y_discrete(
-      limits = rev(levels(df$country)),
-      labels = snakecase::to_title_case(rev(levels(df$country)))
+      legend.key.height = unit(1, "lines"),
+      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt"),
+      axis.line = element_blank()
     ) +
     coord_cartesian(clip = "off")
   p1
 }
+
 

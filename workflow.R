@@ -170,7 +170,7 @@ orderly_run(
   "produce_baseline_error",
   use_draft = "newer",
   parameters = list(week_starting = head(weeks, 1),
-                    week_ending = tail(weeks, 2)[1])
+                    latest_week = tail(weeks, 1))
 )
 
 post_collation_workflow(tail(weeks, 1))
