@@ -84,7 +84,7 @@ augment_data <- function(df, width = 1.5) {
 
 }
 
-compare_with_baseline <- function(df) {
+compare_with_baseline <- function(df, x_labels, y_labels) {
 
 
   xmax <- max(as.numeric(df$x)) + 2
@@ -140,6 +140,16 @@ compare_with_baseline <- function(df) {
       fontface = "bold", fill = NA, label.color = NA, # remove background and outline
       label.padding = grid::unit(rep(0, 4), "pt") # remove padding
     ) +
+    scale_y_continuous(
+      breaks = sort(unique(df$y)),
+      labels = y_labels,
+      minor_breaks = NULL
+    ) +
+    scale_x_continuous(
+      breaks = sort(unique(df$x)),
+      labels = x_labels,
+      minor_breaks = NULL
+    ) +
     theme_minimal() +
     xlab("") +
     ylab("") +
@@ -149,7 +159,8 @@ compare_with_baseline <- function(df) {
       legend.title = element_text(size = 8),
       legend.key.width = unit(2, "lines"),
       legend.key.height = unit(1, "lines"),
-      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt")
+      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt"),
+      axis.line = element_blank()
     ) +
     coord_cartesian(clip = "off")
   p1
