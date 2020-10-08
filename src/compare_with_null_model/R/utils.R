@@ -46,7 +46,7 @@ data_prep <- function(pred_err_df, null_err_df) {
   weekly_compare$weekly_null_err <- signif(weekly_compare$weekly_null_err, 2)
 
   weekly_compare$error_values <- glue(
-    "{weekly_compare$weekly_rel_err}/{weekly_compare$weekly_null_err}"
+    "{weekly_compare$weekly_rel_err}<br>{weekly_compare$weekly_null_err}"
   )
 
   weekly_compare$percent_less_than_1 <-
@@ -56,30 +56,43 @@ data_prep <- function(pred_err_df, null_err_df) {
     weekly_compare = weekly_compare,
     better_than_null = better_than_null
   )
-
 }
 
-compare_with_baseline <- function(df) {
+## Assign x and y levels to forecast weeks and countries respectively
+## so that they can be forced further apart
+augment_data <- function(df, width = 1.5) {
 
   x <- data.frame(
     forecast_date = unique(df$forecast_date)
   )
-  x$x <- seq(from = 1, by = 2, length.out = nrow(x))
-
-  df <- left_join(df, x)
-
-  df$x_labels <- strftime(
-    as.Date(df$forecast_date), format = "%d-%b"
+  x$x <- seq(from = 1, by = width, length.out = nrow(x))
+  x$x_labels <- strftime(
+    as.Date(x$forecast_date), format = "%d-%b"
   )
 
-  xmax <- max(as.numeric(df$x)) + 1.5
+
+  y <- data.frame(country = rev(levels(df$country)))
+  y$y <- seq(from = 1, by = width, length.out = nrow(y))
+
+  y$y_labels <- as.character(y$country) %>%
+    snakecase::to_title_case()
+
+  df <- left_join(df, x) %>% left_join(y)
+
+  df
+}
+
+compare_with_baseline <- function(df) {
+
+
+  xmax <- max(as.numeric(df$x)) + 2
 
   p1 <- ggplot() +
-    geom_label(
+    geom_tile(
       data = df[df$ratio <= 1, ],
-      aes(x, country, label = error_values, fill = ratio),
-      size = 1.5, label.padding = unit(0.05, "line"),
-      label.r = unit(0.01, "lines"), parse = TRUE
+      aes(x = x, y = y, fill = ratio),
+      width = 1.4,
+      height = 1.2
     ) +
     scale_fill_distiller(
       palette = "Greens", na.value = "white", direction = -1,
@@ -91,11 +104,11 @@ compare_with_baseline <- function(df) {
       )
     ) +
     ggnewscale::new_scale_fill() +
-    geom_label(
+    geom_tile(
       data = df[df$ratio > 1 & df$ratio <= 5, ],
-      aes(x, country, label = error_values, fill = ratio),
-      size = 1.5, label.padding = unit(0.05, "line"),
-      label.r = unit(0.01, "lines"), parse = TRUE
+      aes(x, y, fill = ratio),
+      width = 1.4,
+      height = 1.2
     ) +
     scale_fill_distiller(
       palette = "YlOrRd", na.value = "white", direction = 1,
@@ -107,38 +120,46 @@ compare_with_baseline <- function(df) {
       )
     ) +
     ggnewscale::new_scale_fill() +
-    geom_label(
+    geom_tile(
       data = df[df$ratio > 5, ],
-      aes(x, country, label = error_values),
+      aes(x, y),
       fill = "#515bdc",
-      size = 1.5, label.padding = unit(0.05, "line"),
-      label.r = unit(0.01, "lines"), parse = TRUE
+      width = 1.4,
+      height = 1.2
     ) +
-    geom_text(
+    geom_richtext(
+      data = df, aes(x = x, y = y, label = error_values), size = 1.7,
+      fontface = "bold", fill = NA, label.color = NA, # remove background and outline
+      label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+    ) +
+    geom_richtext(
       data = df,
-      aes(x = xmax, y = country, label = percent_less_than_1),
-      size = 2,
-      fontface = "bold"
+      aes(x = xmax, y = y, label = percent_less_than_1), size = 2,
+      fontface = "bold", fill = NA, label.color = NA, # remove background and outline
+      label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+    ) +
+    scale_y_discrete(
+      ##limits = rev(levels(df$country)),
+      breaks = unique(df$y),
+      labels = unique(df$y_labels)
     ) +
     scale_x_discrete(
       breaks = unique(df$x),
       labels = unique(df$x_labels)
     ) +
-    scale_y_discrete(
-      limits = rev(levels(df$country)),
-      labels = snakecase::to_title_case(rev(levels(df$country)))
-    ) +
     xlab("") +
     ylab("") +
-    theme_classic() +
+    theme_void() +
     theme(
       axis.text.x = element_text(angle = 90, hjust = 0.5),
       legend.position = "top",
       legend.title = element_text(size = 8),
       legend.key.width = unit(2, "lines"),
+      legend.key.height = unit(1, "lines"),
       plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt")
     ) +
     coord_cartesian(clip = "off")
   p1
 }
+
 

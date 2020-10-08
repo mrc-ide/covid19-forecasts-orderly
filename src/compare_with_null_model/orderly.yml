@@ -20,6 +20,7 @@ packages:
   - glue
   - ggnewscale
   - purrr
+  - ggtext
 
 ## use_si should be one of si_1 or si_2
 parameters:

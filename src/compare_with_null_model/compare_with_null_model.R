@@ -56,7 +56,7 @@ less_forecasts$country <- droplevels(less_forecasts$country)
 ############### 15 or more forecasts
 ######################################################################
 ######################################################################
-
+more_forecasts <- augment_data(more_forecasts)
 
 p1 <- compare_with_baseline(more_forecasts)
 rincewind::save_multiple(
