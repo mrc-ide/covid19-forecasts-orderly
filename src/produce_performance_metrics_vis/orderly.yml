@@ -40,7 +40,7 @@ depends:
       use:
         null_model_error.rds: null_model_error.rds
         weekly_incidence.rds: weekly_incidence.rds
-
+        
   - collate_model_outputs:
       id: latest
       use:
@@ -50,3 +50,4 @@ depends:
       id: latest
       use:
         better_than_null.rds: better_than_null.rds
+        country_groups.rds: country_groups.rds
