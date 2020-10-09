@@ -150,7 +150,10 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
     legend.position = "bottom",
     legend.key.width = unit(2, "lines"),
     legend.key.height = unit(1, "lines"),
-    axis.line = element_blank()
+    axis.line = element_blank(),
+    legend.title = element_text(margin = margin(0, 0, 5, 0)),
+    legend.margin = margin(0, 0, 5, 0),
+    legend.box.margin = margin(-5, -5, 5, -5)
   ) +
   xlab("") +
   ylab("") +
