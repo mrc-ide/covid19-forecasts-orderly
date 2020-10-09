@@ -42,51 +42,36 @@ saveRDS(better_than_null, "better_than_null.rds")
 
 ## This is so that we have as many countries as weeks to make a neat
 ## square plot
-main_countries <- better_than_null$country[1:25]
-more_forecasts <- null_compare[null_compare$country %in% main_countries, ]
-more_forecasts$country <- droplevels(more_forecasts$country)
+cutoff <- 25
+country_groups <- list()
+idx <- seq(from = 1, length.out = cutoff, by = 1)
+page <- 1
 
+while (max(idx) < nrow(better_than_null)) {
+  idx <- idx[idx <= nrow(better_than_null)]
+  country_groups[[page]] <- better_than_null$country[idx]
+  idx <- seq(from = max(idx) + 1, length.out = cutoff, by = 1)
+  page <- page + 1
+}
 
-less_forecasts <- null_compare[!null_compare$country %in% main_countries, ]
-less_forecasts$country <- droplevels(less_forecasts$country)
+saveRDS(country_groups, "country_groups.rds")
 
-######################################################################
-######################################################################
-############### Main Text Figure
-############### 15 or more forecasts
-######################################################################
-######################################################################
-out <- augment_data(more_forecasts)
-
-
-p1 <- compare_with_baseline(
-  out[["df"]], out[["x_labels"]], out[["y_labels"]]
+iwalk(
+  country_groups,
+  function(countries, page) {
+    df <- null_compare[null_compare$country %in% countries, ]
+    df$country <- droplevels(df$country)
+    out <- augment_data(df)
+    p1 <- compare_with_baseline(
+      out[["df"]], out[["x_labels"]], out[["y_labels"]]
+    )
+    outfile <- glue("comparison_with_baseline_error_{page}.tiff")
+    rincewind::save_multiple(
+      filename = outfile, plot = p1, one_col = FALSE
+    )
+  }
 )
 
-rincewind::save_multiple(
-  filename = "comparison_with_baseline_error.tiff",
-  plot = p1, one_col = FALSE
-)
-
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-############### SI Text Figure
-############### More than 3 but less than 15 forecasts
-######################################################################
-######################################################################
-######################################################################
-out <- augment_data(less_forecasts)
-
-
-p1 <- compare_with_baseline(
-  out[["df"]], out[["x_labels"]], out[["y_labels"]]
-)
-
-rincewind::save_multiple(
-  filename = "si_comparison_with_baseline_error.tiff", plot = p1
-)
 
 ######################################################################
 ######################################################################
@@ -133,47 +118,19 @@ better_than_null <- out[["better_than_null"]]
 
 saveRDS(better_than_null, "better_than_linear.rds")
 
-more_forecasts <- null_compare[null_compare$country %in% main_countries, ]
-more_forecasts$country <- droplevels(more_forecasts$country)
 
-
-less_forecasts <- null_compare[!null_compare$country %in% main_countries, ]
-less_forecasts$country <- droplevels(less_forecasts$country)
-
-######################################################################
-######################################################################
-############### Main Text Figure
-############### 15 or more forecasts
-######################################################################
-######################################################################
-
-out <- augment_data(more_forecasts)
-
-
-p1 <- compare_with_baseline(
-  out[["df"]], out[["x_labels"]], out[["y_labels"]]
-)
-
-rincewind::save_multiple(
-  filename = "comparison_with_linear_error.tiff", plot = p1
-)
-
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-############### SI Text Figure
-############### More than 3 but less than 15 forecasts
-######################################################################
-######################################################################
-######################################################################
-out <- augment_data(less_forecasts)
-
-
-p1 <- compare_with_baseline(
-  out[["df"]], out[["x_labels"]], out[["y_labels"]]
-)
-
-rincewind::save_multiple(
-  filename = "si_comparison_with_linear_error.tiff", plot = p1
+iwalk(
+  country_groups,
+  function(countries, page) {
+    df <- null_compare[null_compare$country %in% countries, ]
+    df$country <- droplevels(df$country)
+    out <- augment_data(df)
+    p1 <- compare_with_baseline(
+      out[["df"]], out[["x_labels"]], out[["y_labels"]]
+    )
+    outfile <- glue("comparison_with_linear_error_{page}.tiff")
+    rincewind::save_multiple(
+      filename = outfile, plot = p1, one_col = FALSE
+    )
+  }
 )
