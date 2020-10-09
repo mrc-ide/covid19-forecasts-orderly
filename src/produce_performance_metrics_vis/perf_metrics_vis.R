@@ -2,10 +2,6 @@
 ## use_draft = "newer", parameters = list(use_si = "si_2"))
 ######### Performance metrics
 
-main_text_countries <- c(
-  "Brazil", "India", "Italy", "Mexico", "United_States_of_America"
-)
-
 labels <- c(
   "rel_mae" = "Relative mean error",
   "rel_mse" = "Relative mean squared error",
@@ -27,7 +23,7 @@ continent <- readr::read_csv("country_continent.csv") %>%
 
 
 better_than_null <- readRDS("better_than_null.rds")
-
+country_groups <- readRDS("country_groups.rds")
 ######################################################################
 ######################################################################
 ################## Unweighted Ensemble ###############################
@@ -46,11 +42,6 @@ n_forecast <- group_by(unwtd_pred_error, country) %>%
   summarise(n = length(unique(forecast_date))) %>%
   ungroup()
 
-more_than_15 <- n_forecast$country[n_forecast$n >= 15]
-less_than_15 <- n_forecast$country[n_forecast$n < 15 & n_forecast$n > 3]
-
-more_forecasts <- unwtd_pred_error[unwtd_pred_error$country %in% more_than_15, ]
-less_forecasts <- unwtd_pred_error[unwtd_pred_error$country %in% less_than_15, ]
 
 weekly_summary <- function(df) {
 ######################################################################
@@ -103,28 +94,28 @@ weekly_summary <- function(df) {
   weekly
 }
 
+weekly_summaries <- map(
+  country_groups,
+  function(countries) {
+    df <- unwtd_pred_error[unwtd_pred_error$country %in% countries, ]
+    weekly_summary(df)
+  }
+)
 
-more_forecasts <- weekly_summary(more_forecasts)
-less_forecasts <- weekly_summary(less_forecasts)
 overall <- weekly_summary(unwtd_pred_error)
 
 readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
-
-x <- rename(more_forecasts, "prop_in_CrI" = "prop_in_50_mu")
-y <- rename(less_forecasts, "prop_in_CrI" = "prop_in_50_mu")
-
-p1 <- prop_in_cri_heatmap(x)
-p2 <- prop_in_cri_heatmap(y)
-
-rincewind::save_multiple(
-  plot = p1, filename = "main_proportion_in_50_CrI.tiff", two_col = FALSE
-)
-
-rincewind::save_multiple(
-  plot = p2, filename = "si_proportion_in_50_CrI.tiff", two_col = FALSE
+iwalk(
+  weekly_summaries,
+  function(df, page) {
+    x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
+    p <- prop_in_cri_heatmap(x)
+    outfile <- glue("proportion_in_50_CrI_{page}.tiff")
+    rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
+  }
 )
 
 #### Overall metrics
@@ -140,54 +131,24 @@ rincewind::save_multiple(
 ######################################################################
 ################## Proportion in 95% CrI by country ##################
 ######################################################################
-more_forecasts$top_label <- glue(
-  "{round_and_format(more_forecasts$prop_in_975_d_mu)}",
-  " %+-% {round_and_format(more_forecasts$prop_in_975_d_sd)}"
+iwalk(
+  weekly_summaries,
+  function(df, page) {
+    x <- rename(df, "prop_in_CrI" = "prop_in_975_mu")
+    x$top_label <- glue(
+      "{round_and_format(x$prop_in_975_d_mu)}",
+      " %+-% {round_and_format(x$prop_in_975_d_sd)}"
+    )
+
+    x$right_label <- glue(
+      "{round_and_format(x$prop_in_975_c_mu)}",
+      " %+-% {round_and_format(x$prop_in_975_c_sd)}"
+    )
+    p <- prop_in_cri_heatmap(x, CrI = "95%")
+    outfile <- glue("proportion_in_95_CrI_{page}.tiff")
+    rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
+  }
 )
-
-more_forecasts$right_label <- glue(
-  "{round_and_format(more_forecasts$prop_in_975_c_mu)}",
-  " %+-% {round_and_format(more_forecasts$prop_in_975_c_sd)}"
-)
-
-more_forecasts$cell_label <- glue(
-  "{round_and_format(more_forecasts$prop_in_975_mu)}"
-)
-
-x <- rename(more_forecasts, "prop_in_CrI" = "prop_in_975_mu")
-y <- rename(less_forecasts, "prop_in_CrI" = "prop_in_975_mu")
-
-p1 <- prop_in_cri_heatmap(x, CrI = "95%")
-
-
-less_forecasts$top_label <- glue(
-  "{round_and_format(less_forecasts$prop_in_975_d_mu)}",
-  " %+-% {round_and_format(less_forecasts$prop_in_975_d_sd)}"
-)
-
-less_forecasts$right_label <- glue(
-  "{round_and_format(less_forecasts$prop_in_975_c_mu)}",
-  " %+-% {round_and_format(less_forecasts$prop_in_975_c_sd)}"
-)
-
-less_forecasts$cell_label <- glue(
-  "{round_and_format(less_forecasts$prop_in_975_mu)}"
-)
-
-p2 <- prop_in_cri_heatmap(y, CrI = "95%")
-
-rincewind::save_multiple(
-  filename = "main_proportion_in_95_CrI.tiff",
-  plot = p1,
-  two_col = FALSE
-)
-
-rincewind::save_multiple(
-  filename = "si_proportion_in_95_CrI.tiff",
-  plot = p2,
-  two_col = FALSE
-)
-
 
 #####################################################################
 #####################################################################
@@ -321,46 +282,29 @@ readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 ######################################################################
 ######################################################################
 ######################################################################
-more_forecasts$top_label <- glue(
-  "{round_and_format(more_forecasts$rel_mae_d_mu)}",
-  " %+-% {round_and_format(more_forecasts$rel_mae_d_sd)}"
-)
+iwalk(
+  weekly_summaries,
+  function(df, page) {
+    df$top_label <- glue(
+      "{round_and_format(df$rel_mae_d_mu)}",
+      " %+-% {round_and_format(df$rel_mae_d_sd)}"
+    )
 
-more_forecasts$right_label <- glue(
-  "{round_and_format(more_forecasts$rel_mae_c_mu)}",
-  " %+-% {round_and_format(more_forecasts$rel_mae_c_sd)}"
-)
+    df$right_label <- glue(
+      "{round_and_format(df$rel_mae_c_mu)}",
+      " %+-% {round_and_format(df$rel_mae_c_sd)}"
+    )
 
-more_forecasts$cell_label <- glue(
-  "{round_and_format(more_forecasts$rel_mae_mu)}"
-)
-
-p1 <- relative_error_heatmap(more_forecasts)
-
-
-less_forecasts$top_label <- glue(
-  "{round_and_format(less_forecasts$rel_mae_d_mu)}",
-  " %+-% {round_and_format(less_forecasts$rel_mae_d_sd)}"
-)
-
-less_forecasts$right_label <- glue(
-  "{round_and_format(less_forecasts$rel_mae_c_mu)}",
-  " %+-% {round_and_format(less_forecasts$rel_mae_c_sd)}"
-)
-
-less_forecasts$cell_label <- glue(
-  "{round_and_format(less_forecasts$rel_mae_mu)}"
-)
-
-p2 <- relative_error_heatmap(less_forecasts)
-
-rincewind::save_multiple(
-  filename = "main_relative_error_heatmap.tiff", plot = p1
-)
-
-rincewind::save_multiple(
-  filename = "si_relative_error_heatmap.tiff",
-  plot = p2
+    df$cell_label <- glue(
+      "{round_and_format(df$rel_mae_mu)}"
+    )
+    out <- augment_data(df, width = 2)
+    p <- relative_error_heatmap(
+      out[["df"]], out[["x_labels"]], out[["y_labels"]]
+    )
+    outfile <- glue("relative_error_heatmap_{page}.tiff")
+    rincewind::save_multiple(plot = p, filename = outfile)
+  }
 )
 
 ######################################################################

@@ -5,10 +5,9 @@ artefacts:
     description: Comparison with null model
     filenames:
       - log_ratio_vs_delta.tiff
-      - si_comparison_with_baseline_error.tiff
-      - comparison_with_baseline_error.tiff
       - better_than_null.rds
       - better_than_linear.rds
+      - country_groups.rds
       
   
 packages:
