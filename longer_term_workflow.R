@@ -1,15 +1,14 @@
-weeks <- list(
-  "2020-03-29", "2020-04-05",
-  "2020-04-12",
-  "2020-04-19", "2020-04-26", "2020-05-03", "2020-05-10",
-  "2020-05-17", "2020-05-24", "2020-05-31", "2020-06-07",
-  "2020-06-14", "2020-06-21", "2020-06-28", "2020-07-05",
-  "2020-07-12", "2020-07-19", "2020-07-26", "2020-08-02",
-  "2020-08-09", "2020-08-16", "2020-08-23", "2020-08-30",
-  "2020-09-06"
-)
-use_si <- "si_2"
 use_draft <- "newer"
+
+weeks <- seq(
+  from = as.Date("2020-03-29"),
+  to = as.Date("2020-10-04"),
+  by = "7 days"
+)
+
+weeks <- as.character(weeks)
+use_si <- "si_2"
+
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
@@ -20,7 +19,7 @@ for (week in weeks) {
   )
   orderly::orderly_commit(a)
 
-  source("orderly-helper-scripts/write_dependencies_combined_rt.R")
+  source("orderly-helper-scripts/dependencies_combined_rt.R")
   m1 <- orderly::orderly_run(
     "produce_combined_rt", parameters = parameter, use_draft = use_draft
   )

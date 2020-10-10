@@ -140,9 +140,10 @@ all_projections <- map(
       function(country) {
         message(country)
         pop <- population$pop_data2018[population$countries_and_territories == country]
-        n_days <- length(
-          unwtd_rt_estimates[[country]]$weeks_combined
-        ) * 7
+        ## n_days <- length(
+        ##   unwtd_rt_estimates[[country]]$weeks_combined
+        ## ) * 7
+        n_days <- 56
         x <- deaths_to_use[[country]]
         ##rt <- unwtd_rt_estimates[[country]]$rt_samples
         rt <- reff[[country]][["r_eff"]]
