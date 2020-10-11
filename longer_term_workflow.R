@@ -17,7 +17,7 @@ for (week in weeks) {
   a <-  orderly::orderly_run(
     "produce_weights_combined_rt", parameters = parameter, use_draft = use_draft
   )
-  orderly::orderly_commit(a)
+  ##orderly::orderly_commit(a)
 
   source("orderly-helper-scripts/dependencies_combined_rt.R")
   m1 <- orderly::orderly_run(
