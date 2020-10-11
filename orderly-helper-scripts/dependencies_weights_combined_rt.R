@@ -2,7 +2,6 @@
 x <- list(
   script = "script.R",
   parameters = c("week_ending", "use_si"),
-  environment = list(covid_19_path = "COVID19_INPUT_PATH"),
   artefacts = list(
     data = list(
     description = "Weights for combined Rt estimates",
@@ -43,9 +42,10 @@ dependances <- purrr::map(
 dependancies5 <- list(
   list(
     prepare_ecdc_data = list(
-      id = "latest",
+      id = glue::glue("latest(parameter:week_ending == week_ending)"),
       use = list(
-        "latest_deaths_wide_no_filter.rds" =  "latest_deaths_wide_no_filter.rds"
+        "latest_deaths_wide_no_filter.rds" =  "latest_deaths_wide_no_filter.rds",
+        "model_input.rds" = "latest_model_input.rds"
       )
     )
   )
@@ -54,10 +54,8 @@ dependancies5 <- list(
 dependancies6 <- list(
   list(
     produce_baseline_error = list(
-      id = "latest",
-      use = list(
-        "exclude.rds" =  "exclude.rds"
-      )
+      id = glue::glue("latest(parameter:week_ending == \"2020-09-27\")"),
+      use = list("exclude.rds" =  "exclude.rds")
     )
   )
 )

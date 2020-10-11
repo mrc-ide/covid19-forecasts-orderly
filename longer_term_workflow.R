@@ -13,9 +13,9 @@ for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
   parameter <- list(week_ending = week, use_si = use_si)
-  source("orderly-helper-scripts/write_dependencies_weights_combined_rt.R")
+  source("orderly-helper-scripts/dependencies_weights_combined_rt.R")
   a <-  orderly::orderly_run(
-    "produce_weights_combined_rt", parameters = parameter, use_draft = FALSE
+    "produce_weights_combined_rt", parameters = parameter, use_draft = use_draft
   )
   orderly::orderly_commit(a)
 
