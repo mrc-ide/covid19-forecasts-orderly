@@ -4,18 +4,16 @@ artefacts:
     description: Collated combined rt estimates (quantiles)
     filenames:
     - combined_rt_qntls.rds
+    - weekly_iqr.rds
     - combined_weighted_estimates_across_countries.rds
     - combined_weighted_estimates_per_country.rds
-    - weekly_iqr.rds
+sources: R/utils.R
 packages:
 - dplyr
 - tidyr
 - ggdist
 - purrr
 - ggplot2
-
-sources: R/utils.R
-
 depends:
 - produce_combined_rt:
     id: latest(parameter:week_ending == "2020-03-29"  && parameter:use_si == "si_2")
@@ -59,3 +57,136 @@ depends:
       weekly_iqr_2020-05-03.rds: weekly_iqr.rds
       combined_weighted_estimates_per_country_2020-05-03.rds: combined_weighted_estimates_per_country.rds
       combined_weighted_estimates_across_countries_2020-05-03.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-10"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-10.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-10.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-05-10.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-05-10.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-17"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-17.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-17.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-05-17.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-05-17.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-24"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-24.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-24.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-05-24.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-05-24.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-05-31"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-05-31.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-05-31.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-05-31.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-05-31.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-06-07"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-06-07.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-06-07.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-06-07.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-06-07.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-06-14"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-06-14.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-06-14.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-06-14.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-06-14.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-06-21"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-06-21.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-06-21.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-06-21.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-06-21.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-06-28"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-06-28.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-06-28.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-06-28.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-06-28.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-07-05"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-07-05.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-07-05.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-07-05.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-07-05.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-07-12"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-07-12.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-07-12.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-07-12.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-07-12.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-07-19"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-07-19.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-07-19.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-07-19.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-07-19.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-07-26"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-07-26.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-07-26.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-07-26.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-07-26.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-08-02"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-08-02.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-08-02.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-08-02.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-08-02.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-08-09"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-08-09.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-08-09.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-08-09.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-08-09.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-08-16"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-08-16.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-08-16.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-08-16.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-08-16.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-08-23"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-08-23.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-08-23.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-08-23.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-08-23.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-08-30"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-08-30.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-08-30.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-08-30.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-08-30.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-09-06"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-09-06.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-09-06.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-09-06.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-09-06.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-09-13"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-09-13.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-09-13.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-09-13.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-09-13.rds: combined_weighted_estimates_across_countries.rds

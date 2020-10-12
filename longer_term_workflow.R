@@ -39,6 +39,13 @@ for (week in weeks) {
 source("orderly-helper-scripts/dependencies_collate_combined_rt.R")
 orderly::orderly_run("collate_combined_rt", use_draft = "newer")
 
+for (week in weeks) {
+  parameters <- list(week_ending = week)
+  orderly::orderly_run(
+    "compare_r_effective", use_draft = "newer", parameters = parameters
+  )
+}
+
 source(
   "orderly-helper-scripts/write_dependencies_collate_longer_forecasts.R"
 )

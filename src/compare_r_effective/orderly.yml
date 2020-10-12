@@ -11,12 +11,13 @@ packages:
 - ggdist
 - purrr
 - ggplot2
+- glue
 
-sources: R/utils.R
+parameters: week_ending
 
 depends:
 - produce_longer_forecasts:
-    id: latest(parameter:week_ending == "2020-03-29"  && parameter:use_si == "si_2")
+    id: latest(parameter:week_ending == week_ending  && parameter:use_si == "si_2")
     use:
       unweighted_reff_qntls.rds: unweighted_reff_qntls.rds
       weighted_per_country_reff_qntls.rds: weighted_per_country_reff_qntls.rds
