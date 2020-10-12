@@ -42,7 +42,7 @@ depends:
     id: latest(parameter:week_ending == week_ending)
     use:
       summary_DeathToRepoted_14days.csv: summary_DeathToRepoted_14days.csv
-  prepare_ecdc_data:
-    id: latest(parameter:week_ending == week_ending)
+  produce_baseline_error:
+    id: latest(parameter:week_ending == "2020-09-27")
     use:
-      exclude.rds: exclude.rds      
+      exclude.rds: exclude.rds         
