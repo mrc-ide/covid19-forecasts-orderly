@@ -58,10 +58,10 @@ depends:
       si_distrs.rds: si_distrs.rds
       population_weighted_ifr.rds: population_weighted_ifr.rds
   prepare_ecdc_data:
-    id: latest
+    id: latest(parameter:week_ending == week_ending)
     use:
       latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
   produce_baseline_error:
-    id: latest
+    id: latest(parameter:week_ending == "2020-09-27")
     use:
-      exclude.rds: exclude.rds      
+      exclude.rds: exclude.rds

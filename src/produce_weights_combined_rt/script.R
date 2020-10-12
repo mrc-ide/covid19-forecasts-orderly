@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-08-23", use_si = "si_2"))
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-09-06", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
 
 run_info <- orderly::orderly_run_info()
@@ -7,6 +7,7 @@ infiles <- run_info$depends$as
 exclude <- readRDS("exclude.rds")
 infiles <- grep("exclude", infiles, invert = TRUE, value = TRUE)
 infiles <- grep("latest", infiles, invert = TRUE, value = TRUE)
+infiles <- grep("model_input", infiles, invert = TRUE, value = TRUE)
 
 names(infiles) <- gsub(
   pattern = "ensemble_model_rt_samples_", replacement = "", x = infiles
@@ -18,9 +19,7 @@ observed[["Czech_Republic"]] <- observed[["Czechia"]]
 week_ending <- as.Date(week_ending)
 week_prev <- week_ending - 7
 
-model_input <- readRDS(
-  glue("{dirname(covid_19_path)}/model_inputs/data_{week_prev}.rds")
-)
+model_input <- readRDS("model_input.rds")
 ##deaths_to_use <- model_input$D_active_transmission
 
 deaths_to_use <- observed[observed$dates <= week_prev, ]
@@ -31,6 +30,7 @@ countries <- setNames(model_input$Country, model_input$Country)
 countries <- countries[! countries %in% exclude]
 message("################ Including countries ######################")
 message(paste(countries, collapse = "\n"))
+
 country_weeks <- map(
   countries,
   function(country) {

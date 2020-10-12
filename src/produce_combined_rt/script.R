@@ -45,11 +45,13 @@ week_ending <- as.Date(week_ending)
 ## )
 
 country_weeks <- readRDS("country_weeks.rds")
-##country_weeks <- purrr::keep(country_weeks, ~ length(.) > 1)
+country_weeks <- country_weeks[names(country_weeks) %in% countries]
 
 week_iqr <- imap(
   country_weeks,
   function(weeks, country) {
+    message(country)
+    message(paste(weeks, collapse = " "))
     rt <- rt_samples[rt_samples$model %in% as.Date(weeks) & rt_samples$country == country, ]
     x <- group_by(rt, model) %>%
       summarise_if(
@@ -73,9 +75,7 @@ week_iqr <- imap(
 saveRDS(week_iqr, "weekly_iqr.rds")
 
 
-combined_estimates <- purrr::imap(
-  week_iqr, ~ combine_with_previous(.x, .y)
-)
+combined_estimates <- imap(week_iqr, ~ combine_with_previous(.x, .y))
 
 saveRDS(combined_estimates, "combined_rt_estimates.rds")
 
