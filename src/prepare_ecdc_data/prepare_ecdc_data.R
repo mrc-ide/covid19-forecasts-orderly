@@ -306,6 +306,8 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Hungary" & raw_data$Dat
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Hungary" & raw_data$DateRep == "2020-10-10"] <- 21
 ## source Worldometers
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2020-10-10"] <- 180
+raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2020-10-09"] <- 160
+raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2020-10-08"] <- 145
 
 
 raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
@@ -381,7 +383,8 @@ exclude <- c(
   "United_States_of_America",
   "Syria",
   "Zimbabwe",
-  "Israel"
+  "Israel",
+  "Ecuador"
 )
 
 saveRDS(exclude, "exclude.rds")
