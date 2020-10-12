@@ -4,6 +4,8 @@ artefacts:
     description: Collated combined rt estimates (quantiles)
     filenames:
     - combined_rt_qntls.rds
+    - combined_weighted_estimates_across_countries.rds
+    - combined_weighted_estimates_per_country.rds
     - weekly_iqr.rds
 packages:
 - dplyr

@@ -1,0 +1,27 @@
+script: compare_r_effective.R
+artefacts:
+  data:
+    description: Collated combined rt estimates (quantiles)
+    filenames:
+    - combined_rt_qntls.rds
+    - weekly_iqr.rds
+packages:
+- dplyr
+- tidyr
+- ggdist
+- purrr
+- ggplot2
+
+sources: R/utils.R
+
+depends:
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-03-29"  && parameter:use_si == "si_2")
+    use:
+      unweighted_reff_qntls.rds: unweighted_reff_qntls.rds
+      weighted_per_country_reff_qntls.rds: weighted_per_country_reff_qntls.rds
+      weighted_across_countries_reff_qntls.rds: weighted_across_countries_reff_qntls.rds
+- collate_combined_rt:
+    id: latest
+    use:
+      weekly_iqr.rds: weekly_iqr.rds
