@@ -128,6 +128,10 @@ depends:
     id: latest(parameter:week_ending == "2020-09-06")
     use:
       ensemble_model_rt_samples_2020-09-06.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-09-13")
+    use:
+      ensemble_model_rt_samples_2020-09-13.rds: ensemble_model_rt_samples.rds
 - prepare_ecdc_data:
     id: latest(parameter:week_ending == week_ending)
     use:
