@@ -3,14 +3,14 @@
 }
 
 .imperiallogo {
-    padding: 10px 5px 10px 5px;
+    padding: 10px 5px 8px 5px;
     height: 82px;
-    width: 217px;
+    width: 267px;
 
 }
 
 .sussexlogo {
-    padding: 10px 5px 10px 0px;
+    padding: 10px 3px 10px 0px;
     height: 82px;
     width: 82px;
 }
@@ -40,6 +40,7 @@ h1,h2,h3,h4,h5,h6,legend{
     background: #093e74;
     height: 92%;
     top: 70px;
+    width: 350px;
                 
 }
 
@@ -50,11 +51,13 @@ h1,h2,h3,h4,h5,h6,legend{
 #postamble{
     background:#176eaf;
     border-top:solid 0px;
+    width: 350px;    
 }
 
 #content {
     min-height: 80%;
     height: 80%;
+    margin-left: 350px;
 }
 
 #header2 {

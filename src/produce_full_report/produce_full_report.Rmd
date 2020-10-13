@@ -508,46 +508,6 @@ before, we set the ratio at 1 (95% CI 1-1)*
 <br><br>
 
 
-## Case Ascertainment
-
-Case ascertainment was estimated based on the deaths in the previous 2 weeks  and 
-reported cases in the 10 days prior to that period.  Estimates of case
-ascertainment were highly variable and, due to the underlying
-assumption of perfect reporting, are likely to be an underestimate. In
-particular, community deaths due to COVID-19 are likely under-reported
-[@onsreport]. 
-
-
-**Table 2.** Results summary for reporting and case ascertainment. We present 
-(**i**) the estimated ratio of deaths to reported cases 10 days prior
-for each country (mean and 95% CI) during the last *14 days*; (**ii**) the estimated
-  case ascertainment per country (mean and 95% CI) during the last *14
-  days*. Estimated case ascertainment, factors to real
-  size and predicted true number of cases assume perfect reporting of
-  deaths. Note that when the ratio of deaths to reported cases is
-  greater than the CFR, the case ascertainment ratio is set to 1, CrI
-  (1 - 1). See Methods for details.
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-##x <- readr::read_csv("summary_DeathToRepoted_14days_2020-06-21.csv")
-x <- readr::read_csv("summary_DeathToRepoted_14days.csv")
-x <- x[!x$country %in% exclude, ]
-x <- dplyr::select(
-  x, country, deaths_to_reported_ratio, estimated_reporting
-)
-
-x$country <- snakecase::to_title_case(x$country)
-colnames(x) <- snakecase::to_title_case(colnames(x))
-## We are now showing only case ascertainment and
-## deaths to cases ratio for each country
-## knitr::kable(x[, -1]) %>%
-##     kable_styling()
-
-
-DT::datatable(x, rownames = FALSE)
-
-```
 
 # Methods
 

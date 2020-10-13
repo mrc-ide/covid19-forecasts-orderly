@@ -83,6 +83,13 @@ plots <- purrr::imap(
            ~country, scales = "free_y", ncol = ncols, nrow = nrows,
            labeller = as_labeller(nice_names),
            )
+      if (length(cntry_local) < npanels) {
+        ## if the number of countries is smaller, then the facets are
+        ## bigger. Add empty grobs to fix the size
+        p2 <- ggplot() + theme_void()
+        p3 <- ggplot() + theme_void()
+        p <- cowplot::plot_grid(p, p2, p3, nrow = 3, rel_heights = c(1, 0.25, 0.25))
+      }
       p
     })
     out
