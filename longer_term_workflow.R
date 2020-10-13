@@ -47,7 +47,7 @@ for (week in weeks) {
 }
 
 source(
-  "orderly-helper-scripts/write_dependencies_collate_longer_forecasts.R"
+  "orderly-helper-scripts/dependencies_collate_longer_forecasts.R"
 )
 orderly::orderly_run("src/collate_longer_forecasts/", use_draft = "newer")
 
@@ -57,4 +57,4 @@ orderly::orderly_run(
 
 week_starting <- as.Date(head(weeks, 1)[[1]])
 week_ending <- as.Date(tail(weeks, 1)[[1]])
-source("orderly-helper-scripts/write_dependencies_collate_longer_forecasts_perf.R")
+source("orderly-helper-scripts/dependencies_collate_longer_forecasts_perf.R")

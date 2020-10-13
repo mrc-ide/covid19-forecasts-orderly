@@ -3,8 +3,8 @@ artefacts:
   data:
     description: Collated combined rt estimates (quantiles)
     filenames:
-    - combined_rt_qntls.rds
-    - weekly_iqr.rds
+    - overlap.rds
+
 packages:
 - dplyr
 - tidyr

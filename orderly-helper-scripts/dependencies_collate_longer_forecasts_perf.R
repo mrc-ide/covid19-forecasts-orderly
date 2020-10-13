@@ -13,10 +13,6 @@ x <- list(
  packages = c("dplyr", "purrr")
 )
 
-weeks <- seq(
-  from = week_starting, to = week_ending, by = "7 days"
-)
-
 dependancies <- purrr::map(
   weeks,
   function(week) {

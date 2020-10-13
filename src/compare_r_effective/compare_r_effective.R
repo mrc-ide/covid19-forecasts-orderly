@@ -14,10 +14,9 @@ reff_overlaps_weekly <- function(reff, weekly) {
   ) %>%
     pmap_lgl(
       function(reff_low, reff_high, weekly_low, weekly_high) {
-        rincewind::overlaps(x1 = c(reff_low, reff_high),
-                            x2 = c(weekly_low, weekly_high),
-                            digits = 3
-                            )
+        x1 = c(reff_low, reff_high)
+        x2 = c(weekly_low, weekly_high)
+        (weekly_low > reff_low) & (weekly_high < reff_high)
       }
     )
   data.frame(day = seq_along(out), reff_overlaps_weekly = out)
@@ -66,16 +65,19 @@ overlap <- map(
         weekly <- weekly_iqr_augm[[country]]
         reff <- strategy[[country]]
         reff$date <- as.Date(reff$date)
+        weekly <- weekly[weekly$dates %in% reff$date, ]
         reff_overlaps_weekly(reff, weekly)
       }, .id = "country"
     )
   }
 )
 
+saveRDS(overlap, "overlap.rds")
+
 iwalk(
   reff_by_strategy,
   function(strategy, nm) {
-    countries <- setNames(names(strategy), names(strategy))
+    countries <- names(strategy)
     walk(
       countries,
       function(country) {
@@ -96,10 +98,16 @@ iwalk(
             data = weekly, aes(dates, `50%`, group = forecast_week)
           ) +
           geom_hline(yintercept = 1, linetype = "dashed") +
-          scale_x_date(date_breaks = "2 weeks") +
+          scale_x_date(
+            date_breaks = "2 weeks", limits = range(reff$date)
+          ) +
+          scale_y_continuous(expand = c(0, NA)) +
           ylab("Reproduction number") +
           xlab("") +
           theme_minimal() +
+          theme(
+            axis.text.x = element_text(angle = 90, hjust = 0.5)
+          ) +
           ggtitle(
             glue("Effective and weekly reproduction number for {country}")
           )
