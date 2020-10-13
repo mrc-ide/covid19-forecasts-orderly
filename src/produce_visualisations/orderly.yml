@@ -39,6 +39,7 @@ packages:
   - htmlwidgets
   - dplyr
   - purrr
+  - gridExtra
 
 sources:
   - R/utils.R
