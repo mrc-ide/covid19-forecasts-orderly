@@ -1,0 +1,12 @@
+script: longer_forecasts_perf_viz.R
+
+packages:
+- ggplot2
+- cowplot
+
+depends:
+  collate_longer_forecasts_metrics:
+    id: latest
+    use:
+      long_projections_error_weekly.rds: long_projections_error_weekly.rds
+      long_projections_error_daily.rds: long_projections_error_daily.rds

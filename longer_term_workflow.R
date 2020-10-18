@@ -58,3 +58,7 @@ orderly::orderly_run(
 week_starting <- as.Date(head(weeks, 1)[[1]])
 week_ending <- as.Date(tail(weeks, 1)[[1]])
 source("orderly-helper-scripts/dependencies_collate_longer_forecasts_perf.R")
+
+orderly::orderly_run(
+  "collate_longer_forecasts_metrics", use_draft = "newer"
+)
