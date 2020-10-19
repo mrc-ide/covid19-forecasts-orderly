@@ -178,6 +178,13 @@ knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_5.png")
 
 ```
 
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_6.png")
+
+```
+
 *Figure 2.* Reported daily deaths and current forecasts based on the ensemble
 model. For each European country with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
@@ -205,6 +212,13 @@ knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_2.png")
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
+
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_4.png")
 
 ```
 
@@ -448,6 +462,11 @@ knitr::include_graphics("figs/reporting_ratio_Europe_page_4.png")
 knitr::include_graphics("figs/reporting_ratio_Europe_page_5.png")
 ```
 
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Europe_page_6.png")
+```
+
 ### Asia
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -460,6 +479,10 @@ knitr::include_graphics("figs/reporting_ratio_Asia_page_2.png")
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figs/reporting_ratio_Asia_page_3.png")
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/reporting_ratio_Asia_page_4.png")
 ```
 
 ### Africa
@@ -692,6 +715,10 @@ knitr::include_graphics("figs/Europe_si_2_page_4.png")
 knitr::include_graphics("figs/Europe_si_2_page_5.png")
 ```
 
+```{r}
+knitr::include_graphics("figs/Europe_si_2_page_6.png")
+```
+
 *Figure 14.* Projections (7-day ahead) for the week starting 19^th^ October 2020 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
@@ -711,6 +738,10 @@ knitr::include_graphics("figs/Asia_si_2_page_2.png")
 
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_3.png")
+```
+
+```{r}
+knitr::include_graphics("figs/Asia_si_2_page_4.png")
 ```
 *Figure 15.* Projections (7-day ahead) for the week starting 19^th^ October 2020 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
