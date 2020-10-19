@@ -387,7 +387,9 @@ exclude <- c(
   "Syria",
   "Zimbabwe",
   "Israel",
-  "Ecuador"
+  "Ecuador",
+  "El_Salvador",
+  "Costa_Rica"
 )
 
 saveRDS(exclude, "exclude.rds")
