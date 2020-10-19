@@ -1,8 +1,9 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 daily <- readRDS("long_projections_error_daily.rds")
 weekly <- group_by(daily, strategy, country, week_of_projection) %>%
-  summarise_if(is.numeric, mean)
+  summarise_if(is.numeric, list(mu = mean, sd = sd))
 
+weekly_incid <- readRDS("weekly_incidence.rds")
 
 compare <- ggplot(
   weekly, aes(factor(week_of_projection), rel_mae, fill = strategy)
@@ -14,6 +15,31 @@ compare <- ggplot(
   xlab("Week of projection") +
   ylab("log relative error")
 
+cbbPalette <- c(
+  "#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
+  "#D55E00", "#CC79A7"
+)
+
+names(cbbPalette) <- 1:8
+
+weekly$week_of_projection <- factor(weekly$week_of_projection)
+
+f <- scales::trans_breaks("log10", function(x) 10^x)
+g <- scales::trans_format("log10", scales::math_format(10^.x))
+breaks <- union(f(weekly$obs_mu), f(weekly$rel_mae_mu))
+labels <- g(breaks)
+
+ggplot(
+  weekly, aes(obs_mu, rel_mae_mu, col = week_of_projection)
+) +
+  geom_point() +
+  scale_y_log10(breaks = breaks, labels = labels) +
+  scale_x_log10(breaks = breaks, labels = labels) +
+  scale_color_manual(values = cbbPalette, name = "Week of projection") +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  xlab("(log) Mean weekly incidence") +
+  ylab("(log) Mean relative error")
 
 country_groups <- readRDS("country_groups.rds")
 

@@ -4,6 +4,7 @@ packages:
 - ggplot2
 - cowplot
 - dplyr
+- purrr
 
 depends:
   collate_longer_forecasts_metrics:
@@ -14,4 +15,9 @@ depends:
   compare_with_null_model:
     id: latest
     use:
-      country_groups.rds: country_groups.rds      
+      country_groups.rds: country_groups.rds
+  produce_baseline_error:
+    id: latest
+    use:
+      weekly_incidence.rds: weekly_incidence.rds
+      
