@@ -1,5 +1,11 @@
 daily <- readRDS("long_projections_error_daily.rds")
-weekly <- readRDS("long_projections_error_weekly.rds")
+weekly <- weekly <- group_by(daily, strategy, country, week_of_projection) %>%
+  summarise_if(is.numeric, mean)
+
+
+ggplot(weekly, aes(factor(week_of_projection), rel_mae, fill = strategy)) +
+  geom_boxplot(position = "dodge") +
+  scale_y_log10()
 
 by_week_proj <- group_by(weekly, week_of_projection) %>%
   summarise_if(is.numeric, mean) %>%

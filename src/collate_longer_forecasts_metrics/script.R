@@ -13,7 +13,7 @@ names(infiles) <- gsub(
 ) %>% gsub(x = ., pattern = ".rds", replacement = "")
 
 daily <- map_dfr(infiles, readRDS)
-weekly <- group_by(daily, country, week_of_projection) %>%
+weekly <- group_by(daily, strategy, country, week_of_projection) %>%
   summarise_if(is.numeric, mean)
 
 
