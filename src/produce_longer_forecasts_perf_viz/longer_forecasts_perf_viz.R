@@ -1,19 +1,43 @@
+## orderly::orderly_develop_start(use_draft = "newer")
 daily <- readRDS("long_projections_error_daily.rds")
-weekly <- weekly <- group_by(daily, strategy, country, week_of_projection) %>%
+weekly <- group_by(daily, strategy, country, week_of_projection) %>%
   summarise_if(is.numeric, mean)
 
 
-ggplot(weekly, aes(factor(week_of_projection), rel_mae, fill = strategy)) +
+compare <- ggplot(
+  weekly, aes(factor(week_of_projection), rel_mae, fill = strategy)
+) +
   geom_boxplot(position = "dodge") +
-  scale_y_log10()
+  scale_y_log10() +
+  theme_minimal() +
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  xlab("Week of projection") +
+  ylab("log relative error")
 
-by_week_proj <- group_by(weekly, week_of_projection) %>%
-  summarise_if(is.numeric, mean) %>%
-  ungroup()
 
-by_country <- group_by(weekly, country, week_of_projection) %>%
-  summarise_if(is.numeric, mean) %>%
-  ungroup()
+country_groups <- readRDS("country_groups.rds")
+
+by_strategy <- split(weekly, weekly$strategy)
+
+by_strategy_week <- map(
+  by_strategy,
+  function(df) {
+    group_by(df, strategy, week_of_projection) %>%
+      summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
+      ungroup()
+  }
+)
+
+by_strategy_country <- map(
+  by_strategy,
+  function(df) {
+    group_by(df, strategy, country) %>%
+      summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
+      ungroup()
+  }
+)
+
+df <- weekly[weekly$country %in% country_groups[[1]], ]
 
 
 ggplot() +
