@@ -8,6 +8,7 @@ artefacts:
 parameters:
 - window
 - week_ending
+- latest_week
 
 packages:
   - purrr
@@ -20,7 +21,10 @@ depends:
     id: latest(parameter:week_ending == week_ending)
     use:
       unweighted_projections.rds: unweighted_projections.rds
+      weighted_across_countries_projections.rds: weighted_across_countries_projections.rds
+      weighted_per_country_projections.rds: weighted_per_country_projections.rds
+      
   prepare_ecdc_data:
-    id: "latest"
+    id: latest(parameter:week_ending == latest_week)
     use:
       latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds

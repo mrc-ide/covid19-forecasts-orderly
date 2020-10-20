@@ -30,7 +30,7 @@ for (week in weeks) {
     "produce_longer_forecasts", parameters = parameter, use_draft = use_draft
   )
 
-  parameter <- list(week_ending = week, window = 1)
+  parameter <- list(week_ending = week, window = 1, latest_week = "2020-10-11")
   orderly::orderly_run(
     "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
   )
@@ -42,8 +42,15 @@ source(
 )
 orderly::orderly_run("collate_combined_rt", use_draft = "newer")
 
+for (week in weeks) {
+  parameters <- list(week_ending = week)
+  orderly::orderly_run(
+    "compare_r_effective", use_draft = "newer", parameters = parameters
+  )
+}
+
 source(
-  "orderly-helper-scripts/write_dependencies_collate_longer_forecasts.R"
+  "orderly-helper-scripts/dependencies_collate_longer_forecasts.R"
 )
 orderly::orderly_run("src/collate_longer_forecasts/", use_draft = "newer")
 
@@ -52,3 +59,7 @@ orderly::orderly_run(
 )
 
 source("orderly-helper-scripts/write_dependencies_collate_longer_forecasts_perf.R")
+
+orderly::orderly_run(
+  "collate_longer_forecasts_metrics", use_draft = "newer"
+)
