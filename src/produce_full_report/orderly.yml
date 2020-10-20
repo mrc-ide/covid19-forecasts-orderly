@@ -43,6 +43,6 @@ depends:
     use:
       summary_DeathToRepoted_14days.csv: summary_DeathToRepoted_14days.csv
   prepare_ecdc_data:
-    id: latest(parameter:week_ending == week_ending)
+    id: latest
     use:
-      exclude.rds: exclude.rds      
+      exclude.rds: exclude.rds         

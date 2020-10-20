@@ -15,6 +15,9 @@ packages:
   - rincewind
   - cowplot
   - glue
+  - orderly
+
+sources: R/utils.R
  
 depends:
   collate_longer_forecasts:

@@ -5,9 +5,7 @@ artefacts:
     filenames:
     - combined_rt_qntls.rds
     - weekly_iqr.rds
-    - combined_weighted_estimates_across_countries.rds
-    - combined_weighted_estimates_per_country.rds
-sources: R/utils.R
+    - length_weeks_combined.rds
 packages:
 - dplyr
 - tidyr
@@ -181,12 +179,23 @@ depends:
     use:
       combined_rt_estimates_2020-09-06.rds: combined_rt_estimates.rds
       weekly_iqr_2020-09-06.rds: weekly_iqr.rds
-      combined_weighted_estimates_per_country_2020-09-06.rds: combined_weighted_estimates_per_country.rds
-      combined_weighted_estimates_across_countries_2020-09-06.rds: combined_weighted_estimates_across_countries.rds
 - produce_combined_rt:
     id: latest(parameter:week_ending == "2020-09-13"  && parameter:use_si == "si_2")
     use:
       combined_rt_estimates_2020-09-13.rds: combined_rt_estimates.rds
       weekly_iqr_2020-09-13.rds: weekly_iqr.rds
-      combined_weighted_estimates_per_country_2020-09-13.rds: combined_weighted_estimates_per_country.rds
-      combined_weighted_estimates_across_countries_2020-09-13.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-09-20"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-09-20.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-09-20.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-09-27"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-09-27.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-09-27.rds: weekly_iqr.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-10-04"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-10-04.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-10-04.rds: weekly_iqr.rds

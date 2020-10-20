@@ -1,15 +1,135 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
-daily <- readRDS("long_projections_error_daily.rds")
-weekly <- group_by(daily, strategy, country, week_of_projection) %>%
-  summarise_if(is.numeric, list(mu = mean, sd = sd))
+daily_error <- readRDS("long_projections_error_daily.rds")
+weekly_error <- readRDS("long_projections_error_weekly.rds")
 
-weekly_incid <- readRDS("weekly_incidence.rds")
+weekly_incid <- group_by(
+  daily_error, strategy, country, forecast_week, week_of_projection
+) %>%
+  summarise(weekly_incid = sum(obs)) %>%
+  ungroup()
+
+weekly_incid$category <- case_when(
+  weekly_incid$weekly_incid <= 10 ~ "less_than_10",
+  weekly_incid$weekly_incid > 10 &
+  weekly_incid$weekly_incid <= 100 ~ "less_than_100",
+  weekly_incid$weekly_incid > 100 &
+  weekly_incid$weekly_incid <= 500 ~ "less_than_500",
+  weekly_incid$weekly_incid > 500  ~ "greater_than_500",
+)
+
+weekly_error <- left_join(weekly_error, weekly_incid)
+weekly_error$category <- factor(
+  weekly_error$category,
+  levels = c("less_than_10", "less_than_100",
+             "less_than_500", "greater_than_500"),
+  ordered = TRUE
+)
+
+by_strategy <- split(weekly_error, weekly_error$strategy)
+
+cb_palette <- c("#999999", "#E69F00", "#56B4E9", "#009E73")
+names(cb_palette) <- levels(weekly_error$category)
+
+plots_by_incid <- map(
+  by_strategy,
+  function(df) {
+    df$week_of_projection <- factor(df$week_of_projection)
+    df$rel_mae <- log(df$rel_mae, 10)
+    p <- ggplot(
+      df, aes(week_of_projection, rel_mae, fill = category),
+      ) +
+      geom_boxplot(position = "dodge", alpha = 0.5) +
+      scale_fill_manual(
+        values = cb_palette,
+        name = "Weekly incidence",
+        breaks = c("less_than_10", "less_than_100",
+                   "less_than_500", "greater_than_500"),
+        labels = c(" <= 10", " <= 100", " <= 500", "> 500")
+      ) +
+      theme_minimal() +
+      xlab("Week of projection") +
+      ylab("(log) Relative mean error") +
+      theme(
+        legend.position = "bottom"
+      )
+    p
+  }
+)
+
+iwalk(
+  plots_by_incid,
+  function(p, strategy) {
+    outfile <- glue("error_by_incid_level_{strategy}.tiff")
+    rincewind::save_multiple(p, outfile, two_col = FALSE)
+  }
+)
+
+weeks_combined <- readRDS("length_weeks_combined.rds")
+
+x <- left_join(weekly_error, weeks_combined)
+
+x$flag <- case_when(
+  x$week_of_projection <= x$weeks_combined ~ "within",
+  x$week_of_projection > x$weeks_combined ~ "outside"
+)
+
+x <- split(x, x$strategy)
+
+plots <- map(
+  x,
+  function(df) {
+
+    df$week_of_projection <- factor(df$week_of_projection)
+
+    p <- ggplot() +
+      geom_half_violin(
+        data = df[df$flag == "within", ],
+        aes(week_of_projection, log(rel_mae), fill = "red"),
+        draw_quantiles = c(0.25, 0.5, 0.75),
+        side = "l", alpha = 0.3
+      ) +
+      geom_half_violin(
+        data = df[df$flag != "within", ],
+        aes(week_of_projection, log(rel_mae), fill = "blue"),
+        draw_quantiles = c(0.25, 0.5, 0.75),
+        side = "r", alpha = 0.3
+      ) +
+      theme_minimal() +
+      xlab("Week of projection") +
+      ylab("(log) Relative mean error") +
+      scale_fill_identity(
+        guide = "legend",
+        breaks = c("red", "blue"),
+        labels = c("<= weeks combined", "> weeks combined"),
+        name = "Projection horizon"
+      ) +
+      theme(legend.position = "bottom")
+
+    p
+  }
+)
+
+iwalk(
+  plots, function(p, strategy) {
+    outfile <- glue("within_or_without_window_{strategy}.tiff")
+    rincewind::save_multiple(p, outfile, two_col = FALSE)
+  }
+)
+
+better_than_null <- readRDS("better_than_null.rds")
+
+weekly$country <- factor(
+  weekly$country, levels = better_than_null$country, ordered = TRUE
+)
+
+weekly$week_of_projection <- factor(weekly$week_of_projection)
+
+country_groups <- readRDS("country_groups.rds")
 
 compare <- ggplot(
-  weekly, aes(factor(week_of_projection), rel_mae, fill = strategy)
+  weekly, aes(factor(week_of_projection), log(rel_mae), fill = strategy)
 ) +
   geom_boxplot(position = "dodge") +
-  scale_y_log10() +
   theme_minimal() +
   theme(legend.position = "bottom", legend.title = element_blank()) +
   xlab("Week of projection") +
@@ -22,87 +142,32 @@ cbbPalette <- c(
 
 names(cbbPalette) <- 1:8
 
-weekly$week_of_projection <- factor(weekly$week_of_projection)
-
-f <- scales::trans_breaks("log10", function(x) 10^x)
-g <- scales::trans_format("log10", scales::math_format(10^.x))
-breaks <- union(f(weekly$obs_mu), f(weekly$rel_mae_mu))
-labels <- g(breaks)
-
-ggplot(
-  weekly, aes(obs_mu, rel_mae_mu, col = week_of_projection)
+p <- ggplot(
+  weekly,
+  aes(log(obs_mu, 10), log(rel_mae_mu, 10), col = week_of_projection)
 ) +
   geom_point() +
-  scale_y_log10(breaks = breaks, labels = labels) +
-  scale_x_log10(breaks = breaks, labels = labels) +
+  expand_limits(x = 0, y = 0) +
   scale_color_manual(values = cbbPalette, name = "Week of projection") +
   theme_minimal() +
   theme(legend.position = "top") +
+  guides(col = guide_legend(nrow = 1, byrow = TRUE)) +
   xlab("(log) Mean weekly incidence") +
   ylab("(log) Mean relative error")
 
-country_groups <- readRDS("country_groups.rds")
+ggsave("incid_vs_relative_error.png", p)
+
+
 
 by_strategy <- split(weekly, weekly$strategy)
 
-by_strategy_week <- map(
-  by_strategy,
-  function(df) {
-    group_by(df, strategy, week_of_projection) %>%
-      summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
-      ungroup()
-  }
-)
+x <- by_strategy[[1]]
 
-by_strategy_country <- map(
-  by_strategy,
-  function(df) {
-    group_by(df, strategy, country) %>%
-      summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
-      ungroup()
-  }
-)
+df <- x[x$country %in% country_groups[[1]], ]
+df <- weekly_summary(df)
 
-df <- weekly[weekly$country %in% country_groups[[1]], ]
+out <- augment_data(df)
 
-
-ggplot() +
-  geom_tile(
-    data = by_country[by_country$rel_mae <= 5, ],
-    aes(week_of_projection, country, fill = rel_mae)
-  ) +
-  scale_fill_distiller(
-    palette = "Spectral", na.value = "white", direction = -1,
-    guide = guide_colourbar(
-      title = "Relative Error",
-      title.position = "left",
-      title.vjust = 0.5,
-      order = 1
-    )
-  ) +
-  ggnewscale::new_scale_fill() +
-  geom_tile(
-    data = by_country[by_country$rel_mae > 5 & by_country$rel_mae < 10, ],
-    aes(week_of_projection, country, fill = rel_mae)
-  ) +
-  scale_fill_distiller(
-    palette = "YlOrRd", na.value = "white", direction = 1,
-    guide = guide_colourbar(
-      title = "2 < Model Error <= 5",
-      title.position = "top",
-      title.hjust = 0.5,
-      order = 2
-    )
-  ) +
-  theme_minimal()
-
-nice_country_name <- function(x) snakecase::to_title_case(as.character(x))
-
-
-long_relative_error_heatmap(by_country)
-
-quantile()
-
-ggplot(by_country) +
-  geom_histogram(aes(rel_mae), binwidth = 0.1) +
-  facet_wrap(~week_of_projection, ncol = 2, scales = "free_x")
+df <- out[[1]]
+x_labels <- out[["x_labels"]]
+y_labels <- out[["y_labels"]]

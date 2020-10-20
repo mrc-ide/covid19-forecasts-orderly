@@ -301,7 +301,17 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2020-10-03"] <- 354
 
 
+## Corrections 12th October; Worldometers
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Hungary" & raw_data$DateRep == "2020-10-11"] <- 14
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Hungary" & raw_data$DateRep == "2020-10-10"] <- 21
+## source Worldometers
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2020-10-10"] <- 180
+raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2020-10-09"] <- 160
+raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2020-10-08"] <- 145
 
+## Corrections 19th October
+## https://www.thejournal.ie/new-covid-19-cases-2-october-5221779-Oct2020/
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$DateRep == "2020-10-03"] <- 1
 
 raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   map_dfr(
@@ -370,18 +380,21 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
-## exclude <- c(
-##   "Kazakhstan",
-##   "Oman",
-##   ##"United_States_of_America",
-##   "Syria",
-##   "Zimbabwe",
-##   "Kosovo"
-## )
-exclude <- c()
+exclude <- c(
+  "Kazakhstan",
+  "Oman",
+  "United_States_of_America",
+  "Syria",
+  "Zimbabwe",
+  "Israel",
+  "Ecuador",
+  "El_Salvador",
+  "Costa_Rica"
+)
+
 saveRDS(exclude, "exclude.rds")
 
-Country <- Country[!Country %in% exclude]
+##Country <- Country[!Country %in% exclude]
 
 x <- list(
   date_week_ending = week_ending,
