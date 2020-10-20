@@ -3,25 +3,24 @@ daily_error <- readRDS("long_projections_error_daily.rds")
 weekly_error <- readRDS("long_projections_error_weekly.rds")
 
 weekly_incid <- group_by(
-  daily, strategy, country, forecast_week, week_of_projection
+  daily_error, strategy, country, forecast_week, week_of_projection
 ) %>%
   summarise(weekly_incid = sum(obs)) %>%
   ungroup()
 
 weekly_incid$category <- case_when(
-  weekly_incid$weekly_incid <= 50 ~ "less_than_50",
-  weekly_incid$weekly_incid > 50 &
+  weekly_incid$weekly_incid <= 10 ~ "less_than_10",
+  weekly_incid$weekly_incid > 10 &
   weekly_incid$weekly_incid <= 100 ~ "less_than_100",
   weekly_incid$weekly_incid > 100 &
   weekly_incid$weekly_incid <= 500 ~ "less_than_500",
   weekly_incid$weekly_incid > 500  ~ "greater_than_500",
-
 )
 
 weekly_error <- left_join(weekly_error, weekly_incid)
 weekly_error$category <- factor(
   weekly_error$category,
-  levels = c("less_than_50", "less_than_100",
+  levels = c("less_than_10", "less_than_100",
              "less_than_500", "greater_than_500"),
   ordered = TRUE
 )
@@ -43,9 +42,9 @@ plots_by_incid <- map(
       scale_fill_manual(
         values = cb_palette,
         name = "Weekly incidence",
-        breaks = c("less_than_50", "less_than_100",
+        breaks = c("less_than_10", "less_than_100",
                    "less_than_500", "greater_than_500"),
-        labels = c(" <= 50", " <= 100", " <= 500", "> 500")
+        labels = c(" <= 10", " <= 100", " <= 500", "> 500")
       ) +
       theme_minimal() +
       xlab("Week of projection") +
@@ -61,6 +60,58 @@ iwalk(
   plots_by_incid,
   function(p, strategy) {
     outfile <- glue("error_by_incid_level_{strategy}.tiff")
+    rincewind::save_multiple(p, outfile, two_col = FALSE)
+  }
+)
+
+weeks_combined <- readRDS("length_weeks_combined.rds")
+
+x <- left_join(weekly_error, weeks_combined)
+
+x$flag <- case_when(
+  x$week_of_projection <= x$weeks_combined ~ "within",
+  x$week_of_projection > x$weeks_combined ~ "outside"
+)
+
+x <- split(x, x$strategy)
+
+plots <- map(
+  x,
+  function(df) {
+
+    df$week_of_projection <- factor(df$week_of_projection)
+
+    p <- ggplot() +
+      geom_half_violin(
+        data = df[df$flag == "within", ],
+        aes(week_of_projection, log(rel_mae), fill = "red"),
+        draw_quantiles = c(0.25, 0.5, 0.75),
+        side = "l", alpha = 0.3
+      ) +
+      geom_half_violin(
+        data = df[df$flag != "within", ],
+        aes(week_of_projection, log(rel_mae), fill = "blue"),
+        draw_quantiles = c(0.25, 0.5, 0.75),
+        side = "r", alpha = 0.3
+      ) +
+      theme_minimal() +
+      xlab("Week of projection") +
+      ylab("(log) Relative mean error") +
+      scale_fill_identity(
+        guide = "legend",
+        breaks = c("red", "blue"),
+        labels = c("<= weeks combined", "> weeks combined"),
+        name = "Projection horizon"
+      ) +
+      theme(legend.position = "bottom")
+
+    p
+  }
+)
+
+iwalk(
+  plots, function(p, strategy) {
+    outfile <- glue("within_or_without_window_{strategy}.tiff")
     rincewind::save_multiple(p, outfile, two_col = FALSE)
   }
 )

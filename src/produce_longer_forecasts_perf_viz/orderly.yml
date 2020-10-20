@@ -11,6 +11,10 @@ packages:
 sources: R/utils.R
 
 depends:
+  collate_combined_rt:
+    id: latest
+    use:
+      length_weeks_combined.rds: length_weeks_combined.rds
   collate_longer_forecasts_metrics:
     id: latest
     use:

@@ -77,6 +77,26 @@ combined_rt_estimates <- map(
   infiles[grep("combined_rt_estimates", infiles)], readRDS
 )
 
+names(combined_rt_estimates) <- gsub(
+  pattern = "combined_rt_estimates_",
+  replacement = "",
+  x = infiles[grep("combined_rt_estimates", infiles)]
+) %>% gsub(pattern = ".rds", replacement = "", x = .)
+
+length_weeks_combined <- map_dfr(
+  combined_rt_estimates,
+  function(cntry) {
+    map_dfr(
+      cntry,
+      function(x) data.frame(weeks_combined = length(x$weeks_combined)),
+      .id = "country"
+    )
+  }, .id = "forecast_week"
+)
+
+saveRDS(
+  length_weeks_combined, "length_weeks_combined.rds"
+)
 combined_rt_qntls <- map_depth(
   combined_rt_estimates,
   2,
