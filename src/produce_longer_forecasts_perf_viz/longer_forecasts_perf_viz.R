@@ -1,7 +1,69 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
-daily <- readRDS("long_projections_error_daily.rds")
-weekly <- group_by(daily, strategy, country, week_of_projection) %>%
-  summarise_if(is.numeric, mean)
+daily_error <- readRDS("long_projections_error_daily.rds")
+weekly_error <- readRDS("long_projections_error_weekly.rds")
+
+weekly_incid <- group_by(
+  daily, strategy, country, forecast_week, week_of_projection
+) %>%
+  summarise(weekly_incid = sum(obs)) %>%
+  ungroup()
+
+weekly_incid$category <- case_when(
+  weekly_incid$weekly_incid <= 50 ~ "less_than_50",
+  weekly_incid$weekly_incid > 50 &
+  weekly_incid$weekly_incid <= 100 ~ "less_than_100",
+  weekly_incid$weekly_incid > 100 &
+  weekly_incid$weekly_incid <= 500 ~ "less_than_500",
+  weekly_incid$weekly_incid > 500  ~ "greater_than_500",
+
+)
+
+weekly_error <- left_join(weekly_error, weekly_incid)
+weekly_error$category <- factor(
+  weekly_error$category,
+  levels = c("less_than_50", "less_than_100",
+             "less_than_500", "greater_than_500"),
+  ordered = TRUE
+)
+
+by_strategy <- split(weekly_error, weekly_error$strategy)
+
+cb_palette <- c("#999999", "#E69F00", "#56B4E9", "#009E73")
+names(cb_palette) <- levels(weekly_error$category)
+
+plots_by_incid <- map(
+  by_strategy,
+  function(df) {
+    df$week_of_projection <- factor(df$week_of_projection)
+    df$rel_mae <- log(df$rel_mae, 10)
+    p <- ggplot(
+      df, aes(week_of_projection, rel_mae, fill = category),
+      ) +
+      geom_boxplot(position = "dodge", alpha = 0.5) +
+      scale_fill_manual(
+        values = cb_palette,
+        name = "Weekly incidence",
+        breaks = c("less_than_50", "less_than_100",
+                   "less_than_500", "greater_than_500"),
+        labels = c(" <= 50", " <= 100", " <= 500", "> 500")
+      ) +
+      theme_minimal() +
+      xlab("Week of projection") +
+      ylab("(log) Relative mean error") +
+      theme(
+        legend.position = "bottom"
+      )
+    p
+  }
+)
+
+iwalk(
+  plots_by_incid,
+  function(p, strategy) {
+    outfile <- glue("error_by_incid_level_{strategy}.tiff")
+    rincewind::save_multiple(p, outfile, two_col = FALSE)
+  }
+)
 
 better_than_null <- readRDS("better_than_null.rds")
 
@@ -14,10 +76,9 @@ weekly$week_of_projection <- factor(weekly$week_of_projection)
 country_groups <- readRDS("country_groups.rds")
 
 compare <- ggplot(
-  weekly, aes(factor(week_of_projection), rel_mae, fill = strategy)
+  weekly, aes(factor(week_of_projection), log(rel_mae), fill = strategy)
 ) +
   geom_boxplot(position = "dodge") +
-  scale_y_log10() +
   theme_minimal() +
   theme(legend.position = "bottom", legend.title = element_blank()) +
   xlab("Week of projection") +
@@ -57,3 +118,5 @@ df <- weekly_summary(df)
 out <- augment_data(df)
 
 df <- out[[1]]
+x_labels <- out[["x_labels"]]
+y_labels <- out[["y_labels"]]
