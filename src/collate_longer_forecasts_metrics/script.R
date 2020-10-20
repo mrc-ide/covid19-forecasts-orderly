@@ -12,9 +12,13 @@ names(infiles) <- gsub(
   x = infiles, pattern = "long_projections_error_", replacement = ""
 ) %>% gsub(x = ., pattern = ".rds", replacement = "")
 
-daily <- map_dfr(infiles, readRDS)
-weekly <- group_by(daily, country, week_of_projection) %>%
-  summarise_if(is.numeric, mean)
+daily <- map_dfr(infiles, readRDS, .id = "forecast_week")
+
+weekly <- group_by(
+  daily, strategy, country, forecast_week, week_of_projection
+) %>%
+  summarise_if(is.numeric, mean) %>%
+  ungroup()
 
 
 saveRDS(daily, "long_projections_error_daily.rds")

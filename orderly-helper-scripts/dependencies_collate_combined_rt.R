@@ -4,14 +4,13 @@ x <- list(
   artefacts = list(
     data = list(
     description = "Collated combined rt estimates (quantiles)",
-    filenames = c("combined_rt_qntls.rds", "weekly_iqr.rds")
+    filenames = c("combined_rt_qntls.rds",
+                  "weekly_iqr.rds",
+                  "length_weeks_combined.rds")
   )
  ),
  packages = c("dplyr", "tidyr", "ggdist", "purrr", "ggplot2")
 )
-
-week_starting <- as.Date("2020-03-29")
-week_ending <- as.Date("2020-09-06")
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"

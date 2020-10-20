@@ -1,0 +1,31 @@
+script: longer_forecasts_perf_viz.R
+
+packages:
+- ggplot2
+- cowplot
+- dplyr
+- purrr
+- rincewind
+- glue
+
+sources: R/utils.R
+
+depends:
+  collate_combined_rt:
+    id: latest
+    use:
+      length_weeks_combined.rds: length_weeks_combined.rds
+  collate_longer_forecasts_metrics:
+    id: latest
+    use:
+      long_projections_error_weekly.rds: long_projections_error_weekly.rds
+      long_projections_error_daily.rds: long_projections_error_daily.rds
+  compare_with_null_model:
+    id: latest
+    use:
+      country_groups.rds: country_groups.rds
+      better_than_null.rds: better_than_null.rds
+  produce_baseline_error:
+    id: latest
+    use:
+      weekly_incidence.rds: weekly_incidence.rds

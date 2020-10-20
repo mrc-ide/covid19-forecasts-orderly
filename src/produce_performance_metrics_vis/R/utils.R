@@ -1,10 +1,3 @@
-nice_country_name <- function(x) snakecase::to_title_case(as.character(x))
-
-round_and_format <- function(x, digits = 2) {
-  format(round(x, digits), nsmall = digits)
-}
-
-
 prop_in_cri_heatmap <- function(df, CrI = "50%") {
 
   df$x_labels <- strftime(
