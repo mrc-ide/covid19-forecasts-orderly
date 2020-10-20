@@ -69,29 +69,25 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "format_model_outputs/",
-    use_draft = use_draft,
-    parameter = list(week_ending = week)
+    use_draft = use_draft, parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
 
   a <- orderly_run(
     "produce_maps/",
-    use_draft = use_draft,
-    parameter = list(week_ending = week)
+    use_draft = use_draft, parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
 
   a <- orderly_run(
     "produce_retrospective_vis/",
-    use_draft = use_draft,
-    parameter = list(week_ending = week)
+    use_draft = use_draft, parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
 
   a <- orderly_run(
     "produce_visualisations/",
-    parameters = list(week_ending = week),
-    use_draft = use_draft
+    parameters = list(week_ending = week), use_draft = use_draft
   )
   if (commit) orderly_commit(a)
 

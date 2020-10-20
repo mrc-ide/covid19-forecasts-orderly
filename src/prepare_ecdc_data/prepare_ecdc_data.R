@@ -309,6 +309,9 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2020-10-09"] <- 160
 raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2020-10-08"] <- 145
 
+## Corrections 19th October
+## https://www.thejournal.ie/new-covid-19-cases-2-october-5221779-Oct2020/
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$DateRep == "2020-10-03"] <- 1
 
 raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   map_dfr(
@@ -384,7 +387,9 @@ exclude <- c(
   "Syria",
   "Zimbabwe",
   "Israel",
-  "Ecuador"
+  "Ecuador",
+  "El_Salvador",
+  "Costa_Rica"
 )
 
 saveRDS(exclude, "exclude.rds")
