@@ -382,6 +382,8 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   "Kazakhstan",
+  "Kyrgyzstan",
+  "Tunisia",
   "Oman",
   "United_States_of_America",
   "Syria",
