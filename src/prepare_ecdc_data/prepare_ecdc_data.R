@@ -313,6 +313,14 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_dat
 ## https://www.thejournal.ie/new-covid-19-cases-2-october-5221779-Oct2020/
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$DateRep == "2020-10-03"] <- 1
 
+
+## Corrections 09th November
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-08"] <- 199
+raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-08"] <- 6124
+## 1326 new deaths were added after a change in criteria for reporting
+## deaths
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep == "2020-11-05"] <- 297
+
 raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   map_dfr(
     function(df) {
@@ -334,7 +342,9 @@ raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
       df
     }
   )
-
+## WHO erroneously notes this as 12
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-02"] <- 112
+raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-02"] <- 11789
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
@@ -391,7 +401,11 @@ exclude <- c(
   "Israel",
   "Ecuador",
   "El_Salvador",
-  "Costa_Rica"
+  "Costa_Rica",
+  "Bosnia_and_Herzegovina",
+  "Kosovo",
+  "Uganda",
+  "Spain" ## latest data not yet available.
 )
 
 saveRDS(exclude, "exclude.rds")
