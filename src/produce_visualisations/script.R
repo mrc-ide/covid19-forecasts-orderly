@@ -87,8 +87,8 @@ plots <- purrr::imap(
         ## if the number of countries is smaller, then the facets are
         ## bigger. Add empty grobs to fix the size
         p2 <- ggplot() + theme_void()
-        p3 <- ggplot() + theme_void()
-        p <- cowplot::plot_grid(p, p2, p3, nrow = 3, rel_heights = c(1, 0.25, 0.25))
+        ##p3 <- ggplot() + theme_void()
+        p <- cowplot::plot_grid(p, p2, nrow = 2, rel_heights = c(1, 0.25, 0.25))
       }
       p
     }
@@ -168,8 +168,8 @@ plots <- purrr::imap(
         ## if the number of countries is smaller, then the facets are
         ## bigger. Add empty grobs to fix the size
         p2 <- ggplot() + theme_void()
-        p3 <- ggplot() + theme_void()
-        p <- cowplot::plot_grid(p, p2, p3, nrow = 3, rel_heights = c(1, 0.25, 0.25))
+        ##p3 <- ggplot() + theme_void()
+        p <- cowplot::plot_grid(p, p2, nrow = 2, rel_heights = c(1, 0.25, 0.25))
       }
       p
     })
@@ -380,8 +380,8 @@ plots <- split(x, x$continent) %>%
         ## if the number of countries is smaller, then the facets are
         ## bigger. Add empty grobs to fix the size
           p2 <- ggplot() + theme_void()
-          p3 <- ggplot() + theme_void()
-          p <- cowplot::plot_grid(p, p2, p3, nrow = 3, rel_heights = c(1, 0.25, 0.25))
+          ##p3 <- ggplot() + theme_void()
+          p <- cowplot::plot_grid(p, p2, nrow = 2, rel_heights = c(1, 0.25, 0.25))
         }
 
         outfile <- glue::glue("reporting_ratio_{continent}_page_{page_num}.png")
