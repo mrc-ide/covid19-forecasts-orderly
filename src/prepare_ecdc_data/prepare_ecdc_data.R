@@ -321,6 +321,14 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$Date
 ## deaths
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Spain" & raw_data$DateRep == "2020-11-05"] <- 297
 
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-15"] <- 118
+raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-15"] <- 4659
+## Backlog of deaths reported on this day
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2020-11-11"] <- 857
+
+
+
 raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   map_dfr(
     function(df) {
@@ -405,6 +413,7 @@ exclude <- c(
   "Bosnia_and_Herzegovina",
   "Kosovo",
   "Uganda",
+  "Switzerland", ## Numbers do not agree with those on worldometers
   "Spain" ## latest data not yet available.
 )
 
