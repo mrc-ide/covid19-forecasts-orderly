@@ -102,8 +102,14 @@ purrr::iwalk(
     message(xmax)
     if (xmax < 0) return(NULL)
 
+    obs$rolling_mean <- slider::slide_dbl(
+      obs$deaths, mean, .before = 3, .after = 3
+    )
     p1 <- all_forecasts(obs, pred)
     p1 <- p1 +
+      geom_line(
+        data = obs, aes(days_since_100_deaths, rolling_mean)
+      ) +
       scale_x_continuous(
         breaks = seq(0, xmax, 14),
         limits = c(0, xmax),
