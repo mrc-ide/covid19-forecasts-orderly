@@ -105,16 +105,7 @@ purrr::iwalk(
     obs$rolling_mean <- slider::slide_dbl(
       obs$deaths, mean, .before = 3, .after = 3
     )
-    p1 <- all_forecasts(obs, pred)
-    p1 <- p1 +
-      geom_line(
-        data = obs, aes(days_since_100_deaths, rolling_mean)
-      ) +
-      scale_x_continuous(
-        breaks = seq(0, xmax, 14),
-        limits = c(0, xmax),
-        minor_breaks = NULL
-    )
+    p1 <- all_forecasts_calendar(obs, pred)
 
     ## Remove x-axis ticks to have them on the bottom panel only
     p1 <- p1 +
@@ -125,20 +116,20 @@ purrr::iwalk(
         axis.text.y = element_text(size = 8),
         axis.text.x = element_blank(),
         axis.title.x = element_text(size = 8),
-        axis.title.y = element_text(size = 8, angle = 90),
-        legend.position = "none"
+        axis.title.y = element_text(size = 8, angle = 90)
+        ##legend.position = "none"
+      ) +
+      theme(
+        legend.position = c(0, 1),
+        legend.justification = c(0, 1),
+        legend.title = element_blank(),
+        legend.box = "vertical",
+        legend.margin = margin(t = 0, r = 0, l = 10, b = 0)
       )
 
     p2 <- all_restimates_line(out) +
       ylab("Effective Reproduction Number") +
       xlab("Days since 100 deaths")
-
-    p2 <- p2 +
-      scale_x_continuous(
-        breaks = seq(0, xmax, 14),
-        limits = c(0, xmax),
-        minor_breaks = NULL
-      )
 
     p2 <- p2 +
       theme_manuscript() +
@@ -147,7 +138,11 @@ purrr::iwalk(
         axis.text = element_text(size = 8),
         axis.title.y = element_text(size = 8, angle = 90),
         axis.title.x = element_text(size = 8, angle = 0, hjust = 0.5)
+      ) +
+      theme(
+        legend.position = "top", legend.title = element_blank()
       )
+
 
     p <- cowplot::plot_grid(
       p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
