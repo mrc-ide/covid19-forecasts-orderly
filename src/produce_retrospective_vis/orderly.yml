@@ -1,6 +1,3 @@
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-
 script: script.R
 
 artefacts:
@@ -8,9 +5,9 @@ artefacts:
     description: Number of countries included
     filenames:
       - n_included_line.png
-      - n_included_bar.png
       - epicurve_by_continent.png
       - epicurve_pline.png
+      - countries_included_each_week.csv
 
 packages:
   - ggplot2
@@ -18,6 +15,8 @@ packages:
   - dplyr
   - ggrepel
   - cowplot
+  - purrr
+  - rincewind
 
 resources:
   - country-and-continent-codes-list.csv
@@ -28,4 +27,4 @@ depends:
   prepare_ecdc_data:
     id: latest(parameter:week_ending == week_ending)
     use:
-      model_input.rds: latest_model_input.rds
+      model_input.rds: latest_deaths_wide_no_filter.rds
