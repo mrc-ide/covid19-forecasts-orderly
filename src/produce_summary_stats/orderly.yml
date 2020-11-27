@@ -1,1 +1,20 @@
 script: script.R
+
+packages:
+- dplyr
+- rmarkdown
+- readr
+
+resources:
+- summary.Rmd
+
+artefacts:
+  report:
+    description: summary
+    filenames: summary.html
+
+depends:
+  produce_retrospective_vis:
+    id: latest
+    use:
+      countries_included_each_week.csv: countries_included_each_week.csv
