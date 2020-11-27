@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(use_si = "si_2", latest_week = "2020-09-27"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(use_si = "si_2", latest_week = "2020-11-16"), use_draft = "newer")
 ### This task produces the following visualtions:
 ### comparison of unweighted and weighted ensembles for each country
 ### all forecasts from unweighted ensemble
@@ -120,11 +120,10 @@ purrr::iwalk(
         ##legend.position = "none"
       ) +
       theme(
-        legend.position = c(0, 1),
-        legend.justification = c(0, 1),
+        legend.position = "top",
         legend.title = element_blank(),
-        legend.box = "vertical",
-        legend.margin = margin(t = 0, r = 0, l = 10, b = 0)
+        legend.spacing = unit(0, "pt"),
+        legend.text = element_text(size = 9)
       )
 
     p2 <- all_restimates_line(out) +
@@ -140,7 +139,10 @@ purrr::iwalk(
         axis.title.x = element_text(size = 8, angle = 0, hjust = 0.5)
       ) +
       theme(
-        legend.position = "top", legend.title = element_blank()
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.spacing = unit(0, "pt"),
+        legend.text = element_text(size = 10)
       )
 
 

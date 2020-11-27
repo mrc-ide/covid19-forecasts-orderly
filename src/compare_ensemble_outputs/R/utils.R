@@ -157,24 +157,24 @@ all_forecasts_calendar <- function(obs, pred) {
       ##aesthetics = c("linetype", "color", "shape", "fill"),
       breaks = "solid",
       labels = "7 days rolling average",
-      guide = "legend"
+      guide = guide_legend(order = 2)
     ) +
     scale_shape_identity(
       ##aesthetics = c("linetype", "color", "shape", "fill"),
       breaks = 16,
       labels = "Reported deaths",
-      guide = "legend"
+      guide = guide_legend(order = 1)
     ) +
     scale_color_identity(
       ##aesthetics = c("linetype", "color", "shape", "fill"),
       breaks = "#634d43",
       labels = "Median projected deaths",
-      guide = "legend"
+      guide = guide_legend(order = 2)
     ) +
     scale_fill_identity(
       breaks = "#634d43",
       labels = "95% CrI of projected deaths",
-      guide = "legend"
+      guide = guide_legend(order = 3)
     ) +
     facet_wrap(
       ~country,
