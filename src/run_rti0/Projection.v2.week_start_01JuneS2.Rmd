@@ -1,0 +1,206 @@
+---
+title: "ccc"
+author: "Pierre Nouvellet"
+date: "2019-07"
+---
+
+```{r options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+set.seed(1)
+# runif(1,0,1)
+library(knitr)
+library(EpiEstim)
+library(Hmisc)
+
+opts_chunk$set(collapse = TRUE)
+
+opts_chunk$set(fig.path='figs/', fig.keep='high', 
+               dev=c('png'), fig.width=8, fig.height=8, cache=FALSE,
+               tidy=FALSE, warning=FALSE, fig.show="asis"
+ 	       )
+
+# useful functions
+sapply(paste0('Rscript/MCMC/',(list.files('Rscript/MCMC/'))),FUN = source)
+
+
+```
+
+
+NEED to do:
+1) input
+
+# Input
+
+```{r}
+
+date_week_finishing <-  as.Date('31/05/2020',format = '%d/%m/%Y')
+
+day.project <- 7
+t.window.range <- 10
+
+rep <- 5e4
+
+```
+
+# Read data
+
+```{r,fig.height=8,fig.width=5}
+d <- readRDS(file = paste0('../Rdata/data_',date_week_finishing,'.rds'))
+
+I <- d$D_active_transmission
+country <- d$Country
+N_geo <- length(country)
+# date_week_finishing <- d$date_week_finishing
+
+# plot(I$dates,I$United_States_of_America,
+#      xlim=as.Date(c('16-03-20','10-06-20'),format = '%d-%m-%y'),
+#      ylim = c(0,5000),bty='n',xlab = '',ylab = 'deaths',
+#      xaxt="n")
+# axis(side = 1, 
+#      at = as.Date(c('16-03-20','10-06-20'),
+#                   format = '%d-%m-%y'), 
+#      labels = c('16-March','10-June'))
+# library(zoo)
+# ri <- rollmean(x = I$United_States_of_America, k = 7)
+# lines(I$dates,c(I$United_States_of_America[1:6],ri),col='blue')
+# abline(h=2000,lty = 2)
+# abline(h=1000,lty = 2)
+# abline(h=3000,lty = 2)
+```
+
+
+```{r}
+
+## SI
+### 1. Estimating R_t with EpiEstim
+si_mean <- d$si_mean[2]
+si_std <- d$si_std[2]
+# CV_SI <- si_std / si_mean
+SItrunc <- 20
+
+## # serial interval estimate used: mean = 3.96, sd =  4.75
+## # from Du et al. from The University of Texas at Austin and University of Hong Kong
+## # (https://www.medrxiv.org/content/10.1101/2020.01.28.20019299v4.full.pdf)
+## # (https://www.medrxiv.org/content/10.1101/2020.02.19.20025452v2.full.pdf)
+SI <- SI_gamma_dist_EpiEstim(mu = si_mean,
+                             si_std  = si_std,
+                            SItrunc = SItrunc)
+
+plot(seq(0, 20), SI$dist, type = "h",
+          lwd = 10, lend = 1, xlab = "time (days)", ylab = "frequency")
+title(main = "Discrete distribution of the serial interval of COVID-19")
+```
+
+
+
+```{r}
+
+t.proj.start <- date_week_finishing + 1
+
+t.window <- seq(t.proj.start-t.window.range,t.proj.start-1,1)
+
+incidence_inference <- I[which(I$dates %in% t.window),]
+
+
+```
+
+# evaluate Rt
+
+```{r MCMC1, eval=TRUE, echo=TRUE}
+
+                          
+sigma_prop <- rep(0.1,N_geo*2)         # initial proposal variances (they are now tuned!)
+# initial incidence conditions 
+if ( N_geo>1 ){
+  mu0 <- as.numeric(log(colMeans(incidence_inference[,-1])*si_mean))
+}else{
+  mu0 <- as.numeric(log(mean(incidence_inference[,-1])*si_mean))
+}
+# initially, we assume R=1 and choose initial condition accordingly, i.e. with mu0 case and R=1 
+# we expect the number of daily cases to stabilised at the mean of the observed incidence in the 
+# time window of interest
+# this is use for the prior of initial number of cases, i.e. as the mean of an exponential distribution
+# in practice, the mu0 cases will happen 100 days before the start of the time windows
+
+theta0 <- c(rep(1,N_geo), mu0)          # initial parameter R=1 (time # of locations, and initial number of cases in the past)  
+
+
+source('Rscript/wrapper.v2.r')
+
+```
+
+
+### Project forward
+
+Once we have inferred the reproduction numbers in the time window, and the initial conditions, we can use the same model to project forward.
+
+We start the projection from the begining of the time window, to reflect incertainty in the initial conditions.
+
+If the time window was 4 weeks, and we want to project for 4 weeks after that, then the 'week_forward' needs to be 4+4 in the function 'Sim_Poiss'.
+
+```{r forward1, eval=TRUE , echo= TRUE}
+# save.image(file = 'int_23MArch.RData')
+# load(file = 'int_23MArch.RData')
+NR_samples <- nrow(res$theta)/10 
+Nsim_per_samples <-  10
+
+day_forward <- day.project + t.window.range
+
+source('Rscript/wrapper.proj.v2.r')
+
+
+```
+
+
+```{r}
+results <- list(date_week_finishing =d$date_week_finishing,
+                                  Threshold_criterion_4weeks = d$Threshold_criterion_4weeks,
+                                  Threshold_criterion_7days = d$Threshold_criterion_7days,
+                                  I_active_transmission = d$I_active_transmission,
+                                  Country = d$Country,
+                                  res_MCMC = res,
+                                  I_pred = I_pred,
+                                  t.proj.start = t.proj.start,
+                                  t.window.range = t.window.range,
+                                  day.project = day.project,
+                                  SI = SI)
+
+```
+
+
+Standard output for project
+
+
+```{r}
+N_geo <- length(results$Country)
+
+Rt_last <- data.frame(results$res_MCMC$theta[,1:N_geo])
+names(Rt_last) <- results$Country
+if (nrow(Rt_last)>1e4){
+  f <- round(seq(1,nrow(Rt_last),length.out = 1e4))
+  Rt_last <- Rt_last[f,]
+}
+
+
+Predictions <- list()
+for (i in 1:N_geo){
+  temp <- results$I_pred[[i]]
+  temp <- as.data.frame(temp[,8:14])
+  names(temp) <- as.character(seq(results$t.proj.start,results$t.proj.start+7-1,1))
+  if (nrow(temp)>1e4){
+    f <- round(seq(1,nrow(temp),length.out = 1e4))
+    temp <- temp[f,]
+  }
+  Predictions[[as.character(results$Country[i])]] <- temp
+}
+
+Std_results <- list(I_active_transmission = d$I_active_transmission,
+                    D_active_transmission = d$D_active_transmission,
+                    Country = results$Country,
+                    Rt_last = Rt_last,
+                    Predictions = Predictions)
+
+
+saveRDS(object = Std_results,
+        file = paste0('RData/RtI0_Std_results_week_end_',date_week_finishing,'.SI2.rds' ))
+```
+

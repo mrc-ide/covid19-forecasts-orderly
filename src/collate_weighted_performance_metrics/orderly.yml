@@ -129,3 +129,31 @@ depends:
     id: latest(parameter:week_ending == "2020-09-27")
     use:
       unwtd_pred_error_2020-09-27.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-10-04")
+    use:
+      unwtd_pred_error_2020-10-04.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-10-11")
+    use:
+      unwtd_pred_error_2020-10-11.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-10-18")
+    use:
+      unwtd_pred_error_2020-10-18.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-10-25")
+    use:
+      unwtd_pred_error_2020-10-25.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-11-01")
+    use:
+      unwtd_pred_error_2020-11-01.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-11-08")
+    use:
+      unwtd_pred_error_2020-11-08.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-11-15")
+    use:
+      unwtd_pred_error_2020-11-15.csv: unwtd_pred_error.csv

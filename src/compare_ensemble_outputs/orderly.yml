@@ -20,6 +20,7 @@ packages:
 - glue
 - cowplot
 - rincewind
+- ggtext
 depends:
 - collate_model_outputs:
     id: latest
@@ -31,6 +32,6 @@ depends:
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
 - produce_baseline_error:
-    id: latest(parameter:week_ending == latest_week)
+    id: latest
     use:
       exclude.rds: exclude.rds
