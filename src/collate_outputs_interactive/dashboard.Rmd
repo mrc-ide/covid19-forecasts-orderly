@@ -40,10 +40,9 @@ forecast_weeks <- seq(
   as.Date("2020-03-08"), to = as.Date("2020-09-06"), by = "7 days"
 )
 names(forecast_weeks) <- forecast_weeks
-long_forecasts <- readRDS("unwtd_long_qntls.rds")
+##long_forecasts <- readRDS("unwtd_long_qntls.rds")
 
 country_long_pred <- reactive({
-  
   pred <- long_forecasts[long_forecasts$country == input$country &
                          long_forecasts$forecast_week %in% input$forecast_week, ]
   pred$date <- as.Date(pred$date)
@@ -51,7 +50,6 @@ country_long_pred <- reactive({
 })
 
 country_pred <- reactive({
-  
   pred <- ensb_qntls[ensb_qntls$country == input$country &
                      ensb_qntls$proj %in% input$forecast_week, ]
   pred$date <- as.Date(pred$date)
@@ -59,12 +57,16 @@ country_pred <- reactive({
 })
 
 country_obs <- reactive({
-  
   out <- obs[, c("dates", input$country)]
   out$deaths <- out[[input$country]]
   out$dates <- as.Date(out$dates)
   out
 })
+
+country_weeks <- reactive({
+  unique(ensb_qntls[ensb_qntls$country == input$country, "proj"])
+})
+
 
 ```
 
@@ -80,16 +82,18 @@ selectInput(
   multiple = FALSE
 )
 
-pickerInput(
-  'forecast_week',
-  label = 'Select a week',
-  choices = forecast_weeks,
-  selected = "2020-03-08",
-  options = list(`actions-box` = TRUE),
-  multiple = TRUE
-)
-
-
+uiOutput('forecast_week')
+output$forecast_week <- renderUI({
+  weeks <- country_weeks()
+  pickerInput(
+    'forecast_week',
+    label = 'Select a week',
+    choices = weeks,
+    selected = weeks[[1]],
+    options = list(`actions-box` = TRUE),
+    multiple = TRUE
+  )
+})
 ```
 
 
@@ -108,15 +112,20 @@ output$scatter <- renderPlotly({
   pred <- country_pred()
   obs_country <- country_obs()
   p1a <- ggplot() +
-    geom_point(data = obs_country, aes(dates, deaths)) +
-    geom_line(data = pred, aes(date, `50%`, group = proj)) +
+    geom_point(
+      data = obs_country, aes(dates, deaths)
+    ) +
+    geom_line(
+      data = pred, aes(date, `50%`, group = proj, col = "#634d43")
+    ) +
     geom_ribbon(
       data = pred,
-      aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = proj),
+      aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = proj,
+          fill = "#634d43"),
       alpha = 0.3
     ) +
     scale_x_date(
-      date_breaks = "2 weeks",
+      date_breaks = "3 weeks",
       limits = c(as.Date("2020-03-01"), NA)
     ) +
     xlab("") +
@@ -124,8 +133,33 @@ output$scatter <- renderPlotly({
     theme_minimal(base_size = 14) +
     theme(
       axis.text.x =
-        element_text(angle = 90, hjust = 0.5, vjust = 0)
-    )
+        element_text(angle = 90, hjust = 0.5, vjust = 0),
+      legend.position = "none"
+    ) 
+    ## scale_shape_identity(
+    ##   ##aesthetics = c("linetype", "color", "shape", "fill"),
+    ##   breaks = 16,
+    ##   labels = "Reported deaths",
+    ##   guide = guide_legend(order = 1)
+    ## ) +
+    ## scale_color_identity(
+    ##   ##aesthetics = c("linetype", "color", "shape", "fill"),
+    ##   breaks = "#634d43",
+    ##   labels = "Median projected deaths",
+    ##   guide = guide_legend(order = 2)
+    ## ) +
+    ## scale_fill_identity(
+    ##   breaks = "#634d43",
+    ##   labels = "95% CrI of projected deaths",
+    ##   guide = guide_legend(order = 3)
+    ## ) +
+    ## theme(
+    ##   legend.position = "top",
+    ##   legend.title = element_blank(),
+    ##   legend.spacing = unit(0, "pt"),
+    ##   legend.text = element_text(size = 9)
+    ## )
+
     
   g <- ggplotly(p1a, source = 'source') %>% 
     layout(dragmode = 'lasso', 
