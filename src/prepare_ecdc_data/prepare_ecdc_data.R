@@ -354,6 +354,21 @@ raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-02"] <- 112
 raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-02"] <- 11789
 
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-22"] <- 96
+raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-22"] <- 1875
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Switzerland" & raw_data$DateRep == "2020-11-22"] <- 39
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2020-11-21"] <- 59
+## worldometers
+raw_data$Cases[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2020-11-18"] <- 14524
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Poland" & raw_data$DateRep == "2020-10-05"] <- 34
+raw_data$Cases[raw_data$`Countries.and.territories` == "Poland" & raw_data$DateRep == "2020-10-05"] <- 1934
+
+## Corrections from worldometers
+raw_data$Cases[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2020-10-10"] <- 5263
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Azerbaijan" & raw_data$DateRep == "2020-11-29"] <- 38
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -368,7 +383,7 @@ saveRDS(
 
 ## Apply thresholds
 pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
-  purrr::keep(deaths_threshold) %>%
+  purrr::keep(rincewind::deaths_threshold) %>%
   dplyr::bind_rows()
 
 ## Still have some negative cases. Replace the negative case count
@@ -413,6 +428,7 @@ exclude <- c(
   "Bosnia_and_Herzegovina",
   "Kosovo",
   "Uganda",
+  "Sudan",
   "Switzerland", ## Numbers do not agree with those on worldometers
   "Spain" ## latest data not yet available.
 )

@@ -37,7 +37,7 @@ continents <- continents[, c(
   "continent_name",
   "three_letter_country_code"
 )]
-
+included$country <- as.character(included$country)
 included$iso3c <- countrycode::countrycode(
   snakecase::to_title_case(included$country), "country.name", "iso3c"
 )

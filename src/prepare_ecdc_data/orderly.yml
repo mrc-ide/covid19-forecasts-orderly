@@ -16,7 +16,7 @@ packages:
   - readr
   - purrr
   - ggplot2
-  
+  - rincewind
 sources:
   - R/utils.R
 
