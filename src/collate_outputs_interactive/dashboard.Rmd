@@ -19,6 +19,10 @@ library(ggthemes)
 library(viridis)
 library(plotly)
 library(shinyWidgets)
+library(purrr)
+
+rt_qntls <- readRDS("unweighted_rt_qntls.rds")
+rt_qntls <- rt_qntls[rt_qntls$si == "si_2", ]
 
 ensb_qntls <- readRDS("unweighted_qntls.rds")
 ensb_qntls <- ensb_qntls[ensb_qntls$si == "si_2", ]
@@ -37,7 +41,7 @@ countries <- list(
   Oceania = countries[continents == "Oceania"]
 )
 forecast_weeks <- seq(
-  as.Date("2020-03-08"), to = as.Date("2020-09-06"), by = "7 days"
+  as.Date("2020-03-08"), to = as.Date("2020-11-16"), by = "7 days"
 )
 names(forecast_weeks) <- forecast_weeks
 ##long_forecasts <- readRDS("unwtd_long_qntls.rds")
@@ -65,6 +69,24 @@ country_obs <- reactive({
 
 country_weeks <- reactive({
   unique(ensb_qntls[ensb_qntls$country == input$country, "proj"])
+})
+
+country_restimate <- reactive({
+  restim <- rt_qntls[rt_qntls$country == input$country &
+                     rt_qntls$forecast_date %in% input$forecast_week, ]
+  restim <- tidyr::spread(restim, key = quantile, value = out2)
+  restim <- restim[rep(seq_len(nrow(restim)), each = 7), ]
+  restim <- split(restim, restim$forecast_date) %>%
+    map_dfr(
+      function(df) {
+        df$date <- seq(
+          from = as.Date(df$forecast_date[1]), length.out = 7, by = "1 day"
+        )
+        df
+      }
+    )
+  restim$date <- as.Date(restim$date)
+  restim
 })
 
 
@@ -116,17 +138,17 @@ output$scatter <- renderPlotly({
       data = obs_country, aes(dates, deaths)
     ) +
     geom_line(
-      data = pred, aes(date, `50%`, group = proj, col = "#634d43")
+      data = pred, aes(date, `50%`, group = proj),
+      col = "#634d43", size = 1.1
     ) +
     geom_ribbon(
       data = pred,
-      aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = proj,
-          fill = "#634d43"),
+      aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = proj),
+      fill = "#634d43",
       alpha = 0.3
     ) +
     scale_x_date(
-      date_breaks = "3 weeks",
-      limits = c(as.Date("2020-03-01"), NA)
+      date_breaks = "3 weeks", limits = c(as.Date("2020-03-01"), NA)
     ) +
     xlab("") +
     ylab("Daily Deaths") +
@@ -136,30 +158,6 @@ output$scatter <- renderPlotly({
         element_text(angle = 90, hjust = 0.5, vjust = 0),
       legend.position = "none"
     ) 
-    ## scale_shape_identity(
-    ##   ##aesthetics = c("linetype", "color", "shape", "fill"),
-    ##   breaks = 16,
-    ##   labels = "Reported deaths",
-    ##   guide = guide_legend(order = 1)
-    ## ) +
-    ## scale_color_identity(
-    ##   ##aesthetics = c("linetype", "color", "shape", "fill"),
-    ##   breaks = "#634d43",
-    ##   labels = "Median projected deaths",
-    ##   guide = guide_legend(order = 2)
-    ## ) +
-    ## scale_fill_identity(
-    ##   breaks = "#634d43",
-    ##   labels = "95% CrI of projected deaths",
-    ##   guide = guide_legend(order = 3)
-    ## ) +
-    ## theme(
-    ##   legend.position = "top",
-    ##   legend.title = element_blank(),
-    ##   legend.spacing = unit(0, "pt"),
-    ##   legend.text = element_text(size = 9)
-    ## )
-
     
   g <- ggplotly(p1a, source = 'source') %>% 
     layout(dragmode = 'lasso', 
@@ -187,6 +185,50 @@ Row
 ### Reproduction Number Estimates
 
 ```{r}
+renderPlotly({
+  
+  key <- country_pred()$country # This will uniquely identify tracts for Plotly
+  pred <- country_pred()
+  rt_country <- country_restimate()
+  p1b <- ggplot(rt_country) +
+    geom_ribbon(
+      aes(
+        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_date
+      ),
+      fill = "black", alpha = 0.3
+    ) +
+    geom_ribbon(
+      aes(
+        x = date, ymin = `25%`, ymax = `75%`, group = forecast_date
+      ), alpha = 0.5
+    ) +
+    geom_line(
+      aes(date, `50%`, group = forecast_date)) +
+    geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
+    scale_x_date(
+      date_breaks = "3 weeks", limits = c(as.Date("2020-03-01"), NA)
+    ) +
+    expand_limits(y = 0) +
+    xlab("") +
+    ylab("Reproduction Number") +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x =
+        element_text(angle = 90, hjust = 0.5, vjust = 0),
+      legend.position = "none"
+    ) 
+
+  g <- ggplotly(p1b, source = 'source') %>%
+    layout(dragmode = 'lasso', 
+           margin = list(l = 100), 
+           font = list(family = 'Open Sans', size = 16))
+  
+  build <- plotly_build(g)
+  
+  build
+    
+})  
+##plotlyOutput('restimates', width = "50%")
 
 ```
 
