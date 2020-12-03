@@ -52,6 +52,9 @@ all_restimates_line <- function(out) {
       aes(dates, `50%`, group = forecast_date, linetype = "solid")) +
     geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
     facet_wrap(~country, ncol = 1, scales = "free_y") +
+    scale_x_date(
+      date_breaks = "1 month", date_labels = "%b-%Y"
+    ) +
     scale_fill_identity(
       breaks = "black",
       labels = "95% CrI of Rt",

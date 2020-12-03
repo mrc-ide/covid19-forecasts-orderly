@@ -4,17 +4,29 @@ packages:
 - dplyr
 - rmarkdown
 - readr
+- scales
 
 resources:
 - summary.Rmd
 
 artefacts:
   report:
-    description: summary
+    description: Pulls together all key stats
     filenames: summary.html
 
 depends:
-  produce_retrospective_vis:
-    id: latest
-    use:
-      countries_included_each_week.csv: countries_included_each_week.csv
+  - produce_retrospective_vis:
+      id: latest
+      use:
+        countries_included_each_week.csv: countries_included_each_week.csv
+
+  - produce_performance_metrics_vis:
+      id: latest
+      use:
+        unwtd_pred_weekly_summary.csv: unwtd_pred_weekly_summary.csv
+        
+  - compare_with_null_model:
+      id: latest
+      use:
+        better_than_null.rds: better_than_null.rds
+        better_than_linear.rds: better_than_linear.rds       

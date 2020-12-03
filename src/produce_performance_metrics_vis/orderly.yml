@@ -4,8 +4,9 @@ artefacts:
   data:
     description: Model performance metrics
     filenames:
-      - 2col_si_relative_error_heatmap.tiff
-  
+      - unwtd_pred_weekly_summary.csv
+      - obs_predicted_2d_density.csv
+
 packages:
   - dplyr
   - tidyr
@@ -18,6 +19,8 @@ packages:
   - ggnewscale
   - purrr
   - rincewind
+  - cowplot
+  - ggtext
 
 ## use_si should be one of si_1 or si_2
 parameters:

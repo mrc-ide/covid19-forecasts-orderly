@@ -41,3 +41,46 @@ countries_included <- group_by(countries_included, week_starting) %>%
 `r tail(countries_included$week_starting, 1)` is 
 `r tail(countries_included$n, 1)`.
 
+
+## Proportion in Credible Interval
+
+```{r}
+unwtd_pred_error <- readr::read_csv("unwtd_pred_weekly_summary.csv")
+x <- mean(unwtd_pred_error$prop_in_50_mu)
+x_sd <- sd(unwtd_pred_error$prop_in_50_mu)
+
+y <- mean(unwtd_pred_error$prop_in_975_mu)
+y_sd <- sd(unwtd_pred_error$prop_in_975_mu)
+
+mae <- mean(unwtd_pred_error$rel_mae_mu)
+mae_sd <- sd(unwtd_pred_error$rel_mae_mu)
+
+```
+
+- Overall the proportion of observations in 50% CrI is
+`r scales::percent(x, 0.1)`, SD: `r scales::percent(x_sd, 0.1)` .
+
+- Overall the proportion of observations in 95% CrI is
+`r scales::percent(y, 0.1)`, SD: `r scales::percent(y_sd, 0.1)`.
+
+- Mean relative error across all countries and all weeks of 
+forecasts was `r signif(mae, 3)`. SD of relative
+mean error was `r signif(mae_sd, 3)`.
+
+
+```{r}
+
+better_than_null <- readRDS("better_than_null.rds")
+better_than_linear <- readRDS("better_than_linear.rds")
+
+x <- sum(better_than_null$n_less_than_1) / sum(better_than_null$n_forecasts)
+y <- sum(better_than_linear$n_less_than_1) / sum(better_than_linear$n_forecasts)
+```
+
+- The relative error of the model was smaller than the error a null 
+model would have made in `r scales::percent(x, 0.1)` of weeks for which forecasts were
+produced.
+
+- The relative error of the model was smaller than the error a null 
+model would have made in `r scales::percent(y, 0.1)` of weeks for which forecasts were
+produced.

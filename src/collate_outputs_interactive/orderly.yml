@@ -14,7 +14,3 @@ depends:
     id: latest
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
-- collate_longer_forecasts:
-    id: latest
-    use:
-      unwtd_long_qntls.rds: unwtd_projections_qntls.rds

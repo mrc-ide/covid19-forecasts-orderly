@@ -128,7 +128,7 @@ purrr::iwalk(
 
     p2 <- all_restimates_line(out) +
       ylab("Effective Reproduction Number") +
-      xlab("Days since 100 deaths")
+      xlab("")
 
     p2 <- p2 +
       theme_manuscript() +
@@ -136,15 +136,12 @@ purrr::iwalk(
         strip.text = element_blank(),
         axis.text = element_text(size = 8),
         axis.title.y = element_text(size = 8, angle = 90),
-        axis.title.x = element_text(size = 8, angle = 0, hjust = 0.5)
-      ) +
-      theme(
+        axis.title.x = element_text(size = 8, angle = 90, hjust = 0.5),
         legend.position = "top",
         legend.title = element_blank(),
         legend.spacing = unit(0, "pt"),
         legend.text = element_text(size = 10)
       )
-
 
     p <- cowplot::plot_grid(
       p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
