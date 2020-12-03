@@ -26,6 +26,22 @@ library(dplyr)
 library(purrr)
 library(ggplot2)
 ```
+## Summary
+
+```{r}
+countries_included <- readr::read_csv("countries_included_each_week.csv")
+countries_included <- group_by(countries_included, week_starting) %>%
+  summarise(n = n())
+```
+
+- Number of countries included in week starting 
+`r countries_included$week_starting[1]` is `r countries_included$n[1]`.
+
+- Number of countries included in week starting 
+`r tail(countries_included$week_starting, 1)` is 
+`r tail(countries_included$n, 1)`.
+
+
 ## Proportion in Credible Interval
 
 ```{r}
