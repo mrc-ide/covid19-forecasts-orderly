@@ -16,7 +16,7 @@ depends:
   - produce_performance_metrics_vis:
       id: latest
       use:
-        unwtd_pred_error.csv: unwtd_pred_error.csv
+        unwtd_pred_weekly_summary.csv: unwtd_pred_weekly_summary.csv
   - compare_with_null_model:
       id: latest
       use:
