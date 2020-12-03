@@ -6,8 +6,9 @@ x <- list(
     description = "Collated combined rt estimates (quantiles)",
     filenames = c("combined_rt_qntls.rds",
                   "weekly_iqr.rds",
-                  "length_weeks_combined.rds")
-  )
+                  "combined_weighted_estimates_across_countries.rds",
+                  "combined_weighted_estimates_per_country.rds")
+    )
   ),
   sources = c("R/utils.R"),
  packages = c("dplyr", "tidyr", "ggdist", "purrr", "ggplot2")
