@@ -19,6 +19,10 @@ library(ggthemes)
 library(viridis)
 library(plotly)
 library(shinyWidgets)
+library(purrr)
+
+rt_qntls <- readRDS("unweighted_rt_qntls.rds")
+rt_qntls <- rt_qntls[rt_qntls$si == "si_2", ]
 
 ensb_qntls <- readRDS("unweighted_qntls.rds")
 ensb_qntls <- ensb_qntls[ensb_qntls$si == "si_2", ]
@@ -37,13 +41,12 @@ countries <- list(
   Oceania = countries[continents == "Oceania"]
 )
 forecast_weeks <- seq(
-  as.Date("2020-03-08"), to = as.Date("2020-09-06"), by = "7 days"
+  as.Date("2020-03-08"), to = as.Date("2020-11-16"), by = "7 days"
 )
 names(forecast_weeks) <- forecast_weeks
-long_forecasts <- readRDS("unwtd_long_qntls.rds")
+##long_forecasts <- readRDS("unwtd_long_qntls.rds")
 
 country_long_pred <- reactive({
-  
   pred <- long_forecasts[long_forecasts$country == input$country &
                          long_forecasts$forecast_week %in% input$forecast_week, ]
   pred$date <- as.Date(pred$date)
@@ -51,7 +54,6 @@ country_long_pred <- reactive({
 })
 
 country_pred <- reactive({
-  
   pred <- ensb_qntls[ensb_qntls$country == input$country &
                      ensb_qntls$proj %in% input$forecast_week, ]
   pred$date <- as.Date(pred$date)
@@ -59,12 +61,34 @@ country_pred <- reactive({
 })
 
 country_obs <- reactive({
-  
   out <- obs[, c("dates", input$country)]
   out$deaths <- out[[input$country]]
   out$dates <- as.Date(out$dates)
   out
 })
+
+country_weeks <- reactive({
+  unique(ensb_qntls[ensb_qntls$country == input$country, "proj"])
+})
+
+country_restimate <- reactive({
+  restim <- rt_qntls[rt_qntls$country == input$country &
+                     rt_qntls$forecast_date %in% input$forecast_week, ]
+  restim <- tidyr::spread(restim, key = quantile, value = out2)
+  restim <- restim[rep(seq_len(nrow(restim)), each = 7), ]
+  restim <- split(restim, restim$forecast_date) %>%
+    map_dfr(
+      function(df) {
+        df$date <- seq(
+          from = as.Date(df$forecast_date[1]), length.out = 7, by = "1 day"
+        )
+        df
+      }
+    )
+  restim$date <- as.Date(restim$date)
+  restim
+})
+
 
 ```
 
@@ -80,16 +104,18 @@ selectInput(
   multiple = FALSE
 )
 
-pickerInput(
-  'forecast_week',
-  label = 'Select a week',
-  choices = forecast_weeks,
-  selected = "2020-03-08",
-  options = list(`actions-box` = TRUE),
-  multiple = TRUE
-)
-
-
+uiOutput('forecast_week')
+output$forecast_week <- renderUI({
+  weeks <- country_weeks()
+  pickerInput(
+    'forecast_week',
+    label = 'Select a week',
+    choices = weeks,
+    selected = weeks[[1]],
+    options = list(`actions-box` = TRUE),
+    multiple = TRUE
+  )
+})
 ```
 
 
@@ -108,24 +134,30 @@ output$scatter <- renderPlotly({
   pred <- country_pred()
   obs_country <- country_obs()
   p1a <- ggplot() +
-    geom_point(data = obs_country, aes(dates, deaths)) +
-    geom_line(data = pred, aes(date, `50%`, group = proj)) +
+    geom_point(
+      data = obs_country, aes(dates, deaths)
+    ) +
+    geom_line(
+      data = pred, aes(date, `50%`, group = proj),
+      col = "#634d43", size = 1.1
+    ) +
     geom_ribbon(
       data = pred,
       aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = proj),
+      fill = "#634d43",
       alpha = 0.3
     ) +
     scale_x_date(
-      date_breaks = "2 weeks",
-      limits = c(as.Date("2020-03-01"), NA)
+      date_breaks = "3 weeks", limits = c(as.Date("2020-03-01"), NA)
     ) +
     xlab("") +
     ylab("Daily Deaths") +
     theme_minimal(base_size = 14) +
     theme(
       axis.text.x =
-        element_text(angle = 90, hjust = 0.5, vjust = 0)
-    )
+        element_text(angle = 90, hjust = 0.5, vjust = 0),
+      legend.position = "none"
+    ) 
     
   g <- ggplotly(p1a, source = 'source') %>% 
     layout(dragmode = 'lasso', 
@@ -153,6 +185,50 @@ Row
 ### Reproduction Number Estimates
 
 ```{r}
+renderPlotly({
+  
+  key <- country_pred()$country # This will uniquely identify tracts for Plotly
+  pred <- country_pred()
+  rt_country <- country_restimate()
+  p1b <- ggplot(rt_country) +
+    geom_ribbon(
+      aes(
+        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_date
+      ),
+      fill = "black", alpha = 0.3
+    ) +
+    geom_ribbon(
+      aes(
+        x = date, ymin = `25%`, ymax = `75%`, group = forecast_date
+      ), alpha = 0.5
+    ) +
+    geom_line(
+      aes(date, `50%`, group = forecast_date)) +
+    geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
+    scale_x_date(
+      date_breaks = "3 weeks", limits = c(as.Date("2020-03-01"), NA)
+    ) +
+    expand_limits(y = 0) +
+    xlab("") +
+    ylab("Reproduction Number") +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x =
+        element_text(angle = 90, hjust = 0.5, vjust = 0),
+      legend.position = "none"
+    ) 
+
+  g <- ggplotly(p1b, source = 'source') %>%
+    layout(dragmode = 'lasso', 
+           margin = list(l = 100), 
+           font = list(family = 'Open Sans', size = 16))
+  
+  build <- plotly_build(g)
+  
+  build
+    
+})  
+##plotlyOutput('restimates', width = "50%")
 
 ```
 

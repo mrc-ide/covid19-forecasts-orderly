@@ -15,11 +15,11 @@ prop_in_cri_heatmap <- function(df, CrI = "50%") {
   ) +
   geom_text(
     aes(x = xmax, y = country, label = right_label),
-    parse = TRUE, size = 2
+    parse = TRUE, size = 6 / .pt
   ) +
   geom_text(
     aes(x = forecast_date, y = ymax, label = top_label),
-    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
+    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 6 / .pt
   ) +
     scale_y_discrete(
       limits = rev(levels(df$country)),
@@ -41,10 +41,11 @@ prop_in_cri_heatmap <- function(df, CrI = "50%") {
     theme(
       axis.line = element_blank(),
       axis.text.x.bottom = element_text(
-        angle = 90, hjust = 0.5, vjust = 0.5, size = 6
+        angle = 90, hjust = 0.5, vjust = 0.5, size = 18 / .pt
       ),
-      axis.text.y = element_text(size = 6),
+      axis.text.y = element_text(size = 18 / .pt),
       plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
+      legend.title = element_text(size = 24 / .pt),
       legend.position = "bottom",
       legend.key.width = unit(2, "lines"),
       legend.key.height = unit(1, "lines")
