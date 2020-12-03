@@ -108,16 +108,37 @@ readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
-iwalk(
+plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
     p <- prop_in_cri_heatmap(x)
     outfile <- glue("proportion_in_50_CrI_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
+    p
   }
 )
 
+## For SI, we put 2 plots together with a common legend.
+legend <- get_legend(
+  plots[[2]] + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+
+prow <- plot_grid(
+  plots[[2]] + theme(legend.position = "none"),
+  plots[[3]] + theme(legend.position = "none"),
+  ncol = 2
+)
+
+prow <- prow + theme(title = element_text(size = 6 / .pt))
+## Finally put the legend back in
+
+p50 <- plot_grid(
+  legend, prow, ncol = 1, rel_heights = c(0.1, 1)
+)
+
+outfile <- glue("proportion_in_50_CrI_si.tiff")
+rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
 #### Overall metrics
 ## > mean(unwtd_pred_error$prop_in_50)
 ## [1] 0.580651
@@ -131,7 +152,7 @@ iwalk(
 ######################################################################
 ################## Proportion in 95% CrI by country ##################
 ######################################################################
-iwalk(
+plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_975_mu")
@@ -150,13 +171,30 @@ iwalk(
   }
 )
 
+legend <- get_legend(
+  plots[[2]] + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+prow <- plot_grid(
+  plots[[2]] + theme(legend.position = "none"),
+  plots[[3]] + theme(legend.position = "none"),
+  ncol = 2
+)
+
+## Finally put the legend back in
+
+p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
+outfile <- glue("proportion_in_95_CrI_si.tiff")
+rincewind::save_multiple(plot = p95, filename = outfile, two_col = TRUE)
+
 #####################################################################
 #####################################################################
 #####################################################################
 ########## Observed vs Median Predicitons Density ###################
 #####################################################################
 #####################################################################
-x50_all <- select(unwtd_pred_error, country, obs, median_pred)
+x50_all <- select(
+  unwtd_pred_error, country, obs, median_pred, forecast_date
+)
 x50_all <- distinct(x50_all)
 x50_all <- filter(x50_all, obs >= 0)
 
@@ -200,7 +238,16 @@ x50_all$pred_category[x50_all$median_pred >= 2100] <- "[2100, Inf)"
 categories <- glue::glue("[{bin_start}, {bin_end})")
 categories <- c(categories, "[2100, Inf)")
 
-y <- dplyr::count(x50_all, pred_category, obs_category)
+##y <- dplyr::count(x50_all, pred_category, obs_category)
+x50_all$forecast_month <- lubridate::month(
+  x50_all$forecast_date, label = TRUE, abbr = FALSE
+)
+
+y <- group_by(
+  x50_all, forecast_month, obs_category, pred_category
+) %>% summarise(n = n()) %>%
+  ungroup()
+
 
 normalised <- map_dfr(
   categories,
@@ -219,6 +266,16 @@ normalised$obs_category <- factor(
   normalised$obs_category, levels = categories, ordered = TRUE
 )
 
+normalised$wave <- ifelse(
+  normalised$forecast_month %in% levels(normalised$forecast_month)[1:6],
+  "January - June",
+  "June - November"
+)
+
+normalised <- group_by(
+  normalised, wave, obs_category, pred_category
+) %>% summarise(proportion = sum(proportion)) %>%
+  ungroup()
 
 pdensity <- ggplot() +
   geom_tile(
@@ -248,16 +305,17 @@ pdensity <- ggplot() +
     axis.title = element_text(size = 6),
     legend.key.width = unit(1, "lines"),
     legend.key.height = unit(1, "lines")
-  )
+  ) +
+  ggforce::facet_wrap_paginate(~wave, ncol = 2, nrow = 1, page = 1)
 
 y <- data.frame(pred_category = categories, obs_category = categories)
 
 pdensity2 <- pdensity +
   geom_point(
     data = y, aes(obs_category, pred_category), shape = "cross"
-  ) +
-  scale_shape_identity() +
-  coord_fixed()
+  )
+  ##scale_shape_identity()
+  ##coord_fixed()
 
 ggsave(
   filename = "obs_predicted_2d_density.tiff",
@@ -268,8 +326,7 @@ ggsave(
   compression = "lzw"
 )
 
-normalised <- select(normalised, -n) %>%
-  spread(pred_category, proportion, fill = 0)
+normalised <- spread(normalised, pred_category, proportion, fill = 0)
 
 readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 
