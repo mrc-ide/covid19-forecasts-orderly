@@ -2,39 +2,6 @@
 dir.create("figures")
 
 
-## ggforce::facet_wrap_paginate fails on R 4.0 when the plot
-## has less than nrow * ncol facets. Hence having to write my own
-## very specific pagination
-paginate <- function(p, df, npanels, nrows, ncols) {
-
-  forecast_weeks <- unique(df$forecast_week)
-  npages <- ceiling(length(forecast_weeks) / npanels)
-  out <- list()
-  for (page in 1:npages) {
-    message(page)
-    idx <- seq(to = page * npanels, length.out = npanels, by = 1)
-    idx <- idx[idx <= length(forecast_weeks)]
-    weeks <- factor(forecast_weeks[idx])
-    df_page <- df[df$forecast_week %in% weeks, ]
-    p2 <- p +
-      geom_ribbon(
-        data = df_page,
-        aes(
-          x = date, ymin = `2.5%`, ymax = `97.5%`, fill = forecast_week
-        ),
-        alpha = 0.4
-      ) +
-      geom_line(
-        data = df_page,
-        aes(date, `50%`, col = forecast_week), size = 1.2
-      ) +
-      facet_wrap(
-        ~forecast_week, ncol = ncols, nrow = nrows##, scales = "free_y"
-      )
-    out[[page]] <- p2
-  }
-  out
-}
 
 npanels <- 6
 nrows <- 3
@@ -54,8 +21,24 @@ first_100th <- apply(
 ps_qntls <- readRDS("ps_qntls.rds")
 ps_qntls <- ps_qntls[! ps_qntls$country %in% exclude, ]
 
-ps_bycountry <- split(ps_qntls, ps_qntls$country)
-ps_bycountry <- keep(ps_bycountry, ~ nrow(.) > 0)
+ps_qntls <- split(
+  ps_qntls,
+  list(ps_qntls$country, ps_qntls$forecast_week),
+  drop = TRUE
+) %>%
+  map_dfr(
+    function(df) {
+      df$date <- as.Date(df$date)
+      df <- df[order(df$date), ]
+      df$day <- seq_len(nrow(df))
+      df <- df[df$day <= 28, ]
+      df
+    }
+  )
+
+
+ps_bycountry <- split(ps_qntls, ps_qntls$country, drop = TRUE)
+
 ##ps_bycountry <- split(pred_qntls, pred_qntls$country)
 
 iwalk(
@@ -65,8 +48,12 @@ iwalk(
     forecast_weeks <- unique(ps$forecast_week)
     palette <- alternating_palette(forecast_weeks)
     ps$forecast_week <- factor(ps$forecast_week)
-
+    ps$flag <- rep(1:4, each = 28, length.out = nrow(ps))
     xmin <- all_deaths$dates[first_100th[[cntry]]]
+
+    palette <- alternating_palette(
+      forecast_weeks, col1 = "#8a7972", col2 = "#3d2115"
+    )
 
     p <- ggplot(ps) +
       geom_ribbon(
@@ -81,17 +68,20 @@ iwalk(
       scale_fill_manual(
         values = palette, aesthetics = c("col", "fill")
       ) +
-      theme_minimal() +
       scale_y_continuous(limits = c(0, 1)) +
-      theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+      scale_x_date(
+        date_breaks = "4 weeks", limits = c(as.Date(xmin), NA),
+        date_labels = "%b - %Y"
       ) +
-      xlab("") +
-      ylab("Proportion of population susceptible") +
+      theme_minimal() +
       theme(
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        strip.text = element_blank(),
         legend.position = "none",
         axis.text.y = element_text(size = 6)
-      )
+      ) +
+      xlab("") +
+      ylab("Proportion of population susceptible")
 
     if (length(forecast_weeks) >= 2) {
       p <- p +
@@ -271,6 +261,23 @@ iwalk(
 ## )
 ## x <- purrr::keep(x, ~ nrow(.) > 0)
 pred_qntls <- readRDS("longer_projections_qntls.rds")
+
+pred_qntls <- split(
+  pred_qntls,
+  list(pred_qntls$country, pred_qntls$forecast_week),
+  drop = TRUE
+) %>%
+  map_dfr(
+    function(df) {
+      df$date <- as.Date(df$date)
+      df <- df[order(df$date), ]
+      df$day <- seq_len(nrow(df))
+      df <- df[df$day <= 28, ]
+      df
+    }
+  )
+
+
 pred_qntls$forecast_week <- as.Date(pred_qntls$forecast_week)
 pred_qntls <- pred_qntls[!pred_qntls$country %in% exclude, ]
 
@@ -284,6 +291,7 @@ purrr::iwalk(
     pred <- pred[order(pred$forecast_week), ]
     pred$date <- as.Date(pred$date)
     forecast_weeks <- unique(pred$forecast_week)
+    pred$flag <- rep(1:4, each = 28, length.out = nrow(pred))
 
     obs <- all_deaths[, c("dates", cntry)]
     obs <- obs[obs$dates <= max(pred$date) + 7, ]
@@ -297,7 +305,7 @@ purrr::iwalk(
 
     xmin <- obs$dates[first_100th[[cntry]]]
 
-    palette <- alternating_palette(forecast_weeks)
+
 
     pred$forecast_week <- factor(pred$forecast_week)
     npages <- ceiling(length(forecast_weeks) / npanels)
@@ -307,35 +315,41 @@ purrr::iwalk(
         data = obs,
         aes(dates, deaths), col = "#663723", alpha = 0.5, size = 1
       ) +
+      geom_ribbon(
+        data = pred,
+        aes(
+          x = date, ymin = `2.5%`, ymax = `97.5%`, fill = forecast_week
+        ),
+        alpha = 0.4
+      ) +
+      geom_line(
+        data = pred, aes(date, `50%`, col = forecast_week), size = 1.2
+      ) +
+      facet_wrap(~flag, ncol = 1, scales = "free_y") +
       scale_fill_manual(values = palette, aesthetics = c("col", "fill")) +
-      theme_minimal() +
       scale_x_date(
-        date_breaks = "2 weeks", limits = c(as.Date(xmin), NA)
+        date_breaks = "4 weeks", limits = c(as.Date(xmin), NA),
+        date_labels = "%b - %Y"
       ) +
+      theme_minimal() +
       theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
-      ) +
-      xlab("") +
-      ylab("Daily Incidence") +
-      theme(
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        strip.text = element_blank(),
         legend.position = "none",
         axis.text.y = element_text(size = 6)
-      )
+      ) +
+      xlab("") +
+      ylab("Daily Incidence")
 
 
     label <- glue(
       "Projections for {snakecase::to_title_case(cntry)}"
     )
     p <- p + ggtitle(label)
-    plots <- paginate(p, pred, npanels, nrows, ncols)
-
-    iwalk(
-      plots,
-      function(p2, page) {
-        outfile <- glue("figures/{cntry}_{page}.png")
-        message(outfile)
-        ggsave(outfile , p2)
-      }
-    )
+    outfile <- glue("figures/{cntry}.png")
+    message(outfile)
+    ggsave(outfile , p)
   }
 )
+
+

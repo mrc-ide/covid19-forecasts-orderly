@@ -1,17 +1,20 @@
 ## orderly::orderly_develop_start(use_draft = "newer",
 ## parameters = list(week_ending = "2020-10-04"))
 dir.create("figures")
+
 reff_overlaps_weekly <- function(reff, weekly) {
   x <- left_join(
     reff, weekly, by = c("date" = "dates"),
     suffix = c("_reff", "_weekly")
   )
   x <- na.omit(x)
-
+  x$day <- seq_len(nrow(x))
+  ## We have now decided that we will not forecast beyond 4 weeks
+  x <- x[x$day <= 28, ]
   x$reff_overlaps_weekly <-
     (x$`2.5%_weekly` > x$`2.5%_reff`) &
     (x$`97.5%_weekly` < x$`97.5%_reff`)
-  x$day <- seq_len(nrow(x))
+
   x
 }
 
