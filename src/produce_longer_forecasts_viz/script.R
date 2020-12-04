@@ -102,9 +102,23 @@ weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country)
 reff_qntls <- readRDS("reff_qntls.rds")
 reff_qntls <- reff_qntls[! reff_qntls$country %in% exclude, ]
 
-reff_bycountry <- split(reff_qntls, reff_qntls$country)
-reff_bycountry <- keep(reff_bycountry, ~ nrow(.) > 0)
-##reff_bycountry <- split(pred_qntls, pred_qntls$country)
+reff_qntls <- split(
+  reff_qntls,
+  list(reff_qntls$country, reff_qntls$forecast_week), drop = TRUE
+) %>%
+  map_dfr(
+    function(df) {
+      df$date <- as.Date(df$date)
+      df <- df[order(df$date), ]
+      df$day <- seq_len(nrow(df))
+      df <- df[df$day <= 28, ]
+      df
+    }
+  )
+
+reff_bycountry <- split(reff_qntls, reff_qntls$country, drop = TRUE)
+
+
 iwalk(
   reff_bycountry,
   function(reff, cntry) {
@@ -112,7 +126,7 @@ iwalk(
     forecast_weeks <- unique(reff$forecast_week)
     palette <- alternating_palette(forecast_weeks)
     reff$forecast_week <- factor(reff$forecast_week)
-
+    reff$flag <- rep(1:4, each = 28, length.out = nrow(reff))
     xmin <- all_deaths$dates[first_100th[[cntry]]]
     ymax <- ceiling(max(reff$`97.5%`))
 
@@ -126,24 +140,26 @@ iwalk(
       geom_line(
         aes(date, `50%`, col = forecast_week), size = 1.2
       ) +
+      geom_hline(yintercept = 1, linetype = "dashed") +
+      ylim(0, ymax) +
       scale_fill_manual(
         values = palette, aesthetics = c("col", "fill")
       ) +
       xlab("") +
       ylab("Effective Reproduction Number") +
+      scale_x_date(
+        date_breaks = "4 weeks", limits = c(as.Date(xmin), NA),
+        date_labels = "%b-%Y"
+      ) +
+      facet_wrap(~flag, ncol = 1) +
+      theme_minimal() +
       theme(
         legend.position = "none",
-        axis.text.y = element_text(size = 6)
-      ) +
-      ylim(0, ymax) +
-      geom_hline(yintercept = 1, linetype = "dashed")
-
-    if (length(forecast_weeks) >= 2) {
-      p <- p +
-        scale_x_date(
-          date_breaks = "2 weeks", limits = c(as.Date(xmin), NA)
+        axis.text.y = element_text(size = 6),
+        strip.text = element_blank(),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
       )
-    }
+
     outfile <- glue("figures/{cntry}_reff.png")
     message(outfile)
     ggsave(outfile , p)
@@ -159,9 +175,8 @@ iwalk(
     forecast_weeks <- unique(reff$forecast_week)
     palette <- alternating_palette(forecast_weeks)
     reff$forecast_week <- factor(reff$forecast_week)
-
+    reff$flag <- rep(1:4, each = 28, length.out = nrow(reff))
     weekly <- weekly_rt_bycountry[[cntry]]
-    ## Augment data.frame by adding a row for each day of the week
     weekly <- weekly[weekly$si == "si_2", ]
     weekly <- split(weekly, weekly$forecast_date) %>%
       map_dfr(
@@ -176,80 +191,42 @@ iwalk(
           df
         }
       )
-    ## Scatter plot
-    x <- dplyr::left_join(
-      reff, weekly,
-      by = c("date"),
-      suffix = c("_short", "_long")
-    )
 
-    p <- ggplot(x, aes(`50%_short`, `50%_long`)) +
-      geom_point() +
-      ##ylim(0, ymax) +
-      ##xlim(0, ymax) +
-      geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
-      theme_minimal() +
-      xlab("Weekly Effective Reproduction Number") +
-      ylab("Long-term Effective Reproduction Number")  +
-      coord_cartesian() +
-      expand_limits(x = 0, y = 0)
+    p1 <- ggplot() +
+      geom_line(
+        data = weekly, aes(date, `50%`, group = forecast_date),
+        col = "#000000"
+      ) +
+    geom_ribbon(
+      data = weekly,
+      aes(
+        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_date
+      ),
+      fill = "#000000", alpha = 0.3
+    ) +
+      geom_line(
+        data = reff, aes(date, `50%`, group = forecast_week),
+        col = "#009E73") +
+      geom_ribbon(
+        data = reff,
+        aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_week),
+        fill = "#009E73", alpha = 0.3
+      ) +
+        geom_hline(yintercept = 1, linetype = "dashed") +
+        ylim(0, ymax) +
+        theme_minimal() +
+      theme(
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        strip.text = element_blank(),
+        legend.position = "none",
+        axis.text.y = element_text(size = 6)
+      ) +
+      xlab("") +
+        ylab("Effective Reproduction Number") +
+        facet_wrap(~flag, ncol = 1)
 
-    outfile <- glue("figures/{cntry}_short_and_long_rt_scatter.png")
-    ggsave(outfile , p)
-
-
-    plots <- map(
-      forecast_weeks,
-      function(week) {
-        long <- reff[reff$forecast_week == week, ]
-        short <- weekly[weekly$date %in% long$date, ]
-        ymax <- ceiling(max(short$`97.5%`, long$`97.5%`))
-
-        p1 <- ggplot() +
-          geom_line(
-            data = short, aes(date, `50%`, group = forecast_date),
-            col = "#000000"
-          ) +
-        geom_line(data = long, aes(date, `50%`), col = "#009E73") +
-        geom_ribbon(
-          data = short,
-          aes(
-            x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_date
-          ),
-          fill = "#000000", alpha = 0.3
-        ) +
-        geom_ribbon(
-          data = long, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
-          fill = "#009E73", alpha = 0.3
-        ) +
-          theme_minimal() +
-          ylim(0, ymax) +
-          geom_hline(yintercept = 1, linetype = "dashed") +
-          xlab("") +
-          ylab("")
-
-        if (nrow(long == 7)) {
-          dates <- seq(
-            from = min(long$date), length.out = 3, to = max(long$date)
-          )
-          p1 <- p1 + scale_x_date(breaks = dates)
-        } else {
-          p1 <- p1 + scale_x_date(date_breaks = "1 week")
-        }
-        p1
-      }
-    )
-    label <- grid::textGrob("Effective Reproduction Number", rot = 90)
-    npages <- ceiling(length(forecast_weeks) / npanels)
-    for (page in 1:npages) {
-      message(page)
-      idx <- seq(to = page * npanels, length.out = npanels, by = 1)
-      idx <- idx[idx <= length(forecast_weeks)]
-      plist <- plots[idx]
-      p <- grid.arrange(grobs = plist, ncol = ncols, left = label)
-      outfile <- glue("figures/{cntry}_short_and_long_rt_{page}.png")
-      ggsave(outfile , p)
-    }
+    outfile <- glue("figures/{cntry}_short_and_long_rt.png")
+    ggsave(outfile , p1)
   }
 )
 
