@@ -2,8 +2,8 @@ library(orderly)
 use_draft <- "newer"
 
 weeks <- seq(
-  from = as.Date("2020-03-29"),
-  to = as.Date("2020-10-04"),
+  from = as.Date("2020-10-04"),
+  to = as.Date("2020-11-23"),
   by = "7 days"
 )
 
@@ -31,11 +31,12 @@ for (week in weeks) {
     "produce_longer_forecasts", parameters = parameter, use_draft = use_draft
   )
 
-  parameter <- list(week_ending = week, window = 1, latest_week = "2020-10-11")
-  orderly::orderly_run(
-    "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
-  )
+  ## parameter <- list(week_ending = week, window = 1, latest_week = "2020-10-11")
+  ## orderly::orderly_run(
+  ##   "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
+  ## )
 }
+
 week_starting <- as.Date(head(weeks, 1)[[1]])
 week_ending <- as.Date(tail(weeks, 1)[[1]])
 source(
