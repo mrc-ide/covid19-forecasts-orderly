@@ -432,6 +432,7 @@ exclude <- c(
   "Kosovo",
   "Uganda",
   "Sudan",
+  "Sweden",
   "Switzerland", ## Numbers do not agree with those on worldometers
   "Spain" ## latest data not yet available.
 )
