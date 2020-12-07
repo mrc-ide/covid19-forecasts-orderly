@@ -369,6 +369,9 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Poland" & raw_data$DateR
 raw_data$Cases[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2020-10-10"] <- 5263
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Azerbaijan" & raw_data$DateRep == "2020-11-29"] <- 38
 
+## From  ECDC
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2020-11-24"] <- 100
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
