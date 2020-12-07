@@ -16,8 +16,7 @@ packages:
   - cowplot
   - glue
   - orderly
-
-sources: R/utils.R
+  - ggforce
  
 depends:
   collate_longer_forecasts:

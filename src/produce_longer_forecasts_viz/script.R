@@ -1,7 +1,8 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 dir.create("figures")
 
-
+ndays_projected <- 28
+nweeks_projected <- 4
 
 npanels <- 6
 nrows <- 3
@@ -31,7 +32,7 @@ ps_qntls <- split(
       df$date <- as.Date(df$date)
       df <- df[order(df$date), ]
       df$day <- seq_len(nrow(df))
-      df <- df[df$day <= 28, ]
+      df <- df[df$day <= ndays_projected, ]
       df
     }
   )
@@ -48,7 +49,10 @@ iwalk(
     forecast_weeks <- unique(ps$forecast_week)
     palette <- alternating_palette(forecast_weeks)
     ps$forecast_week <- factor(ps$forecast_week)
-    ps$flag <- rep(1:4, each = 28, length.out = nrow(ps))
+    ps$flag <- rep(
+      seq_len(nweeks_projected), each = ndays_projected,
+      length.out = nrow(ps)
+    )
     xmin <- all_deaths$dates[first_100th[[cntry]]]
 
     palette <- alternating_palette(
@@ -83,12 +87,6 @@ iwalk(
       xlab("") +
       ylab("Proportion of population susceptible")
 
-    if (length(forecast_weeks) >= 2) {
-      p <- p +
-        scale_x_date(
-          date_breaks = "2 weeks", limits = c(as.Date(xmin), NA)
-      )
-    }
     outfile <- glue("figures/{cntry}_ps.png")
     message(outfile)
     ggsave(outfile , p)
@@ -111,7 +109,7 @@ reff_qntls <- split(
       df$date <- as.Date(df$date)
       df <- df[order(df$date), ]
       df$day <- seq_len(nrow(df))
-      df <- df[df$day <= 28, ]
+      df <- df[df$day <= ndays_projected, ]
       df
     }
   )
@@ -126,7 +124,7 @@ iwalk(
     forecast_weeks <- unique(reff$forecast_week)
     palette <- alternating_palette(forecast_weeks)
     reff$forecast_week <- factor(reff$forecast_week)
-    reff$flag <- rep(1:4, each = 28, length.out = nrow(reff))
+    reff$flag <- rep(seq_len(nweeks_projected), each = ndays_projected, length.out = nrow(reff))
     xmin <- all_deaths$dates[first_100th[[cntry]]]
     ymax <- ceiling(max(reff$`97.5%`))
 
@@ -151,7 +149,6 @@ iwalk(
         date_breaks = "4 weeks", limits = c(as.Date(xmin), NA),
         date_labels = "%b-%Y"
       ) +
-      facet_wrap(~flag, ncol = 1) +
       theme_minimal() +
       theme(
         legend.position = "none",
@@ -160,9 +157,23 @@ iwalk(
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
       )
 
-    outfile <- glue("figures/{cntry}_reff.png")
+    outfile <- glue("figures/{cntry}_reff_unfacetted.png")
     message(outfile)
     ggsave(outfile , p)
+
+    p2 <- p + facet_wrap(~flag, ncol = 1)
+    outfile <- glue("figures/{cntry}_reff.png")
+    message(outfile)
+    ggsave(outfile , p2)
+
+    for (page in seq_len(nweeks_projected)) {
+      p3 <- p +
+        ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = page)
+
+      outfile <- glue("figures/{cntry}_reff_{page}.png")
+      message(outfile)
+      ggsave(outfile , p3)
+    }
   }
 )
 
@@ -175,7 +186,7 @@ iwalk(
     forecast_weeks <- unique(reff$forecast_week)
     palette <- alternating_palette(forecast_weeks)
     reff$forecast_week <- factor(reff$forecast_week)
-    reff$flag <- rep(1:4, each = 28, length.out = nrow(reff))
+    reff$flag <- rep(seq_len(nweeks_projected), each = ndays_projected, length.out = nrow(reff))
     weekly <- weekly_rt_bycountry[[cntry]]
     weekly <- weekly[weekly$si == "si_2", ]
     weekly <- split(weekly, weekly$forecast_date) %>%
@@ -249,7 +260,7 @@ pred_qntls <- split(
       df$date <- as.Date(df$date)
       df <- df[order(df$date), ]
       df$day <- seq_len(nrow(df))
-      df <- df[df$day <= 28, ]
+      df <- df[df$day <= ndays_projected, ]
       df
     }
   )
@@ -268,7 +279,7 @@ purrr::iwalk(
     pred <- pred[order(pred$forecast_week), ]
     pred$date <- as.Date(pred$date)
     forecast_weeks <- unique(pred$forecast_week)
-    pred$flag <- rep(1:4, each = 28, length.out = nrow(pred))
+    pred$flag <- rep(seq_len(nweeks_projected), each = ndays_projected, length.out = nrow(pred))
 
     obs <- all_deaths[, c("dates", cntry)]
     obs <- obs[obs$dates <= max(pred$date) + 7, ]
@@ -286,6 +297,7 @@ purrr::iwalk(
 
     pred$forecast_week <- factor(pred$forecast_week)
     npages <- ceiling(length(forecast_weeks) / npanels)
+    palette <- alternating_palette(forecast_weeks)
 
     p <- ggplot() +
       geom_point(
@@ -302,7 +314,6 @@ purrr::iwalk(
       geom_line(
         data = pred, aes(date, `50%`, col = forecast_week), size = 1.2
       ) +
-      facet_wrap(~flag, ncol = 1, scales = "free_y") +
       scale_fill_manual(values = palette, aesthetics = c("col", "fill")) +
       scale_x_date(
         date_breaks = "4 weeks", limits = c(as.Date(xmin), NA),
@@ -318,14 +329,22 @@ purrr::iwalk(
       xlab("") +
       ylab("Daily Incidence")
 
-
     label <- glue(
       "Projections for {snakecase::to_title_case(cntry)}"
     )
-    p <- p + ggtitle(label)
+    ##p <- p + ggtitle(label)
+    p2 <- p + facet_wrap(~flag, ncol = 1, scales = "free_y") +
     outfile <- glue("figures/{cntry}.png")
     message(outfile)
     ggsave(outfile , p)
+    for (page in seq_len(nweeks_projected)) {
+      p3 <- p +
+        ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = page)
+
+      outfile <- glue("figures/{cntry}_projections_{page}.png")
+      message(outfile)
+      ggsave(outfile , p3)
+    }
   }
 )
 

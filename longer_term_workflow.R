@@ -1,9 +1,15 @@
 library(orderly)
 use_draft <- "newer"
 
+## weeks <- seq(
+##   from = as.Date("2020-10-04"),
+##   to = as.Date("2020-11-23"),
+##   by = "7 days"
+## )
+
 weeks <- seq(
-  from = as.Date("2020-10-04"),
-  to = as.Date("2020-11-23"),
+  from = as.Date("2020-03-29"),
+  to = as.Date("2020-10-25"),
   by = "7 days"
 )
 

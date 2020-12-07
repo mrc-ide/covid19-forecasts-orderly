@@ -445,6 +445,51 @@ depends:
       unweighted_reff_with_underreporting_2020-10-04.rds: unweighted_reff_with_underreporting.rds
       weighted_across_countries_reff_with_underreporting_2020-10-04.rds: weighted_across_countries_reff_with_underreporting.rds
       weighted_per_country_reff_with_underreporting_2020-10-04.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-10-11"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-10-11.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-10-11.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-10-11.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-10-11.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-10-11.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-10-11.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-10-11.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-10-11.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-10-11.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-10-11.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-10-11.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-10-11.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-10-18"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-10-18.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-10-18.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-10-18.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-10-18.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-10-18.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-10-18.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-10-18.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-10-18.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-10-18.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-10-18.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-10-18.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-10-18.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-10-25"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-10-25.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-10-25.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-10-25.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-10-25.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-10-25.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-10-25.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-10-25.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-10-25.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-10-25.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-10-25.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-10-25.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-10-25.rds: weighted_per_country_reff_with_underreporting.rds
 - prepare_ecdc_data:
     id: latest
     use:
