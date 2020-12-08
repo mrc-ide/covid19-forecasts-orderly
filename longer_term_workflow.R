@@ -8,7 +8,7 @@ use_draft <- "newer"
 ## )
 
 weeks <- seq(
-  from = as.Date("2020-03-29"),
+  from = as.Date("2020-10-04"),
   to = as.Date("2020-10-25"),
   by = "7 days"
 )
@@ -37,7 +37,7 @@ for (week in weeks) {
     "produce_longer_forecasts", parameters = parameter, use_draft = use_draft
   )
 
-  parameter <- list(week_ending = week, window = 1, latest_week = "2020-10-11")
+  parameter <- list(week_ending = week, window = 1, latest_week = "2020-12-06")
   orderly::orderly_run(
     "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
   )
@@ -66,7 +66,7 @@ orderly::orderly_run(
   "src/produce_longer_forecasts_viz/", use_draft = "newer"
 )
 
-source("orderly-helper-scripts/write_dependencies_collate_longer_forecasts_perf.R")
+source("orderly-helper-scripts/dependencies_collate_longer_forecasts_perf.R")
 
 orderly::orderly_run(
   "collate_longer_forecasts_metrics", use_draft = "newer"
