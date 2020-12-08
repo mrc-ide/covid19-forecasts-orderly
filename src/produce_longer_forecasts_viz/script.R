@@ -4,10 +4,6 @@ dir.create("figures")
 ndays_projected <- 28
 nweeks_projected <- 4
 
-npanels <- 6
-nrows <- 3
-ncols <- 2
-
 exclude <- readRDS("exclude.rds")
 
 all_deaths <- readRDS("latest_deaths_wide_no_filter.rds")
@@ -37,6 +33,8 @@ ps_qntls <- split(
     }
   )
 
+
+saveRDS(ps_qntls, "ps_qntls_filtered.rds")
 
 ps_bycountry <- split(ps_qntls, ps_qntls$country, drop = TRUE)
 
@@ -95,6 +93,24 @@ iwalk(
 
 weekly_rt <- readRDS("weekly_rt_qntls.rds")
 weekly_rt <- weekly_rt[! weekly_rt$country %in% exclude, ]
+weekly_rt <-  split(weekly_rt, weekly_rt$country) %>%
+  map_dfr(function(weekly) {
+    split(weekly, weekly$forecast_date) %>%
+      map_dfr(
+        function(df) {
+          df <- spread(df, quantile, out2)
+          df <- df[rep(seq_len(nrow(weekly)), each = 7), ]
+          df$date <- seq(
+            from = as.Date(df$forecast_date[1]) + 1,
+            length.out = 7,
+            by = "1 day"
+          )
+          df
+        }
+      )
+  }
+)
+
 weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country)
 
 reff_qntls <- readRDS("reff_qntls.rds")
@@ -113,6 +129,8 @@ reff_qntls <- split(
       df
     }
   )
+
+saveRDS(reff_qntls, "reff_qntls_filtered.rds")
 
 reff_bycountry <- split(reff_qntls, reff_qntls$country, drop = TRUE)
 
@@ -166,7 +184,12 @@ iwalk(
     message(outfile)
     ggsave(outfile , p2)
 
-    for (page in seq_len(nweeks_projected)) {
+    p3 <- p +
+      ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = 1)
+
+    pages <- ggforce::n_pages(p3)
+
+    for (page in seq_len(pages)) {
       p3 <- p +
         ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = page)
 
@@ -189,20 +212,7 @@ iwalk(
     reff$flag <- rep(seq_len(nweeks_projected), each = ndays_projected, length.out = nrow(reff))
     weekly <- weekly_rt_bycountry[[cntry]]
     weekly <- weekly[weekly$si == "si_2", ]
-    weekly <- split(weekly, weekly$forecast_date) %>%
-      map_dfr(
-        function(df) {
-          df <- spread(df, quantile, out2)
-          df <- df[rep(seq_len(nrow(weekly)), each = 7), ]
-          df$date <- seq(
-            from = as.Date(df$forecast_date[1]) + 1,
-            length.out = 7,
-            by = "1 day"
-          )
-          df
-        }
-      )
-
+    ymax <- ceiling(max(reff$`97.5%`))
     p1 <- ggplot() +
       geom_line(
         data = weekly, aes(date, `50%`, group = forecast_date),
@@ -265,6 +275,7 @@ pred_qntls <- split(
     }
   )
 
+saveRDS(pred_qntls, "pred_qntls_filtered.rds")
 
 pred_qntls$forecast_week <- as.Date(pred_qntls$forecast_week)
 pred_qntls <- pred_qntls[!pred_qntls$country %in% exclude, ]
@@ -296,7 +307,7 @@ purrr::iwalk(
 
 
     pred$forecast_week <- factor(pred$forecast_week)
-    npages <- ceiling(length(forecast_weeks) / npanels)
+
     palette <- alternating_palette(forecast_weeks)
 
     p <- ggplot() +
@@ -333,11 +344,17 @@ purrr::iwalk(
       "Projections for {snakecase::to_title_case(cntry)}"
     )
     ##p <- p + ggtitle(label)
-    p2 <- p + facet_wrap(~flag, ncol = 1, scales = "free_y") +
+    p2 <- p + facet_wrap(~flag, ncol = 1, scales = "free_y")
     outfile <- glue("figures/{cntry}.png")
     message(outfile)
     ggsave(outfile , p)
-    for (page in seq_len(nweeks_projected)) {
+
+    p3 <- p +
+      ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = 1)
+
+    pages <- ggforce::n_pages(p3)
+
+    for (page in seq_len(pages)) {
       p3 <- p +
         ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = page)
 
@@ -349,3 +366,30 @@ purrr::iwalk(
 )
 
 
+reff_qntls <- rincewind::assign_epidemic_phase(reff_qntls)
+compare_phase <- left_join(
+  reff_qntls, weekly_rt, by = c("country", "date"),
+  suffix = c("_eff", "_weekly")
+)
+compare_phase <- na.omit(compare_phase)
+
+saveRDS(compare_phase, "compare_phase_weekly_effevtive.rds")
+
+compare_phase$flag <- case_when(
+  compare_phase$phase_weekly == compare_phase$phase_eff ~ "same",
+  TRUE ~ "different"
+)
+
+country_groups <- readRDS("country_groups.rds")
+x <- compare_phase[compare_phase$country %in% country_groups[[1]], ]
+x$country <- rincewind::nice_country_name(x$country)
+
+ggplot(x, aes(date, country, fill = flag)) +
+  geom_tile() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  xlab("") +
+  ylab("") +
+  scale_x_date(
+    date_breaks = "4 weeks", date_labels = "%b - %Y"
+  )

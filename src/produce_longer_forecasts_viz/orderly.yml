@@ -2,8 +2,11 @@ script: script.R
 
 artefacts:
   data:
-    description: Figures
-    filenames: figures/all_projections_India.png
+    description: Outputs filtered to less than or equal to 4 weeks ahead 
+    filenames:
+      - pred_qntls_filtered.rds
+      - ps_qntls_filtered.rds
+      - reff_qntls_filtered.rds
 
 packages:
   - purrr
@@ -37,5 +40,8 @@ depends:
     id: "latest"
     use:
       weekly_rt_qntls.rds: unweighted_rt_qntls.rds
-      
+  compare_with_null_model:
+    id: latest
+    use:
+      country_groups.rds: country_groups.rds      
       
