@@ -10,114 +10,18 @@ packages:
 - purrr
 depends:
 - produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-03-29")
-    use:
-      long_projections_error_2020-03-29.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-04-05")
-    use:
-      long_projections_error_2020-04-05.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-04-12")
-    use:
-      long_projections_error_2020-04-12.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-04-19")
-    use:
-      long_projections_error_2020-04-19.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-04-26")
-    use:
-      long_projections_error_2020-04-26.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-05-03")
-    use:
-      long_projections_error_2020-05-03.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-05-10")
-    use:
-      long_projections_error_2020-05-10.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-05-17")
-    use:
-      long_projections_error_2020-05-17.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-05-24")
-    use:
-      long_projections_error_2020-05-24.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-05-31")
-    use:
-      long_projections_error_2020-05-31.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-06-07")
-    use:
-      long_projections_error_2020-06-07.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-06-14")
-    use:
-      long_projections_error_2020-06-14.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-06-21")
-    use:
-      long_projections_error_2020-06-21.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-06-28")
-    use:
-      long_projections_error_2020-06-28.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-07-05")
-    use:
-      long_projections_error_2020-07-05.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-07-12")
-    use:
-      long_projections_error_2020-07-12.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-07-19")
-    use:
-      long_projections_error_2020-07-19.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-07-26")
-    use:
-      long_projections_error_2020-07-26.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-08-02")
-    use:
-      long_projections_error_2020-08-02.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-08-09")
-    use:
-      long_projections_error_2020-08-09.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-08-16")
-    use:
-      long_projections_error_2020-08-16.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-08-23")
-    use:
-      long_projections_error_2020-08-23.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-08-30")
-    use:
-      long_projections_error_2020-08-30.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-09-06")
-    use:
-      long_projections_error_2020-09-06.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-09-13")
-    use:
-      long_projections_error_2020-09-13.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-09-20")
-    use:
-      long_projections_error_2020-09-20.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
-    id: latest(parameter:week_ending == "2020-09-27")
-    use:
-      long_projections_error_2020-09-27.rds: long_projections_error.rds
-- produce_longer_forecasts_metrics:
     id: latest(parameter:week_ending == "2020-10-04")
     use:
       long_projections_error_2020-10-04.rds: long_projections_error.rds
+- produce_longer_forecasts_metrics:
+    id: latest(parameter:week_ending == "2020-10-11")
+    use:
+      long_projections_error_2020-10-11.rds: long_projections_error.rds
+- produce_longer_forecasts_metrics:
+    id: latest(parameter:week_ending == "2020-10-18")
+    use:
+      long_projections_error_2020-10-18.rds: long_projections_error.rds
+- produce_longer_forecasts_metrics:
+    id: latest(parameter:week_ending == "2020-10-25")
+    use:
+      long_projections_error_2020-10-25.rds: long_projections_error.rds
