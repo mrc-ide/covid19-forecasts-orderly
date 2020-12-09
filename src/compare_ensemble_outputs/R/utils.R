@@ -39,36 +39,32 @@ all_restimates_line <- function(out) {
       ),
       alpha = 0.3
     ) +
-    geom_ribbon(
-      aes(
-        x = dates,
-        ymin = `25%`,
-        ymax = `75%`,
-        group = forecast_date
-      ),
-      alpha = 0.5
-    ) +
+    ## geom_ribbon(
+    ##   aes(
+    ##     x = dates,
+    ##     ymin = `25%`,
+    ##     ymax = `75%`,
+    ##     group = forecast_date
+    ##   ),
+    ##   alpha = 0.5
+    ## ) +
     geom_line(
       aes(dates, `50%`, group = forecast_date, linetype = "solid")) +
     geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
     facet_wrap(~country, ncol = 1, scales = "free_y") +
     scale_x_date(
-      date_breaks = "1 month", date_labels = "%b-%Y"
+      date_breaks = "1 month", date_labels = "%d-%b"
     ) +
     scale_fill_identity(
-      breaks = "black",
-      labels = "95% CrI of Rt",
-      guide = "legend"
+      breaks = "black", labels = "95% CrI of Rt", guide = "legend"
     ) +
     scale_linetype_identity(
       breaks = "solid", labels = "Median Rt", guide = "legend"
-    ) +
-    facet_wrap(
-      ~country,
-      ncol = 1,
-      scales = "free_y",
-      labeller = labeller(country = snakecase::to_title_case)
-    )
+    ) ## +
+    ## facet_wrap(
+    ##   ~country, ncol = 1, scales = "free_y",
+    ##   labeller = labeller(country = snakecase::to_title_case)
+    ## )
 
   p
 }
@@ -78,14 +74,14 @@ all_forecasts <- function(obs, pred) {
 
   ggplot() +
       geom_point(
-        data = obs,
-        aes(days_since_100_deaths, deaths),
+        data = obs, aes(days_since_100_deaths, deaths),
         col = "#663723"
       ) +
       geom_line(
         data = pred,
         aes(
-          x = days_since_100_deaths, `50%`, group = proj, col = "#634d43"
+          x = days_since_100_deaths, `50%`, group = proj,
+          col = "#4a8c6f"
         ),
         size = 1
       ) +
@@ -96,7 +92,7 @@ all_forecasts <- function(obs, pred) {
           ymin = `2.5%`,
           ymax = `97.5%`,
           group = proj,
-          fill = "#634d43"
+          fill = "#4a8c6f"
         ),
         alpha = 0.3
       ) +
@@ -107,7 +103,7 @@ all_forecasts <- function(obs, pred) {
           ymin = `25%`,
           ymax = `75%`,
           group = proj,
-          fill = "#634d43"
+          fill = "#4a8c6f"
         ),
         alpha = 0.5
       ) +
@@ -138,23 +134,21 @@ all_forecasts_calendar <- function(obs, pred) {
       ) +
     geom_line(
       data = obs, aes(dates, rolling_mean, linetype = "solid"),
-      size = 1.1
+      size = 1
     ) +
     geom_line(
         data = pred,
-        aes(x = date, `50%`, group = proj, col = "#634d43"),
-        size = 1
+        aes(x = date, `50%`, group = proj, col = "#4a8c6f"),
+        size = 1.1
       ) +
       geom_ribbon(
         data = pred,
         aes(
           x = date, ymin = `2.5%`, ymax = `97.5%`,
-          group = proj, fill = "#634d43"
+          group = proj, fill = "#4a8c6f"
         ),
-        alpha = 0.3
+        alpha = 0.4
       ) +
-    xlab("") +
-    ylab("") +
     scale_x_date(date_breaks = "3 weeks") +
     scale_linetype_identity(
       ##aesthetics = c("linetype", "color", "shape", "fill"),
@@ -165,27 +159,21 @@ all_forecasts_calendar <- function(obs, pred) {
     scale_shape_identity(
       ##aesthetics = c("linetype", "color", "shape", "fill"),
       breaks = 16,
-      labels = "Reported deaths",
+      labels = "Obs deaths",
       guide = guide_legend(order = 1)
     ) +
     scale_color_identity(
       ##aesthetics = c("linetype", "color", "shape", "fill"),
-      breaks = "#634d43",
-      labels = "Median projected deaths",
+      breaks = "#4a8c6f",
+      labels = "Median",
       guide = guide_legend(order = 2)
     ) +
     scale_fill_identity(
-      breaks = "#634d43",
-      labels = "95% CrI of projected deaths",
+      breaks = "#4a8c6f",
+      labels = "95% CrI",
       guide = guide_legend(order = 3)
     ) +
-    facet_wrap(
-      ~country,
-      ncol = 1,
-      scales = "free_y",
-      labeller = labeller(country = snakecase::to_title_case)
-    )
-
+    ggtitle(label = snakecase::to_title_case(obs$country[1]))
 
 }
 
