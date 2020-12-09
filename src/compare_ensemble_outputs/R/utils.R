@@ -83,7 +83,7 @@ all_forecasts <- function(obs, pred) {
           x = days_since_100_deaths, `50%`, group = proj,
           col = "#4a8c6f"
         ),
-        size = 1
+        size = 1.1
       ) +
       geom_ribbon(
         data = pred,
@@ -130,16 +130,15 @@ all_forecasts_calendar <- function(obs, pred) {
 
   ggplot() +
     geom_point(
-      data = obs, aes(dates, deaths, shape = 16),
-      ) +
+      data = obs, aes(dates, deaths, shape = 16), alpha = 0.7
+    ) +
     geom_line(
       data = obs, aes(dates, rolling_mean, linetype = "solid"),
-      size = 1
+      size = 0.9
     ) +
     geom_line(
         data = pred,
-        aes(x = date, `50%`, group = proj, col = "#4a8c6f"),
-        size = 1.1
+        aes(x = date, `50%`, group = proj, col = "#4a8c6f")
       ) +
       geom_ribbon(
         data = pred,
@@ -147,7 +146,7 @@ all_forecasts_calendar <- function(obs, pred) {
           x = date, ymin = `2.5%`, ymax = `97.5%`,
           group = proj, fill = "#4a8c6f"
         ),
-        alpha = 0.4
+        alpha = 0.5
       ) +
     scale_x_date(date_breaks = "3 weeks") +
     scale_linetype_identity(

@@ -81,7 +81,7 @@ proj_plots <- map(
         axis.text.x = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 9, angle = 90),
-        plot.margin = unit(c(0.1, 0, 0, 0.1), "cm"),
+        plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
         panel.spacing = unit(c(0, 0, 0, 0), "cm")
       )
     p1
@@ -120,9 +120,9 @@ rt_plots <- map(
         axis.title.y = element_text(size = 8, angle = 90),
         axis.title.x = element_blank(),
         legend.position = "none",
-        plot.margin = unit(c(0.1, 0, 0, 0), "cm"),
+        plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
         panel.spacing = unit(c(0, 0, 0, 0), "cm")
-      )
+      ) + coord_cartesian(clip = "off")
 
     p2
   }
@@ -139,7 +139,7 @@ both <- map(
       p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
     )
     outfile <- glue::glue("{country}_forecasts{file_format}")
-    ##save_multiple(plot = p, filename = outfile, one_col = FALSE)
+    save_multiple(plot = p, filename = outfile)
     p
   }
 )
@@ -198,7 +198,7 @@ plegend <- plot_grid(
   rel_widths = c(0.25, 1), align = "hv", axis = "l"
 )
 
-save_multiple(plegend, "test.tiff")
+save_multiple(plegend, "main.tiff")
 
 
 ## For SI, png is fine.
