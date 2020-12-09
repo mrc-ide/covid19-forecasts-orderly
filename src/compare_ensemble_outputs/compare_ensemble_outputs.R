@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(use_si = "si_2", latest_week = "2020-11-16"), use_draft = "newer")
+### orderly::orderly_develop_start(parameters = list(use_si = "si_2", latest_week = "2020-12-06"), use_draft = "newer")
 ### This task produces the following visualtions:
 ### comparison of unweighted and weighted ensembles for each country
 ### all forecasts from unweighted ensemble
@@ -9,7 +9,8 @@
 file_format <- ".tiff"
 
 main_text_countries <- c(
-  "Brazil", "India", "Italy", "South_Africa", "United_States_of_America"
+  "Brazil", "India", "Italy", "South_Africa",
+  "Turkey", "United_States_of_America"
 )
 
 unweighted_qntls <- readRDS("unweighted_qntls.rds") %>%
@@ -37,14 +38,6 @@ model_input <- split(
   }
 )
 model_input$dates <- as.Date(model_input$dates)
-## Performance Metrics
-## deaths_tall <- deaths_tall[deaths_tall$country %in% unweighted_qntls$country, ]
-## levels <- unique(interaction(both$proj, both$model))
-## unwtd <- grep(pattern = "Unweighted", x = levels, value = TRUE)
-## wtd <- grep(pattern = "Unweighted", x = levels, value = TRUE, invert TRUE)
-## palette <- c(rep("#b067a3", nlevels(levels) / 2),
-##              rep("#9c954d", nlevels(levels) / 2))
-## names(palette) <- c(unwtd, wtd)
 
 countries <- setNames(
   unique(unweighted_qntls$country), unique(unweighted_qntls$country)
@@ -64,13 +57,9 @@ countries <- countries[!countries %in% exclude]
 unweighted_rt_qntls <- readRDS("unweighted_rt_qntls.rds") %>%
   dplyr::filter(si == use_si)
 
-
-purrr::iwalk(
+proj_plots <- map(
   countries,
-  function(country, name) {
-    message(paste(country, collapse = " "))
-    ## obs <-  unweighted_qntls[unweighted_qntls$country %in% country,
-    ##                          c("date", "country" ,"deaths")]
+  function(country) {
     obs <- model_input[model_input$country %in% country, ]
     pred <- unweighted_qntls[unweighted_qntls$country %in% country, ]
     if (nrow(pred) == 0) {
@@ -79,7 +68,31 @@ purrr::iwalk(
     }
     pred <- rincewind:::cap_predictions(pred)
     pred <- left_join(pred, obs, by = c("date" = "dates"))
+    obs$rolling_mean <- slider::slide_dbl(
+      obs$deaths, mean, .before = 3, .after = 3
+    )
+    p1 <- all_forecasts_calendar(obs, pred)
+    ## Remove x-axis ticks to have them on the bottom panel only
+    p1 <- p1 +
+      ylab("Daily Deaths") +
+      theme_manuscript() +
+      theme(
+        axis.text.y = element_text(size = 8),
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 9, angle = 90),
+        plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
+        panel.spacing = unit(c(0, 0, 0, 0), "cm")
+      )
+    p1
 
+  }
+)
+
+rt_plots <- map(
+  countries,
+  function(country) {
+    message(paste(country, collapse = " "))
 
     x <- unweighted_rt_qntls[unweighted_rt_qntls$country %in% country, ]
     x <- tidyr::spread(x, quantile, out2)
@@ -97,59 +110,95 @@ purrr::iwalk(
           y
       }
     )
-    out <- left_join(out, obs)
-    xmax <- max(out$days_since_100_deaths, na.rm = TRUE)
-    message(xmax)
-    if (xmax < 0) return(NULL)
-
-    obs$rolling_mean <- slider::slide_dbl(
-      obs$deaths, mean, .before = 3, .after = 3
-    )
-    p1 <- all_forecasts_calendar(obs, pred)
-
-    ## Remove x-axis ticks to have them on the bottom panel only
-    p1 <- p1 +
-      ylab("Daily Deaths") +
-      theme_manuscript() +
-      theme(
-        strip.text = element_text(size = 8),
-        axis.text.y = element_text(size = 8),
-        axis.text.x = element_blank(),
-        axis.title.x = element_text(size = 8),
-        axis.title.y = element_text(size = 8, angle = 90)
-        ##legend.position = "none"
-      ) +
-      theme(
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.spacing = unit(0, "pt"),
-        legend.text = element_text(size = 9)
-      )
-
     p2 <- all_restimates_line(out) +
       ylab("Effective Reproduction Number") +
-      xlab("")
-
-    p2 <- p2 +
       theme_manuscript() +
       theme(
         strip.text = element_blank(),
-        axis.text = element_text(size = 8),
+        axis.text.x = element_text(size = 8, angle = 90),
+        axis.text.y = element_text(size = 8),
         axis.title.y = element_text(size = 8, angle = 90),
-        axis.title.x = element_text(size = 8, angle = 90, hjust = 0.5),
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.spacing = unit(0, "pt"),
-        legend.text = element_text(size = 10)
-      )
+        axis.title.x = element_blank(),
+        legend.position = "none",
+        plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
+        panel.spacing = unit(c(0, 0, 0, 0), "cm")
+      ) + coord_cartesian(clip = "off")
 
-    p <- cowplot::plot_grid(
-      p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
-    )
-    outfile <- glue::glue("{name}_forecasts{file_format}")
-    save_multiple(plot = p, filename = outfile, one_col = FALSE)
+    p2
   }
 )
+
+both <- map(
+  countries,
+  function(country) {
+    message(paste(country, collapse = " "))
+    p1 <- proj_plots[[country]] +
+      theme(legend.position = "none")
+    p2 <- rt_plots[[country]]
+    p <- plot_grid(
+      p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
+    )
+    outfile <- glue::glue("{country}_forecasts{file_format}")
+    save_multiple(plot = p, filename = outfile)
+    p
+  }
+)
+
+
+
+## main_text_countries <- c(
+##  "Brazil", "India", "Italy", "South_Africa",
+##  "Turkey", "United_States_of_America"
+##)
+
+p1 <- both[["Brazil"]]
+
+legend <- get_legend(
+  proj_plots[[1]] + theme(legend.box = "horizontal")
+)
+
+p2 <- plot_grid(
+  proj_plots[["India"]] +
+  theme(axis.title.y = element_blank(), legend.position = "none"),
+  rt_plots[["India"]] +
+  theme(axis.title.y = element_blank(), legend.position = "none"),
+  align  = "hv", rel_heights = c(1, 0.6), ncol = 1, axis = "l"
+)
+
+p3 <- plot_grid(
+  proj_plots[["Italy"]] +
+  theme(axis.title.y = element_blank(), legend.position = "none"),
+  rt_plots[["Italy"]] +
+  theme(axis.title.y = element_blank(), legend.position = "none"),
+  align  = "hv", rel_heights = c(1, 0.6), ncol = 1, axis = "l"
+)
+
+p4 <- both[["South_Africa"]]
+
+p5 <- plot_grid(
+  proj_plots[["Turkey"]] +
+  theme(axis.title.y = element_blank(), legend.position = "none"),
+  rt_plots[["Turkey"]] +
+  theme(axis.title.y = element_blank(), legend.position = "none"),
+  align  = "hv", rel_heights = c(1, 0.6), ncol = 1, axis = "l"
+)
+
+p6 <- plot_grid(
+  proj_plots[["United_States_of_America"]] +
+  theme(axis.title.y = element_blank(), legend.position = "none"),
+  rt_plots[["United_States_of_America"]] +
+  theme(axis.title.y = element_blank(), legend.position = "none"),
+  align  = "hv", rel_heights = c(1, 0.6), ncol = 1, axis = "l"
+)
+
+p <- plot_grid(p1, p2, p3, p4, p5, p6, ncol = 3, nrow = 2)
+
+plegend <- plot_grid(
+  legend, p, ncol = 1, rel_heights = c(0.1, 1),
+  rel_widths = c(0.25, 1), align = "hv", axis = "l"
+)
+
+save_multiple(plegend, "main.tiff")
 
 
 ## For SI, png is fine.
