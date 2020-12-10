@@ -44,14 +44,17 @@ saveRDS(better_than_null, "better_than_null.rds")
 ## square plot
 cutoff <- 25
 country_groups <- list()
-idx <- seq(from = 1, length.out = cutoff, by = 1)
+## Select every 4th element rather than the top 25
+idx <- seq(from = 1, length.out = cutoff, by = 3)
 page <- 1
+covered <- sum(map_int(country_groups, length))
 
-while (max(idx) < nrow(better_than_null)) {
+while (covered < nrow(better_than_null)) {
   idx <- idx[idx <= nrow(better_than_null)]
   country_groups[[page]] <- better_than_null$country[idx]
-  idx <- seq(from = max(idx) + 1, length.out = cutoff, by = 1)
+  idx <- seq(from = min(idx) + 1, length.out = cutoff, by = 3)
   page <- page + 1
+  covered <- sum(map_int(country_groups, length))
 }
 
 saveRDS(country_groups, "country_groups.rds")
