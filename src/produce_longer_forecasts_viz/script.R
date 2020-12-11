@@ -124,6 +124,7 @@ for (i in seq_len(nweeks_projected)) {
 names(week_groups) <- seq_along(week_groups)
 
 countries <- setNames(names(ps_bycountry), names(ps_bycountry))
+xmin <- min(as.Date("2020-03-01"))
 
 plots <- map(
   countries,
@@ -143,7 +144,7 @@ plots <- map(
         reff <- reff[as.Date(reff$forecast_week) %in% weeks, ]
         ps <- ps[as.Date(ps$forecast_week) %in% weeks, ]
 
-        obs_local <- obs[obs$dates >= min(as.Date(pred$date)), ]
+        obs_local <- obs[obs$dates >= xmin, ]
         obs_local <- obs_local[obs_local$dates <= max(pred$date) + 7, ]
 
         ymax <- 2 * ceiling(max(obs$deaths, na.rm = TRUE) / 10) * 10
@@ -166,7 +167,8 @@ plots <- map(
 
         p <- p & scale_fill_manual(
           values = palette, aesthetics = c("col", "fill")
-        ) &
+          ) &
+          expand_limits(x = xmin) &
           scale_x_date(
             date_breaks = date_breaks, date_labels = date_labels
           ) &
@@ -208,15 +210,18 @@ plots <- map(
 
         p_final <- p1_final + p2_final + p3_final +
           plot_layout(ncol = 1, heights = c(2, 1, 1)) +
-          plot_annotation(tag_levels = 'A')
+          plot_annotation(
+            ##tag_levels = 'A',
+            title = rincewind::nice_country_name(country)
+          )
 
         p_final <- p_final &
           scale_fill_manual(
             values = palette, aesthetics = c("col", "fill")
         ) &
             theme(
-              axis.title.x = element_blank(),
-              axis.title.y = element_text(size = 7),
+              axis.title = element_blank(),
+              ##axis.title.y = element_text(size = 6),
               legend.position = "none"
             )
         p_final
@@ -226,11 +231,25 @@ plots <- map(
 )
 
 
+file_format <- ".tiff"
 
+main_text_countries <- c(
+  "Brazil", "India", "Italy", "South_Africa",
+  "Turkey", "United_States_of_America"
+)
 
+main_text_plots <- plots[main_text_countries]
 
+p1 <- main_text_plots[[1]][[1]]
+p2 <- main_text_plots[[2]][[1]] + theme(axis.title = element_blank())
+p3 <- main_text_plots[[3]][[1]] & theme(axis.title = element_blank())
+p4 <- main_text_plots[[4]][[1]]
+p5 <- main_text_plots[[5]][[1]] & theme(axis.title = element_blank())
+p6 <- main_text_plots[[6]][[1]] & theme(axis.title = element_blank())
 
+p <- cowplot::plot_grid(p1, p2, p3, nrow = 1, ncol = 3)
 
+ggsave("test.png", p)
 
 reff_qntls <- rincewind::assign_epidemic_phase(reff_qntls)
 compare_phase <- left_join(
