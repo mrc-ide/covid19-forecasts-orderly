@@ -183,32 +183,48 @@ plots <- map(
         ##ggsave(outfile, p)
 
         ## Get rid of the dates on the top 2 panels
-        p1_final <- p1 + theme(axis.text.x = element_blank())
-        p2_final <- p2 + theme(axis.text.x = element_blank())
+        p1_final <- p1 +
+          scale_x_date(
+            date_breaks = date_breaks, date_labels = date_labels
+          ) +
+          theme_minimal() +
+          theme(axis.text.x = element_blank())
 
-        p_final <- p1_final + p2_final + p3 +
+        p2_final <- p2 +
+          scale_x_date(
+            date_breaks = date_breaks, date_labels = date_labels
+          ) +
+          theme_minimal() +
+          theme(axis.text.x = element_blank())
+
+        p3_final <- p3 +
+          scale_x_date(
+            date_breaks = date_breaks, date_labels = date_labels
+          ) +
+          theme_minimal() +
+          theme(
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+          )
+
+        p_final <- p1_final + p2_final + p3_final +
           plot_layout(ncol = 1, heights = c(2, 1, 1)) +
           plot_annotation(tag_levels = 'A')
 
-        p_final <- p_final & scale_fill_manual(
-          values = palette, aesthetics = c("col", "fill")
+        p_final <- p_final &
+          scale_fill_manual(
+            values = palette, aesthetics = c("col", "fill")
         ) &
-          scale_x_date(
-            date_breaks = date_breaks, date_labels = date_labels
-          ) &
-          theme_minimal() +
             theme(
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
               axis.title.x = element_blank(),
-              axis.title.y = element_text(size = 6),
-              legend.position = "none",
-              axis.text.y = element_text(size = 6)
+              axis.title.y = element_text(size = 7),
+              legend.position = "none"
             )
         p_final
       }
     )
   }
 )
+
 
 
 
