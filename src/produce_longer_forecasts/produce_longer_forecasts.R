@@ -143,7 +143,7 @@ all_projections <- map(
         ## n_days <- length(
         ##   unwtd_rt_estimates[[country]]$weeks_combined
         ## ) * 7
-        n_days <- 56
+        n_days <- 28
         x <- deaths_to_use[[country]]
         ##rt <- unwtd_rt_estimates[[country]]$rt_samples
         rt <- reff[[country]][["r_eff"]]

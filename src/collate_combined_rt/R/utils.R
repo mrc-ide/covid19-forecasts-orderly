@@ -75,7 +75,9 @@ combined_rt_quantiles <-   function(l) {
   qntls <- spread(qntls, quantile, val)
   out <- data.frame(
     week_starting = min(l$weeks_combined),
-    week_ending = max(l$weeks_combined)
+    week_ending = max(l$weeks_combined),
+    weeks_combined = length(l$weeks_combined)
   )
+
   cbind(out, qntls)
 }

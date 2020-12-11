@@ -2,8 +2,11 @@ script: script.R
 
 artefacts:
   data:
-    description: Figures
-    filenames: figures/all_projections_India.png
+    description: Outputs filtered to less than or equal to 4 weeks ahead 
+    filenames:
+      - pred_qntls_filtered.rds
+      - ps_qntls_filtered.rds
+      - reff_qntls_filtered.rds
 
 packages:
   - purrr
@@ -16,16 +19,15 @@ packages:
   - cowplot
   - glue
   - orderly
-
-sources: R/utils.R
+  - ggforce
  
 depends:
   collate_longer_forecasts:
     id: "latest"
     use:
-      longer_projections_qntls.rds: unwtd_projections_qntls.rds
-      ps_qntls.rds: unwtd_ps_qntls.rds
-      reff_qntls.rds: unwtd_reff_qntls.rds
+      longer_projections_qntls.rds: wtd_per_country_projections_qntls.rds
+      ps_qntls.rds: wtd_per_country_ps_qntls.rds
+      reff_qntls.rds: wtd_per_country_reff_qntls.rds
   prepare_ecdc_data:
     id: "latest"
     use:
@@ -38,5 +40,8 @@ depends:
     id: "latest"
     use:
       weekly_rt_qntls.rds: unweighted_rt_qntls.rds
-      
+  compare_with_null_model:
+    id: latest
+    use:
+      country_groups.rds: country_groups.rds      
       

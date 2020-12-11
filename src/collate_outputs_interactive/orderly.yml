@@ -14,3 +14,9 @@ depends:
     id: latest
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
+- collate_longer_forecasts:
+    id: latest
+    use:
+      long_forecasts.rds: wtd_per_country_projections_qntls.rds
+      ps_qntls.rds: wtd_per_country_ps_qntls.rds
+      reff_qntls.rds: wtd_per_country_reff_qntls.rds

@@ -13,7 +13,7 @@ augment_data <- function(df, width = 1.5) {
   df <- left_join(df, x) %>% left_join(y)
 
   list(
-    df = df, y_labels = y_labels
+    df = df, y_labels = y_labels, x_labels = x_labels
   )
 }
 

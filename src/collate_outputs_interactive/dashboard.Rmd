@@ -44,7 +44,8 @@ forecast_weeks <- seq(
   as.Date("2020-03-08"), to = as.Date("2020-11-16"), by = "7 days"
 )
 names(forecast_weeks) <- forecast_weeks
-##long_forecasts <- readRDS("unwtd_long_qntls.rds")
+
+long_forecasts <- readRDS("long_forecasts.rds")
 
 country_long_pred <- reactive({
   pred <- long_forecasts[long_forecasts$country == input$country &
@@ -246,6 +247,8 @@ output$long <- renderPlotly({
   
   pred <- country_long_pred()
   obs_country <- country_obs()
+  pred <- dplyr::left_join(pred, obs_country, by = c("date" = "dates"))
+  pred <- rincewind:::cap_predictions(pred)
   p1b <- ggplot() +
     geom_point(data = obs_country, aes(dates, deaths)) +
     geom_line(data = pred, aes(date, `50%`, group = forecast_week)) +
@@ -257,7 +260,7 @@ output$long <- renderPlotly({
       alpha = 0.3
     ) +
     scale_x_date(
-      date_breaks = "2 weeks",
+      date_breaks = "3 weeks",
       limits = c(as.Date("2020-03-01"), NA)
     ) +
     xlab("") +

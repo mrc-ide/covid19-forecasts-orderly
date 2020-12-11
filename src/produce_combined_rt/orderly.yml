@@ -143,8 +143,20 @@ depends:
     id: latest(parameter:week_ending == "2020-10-04")
     use:
       ensemble_model_rt_samples_2020-10-04.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-10-11")
+    use:
+      ensemble_model_rt_samples_2020-10-11.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-10-18")
+    use:
+      ensemble_model_rt_samples_2020-10-18.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-10-25")
+    use:
+      ensemble_model_rt_samples_2020-10-25.rds: ensemble_model_rt_samples.rds
 - produce_weights_combined_rt:
-    id: latest(parameter:week_ending == "2020-10-04")
+    id: latest(parameter:week_ending == "2020-10-25")
     use:
       across_countries_beta.rds: across_countries.rds
       per_country_beta.rds: per_country.rds

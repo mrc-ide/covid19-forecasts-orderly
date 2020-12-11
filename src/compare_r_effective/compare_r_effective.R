@@ -1,25 +1,21 @@
-## orderly::orderly_develop_start(use_draft = "newer")
+## orderly::orderly_develop_start(use_draft = "newer",
+## parameters = list(week_ending = "2020-10-04"))
 dir.create("figures")
+
 reff_overlaps_weekly <- function(reff, weekly) {
   x <- left_join(
     reff, weekly, by = c("date" = "dates"),
     suffix = c("_reff", "_weekly")
   )
   x <- na.omit(x)
+  x$day <- seq_len(nrow(x))
+  ## We have now decided that we will not forecast beyond 4 weeks
+  x <- x[x$day <= 28, ]
+  x$reff_overlaps_weekly <-
+    (x$`2.5%_weekly` > x$`2.5%_reff`) &
+    (x$`97.5%_weekly` < x$`97.5%_reff`)
 
-  out <- select(
-    x,
-    reff_low = `2.5%_reff`, reff_high = `97.5%_reff`,
-    weekly_low = `2.5%_weekly`, weekly_high = `97.5%_weekly`
-  ) %>%
-    pmap_lgl(
-      function(reff_low, reff_high, weekly_low, weekly_high) {
-        x1 = c(reff_low, reff_high)
-        x2 = c(weekly_low, weekly_high)
-        (weekly_low > reff_low) & (weekly_high < reff_high)
-      }
-    )
-  data.frame(day = seq_along(out), reff_overlaps_weekly = out)
+  x
 }
 
 infiles <- list(
@@ -34,6 +30,7 @@ reff_by_strategy <- map(infiles, readRDS)
 ## Therefore, for each country, for each week, repeat the rows for 7
 ## days and increment dates
 weekly_iqr <- readRDS("weekly_iqr.rds")
+
 weekly_iqr_augm <- split(weekly_iqr, weekly_iqr$country) %>%
   map(function(x) {
     message(x$country[1])
@@ -121,7 +118,7 @@ iwalk(
 iwalk(
   overlap,
   function(df, nm) {
-    ntrue <- filter(df, reff_overlaps_weekly == "TRUE") %>%
+    ntrue <- filter(df, reff_overlaps_weekly) %>%
       count(country, reff_overlaps_weekly, sort = TRUE)
 
     df$country <- factor(

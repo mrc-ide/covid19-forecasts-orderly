@@ -21,21 +21,15 @@ x <- list(
   )
  ),
  packages = c(
-   "dplyr", "tidyr", "ggdist", "ggplot2", "rincewind", "purrr", "glue"
+   "dplyr", "tidyr", "ggdist", "ggplot2", "rincewind", "purrr", "glue",
+   "gridExtra"
  )
-)
-
-week_starting <- as.Date("2020-03-29")
-week_ending <- as.Date("2020-04-19")
-
-weeks_needed <- seq(
-  from = week_starting, to = week_ending, by = "7 days"
 )
 
 use_si <- "si_2"
 
 dependancies <- purrr::map(
-  weeks_needed,
+  weeks,
   function(week) {
     query <- glue::glue(
       "latest(parameter:week_ending == \"{week}\" ",
