@@ -121,28 +121,31 @@ for (i in seq_len(nweeks_projected)) {
   week_groups[[i]] <- forecast_weeks[idx]
 }
 
+names(week_groups) <- seq_along(week_groups)
 
 countries <- setNames(names(ps_bycountry), names(ps_bycountry))
 
 plots <- map(
   countries,
   function(country) {
+    message(country)
     pred <- pred_qntls_bycountry[[country]]
     reff <- reff_bycountry[[country]]
     ps <- ps_bycountry[[country]]
     weekly <- weekly_rt_bycountry[[country]]
-    map(
+    obs <- all_deaths[, c("dates", country)]
+    obs$deaths <- obs[[country]]
+    imap(
       week_groups,
-      function(weeks) {
+      function(weeks, index) {
         weeks <- as.Date(weeks)
         pred <- pred[pred$forecast_week %in% weeks, ]
         reff <- reff[as.Date(reff$forecast_week) %in% weeks, ]
         ps <- ps[as.Date(ps$forecast_week) %in% weeks, ]
 
-        obs <- all_deaths[, c("dates", country)]
-        obs <- obs[obs$dates >= min(as.Date(pred$date)), ]
-        obs <- obs[obs$dates <= max(pred$date) + 7, ]
-        obs$deaths <- obs[[cntry]]
+        obs_local <- obs[obs$dates >= min(as.Date(pred$date)), ]
+        obs_local <- obs_local[obs_local$dates <= max(pred$date) + 7, ]
+
         ymax <- 2 * ceiling(max(obs$deaths, na.rm = TRUE) / 10) * 10
         pred <- dplyr::mutate_if(
           pred, is.numeric, ~ ifelse(.x > ymax, ymax, .x)
@@ -155,7 +158,7 @@ plots <- map(
         ps$forecast_week <- as.factor(ps$forecast_week)
         reff$forecast_week <- as.factor(reff$forecast_week)
 
-        p1 <- pred_plot(pred, obs)
+        p1 <- pred_plot(pred, obs_local)
         p2 <- reff_weekly_plot(reff, weekly)
         p3 <- ps_plot(ps)
 
@@ -176,13 +179,17 @@ plots <- map(
               axis.text.y = element_text(size = 6)
             )
         ## This is only to check that the dates are correctly aligned
-        outfile <- glue("figures/{country}_check.png")
-        ggsave(outfile, p)
+        ##outfile <- glue("figures/{country}_{index}_check.png")
+        ##ggsave(outfile, p)
+
         ## Get rid of the dates on the top 2 panels
         p1_final <- p1 + theme(axis.text.x = element_blank())
         p2_final <- p2 + theme(axis.text.x = element_blank())
 
-        p_final <- (p1_final + p2_final + p3 + plot_layout(ncol = 1))
+        p_final <- p1_final + p2_final + p3 +
+          plot_layout(ncol = 1, heights = c(2, 1, 1)) +
+          plot_annotation(tag_levels = 'A')
+
         p_final <- p_final & scale_fill_manual(
           values = palette, aesthetics = c("col", "fill")
         ) &
@@ -197,12 +204,15 @@ plots <- map(
               legend.position = "none",
               axis.text.y = element_text(size = 6)
             )
-
         p_final
       }
     )
   }
 )
+
+
+
+
 
 
 
