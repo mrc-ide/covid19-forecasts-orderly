@@ -7,9 +7,7 @@ ps_plot <- function(ps) {
       ),
       alpha = 0.4
     ) +
-    geom_line(
-      aes(date, `50%`, col = forecast_week), size = 1.2
-    ) +
+    geom_line(aes(date, `50%`, col = forecast_week)) +
     scale_y_continuous(limits = c(0, 1)) +
     ylab("Proportion of population susceptible")
 
@@ -65,8 +63,7 @@ pred_plot <- function(pred, obs) {
       alpha = 0.4
     ) +
     geom_line(
-      data = pred,
-      aes(date, `50%`, col = forecast_week), size = 1.2
+      data = pred, aes(date, `50%`, col = forecast_week)
     ) +
     ylab("Daily Incidence")
 
