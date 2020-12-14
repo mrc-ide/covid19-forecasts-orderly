@@ -1,20 +1,26 @@
 augment_data <- function(df, width = 1.5) {
 
-  x <- data.frame(week_of_projection = unique(df$week_of_projection))
+  x <- data.frame(forecast_week = unique(df$forecast_week))
   x$x <- seq(from = 1, by = width, length.out = nrow(x))
-  x_labels <- setNames(x$week_of_projection, x$x)
+  x_labels <- strftime(
+    as.Date(x$forecast_week), format = "%d-%b"
+  )
+  x_labels <- setNames(x_labels, x$x)
 
-  y <- data.frame(country = rev(levels(df$country)))
+  ##y <- data.frame(country = rev(levels(df$country)))
+  y <- data.frame(country = unique(df$country))
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
-  y_labels <- nice_country_name(y$country)
+  y_labels <- as.character(y$country) %>%
+    snakecase::to_title_case()
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
 
   list(
-    df = df, y_labels = y_labels, x_labels = x_labels
+    df = df, x_labels = x_labels, y_labels = y_labels
   )
+
 }
 
 long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
@@ -58,36 +64,36 @@ long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
     data = df[df$rel_mae_mu > high2, ],
     aes(x, y), fill = "#b2b2ff", width = 1.8, height = 1.8
   ) +
-  geom_text(
-    data = df, aes(x = xmax, y = y, label = right_label),
-    parse = TRUE, size = 2
-  ) +
-  geom_text(
-    data = df,
-    aes(x = x, y = ymax, label = top_label),
-    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
-  ) +
-  geom_richtext(
-    data = df,
-    aes(x = x, y = y, label = cell_label), size = 1.7,
-      fontface = "bold", fill = NA, label.color = NA, # remove background and outline
-      label.padding = grid::unit(rep(0, 4), "pt") # remove padding
-  ) +
-  xlab("") +
-  ylab("") +
+  ## geom_text(
+  ##   data = df, aes(x = xmax, y = y, label = right_label),
+  ##   parse = TRUE, size = 2
+  ## ) +
+  ## geom_text(
+  ##   data = df,
+  ##   aes(x = x, y = ymax, label = top_label),
+  ##   parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
+  ## ) +
+  ## geom_text(
+  ##   data = df,
+  ##   aes(x = x, y = y, label = cell_label), size = 1.7,
+  ##     fontface = "bold", fill = NA, label.color = NA, # remove background and outline
+  ##     label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ## ) +
   scale_y_continuous(
     breaks = sort(unique(df$y)), labels = y_labels, minor_breaks = NULL
   ) +
   scale_x_continuous(
     breaks = sort(unique(df$x)), labels = x_labels, minor_breaks = NULL
   ) +
+  theme_minimal() +
   theme(
     axis.text.x.bottom = element_text(
       angle = 90, hjust = 0.5, vjust = 0.5, size = 6
     ),
     axis.text.y = element_text(size = 6),
+    axis.title = element_blank(),
     plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
-    legend.position = "bottom",
+    legend.position = "top",
     axis.line.x = element_blank()
   ) +
   coord_cartesian(clip = "off")
@@ -100,21 +106,21 @@ weekly_summary <- function(df, col = "rel_mae") {
 ######################################################################
 ################## Weekly Summary for each country ###################
 ######################################################################
-  weekly <- group_by(df, week_of_projection, country) %>%
+  weekly <- group_by(df, forecast_week, country, week_of_projection) %>%
     summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
     ungroup()
 
 ######################################################################
 ################## Summary for each country ##########################
 ######################################################################
-  by_country <- group_by(df, country) %>%
+  by_country <- group_by(df, country, week_of_projection) %>%
     summarise_if(is.numeric, list(c_mu = mean, c_sd = sd)) %>%
     ungroup()
 
 ######################################################################
 ################## Summary for each week ##########################
 ######################################################################
-  by_week <- group_by(df, week_of_projection) %>%
+  by_week <- group_by(df, forecast_week, week_of_projection) %>%
     summarise_if(is.numeric, list(d_mu = mean, d_sd = sd)) %>%
     ungroup()
 
@@ -142,10 +148,10 @@ weekly_summary <- function(df, col = "rel_mae") {
     ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
   )
 
-  weekly$country <- factor(
-    weekly$country,
-    levels = better_than_null$country, ordered = TRUE
-  )
-  weekly$country <- droplevels(weekly$country)
+  ## weekly$country <- factor(
+  ##   weekly$country,
+  ##   levels = better_than_null$country, ordered = TRUE
+  ## )
+  ## weekly$country <- droplevels(weekly$country)
   weekly
 }

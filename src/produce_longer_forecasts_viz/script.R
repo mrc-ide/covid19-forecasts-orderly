@@ -470,11 +470,13 @@ rincewind::save_multiple(main2, "long_forecasts_main_text2.tiff")
 
 
 reff_qntls <- rincewind::assign_epidemic_phase(reff_qntls)
-compare_phase <- left_join(
+
+compare_phase <- dplyr::left_join(
   reff_qntls, weekly_rt,
   by = c("country", "date"),
   suffix = c("_eff", "_weekly")
 )
+
 compare_phase <- na.omit(compare_phase)
 
 saveRDS(compare_phase, "compare_phase_weekly_effevtive.rds")
@@ -496,4 +498,68 @@ ggplot(x, aes(date, country, fill = flag)) +
   ylab("") +
   scale_x_date(
     date_breaks = date_breaks, date_labels = "%b - %Y"
+  )
+
+
+x <- select(x, country, date, phase_eff, phase_weekly)
+x <- tidyr::pivot_longer(x, cols = phase_eff:phase_weekly)
+x$country <- paste(x$country, x$name, sep = "_")
+
+ggplot(x, aes(as.factor(date), country, col = value)) + geom_point()
+
+brazil <- filter(x, country %in% c("Brazil_phase_weekly", "Brazil_phase_eff"))
+brazil$y <- ifelse(brazil$country == "Brazil_phase_eff", 1, 1.1)
+##brazil$date <- as.factor(brazil$date)
+
+p1 <- ggplot(
+  brazil, aes(date, country, col = value)
+) + geom_point(alpha = 0.3) +
+  scale_x_date(date_breaks = "4 weeks", date_labels = "%d-%b") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90), legend.position = "none"
+  )
+
+india <- filter(x, country %in% c("China_phase_weekly", "China_phase_eff"))
+
+p2 <- ggplot(
+  india, aes(date, country, col = value)
+) + geom_point(alpha = 0.3) +
+  scale_x_date(date_breaks = "4 weeks") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(), legend.position = "none"
+  )
+library(patchwork)
+p2 + p1 + plot_layout(ncol = 1, widths = c(0.1, 0.1))
+
+ggplot(x, aes(as.factor(date), country, col = value)) + geom_point()
+
+ggplot(x) +
+  geom_half_point(
+    aes(date, country, col = phase_eff),
+    shape = 2,
+    side = "l",
+    transformation = position_jitter(width = 0, height = 0.1)
+  ) +
+  geom_half_point(
+    aes(date, country, col = phase_weekly),
+    transformation = position_jitter(width = 0, height = 0.1),
+    side = "r",
+    shape = 6
+  ) +
+  scale_x_date(date_breaks = "3 weeks")
+
+brazil <- filter(x, country == "Brazil")
+brazil$x <- as.numeric(brazil$date)
+brazil$x2 <- brazil$x + 0.5
+
+ggplot(x) +
+  geom_point(
+    aes(date, country, col = phase_eff), shape = 2,
+    position = position_nudge(x = 0.5, y = 0)
+  ) +
+  geom_point(
+    aes(date, country, col = phase_weekly), shape = 6,
+    position = position_nudge(x = 0.5, y = 0.5)
   )
