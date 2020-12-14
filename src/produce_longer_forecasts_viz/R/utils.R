@@ -30,15 +30,14 @@ reff_weekly_plot <- function(reff, weekly) {
     ) +
     geom_line(
       data = reff, aes(date, `50%`, group = forecast_week),
-      col = "#009E73"
+      col = "#9ac8fc"
     ) +
     geom_ribbon(
       data = reff,
       aes(
         x = date, ymin = `2.5%`, ymax = `97.5%`,
         group = forecast_week
-      ),
-      fill = "#009E73", alpha = 0.3
+      ), fill = "#9ac8fc", alpha = 0.4
     ) +
     geom_hline(yintercept = 1, linetype = "dashed") +
     ylim(0, ymax) +

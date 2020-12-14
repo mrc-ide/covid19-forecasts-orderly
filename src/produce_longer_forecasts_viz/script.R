@@ -103,8 +103,7 @@ pred_qntls_bycountry <- split(pred_qntls, pred_qntls$country)
 
 forecast_weeks <- unique(ps_qntls$forecast_week)
 palette <- alternating_palette(
-  forecast_weeks,
-  col1 = "#8a7972", col2 = "#3d2115"
+  forecast_weeks, col1 = "#9ac8fc", col2 = "#9ac8fc"
 )
 
 saveRDS(ps_qntls, "ps_qntls_filtered.rds")
@@ -218,9 +217,9 @@ with_dates <- map(
             legend.position = "none",
         axis.text.y = element_text(size = 6)
         )
-    ## This is only to check that the dates are correctly aligned
+        ## This is only to check that the dates are correctly aligned
         outfile <- glue("figures/{country}_{index}_check.png")
-        ggsave(outfile, p)
+        ##ggsave(outfile, p)
         p
       }
     )
@@ -468,7 +467,9 @@ main2 <- p14 + p24 + p34 + p15 + p25 + p35 + p16 + p26 + p36 +
 rincewind::save_multiple(main1, "long_forecasts_main_text1.tiff")
 rincewind::save_multiple(main2, "long_forecasts_main_text2.tiff")
 
-
+######################################################################
+######### Compare phase assigned by the two Rts ######################
+######################################################################
 reff_qntls <- rincewind::assign_epidemic_phase(reff_qntls)
 
 compare_phase <- dplyr::left_join(
@@ -477,7 +478,7 @@ compare_phase <- dplyr::left_join(
   suffix = c("_eff", "_weekly")
 )
 
-compare_phase <- na.omit(compare_phase)
+##compare_phase <- na.omit(compare_phase)
 
 saveRDS(compare_phase, "compare_phase_weekly_effevtive.rds")
 
@@ -487,79 +488,44 @@ compare_phase$flag <- case_when(
 )
 
 country_groups <- readRDS("country_groups.rds")
-x <- compare_phase[compare_phase$country %in% country_groups[[1]], ]
-x$country <- rincewind::nice_country_name(x$country)
 
-ggplot(x, aes(date, country, fill = flag)) +
-  geom_tile() +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  xlab("") +
-  ylab("") +
-  scale_x_date(
-    date_breaks = date_breaks, date_labels = "%b - %Y"
-  )
+palette <- c(
+  decline = "018571", growing = "#a6611a", unclear = "#dfc27d",
+  `stable/growing slowly` = "#80cdc1"
+)
 
 
-x <- select(x, country, date, phase_eff, phase_weekly)
-x <- tidyr::pivot_longer(x, cols = phase_eff:phase_weekly)
-x$country <- paste(x$country, x$name, sep = "_")
+plots <- map(
+  country_groups,
+  function(countries) {
+    x <- compare_phase[compare_phase$country %in% countries, ]
+    x$country <- rincewind::nice_country_name(x$country)
+    ##x <- select(x, country, date, phase_eff, phase_weekly)
+    ggplot(x) +
+      geom_line(
+        aes(date, country, col = phase_eff), size = 1.2,
+        position = position_nudge(x = 0, y = -0.2)
+      ) +
+      geom_line(
+        aes(date, country, col = phase_weekly),
+        size = 1.2, linetype = "dashed",
+        position = position_nudge(x = 0, y = 0.2)
+      ) +
+      scale_color_manual(values = palette) +
+      scale_x_date(
+        date_breaks = date_breaks, date_labels = date_labels
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "top",
+        legend.title = element_blank(),
+        axis.title = element_blank()
+      )
+  }
+)
 
-ggplot(x, aes(as.factor(date), country, col = value)) + geom_point()
+iwalk(plots, function(p, index) {
+  outfile <- glue("compare_phase_{index}.tiff")
+  rincewind::save_multiple(p, outfile)
+})
 
-brazil <- filter(x, country %in% c("Brazil_phase_weekly", "Brazil_phase_eff"))
-brazil$y <- ifelse(brazil$country == "Brazil_phase_eff", 1, 1.1)
-##brazil$date <- as.factor(brazil$date)
-
-p1 <- ggplot(
-  brazil, aes(date, country, col = value)
-) + geom_point(alpha = 0.3) +
-  scale_x_date(date_breaks = "4 weeks", date_labels = "%d-%b") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90), legend.position = "none"
-  )
-
-india <- filter(x, country %in% c("China_phase_weekly", "China_phase_eff"))
-
-p2 <- ggplot(
-  india, aes(date, country, col = value)
-) + geom_point(alpha = 0.3) +
-  scale_x_date(date_breaks = "4 weeks") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(), legend.position = "none"
-  )
-library(patchwork)
-p2 + p1 + plot_layout(ncol = 1, widths = c(0.1, 0.1))
-
-ggplot(x, aes(as.factor(date), country, col = value)) + geom_point()
-
-ggplot(x) +
-  geom_half_point(
-    aes(date, country, col = phase_eff),
-    shape = 2,
-    side = "l",
-    transformation = position_jitter(width = 0, height = 0.1)
-  ) +
-  geom_half_point(
-    aes(date, country, col = phase_weekly),
-    transformation = position_jitter(width = 0, height = 0.1),
-    side = "r",
-    shape = 6
-  ) +
-  scale_x_date(date_breaks = "3 weeks")
-
-brazil <- filter(x, country == "Brazil")
-brazil$x <- as.numeric(brazil$date)
-brazil$x2 <- brazil$x + 0.5
-
-ggplot(x) +
-  geom_point(
-    aes(date, country, col = phase_eff), shape = 2,
-    position = position_nudge(x = 0.5, y = 0)
-  ) +
-  geom_point(
-    aes(date, country, col = phase_weekly), shape = 6,
-    position = position_nudge(x = 0.5, y = 0.5)
-  )
