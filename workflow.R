@@ -87,7 +87,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "produce_visualisations/",
-    parameters = list(week_ending = week), use_draft = use_draft
+     parameters = list(week_ending = week), use_draft = use_draft
   )
   if (commit) orderly_commit(a)
 

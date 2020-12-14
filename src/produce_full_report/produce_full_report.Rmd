@@ -41,9 +41,9 @@ knitr::opts_chunk$set(
 
 # Introduction 
 
-As of 7^th^ December 2020,  more than
-65,000,000 cases of COVID-19 have been reported across the world, 
-with more than 1,520,000 deaths [@whositrep]. 
+As of 14^th^ December 2020,  more than
+70,000,000 cases of COVID-19 have been reported across the world, 
+with more than 1,600,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths
@@ -103,7 +103,7 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week beginning 7^th^ December 2020, 
+two weeks. For the week starting 7^th^ December 2020, 
 the number of countries/regions included based on these thresholds is 82.
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -306,8 +306,8 @@ and 3, see Methods). The reporting of deaths and cases in Brazil is currently ch
 ```{r}
 knitr::include_graphics("figs/rt_phase_si_2.png")
 ```
-*Figure 7.* Estimates of transmissibility in countries with active
-transmission for the week ending 7^th^ December 2020. A country is defined
+*Figure 7.* Latest estimates of transmissibility in countries with active
+transmission. A country is defined
 to be in the declining phase if the 97.5^th^ quantile of the effective
 reproduction number is below 1. It is defined to be in the growing
 phase if the 2.5^th^ quantile of the effective reproduction number is
