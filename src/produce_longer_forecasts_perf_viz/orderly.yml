@@ -7,6 +7,12 @@ packages:
 - purrr
 - rincewind
 - glue
+- ggtext
+
+artefacts:
+  staticgraph:
+    description: One of many files
+    filenames: 1col_rel_mae_by_country_unwieghted.tiff
 
 sources: R/utils.R
 

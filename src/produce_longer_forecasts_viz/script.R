@@ -3,7 +3,10 @@ dir.create("figures")
 
 ndays_projected <- 28
 nweeks_projected <- 4
-
+### common plot propoerties
+####
+date_labels <- "%d - %b"
+date_breaks <- "4 weeks"
 exclude <- readRDS("exclude.rds")
 
 all_deaths <- readRDS("latest_deaths_wide_no_filter.rds")
@@ -14,9 +17,8 @@ first_100th <- apply(
   all_deaths[, -1], 2, function(deaths) which(cumsum(deaths) > 100)[1]
 )
 
-
 ps_qntls <- readRDS("ps_qntls.rds")
-ps_qntls <- ps_qntls[! ps_qntls$country %in% exclude, ]
+ps_qntls <- ps_qntls[!ps_qntls$country %in% exclude, ]
 
 ps_qntls <- split(
   ps_qntls,
@@ -33,67 +35,12 @@ ps_qntls <- split(
     }
   )
 
-
-saveRDS(ps_qntls, "ps_qntls_filtered.rds")
-
 ps_bycountry <- split(ps_qntls, ps_qntls$country, drop = TRUE)
 
-##ps_bycountry <- split(pred_qntls, pred_qntls$country)
-
-iwalk(
-  ps_bycountry,
-  function(ps, cntry) {
-    ps$date <- as.Date(ps$date)
-    forecast_weeks <- unique(ps$forecast_week)
-    palette <- alternating_palette(forecast_weeks)
-    ps$forecast_week <- factor(ps$forecast_week)
-    ps$flag <- rep(
-      seq_len(nweeks_projected), each = ndays_projected,
-      length.out = nrow(ps)
-    )
-    xmin <- all_deaths$dates[first_100th[[cntry]]]
-
-    palette <- alternating_palette(
-      forecast_weeks, col1 = "#8a7972", col2 = "#3d2115"
-    )
-
-    p <- ggplot(ps) +
-      geom_ribbon(
-        aes(
-          x = date, ymin = `2.5%`, ymax = `97.5%`, fill = forecast_week
-        ),
-        alpha = 0.4
-      ) +
-      geom_line(
-        aes(date, `50%`, col = forecast_week), size = 1.2
-      ) +
-      scale_fill_manual(
-        values = palette, aesthetics = c("col", "fill")
-      ) +
-      scale_y_continuous(limits = c(0, 1)) +
-      scale_x_date(
-        date_breaks = "4 weeks", limits = c(as.Date(xmin), NA),
-        date_labels = "%b - %Y"
-      ) +
-      theme_minimal() +
-      theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-        strip.text = element_blank(),
-        legend.position = "none",
-        axis.text.y = element_text(size = 6)
-      ) +
-      xlab("") +
-      ylab("Proportion of population susceptible")
-
-    outfile <- glue("figures/{cntry}_ps.png")
-    message(outfile)
-    ggsave(outfile , p)
-  }
-)
-
 weekly_rt <- readRDS("weekly_rt_qntls.rds")
-weekly_rt <- weekly_rt[! weekly_rt$country %in% exclude, ]
-weekly_rt <-  split(weekly_rt, weekly_rt$country) %>%
+weekly_rt <- weekly_rt[weekly_rt$si == "si_2", ]
+weekly_rt <- weekly_rt[!weekly_rt$country %in% exclude, ]
+weekly_rt <- split(weekly_rt, weekly_rt$country) %>%
   map_dfr(function(weekly) {
     split(weekly, weekly$forecast_date) %>%
       map_dfr(
@@ -108,17 +55,17 @@ weekly_rt <-  split(weekly_rt, weekly_rt$country) %>%
           df
         }
       )
-  }
-)
+  })
 
 weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country)
 
 reff_qntls <- readRDS("reff_qntls.rds")
-reff_qntls <- reff_qntls[! reff_qntls$country %in% exclude, ]
+reff_qntls <- reff_qntls[!reff_qntls$country %in% exclude, ]
 
 reff_qntls <- split(
   reff_qntls,
-  list(reff_qntls$country, reff_qntls$forecast_week), drop = TRUE
+  list(reff_qntls$country, reff_qntls$forecast_week),
+  drop = TRUE
 ) %>%
   map_dfr(
     function(df) {
@@ -130,134 +77,8 @@ reff_qntls <- split(
     }
   )
 
-saveRDS(reff_qntls, "reff_qntls_filtered.rds")
-
 reff_bycountry <- split(reff_qntls, reff_qntls$country, drop = TRUE)
 
-
-iwalk(
-  reff_bycountry,
-  function(reff, cntry) {
-    reff$date <- as.Date(reff$date)
-    forecast_weeks <- unique(reff$forecast_week)
-    palette <- alternating_palette(forecast_weeks)
-    reff$forecast_week <- factor(reff$forecast_week)
-    reff$flag <- rep(seq_len(nweeks_projected), each = ndays_projected, length.out = nrow(reff))
-    xmin <- all_deaths$dates[first_100th[[cntry]]]
-    ymax <- ceiling(max(reff$`97.5%`))
-
-    p <- ggplot(reff) +
-      geom_ribbon(
-        aes(
-          x = date, ymin = `2.5%`, ymax = `97.5%`, fill = forecast_week
-        ),
-        alpha = 0.4
-      ) +
-      geom_line(
-        aes(date, `50%`, col = forecast_week), size = 1.2
-      ) +
-      geom_hline(yintercept = 1, linetype = "dashed") +
-      ylim(0, ymax) +
-      scale_fill_manual(
-        values = palette, aesthetics = c("col", "fill")
-      ) +
-      xlab("") +
-      ylab("Effective Reproduction Number") +
-      scale_x_date(
-        date_breaks = "4 weeks", limits = c(as.Date(xmin), NA),
-        date_labels = "%b-%Y"
-      ) +
-      theme_minimal() +
-      theme(
-        legend.position = "none",
-        axis.text.y = element_text(size = 6),
-        strip.text = element_blank(),
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
-      )
-
-    outfile <- glue("figures/{cntry}_reff_unfacetted.png")
-    message(outfile)
-    ggsave(outfile , p)
-
-    p2 <- p + facet_wrap(~flag, ncol = 1)
-    outfile <- glue("figures/{cntry}_reff.png")
-    message(outfile)
-    ggsave(outfile , p2)
-
-    p3 <- p +
-      ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = 1)
-
-    pages <- ggforce::n_pages(p3)
-
-    for (page in seq_len(pages)) {
-      p3 <- p +
-        ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = page)
-
-      outfile <- glue("figures/{cntry}_reff_{page}.png")
-      message(outfile)
-      ggsave(outfile , p3)
-    }
-  }
-)
-
-
-iwalk(
-  reff_bycountry,
-  function(reff, cntry) {
-    message(cntry)
-    reff$date <- as.Date(reff$date)
-    forecast_weeks <- unique(reff$forecast_week)
-    palette <- alternating_palette(forecast_weeks)
-    reff$forecast_week <- factor(reff$forecast_week)
-    reff$flag <- rep(seq_len(nweeks_projected), each = ndays_projected, length.out = nrow(reff))
-    weekly <- weekly_rt_bycountry[[cntry]]
-    weekly <- weekly[weekly$si == "si_2", ]
-    ymax <- ceiling(max(reff$`97.5%`))
-    p1 <- ggplot() +
-      geom_line(
-        data = weekly, aes(date, `50%`, group = forecast_date),
-        col = "#000000"
-      ) +
-    geom_ribbon(
-      data = weekly,
-      aes(
-        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_date
-      ),
-      fill = "#000000", alpha = 0.3
-    ) +
-      geom_line(
-        data = reff, aes(date, `50%`, group = forecast_week),
-        col = "#009E73") +
-      geom_ribbon(
-        data = reff,
-        aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_week),
-        fill = "#009E73", alpha = 0.3
-      ) +
-        geom_hline(yintercept = 1, linetype = "dashed") +
-        ylim(0, ymax) +
-        theme_minimal() +
-      theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-        strip.text = element_blank(),
-        legend.position = "none",
-        axis.text.y = element_text(size = 6)
-      ) +
-      xlab("") +
-        ylab("Effective Reproduction Number") +
-        facet_wrap(~flag, ncol = 1)
-
-    outfile <- glue("figures/{cntry}_short_and_long_rt.png")
-    ggsave(outfile , p1)
-  }
-)
-
-
-## x <- split(
-##   pred_qntls,
-##   list(pred_qntls$forecast_week, pred_qntls$country),
-##   sep = ":"
-## )
-## x <- purrr::keep(x, ~ nrow(.) > 0)
 pred_qntls <- readRDS("longer_projections_qntls.rds")
 
 pred_qntls <- split(
@@ -275,102 +96,387 @@ pred_qntls <- split(
     }
   )
 
-saveRDS(pred_qntls, "pred_qntls_filtered.rds")
-
 pred_qntls$forecast_week <- as.Date(pred_qntls$forecast_week)
 pred_qntls <- pred_qntls[!pred_qntls$country %in% exclude, ]
 
-x <- split(pred_qntls, pred_qntls$country)
+pred_qntls_bycountry <- split(pred_qntls, pred_qntls$country)
+
+forecast_weeks <- unique(ps_qntls$forecast_week)
+palette <- alternating_palette(
+  forecast_weeks,
+  col1 = "#8a7972", col2 = "#3d2115"
+)
+
+saveRDS(ps_qntls, "ps_qntls_filtered.rds")
+saveRDS(pred_qntls, "pred_qntls_filtered.rds")
+saveRDS(reff_qntls, "reff_qntls_filtered.rds")
 
 
-purrr::iwalk(
-  x,
-  function(pred, cntry) {
-    message(cntry)
-    pred <- pred[order(pred$forecast_week), ]
-    pred$date <- as.Date(pred$date)
-    forecast_weeks <- unique(pred$forecast_week)
-    pred$flag <- rep(seq_len(nweeks_projected), each = ndays_projected, length.out = nrow(pred))
 
-    obs <- all_deaths[, c("dates", cntry)]
-    obs <- obs[obs$dates <= max(pred$date) + 7, ]
-    obs$deaths <- obs[[cntry]]
-    week_ending <- max(pred$forecast_week)
+## Split all forecast weeks into 4 groups
+week_groups <- list()
+
+for (i in seq_len(nweeks_projected)) {
+  idx <- seq(from = i, by = nweeks_projected, to = length(forecast_weeks))
+  week_groups[[i]] <- forecast_weeks[idx]
+}
+
+names(week_groups) <- seq_along(week_groups)
+
+countries <- setNames(names(ps_bycountry), names(ps_bycountry))
+xmin <- min(as.Date("2020-03-01"))
+
+augm_data <- map(
+  countries,
+  function(country) {
+    message(country)
+    pred <- pred_qntls_bycountry[[country]]
+    reff <- reff_bycountry[[country]]
+    ps <- ps_bycountry[[country]]
+    weekly <- weekly_rt_bycountry[[country]]
+    obs <- all_deaths[, c("dates", country)]
+    obs$deaths <- obs[[country]]
     ymax <- 2 * ceiling(max(obs$deaths, na.rm = TRUE) / 10) * 10
-    ##pred$val[pred$val > ymax] <- NA
-    pred <- dplyr::mutate_if(
-      pred, is.numeric, ~ ifelse(.x > ymax, ymax, .x)
+    imap(
+      week_groups,
+      function(weeks, index) {
+        weeks <- as.Date(weeks)
+        pred <- pred[pred$forecast_week %in% weeks, ]
+        reff <- reff[as.Date(reff$forecast_week) %in% weeks, ]
+        ps <- ps[as.Date(ps$forecast_week) %in% weeks, ]
+
+        obs_local <- obs[obs$dates >= xmin, ]
+        obs_local <- obs_local[obs_local$dates <= max(pred$date) + 7, ]
+
+
+        pred <- dplyr::mutate_if(
+          pred, is.numeric, ~ ifelse(.x > ymax, ymax, .x)
+        )
+
+        weekly <- weekly[weekly$date >= min(as.Date(pred$date)), ]
+        weekly <- weekly[weekly$date <= max(pred$date) + 7, ]
+
+        pred$forecast_week <- as.factor(pred$forecast_week)
+        ps$forecast_week <- as.factor(ps$forecast_week)
+        reff$forecast_week <- as.factor(reff$forecast_week)
+
+        list(
+          pred = pred, reff = reff, weekly_rt = weekly, ps = ps,
+          obs_local = obs_local
+        )
+      }
     )
-
-    xmin <- obs$dates[first_100th[[cntry]]]
-
-
-
-    pred$forecast_week <- factor(pred$forecast_week)
-
-    palette <- alternating_palette(forecast_weeks)
-
-    p <- ggplot() +
-      geom_point(
-        data = obs,
-        aes(dates, deaths), col = "#663723", alpha = 0.5, size = 1
-      ) +
-      geom_ribbon(
-        data = pred,
-        aes(
-          x = date, ymin = `2.5%`, ymax = `97.5%`, fill = forecast_week
-        ),
-        alpha = 0.4
-      ) +
-      geom_line(
-        data = pred, aes(date, `50%`, col = forecast_week), size = 1.2
-      ) +
-      scale_fill_manual(values = palette, aesthetics = c("col", "fill")) +
-      scale_x_date(
-        date_breaks = "4 weeks", limits = c(as.Date(xmin), NA),
-        date_labels = "%b - %Y"
-      ) +
-      theme_minimal() +
-      theme(
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-        strip.text = element_blank(),
-        legend.position = "none",
-        axis.text.y = element_text(size = 6)
-      ) +
-      xlab("") +
-      ylab("Daily Incidence")
-
-    label <- glue(
-      "Projections for {snakecase::to_title_case(cntry)}"
-    )
-    ##p <- p + ggtitle(label)
-    p2 <- p + facet_wrap(~flag, ncol = 1, scales = "free_y")
-    outfile <- glue("figures/{cntry}.png")
-    message(outfile)
-    ggsave(outfile , p)
-
-    p3 <- p +
-      ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = 1)
-
-    pages <- ggforce::n_pages(p3)
-
-    for (page in seq_len(pages)) {
-      p3 <- p +
-        ggforce::facet_wrap_paginate(~flag, nrow = 1, ncol = 1, page = page)
-
-      outfile <- glue("figures/{cntry}_projections_{page}.png")
-      message(outfile)
-      ggsave(outfile , p3)
-    }
   }
 )
 
 
+ps_plots <- map_depth(
+  augm_data, 2, function(df_list) {
+    ps_plot(df_list[["ps"]])
+  }
+)
+
+pred_plots <- map_depth(
+  augm_data, 2, function(df_list) {
+    pred_plot(df_list[["pred"]], df_list[["obs_local"]])
+  }
+)
+
+reff_plots <- map_depth(
+  augm_data, 2, function(df_list) {
+    reff_weekly_plot(df_list[["reff"]], df_list[["weekly_rt"]])
+  }
+)
+
+
+with_dates <- map(
+  countries,
+  function(country) {
+    p1_list <- pred_plots[[country]]
+    p2_list <- reff_plots[[country]]
+    p3_list <- ps_plots[[country]]
+    map(
+      seq_along(p1_list),
+      function(index) {
+        p1 <- p1_list[[index]]
+        p2 <- p2_list[[index]]
+        p3 <- p3_list[[index]]
+        p <- (p1 + p2 + p3 + plot_layout(ncol = 1))
+
+        p <- p & scale_fill_manual(
+                   values = palette, aesthetics = c("col", "fill")
+                 ) &
+          expand_limits(x = xmin) &
+          scale_x_date(
+            date_breaks = date_breaks, date_labels = date_labels
+          ) &
+          theme_minimal() +
+          theme(
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(size = 6),
+            legend.position = "none",
+        axis.text.y = element_text(size = 6)
+        )
+    ## This is only to check that the dates are correctly aligned
+        outfile <- glue("figures/{country}_{index}_check.png")
+        ggsave(outfile, p)
+        p
+      }
+    )
+  }
+)
+
+without_dates <- map(
+  countries,
+  function(country) {
+    p1_list <- pred_plots[[country]]
+    p2_list <- reff_plots[[country]]
+    p3_list <- ps_plots[[country]]
+    map(
+      seq_along(p1_list),
+      function(index) {
+        p1 <- p1_list[[index]]
+        p2 <- p2_list[[index]]
+        p3 <- p3_list[[index]]
+        p1_final <- p1 +
+          scale_x_date(
+            date_breaks = date_breaks, date_labels = date_labels
+          ) +
+          theme_minimal() +
+          theme(axis.text.x = element_blank())
+
+        p2_final <- p2 +
+          scale_x_date(
+            date_breaks = date_breaks, date_labels = date_labels
+          ) +
+          theme_minimal() +
+          theme(axis.text.x = element_blank())
+
+        p3_final <- p3 +
+          scale_x_date(
+            date_breaks = date_breaks, date_labels = date_labels
+          ) +
+          theme_minimal() +
+          theme(
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+          )
+
+        p_final <- wrap_plots(
+          p1_final, p2_final, p3_final, ncol = 1, heights = c(2, 1, 1)
+        ) +
+          plot_annotation(title = rincewind::nice_country_name(country))
+
+        p_final <- p_final &
+          scale_fill_manual(
+            values = palette, aesthetics = c("col", "fill")
+          ) &
+          theme(
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(size = 7),
+            legend.position = "none"
+          )
+        p_final
+      }
+    )
+  }
+)
+
+
+file_format <- ".tiff"
+
+main_text_countries <- c(
+  "Brazil", "India", "Italy", "South_Africa",
+  "Turkey", "United_States_of_America"
+)
+
+### Intricate assempbly of main text plot
+### column 1
+p11 <- pred_plots[["Brazil"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        legend.position = "none") +
+  ggtitle("Brazil")
+
+p21 <- reff_plots[["Brazil"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    legend.position = "none")
+
+p31 <- ps_plots[["Brazil"]][[1]] +
+  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.title.x = element_blank(),
+    legend.position = "none")
+
+
+
+
+### column 2
+p12 <- pred_plots[["India"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none") +
+  ggtitle("India")
+
+p22 <- reff_plots[["India"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none")
+
+p32 <- ps_plots[["India"]][[1]] +
+  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.title = element_blank(),
+    legend.position = "none"
+  )
+
+
+### column 3
+p13 <- pred_plots[["Italy"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none") +
+  ggtitle("Italy")
+
+p23 <- reff_plots[["Italy"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none")
+
+p33 <- ps_plots[["Italy"]][[1]] +
+  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.title = element_blank(),
+    legend.position = "none"
+  )
+
+
+main1 <- p11 + p21 + p31 + p12 + p22 + p32 + p13 + p23 + p33 +
+  plot_layout(ncol = 3, nrow = 3, byrow = FALSE) &
+  scale_fill_manual(
+    values = palette, aesthetics = c("col", "fill")
+  ) &
+  expand_limits(x = xmin) &
+  theme(text = element_text(size = 6))
+
+
+### Row 2, column 1
+p14 <- pred_plots[["South_Africa"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(), legend.position = "none"
+  ) +
+  ggtitle("South Africa")
+
+p24 <- reff_plots[["South_Africa"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none")
+
+p34 <- ps_plots[["South_Africa"]][[1]] +
+  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.title = element_blank(),
+    legend.position = "none"
+  )
+
+
+p15 <- pred_plots[["Turkey"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title = element_blank(),
+    legend.position = "none"
+  ) + ggtitle("Turkey")
+
+p25 <- reff_plots[["Turkey"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none")
+
+p35 <- ps_plots[["Turkey"]][[1]] +
+  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.title = element_blank(),
+    legend.position = "none"
+  )
+
+
+p16 <- pred_plots[["United_States_of_America"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none") +
+  ggtitle("USA")
+
+p26 <- reff_plots[["United_States_of_America"]][[1]] +
+  scale_x_date(date_breaks = date_breaks) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none")
+
+p36 <- ps_plots[["United_States_of_America"]][[1]] +
+  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.title = element_blank(),
+    legend.position = "none"
+  )
+
+
+main2 <- p14 + p24 + p34 + p15 + p25 + p35 + p16 + p26 + p36 +
+  plot_layout(ncol = 3, nrow = 3, byrow = FALSE) &
+  scale_fill_manual(
+    values = palette, aesthetics = c("col", "fill")
+  ) &
+  expand_limits(x = xmin) &
+  theme(text = element_text(size = 6))
+
+rincewind::save_multiple(main1, "long_forecasts_main_text1.tiff")
+rincewind::save_multiple(main2, "long_forecasts_main_text2.tiff")
+
+
 reff_qntls <- rincewind::assign_epidemic_phase(reff_qntls)
-compare_phase <- left_join(
-  reff_qntls, weekly_rt, by = c("country", "date"),
+
+compare_phase <- dplyr::left_join(
+  reff_qntls, weekly_rt,
+  by = c("country", "date"),
   suffix = c("_eff", "_weekly")
 )
+
 compare_phase <- na.omit(compare_phase)
 
 saveRDS(compare_phase, "compare_phase_weekly_effevtive.rds")
@@ -391,5 +497,69 @@ ggplot(x, aes(date, country, fill = flag)) +
   xlab("") +
   ylab("") +
   scale_x_date(
-    date_breaks = "4 weeks", date_labels = "%b - %Y"
+    date_breaks = date_breaks, date_labels = "%b - %Y"
+  )
+
+
+x <- select(x, country, date, phase_eff, phase_weekly)
+x <- tidyr::pivot_longer(x, cols = phase_eff:phase_weekly)
+x$country <- paste(x$country, x$name, sep = "_")
+
+ggplot(x, aes(as.factor(date), country, col = value)) + geom_point()
+
+brazil <- filter(x, country %in% c("Brazil_phase_weekly", "Brazil_phase_eff"))
+brazil$y <- ifelse(brazil$country == "Brazil_phase_eff", 1, 1.1)
+##brazil$date <- as.factor(brazil$date)
+
+p1 <- ggplot(
+  brazil, aes(date, country, col = value)
+) + geom_point(alpha = 0.3) +
+  scale_x_date(date_breaks = "4 weeks", date_labels = "%d-%b") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90), legend.position = "none"
+  )
+
+india <- filter(x, country %in% c("China_phase_weekly", "China_phase_eff"))
+
+p2 <- ggplot(
+  india, aes(date, country, col = value)
+) + geom_point(alpha = 0.3) +
+  scale_x_date(date_breaks = "4 weeks") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(), legend.position = "none"
+  )
+library(patchwork)
+p2 + p1 + plot_layout(ncol = 1, widths = c(0.1, 0.1))
+
+ggplot(x, aes(as.factor(date), country, col = value)) + geom_point()
+
+ggplot(x) +
+  geom_half_point(
+    aes(date, country, col = phase_eff),
+    shape = 2,
+    side = "l",
+    transformation = position_jitter(width = 0, height = 0.1)
+  ) +
+  geom_half_point(
+    aes(date, country, col = phase_weekly),
+    transformation = position_jitter(width = 0, height = 0.1),
+    side = "r",
+    shape = 6
+  ) +
+  scale_x_date(date_breaks = "3 weeks")
+
+brazil <- filter(x, country == "Brazil")
+brazil$x <- as.numeric(brazil$date)
+brazil$x2 <- brazil$x + 0.5
+
+ggplot(x) +
+  geom_point(
+    aes(date, country, col = phase_eff), shape = 2,
+    position = position_nudge(x = 0.5, y = 0)
+  ) +
+  geom_point(
+    aes(date, country, col = phase_weekly), shape = 6,
+    position = position_nudge(x = 0.5, y = 0.5)
   )

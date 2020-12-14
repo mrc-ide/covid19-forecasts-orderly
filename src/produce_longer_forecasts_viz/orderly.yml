@@ -20,7 +20,10 @@ packages:
   - glue
   - orderly
   - ggforce
- 
+  - patchwork
+
+sources: R/utils.R
+
 depends:
   collate_longer_forecasts:
     id: "latest"
