@@ -375,10 +375,10 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$D
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Azerbaijan" & raw_data$DateRep == "2020-11-29"] <- 38
 
 ## Corrections 14th Dec from ECDC
-raw_data$Cases[raw_data$`Countries.and.territories` == "Poland" & raw_data$DateRep == "2020-12-10"] <- 4097
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Poland" & raw_data$DateRep == "2020-12-10"] <- 70
-raw_data$Cases[raw_data$`Countries.and.territories` == "Poland" & raw_data$DateRep == "2020-12-09"] <- 2905
-raw_data$Deaths[raw_data$`Countries.and.territories` == "Poland" & raw_data$DateRep == "2020-12-09"] <- 81
+raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$DateRep == "2020-12-10"] <- 4097
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Portugal" & raw_data$DateRep == "2020-12-10"] <- 70
+raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$DateRep == "2020-12-09"] <- 2905
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Portugal" & raw_data$DateRep == "2020-12-09"] <- 81
 
 raw_data$Cases[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep == "2020-12-13"] <- 15627
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep == "2020-12-13"] <- 249

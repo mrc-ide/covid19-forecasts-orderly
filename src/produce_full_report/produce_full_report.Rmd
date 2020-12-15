@@ -48,7 +48,7 @@ with more than 1,600,000 deaths [@whositrep].
 This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 82 countries with active transmission.
+ascertainment) for 84 countries with active transmission.
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -104,7 +104,7 @@ transmission.
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
 two weeks. For the week starting 7^th^ December 2020, 
-the number of countries/regions included based on these thresholds is 82.
+the number of countries/regions included based on these thresholds is 84.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
