@@ -16,21 +16,12 @@ ps_plot <- function(ps) {
 
 
 reff_weekly_plot <- function(reff, weekly) {
-  ymax <- ceiling(max(reff$`97.5%`))
-  p <- ggplot() +
-    geom_line(
-      data = weekly, aes(date, `50%`, group = forecast_date),
-      col = "#000000"
-    ) +
-    geom_ribbon(
-      data = weekly,
-      aes(
-        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_date
-      ), fill = "#000000", alpha = 0.3
-    ) +
+  ##ymax <- ceiling(max(reff$`97.5%`))
+  ymax <- 5
+  p <- restimates_linegraph(weekly, forecast_date) +
     geom_line(
       data = reff, aes(date, `50%`, group = forecast_week),
-      col = "#9ac8fc"
+      col = "#4d647e", size = 1.1
     ) +
     geom_ribbon(
       data = reff,
@@ -39,7 +30,6 @@ reff_weekly_plot <- function(reff, weekly) {
         group = forecast_week
       ), fill = "#9ac8fc", alpha = 0.4
     ) +
-    geom_hline(yintercept = 1, linetype = "dashed") +
     ylim(0, ymax) +
     ylab("Reproduction Number")
 

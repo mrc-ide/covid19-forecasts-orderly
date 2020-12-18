@@ -133,6 +133,7 @@ augm_data <- map(
     reff <- reff_bycountry[[country]]
     ps <- ps_bycountry[[country]]
     weekly <- weekly_rt_bycountry[[country]]
+    weekly$dates <- weekly$date
     obs <- all_deaths[, c("dates", country)]
     obs$deaths <- obs[[country]]
     ymax <- 2 * ceiling(max(obs$deaths, na.rm = TRUE) / 10) * 10
@@ -193,22 +194,20 @@ with_dates <- map(
   function(country) {
     p1_list <- pred_plots[[country]]
     p2_list <- reff_plots[[country]]
-    p3_list <- ps_plots[[country]]
+    ##p3_list <- ps_plots[[country]]
     map(
       seq_along(p1_list),
       function(index) {
         p1 <- p1_list[[index]]
         p2 <- p2_list[[index]]
-        p3 <- p3_list[[index]]
-        p <- (p1 + p2 + p3 + plot_layout(ncol = 1))
+        ##p3 <- p3_list[[index]]
+        p <- (p1 + p2 + plot_layout(ncol = 1))
 
-        p <- p & scale_fill_manual(
-                   values = palette, aesthetics = c("col", "fill")
-                 ) &
-          expand_limits(x = xmin) &
-          scale_x_date(
-            date_breaks = date_breaks, date_labels = date_labels
+        p <- p &
+          scale_fill_manual(
+            values = palette, aesthetics = c("col", "fill")
           ) &
+          expand_limits(x = xmin) &
           theme_minimal() +
           theme(
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
@@ -231,38 +230,23 @@ without_dates <- map(
   function(country) {
     p1_list <- pred_plots[[country]]
     p2_list <- reff_plots[[country]]
-    p3_list <- ps_plots[[country]]
+    ##p3_list <- ps_plots[[country]]
     map(
       seq_along(p1_list),
       function(index) {
         p1 <- p1_list[[index]]
         p2 <- p2_list[[index]]
-        p3 <- p3_list[[index]]
+        ##p3 <- p3_list[[index]]
         p1_final <- p1 +
-          scale_x_date(
-            date_breaks = date_breaks, date_labels = date_labels
-          ) +
           theme_minimal() +
           theme(axis.text.x = element_blank())
 
         p2_final <- p2 +
-          scale_x_date(
-            date_breaks = date_breaks, date_labels = date_labels
-          ) +
           theme_minimal() +
           theme(axis.text.x = element_blank())
 
-        p3_final <- p3 +
-          scale_x_date(
-            date_breaks = date_breaks, date_labels = date_labels
-          ) +
-          theme_minimal() +
-          theme(
-            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
-          )
-
         p_final <- wrap_plots(
-          p1_final, p2_final, p3_final, ncol = 1, heights = c(2, 1, 1)
+          p1_final, p2_final, ncol = 1, heights = c(1, 0.5)
         ) +
           plot_annotation(title = rincewind::nice_country_name(country))
 
@@ -307,16 +291,6 @@ p21 <- reff_plots[["Brazil"]][[1]] +
     axis.title.x = element_blank(),
     legend.position = "none")
 
-p31 <- ps_plots[["Brazil"]][[1]] +
-  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, size = 6),
-    axis.title.x = element_blank(),
-    legend.position = "none")
-
-
-
 
 ### column 2
 p12 <- pred_plots[["India"]][[1]] +
@@ -334,14 +308,6 @@ p22 <- reff_plots[["India"]][[1]] +
         axis.title = element_blank(),
         legend.position = "none")
 
-p32 <- ps_plots[["India"]][[1]] +
-  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, size = 6),
-    axis.title = element_blank(),
-    legend.position = "none"
-  )
 
 
 ### column 3
@@ -360,24 +326,6 @@ p23 <- reff_plots[["Italy"]][[1]] +
         axis.title = element_blank(),
         legend.position = "none")
 
-p33 <- ps_plots[["Italy"]][[1]] +
-  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, size = 6),
-    axis.title = element_blank(),
-    legend.position = "none"
-  )
-
-
-main1 <- p11 + p21 + p31 + p12 + p22 + p32 + p13 + p23 + p33 +
-  plot_layout(ncol = 3, nrow = 3, byrow = FALSE) &
-  scale_fill_manual(
-    values = palette, aesthetics = c("col", "fill")
-  ) &
-  expand_limits(x = xmin) &
-  theme(text = element_text(size = 6))
-
 
 ### Row 2, column 1
 p14 <- pred_plots[["South_Africa"]][[1]] +
@@ -395,14 +343,6 @@ p24 <- reff_plots[["South_Africa"]][[1]] +
         axis.title = element_blank(),
         legend.position = "none")
 
-p34 <- ps_plots[["South_Africa"]][[1]] +
-  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, size = 6),
-    axis.title = element_blank(),
-    legend.position = "none"
-  )
 
 
 p15 <- pred_plots[["Turkey"]][[1]] +
@@ -421,15 +361,6 @@ p25 <- reff_plots[["Turkey"]][[1]] +
         axis.title = element_blank(),
         legend.position = "none")
 
-p35 <- ps_plots[["Turkey"]][[1]] +
-  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, size = 6),
-    axis.title = element_blank(),
-    legend.position = "none"
-  )
-
 
 p16 <- pred_plots[["United_States_of_America"]][[1]] +
   scale_x_date(date_breaks = date_breaks) +
@@ -446,23 +377,7 @@ p26 <- reff_plots[["United_States_of_America"]][[1]] +
         axis.title = element_blank(),
         legend.position = "none")
 
-p36 <- ps_plots[["United_States_of_America"]][[1]] +
-  scale_x_date(date_breaks = date_breaks, date_labels = date_labels) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, size = 6),
-    axis.title = element_blank(),
-    legend.position = "none"
-  )
 
-
-main2 <- p14 + p24 + p34 + p15 + p25 + p35 + p16 + p26 + p36 +
-  plot_layout(ncol = 3, nrow = 3, byrow = FALSE) &
-  scale_fill_manual(
-    values = palette, aesthetics = c("col", "fill")
-  ) &
-  expand_limits(x = xmin) &
-  theme(text = element_text(size = 6))
 
 rincewind::save_multiple(main1, "long_forecasts_main_text1.tiff")
 rincewind::save_multiple(main2, "long_forecasts_main_text2.tiff")
