@@ -396,6 +396,18 @@ saveRDS(
   file = "latest_deaths_wide_no_filter.rds"
 )
 
+by_country_cases_all <- dplyr::select(
+  raw_data, dates = DateRep, Cases, Countries.and.territories
+) %>%
+  tidyr::spread(
+    key = Countries.and.territories, value = Cases, fill = 0
+  )
+
+saveRDS(
+  object = by_country_cases_all,
+  file = "latest_cases_wide_no_filter.rds"
+)
+
 ## Apply thresholds
 pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   purrr::keep(rincewind::deaths_threshold) %>%
