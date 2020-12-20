@@ -19,6 +19,7 @@ first_100th <- apply(
 
 ps_qntls <- readRDS("ps_qntls.rds")
 ps_qntls <- ps_qntls[!ps_qntls$country %in% exclude, ]
+forecast_weeks <- unique(ps_qntls$forecast_week)
 
 ps_qntls <- split(
   ps_qntls,
@@ -40,8 +41,9 @@ ps_bycountry <- split(ps_qntls, ps_qntls$country, drop = TRUE)
 weekly_rt <- readRDS("weekly_rt_qntls.rds")
 weekly_rt <- weekly_rt[weekly_rt$si == "si_2", ]
 weekly_rt <- weekly_rt[!weekly_rt$country %in% exclude, ]
-weekly_rt <- split(weekly_rt, weekly_rt$country) %>%
-  map_dfr(function(weekly) {
+
+weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country) %>%
+  map(function(weekly) {
     split(weekly, weekly$forecast_date) %>%
       map_dfr(
         function(df) {
@@ -55,9 +57,9 @@ weekly_rt <- split(weekly_rt, weekly_rt$country) %>%
           df
         }
       )
-  })
+  }
+)
 
-weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country)
 
 reff_qntls <- readRDS("reff_qntls.rds")
 reff_qntls <- reff_qntls[!reff_qntls$country %in% exclude, ]
@@ -80,6 +82,8 @@ reff_qntls <- split(
 reff_bycountry <- split(reff_qntls, reff_qntls$country, drop = TRUE)
 
 pred_qntls <- readRDS("longer_projections_qntls.rds")
+pred_qntls$forecast_week <- as.Date(pred_qntls$forecast_week)
+pred_qntls <- pred_qntls[!pred_qntls$country %in% exclude, ]
 
 pred_qntls <- split(
   pred_qntls,
@@ -96,12 +100,10 @@ pred_qntls <- split(
     }
   )
 
-pred_qntls$forecast_week <- as.Date(pred_qntls$forecast_week)
-pred_qntls <- pred_qntls[!pred_qntls$country %in% exclude, ]
 
 pred_qntls_bycountry <- split(pred_qntls, pred_qntls$country)
 
-forecast_weeks <- unique(ps_qntls$forecast_week)
+
 palette <- alternating_palette(
   forecast_weeks, col1 = "#9ac8fc", col2 = "#9ac8fc"
 )
@@ -171,14 +173,15 @@ augm_data <- map(
 
 
 ps_plots <- map_depth(
-  augm_data, 2, function(df_list) {
-    ps_plot(df_list[["ps"]])
-  }
+  augm_data, 2, function(df_list) ps_plot(df_list[["ps"]])
 )
 
 pred_plots <- map_depth(
   augm_data, 2, function(df_list) {
-    pred_plot(df_list[["pred"]], df_list[["obs_local"]])
+    all_forecasts_calendar(
+      df_list[["obs_local"]], df_list[["pred"]], date_breaks,
+      date_labels, forecast_week
+    ) + theme(legend.title = element_blank())
   }
 )
 
@@ -276,111 +279,147 @@ main_text_countries <- c(
 ### Intricate assempbly of main text plot
 ### column 1
 p11 <- pred_plots[["Brazil"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
-  theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title.x = element_blank(),
-        legend.position = "none") +
-  ggtitle("Brazil")
-
-p21 <- reff_plots[["Brazil"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
+  ylab("Daily deaths") +
   theme_minimal() +
   theme(
-    axis.text.x = element_blank(),
-    axis.title.x = element_blank(),
-    legend.position = "none")
+    axis.text.x = element_blank(), axis.title.x = element_blank(),
+    legend.position = "none", text = element_text(size = 7)
+  ) +
+  ggtitle("Brazil")
+
+legend <- get_legend(
+  pred_plots[["Brazil"]][[1]] + theme(legend.box = "horizontal")
+)
+
+p21 <- reff_plots[["Brazil"]][[1]] +
+  ylab("Reproduction number") +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(), legend.position = "none", text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 90)
+  )
+
+p1 <- plot_grid(
+  p11,  p21, align  = "hv", rel_heights = c(1, 0.6), ncol = 1,
+  axis = "l"
+)
 
 
 ### column 2
 p12 <- pred_plots[["India"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none") +
+  theme(
+    axis.text.x = element_blank(), axis.title = element_blank(),
+    legend.position = "none", text = element_text(size = 7)
+  ) +
   ggtitle("India")
 
 p22 <- reff_plots[["India"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none")
+  theme(
+    axis.title = element_blank(), legend.position = "none", text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 90)
+  )
+
+p2 <- plot_grid(
+  p12, p22, align  = "hv", rel_heights = c(1, 0.6), ncol = 1,
+  axis = "l"
+)
 
 
 
 ### column 3
 p13 <- pred_plots[["Italy"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none") +
+  theme(
+    axis.text.x = element_blank(),axis.title = element_blank(),
+    legend.position = "none", text = element_text(size = 7)) +
   ggtitle("Italy")
 
 p23 <- reff_plots[["Italy"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none")
+  theme(
+    axis.title = element_blank(), legend.position = "none", text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 90)
+  )
 
+p3 <- plot_grid(
+  p13, p23, align  = "hv", rel_heights = c(1, 0.6), ncol = 1,
+  axis = "l"
+)
 
 ### Row 2, column 1
 p14 <- pred_plots[["South_Africa"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
+  ylab("Daily deaths") +
   theme_minimal() +
-  theme(
-    axis.text.x = element_blank(), legend.position = "none"
-  ) +
+  theme(axis.title.x = element_blank(), legend.position = "none", text = element_text(size = 7)) +
   ggtitle("South Africa")
 
 p24 <- reff_plots[["South_Africa"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
+  ylab("Reproduction number") +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none")
+  theme(
+    axis.title.x = element_blank(), legend.position = "none", text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 90)
+  )
 
+p4 <- plot_grid(
+  p14, p24, align  = "hv", rel_heights = c(1, 0.6), ncol = 1,
+  axis = "l"
+)
 
 
 p15 <- pred_plots[["Turkey"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
   theme_minimal() +
   theme(
-    axis.text.x = element_blank(),
-    axis.title = element_blank(),
-    legend.position = "none"
-  ) + ggtitle("Turkey")
+    axis.text.x = element_blank(), axis.title = element_blank(),
+    legend.position = "none", text = element_text(size = 7)
+  ) +
+  ggtitle("Turkey")
 
 p25 <- reff_plots[["Turkey"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none")
+  theme(
+    axis.title = element_blank(), legend.position = "none",
+    text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 90)
+  )
+
+p5 <- plot_grid(
+  p15, p25, align = "hv", rel_heights = c(1, 0.6), ncol = 1, axis = "l"
+)
 
 
 p16 <- pred_plots[["United_States_of_America"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none") +
+  theme(
+    axis.text.x = element_blank(), axis.title = element_blank(),
+    legend.position = "none", text = element_text(size = 7)
+  ) +
   ggtitle("USA")
 
 p26 <- reff_plots[["United_States_of_America"]][[1]] +
-  scale_x_date(date_breaks = date_breaks) +
   theme_minimal() +
-  theme(axis.text.x = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none")
+  theme(
+    axis.title = element_blank(), legend.position = "none",
+    text = element_text(size = 7),
+    axis.text.x = element_text(size = 7, angle = 90)
+  )
+
+p6 <- plot_grid(
+  p16, p26, align = "hv", rel_heights = c(1, 0.6), ncol = 1, axis = "l"
+)
+
+p <- plot_grid(p1, p2, p3, p4, p5, p6, ncol = 3, nrow = 2)
+
+plegend <- plot_grid(
+  legend, p, ncol = 1, rel_heights = c(0.1, 1),
+  rel_widths = c(0.25, 1), align = "hv", axis = "l"
+)
 
 
+save_multiple(plegend, "long_forecasts_main_text1.tiff")
 
-rincewind::save_multiple(main1, "long_forecasts_main_text1.tiff")
-rincewind::save_multiple(main2, "long_forecasts_main_text2.tiff")
 
 ######################################################################
 ######### Compare phase assigned by the two Rts ######################

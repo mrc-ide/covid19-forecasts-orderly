@@ -16,8 +16,10 @@ ps_plot <- function(ps) {
 
 
 reff_weekly_plot <- function(reff, weekly) {
-  ##ymax <- ceiling(max(reff$`97.5%`))
-  ymax <- 5
+  ymax <- ceiling(max(reff$`97.5%`))
+  ##ymax <- 5
+  weekly <- na.omit(weekly)
+  reff <- na.omit(reff)
   p <- restimates_linegraph(weekly, forecast_date) +
     geom_line(
       data = reff, aes(date, `50%`, group = forecast_week),
@@ -41,7 +43,7 @@ pred_plot <- function(pred, obs) {
 
   p <- ggplot() +
     geom_point(
-      data = obs, aes(dates, deaths), alpha = 0.5, size = 1
+      data = obs, aes(dates, deaths, shape = 16), alpha = 0.7
     ) +
     geom_ribbon(
       data = pred,
