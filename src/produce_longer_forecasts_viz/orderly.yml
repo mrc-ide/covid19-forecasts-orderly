@@ -21,6 +21,8 @@ packages:
   - orderly
   - ggforce
   - patchwork
+  - grid
+  - dplyr
 
 sources: R/utils.R
 

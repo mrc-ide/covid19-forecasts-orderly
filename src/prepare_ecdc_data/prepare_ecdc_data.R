@@ -113,7 +113,14 @@ raw_data$Deaths[raw_data$DateRep == "2020-04-28" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2020-05-22" & raw_data$`Countries.and.territories` == "Spain"] <- 53
 
 
-
+## For 4 days in April, ECDC data and WHO data for USA are very different
+## with both reporting a lot more outliers
+## These numbers are from https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html
+raw_data$Deaths[raw_data$DateRep == "2020-04-15" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 2752
+raw_data$Deaths[raw_data$DateRep == "2020-04-16" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 2349
+raw_data$Deaths[raw_data$DateRep == "2020-04-17" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 2289
+raw_data$Deaths[raw_data$DateRep == "2020-04-18" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 1951
+raw_data$Deaths[raw_data$DateRep == "2020-04-19" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 1520
 
 
 raw_data$Deaths[raw_data$DateRep == "2020-04-17" & raw_data$`Countries.and.territories` == "China"] <- 0

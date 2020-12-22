@@ -17,30 +17,21 @@ ps_plot <- function(ps) {
 
 reff_weekly_plot <- function(reff, weekly) {
   ymax <- ceiling(max(reff$`97.5%`))
-  p <- ggplot() +
-    geom_line(
-      data = weekly, aes(date, `50%`, group = forecast_date),
-      col = "#000000"
-    ) +
-    geom_ribbon(
-      data = weekly,
-      aes(
-        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_date
-      ), fill = "#000000", alpha = 0.3
-    ) +
+  ##ymax <- 5
+  weekly <- na.omit(weekly)
+  reff <- na.omit(reff)
+  p <- restimates_linegraph(weekly, forecast_date) +
     geom_line(
       data = reff, aes(date, `50%`, group = forecast_week),
-      col = "#009E73"
+      col = "#4d647e", size = 1.1
     ) +
     geom_ribbon(
       data = reff,
       aes(
         x = date, ymin = `2.5%`, ymax = `97.5%`,
         group = forecast_week
-      ),
-      fill = "#009E73", alpha = 0.3
+      ), fill = "#9ac8fc", alpha = 0.4
     ) +
-    geom_hline(yintercept = 1, linetype = "dashed") +
     ylim(0, ymax) +
     ylab("Reproduction Number")
 
@@ -52,7 +43,7 @@ pred_plot <- function(pred, obs) {
 
   p <- ggplot() +
     geom_point(
-      data = obs, aes(dates, deaths), alpha = 0.5, size = 1
+      data = obs, aes(dates, deaths, shape = 16), alpha = 0.7
     ) +
     geom_ribbon(
       data = pred,
