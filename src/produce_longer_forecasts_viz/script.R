@@ -42,8 +42,8 @@ weekly_rt <- readRDS("weekly_rt_qntls.rds")
 weekly_rt <- weekly_rt[weekly_rt$si == "si_2", ]
 weekly_rt <- weekly_rt[!weekly_rt$country %in% exclude, ]
 
-weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country) %>%
-  map(function(weekly) {
+weekly_rt <- split(weekly_rt, weekly_rt$country) %>%
+  map_dfr(function(weekly) {
     split(weekly, weekly$forecast_date) %>%
       map_dfr(
         function(df) {
@@ -60,6 +60,7 @@ weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country) %>%
   }
 )
 
+weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country)
 
 reff_qntls <- readRDS("reff_qntls.rds")
 reff_qntls <- reff_qntls[!reff_qntls$country %in% exclude, ]
@@ -125,6 +126,7 @@ for (i in seq_len(nweeks_projected)) {
 names(week_groups) <- seq_along(week_groups)
 
 countries <- setNames(names(ps_bycountry), names(ps_bycountry))
+countries <- countries[! countries %in% "Kosovo"]
 xmin <- min(as.Date("2020-03-01"))
 
 augm_data <- map(
@@ -149,7 +151,6 @@ augm_data <- map(
 
         obs_local <- obs[obs$dates >= xmin, ]
         obs_local <- obs_local[obs_local$dates <= max(pred$date) + 7, ]
-
 
         pred <- dplyr::mutate_if(
           pred, is.numeric, ~ ifelse(.x > ymax, ymax, .x)
@@ -221,7 +222,7 @@ with_dates <- map(
         )
         ## This is only to check that the dates are correctly aligned
         outfile <- glue("figures/{country}_{index}_check.png")
-        ##ggsave(outfile, p)
+        ggsave(outfile, p)
         p
       }
     )
@@ -272,153 +273,109 @@ without_dates <- map(
 file_format <- ".tiff"
 
 main_text_countries <- c(
-  "Brazil", "India", "Italy", "South_Africa",
-  "Turkey", "United_States_of_America"
+  "Brazil", "India", "Italy", "South_Africa", "Turkey",
+  "United_States_of_America"
 )
 
 ### Intricate assempbly of main text plot
 ### column 1
-p11 <- pred_plots[["Brazil"]][[1]] +
-  ylab("Daily deaths") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(), axis.title.x = element_blank(),
-    legend.position = "none", text = element_text(size = 7)
-  ) +
-  ggtitle("Brazil")
-
 legend <- get_legend(
   pred_plots[["Brazil"]][[1]] + theme(legend.box = "horizontal")
 )
 
-p21 <- reff_plots[["Brazil"]][[1]] +
-  ylab("Reproduction number") +
-  theme_minimal() +
-  theme(
-    axis.title.x = element_blank(), legend.position = "none", text = element_text(size = 7),
-    axis.text.x = element_text(size = 7, angle = 90)
-  )
+p11 <- pred_plots[["Brazil"]][[1]] +
+  ggtitle("Brazil") +
+  theme(axis.text.x = element_blank())
 
-p1 <- plot_grid(
-  p11,  p21, align  = "hv", rel_heights = c(1, 0.6), ncol = 1,
-  axis = "l"
-)
+p21 <- reff_plots[["Brazil"]][[1]]
 
+p12 <- pred_plots[["India"]][[1]] + ggtitle("India") +
+    theme(axis.text.x = element_blank())
+p22 <- reff_plots[["India"]][[1]]
 
-### column 2
-p12 <- pred_plots[["India"]][[1]] +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(), axis.title = element_blank(),
-    legend.position = "none", text = element_text(size = 7)
-  ) +
-  ggtitle("India")
+p13 <- pred_plots[["Italy"]][[1]] + ggtitle("Italy") +
+    theme(axis.text.x = element_blank())
+p23 <- reff_plots[["Italy"]][[1]]
 
-p22 <- reff_plots[["India"]][[1]] +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(), legend.position = "none", text = element_text(size = 7),
-    axis.text.x = element_text(size = 7, angle = 90)
-  )
+p14 <- pred_plots[["South_Africa"]][[1]] + ggtitle("South Africa") +
+    theme(axis.text.x = element_blank())
 
-p2 <- plot_grid(
-  p12, p22, align  = "hv", rel_heights = c(1, 0.6), ncol = 1,
-  axis = "l"
-)
+p24 <- reff_plots[["South_Africa"]][[1]]
 
-
-
-### column 3
-p13 <- pred_plots[["Italy"]][[1]] +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(),axis.title = element_blank(),
-    legend.position = "none", text = element_text(size = 7)) +
-  ggtitle("Italy")
-
-p23 <- reff_plots[["Italy"]][[1]] +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(), legend.position = "none", text = element_text(size = 7),
-    axis.text.x = element_text(size = 7, angle = 90)
-  )
-
-p3 <- plot_grid(
-  p13, p23, align  = "hv", rel_heights = c(1, 0.6), ncol = 1,
-  axis = "l"
-)
-
-### Row 2, column 1
-p14 <- pred_plots[["South_Africa"]][[1]] +
-  ylab("Daily deaths") +
-  theme_minimal() +
-  theme(axis.title.x = element_blank(), legend.position = "none", text = element_text(size = 7)) +
-  ggtitle("South Africa")
-
-p24 <- reff_plots[["South_Africa"]][[1]] +
-  ylab("Reproduction number") +
-  theme_minimal() +
-  theme(
-    axis.title.x = element_blank(), legend.position = "none", text = element_text(size = 7),
-    axis.text.x = element_text(size = 7, angle = 90)
-  )
-
-p4 <- plot_grid(
-  p14, p24, align  = "hv", rel_heights = c(1, 0.6), ncol = 1,
-  axis = "l"
-)
-
-
-p15 <- pred_plots[["Turkey"]][[1]] +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(), axis.title = element_blank(),
-    legend.position = "none", text = element_text(size = 7)
-  ) +
-  ggtitle("Turkey")
-
-p25 <- reff_plots[["Turkey"]][[1]] +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(), legend.position = "none",
-    text = element_text(size = 7),
-    axis.text.x = element_text(size = 7, angle = 90)
-  )
-
-p5 <- plot_grid(
-  p15, p25, align = "hv", rel_heights = c(1, 0.6), ncol = 1, axis = "l"
-)
-
+p15 <- pred_plots[["Turkey"]][[1]] + ggtitle("Turkey") +
+    theme(axis.text.x = element_blank())
+p25 <- reff_plots[["Turkey"]][[1]]
 
 p16 <- pred_plots[["United_States_of_America"]][[1]] +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(), axis.title = element_blank(),
-    legend.position = "none", text = element_text(size = 7)
-  ) +
-  ggtitle("USA")
+  ggtitle("USA") +   theme(axis.text.x = element_blank())
+p26 <- reff_plots[["United_States_of_America"]][[1]]
 
-p26 <- reff_plots[["United_States_of_America"]][[1]] +
-  theme_minimal() +
+label1 <- textGrob("Daily deaths", rot = 90, gp = gpar(fontsize = 7))
+label2 <- textGrob(
+  "Reproduction Number", rot = 90, gp = gpar(fontsize = 7)
+)
+
+top <- p11 + p12 + p13 +
+  plot_layout(ncol = 3, nrow = 1) &
+  theme_minimal() &
   theme(
-    axis.title = element_blank(), legend.position = "none",
-    text = element_text(size = 7),
-    axis.text.x = element_text(size = 7, angle = 90)
+    text = element_text(size = 6), axis.text.x = element_blank(),
+    legend.position = "none", axis.title = element_blank(),
+    plot.margin = margin(0, 0, 0, 0, "pt")
   )
 
-p6 <- plot_grid(
-  p16, p26, align = "hv", rel_heights = c(1, 0.6), ncol = 1, axis = "l"
-)
+bottom <- (p21 + p22 + p23) +
+  plot_layout(ncol = 3, nrow = 1) &
+  theme_minimal() +
+  theme(
+    text = element_text(size = 6),
+    axis.title = element_blank(), legend.position = "none",
+    axis.text.x = element_text(angle = 90),
+    plot.margin = margin(0, 0, 0, 0, "pt")
+  )
 
-p <- plot_grid(p1, p2, p3, p4, p5, p6, ncol = 3, nrow = 2)
+top <- wrap_elements(label1) + wrap_elements(top) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
 
-plegend <- plot_grid(
-  legend, p, ncol = 1, rel_heights = c(0.1, 1),
-  rel_widths = c(0.25, 1), align = "hv", axis = "l"
-)
+bottom <- wrap_elements(label2) + wrap_elements(bottom) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
 
+ptop <- cowplot::plot_grid(legend, top, bottom,
+                        rel_heights = c(0.1, 1, 0.6), nrow = 3)
 
-save_multiple(plegend, "long_forecasts_main_text1.tiff")
+top <- p14 + p15 + p16 +
+  plot_layout(ncol = 3, nrow = 1) &
+  theme_minimal() &
+  theme(
+    text = element_text(size = 6),
+    axis.text.x = element_blank(), legend.position = "none",
+    axis.title = element_blank(),
+    plot.margin = margin(0, 0, 0, 0, "pt")
+  )
+
+bottom <- (p24 + p25 + p26) +
+  plot_layout(ncol = 3, nrow = 1) &
+  theme_minimal() +
+  theme(
+    text = element_text(size = 6),
+    axis.title = element_blank(), legend.position = "none",
+    axis.text.x = element_text(angle = 90),
+    plot.margin = margin(0, 0, 0, 0, "pt")
+  )
+
+top <- wrap_elements(label1) + wrap_elements(top) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
+
+bottom <- wrap_elements(label2) + wrap_elements(bottom) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
+
+pbottom <- cowplot::plot_grid(top, bottom, rel_heights = c(1, 0.6),
+                              nrow = 2)
+
+final <- cowplot::plot_grid(ptop, pbottom, nrow = 2)
+
+rincewind::save_multiple(final, "figures/main_long_forecasts.tiff")
+
 
 
 ######################################################################
@@ -455,6 +412,13 @@ plots <- map(
     x <- compare_phase[compare_phase$country %in% countries, ]
     x$country <- rincewind::nice_country_name(x$country)
     ##x <- select(x, country, date, phase_eff, phase_weekly)
+    x$week_of_forecast <- case_when(
+      x$day <= 7 ~ "Week 1",
+      7 < x$day & x$day <= 14 ~ "Week 2",
+      14 < x$day & x$day <= 21 ~ "Week 3",
+      21 < x$day  ~ "Week 4"
+    )
+
     ggplot(x) +
       geom_line(
         aes(date, country, col = phase_eff), size = 1.2,
@@ -469,6 +433,7 @@ plots <- map(
       scale_x_date(
         date_breaks = date_breaks, date_labels = date_labels
       ) +
+      facet_wrap(~week_of_forecast, ncol = 2) +
       theme_minimal() +
       theme(
         legend.position = "top",
