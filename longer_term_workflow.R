@@ -7,9 +7,14 @@ use_draft <- "newer"
 ##   by = "7 days"
 ## )
 
+## weeks <- seq(
+##   from = as.Date("2020-03-29"),
+##   to = as.Date("2020-10-25"),
+##   by = "7 days"
+## )
+
 weeks <- seq(
-  from = as.Date("2020-03-29"),
-  to = as.Date("2020-10-25"),
+  from  = as.Date("2020-10-25"), to = as.Date("2020-12-06"),
   by = "7 days"
 )
 
@@ -25,18 +30,32 @@ for (week in weeks) {
     "produce_weights_combined_rt", parameters = parameter, use_draft = use_draft
   )
   ##orderly::orderly_commit(a)
+}
 
+for (week in weeks) {
+  message("################ ", week, "#############################")
+  week_ending <- as.Date(week)
+  parameter <- list(week_ending = week, use_si = use_si)
   source("orderly-helper-scripts/dependencies_combined_rt.R")
   m1 <- orderly::orderly_run(
     "produce_combined_rt", parameters = parameter, use_draft = use_draft
-  )
+    )
+}
   ##orderly::orderly_commit(m1)
   ##orderly::orderly_push_archive(name = "produce_combined_rt", id = m1)
-
-  m2 <- orderly::orderly_run(
-    "produce_longer_forecasts", parameters = parameter, use_draft = use_draft
+for (week in weeks) {
+  message("################ ", week, "#############################")
+  week_ending <- as.Date(week)
+  parameter <- list(week_ending = week, use_si = use_si)
+  m2 <- orderly_run(
+    "produce_longer_forecasts", parameters = parameter,
+    use_draft = use_draft
   )
+}
 
+for (week in weeks) {
+  message("################ ", week, "#############################")
+  week_ending <- as.Date(week)
   parameter <- list(week_ending = week, window = 1, latest_week = "2020-12-06")
   orderly::orderly_run(
     "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
