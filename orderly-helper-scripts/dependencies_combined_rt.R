@@ -14,7 +14,7 @@ x <- list(
  ),
  packages = c(
    "dplyr", "tidyr", "ggplot2", "purrr", "rincewind", "ggpmisc",
-   "purrr"
+   "purrr", "glue"
  ),
  sources =  "R/utils.R"
 )
