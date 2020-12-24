@@ -1,5 +1,7 @@
 ## orderly::orderly_develop_start(parameters = list(week_ending = "2020-09-06", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
+
+
 dir.create("figures")
 run_info <- orderly::orderly_run_info()
 infiles <- run_info$depends$as
@@ -115,11 +117,13 @@ combined_weighted_estimates2 <- imap(
 )
 
 saveRDS(
-  combined_weighted_estimates2, "combined_weighted_estimates_across_countries.rds"
+  combined_weighted_estimates2,
+  "combined_weighted_estimates_across_countries.rds"
 )
 
 saveRDS(
-  combined_weighted_estimates, "combined_weighted_estimates_per_country.rds"
+  combined_weighted_estimates,
+  "combined_weighted_estimates_per_country.rds"
 )
 
 combined2 <- purrr::keep(
@@ -150,7 +154,7 @@ f <- function(y) {
   df
 }
 
-plots <- purrr::imap(
+plots <- imap(
   combined2,
   function(y, country) {
     x <- week_iqr[[country]]
@@ -238,7 +242,7 @@ plots <- purrr::imap(
   }
 )
 
-purrr::iwalk(
+iwalk(
   plots,
   function(p, country) ggsave(glue::glue("figures/{country}.png"), p)
 )
