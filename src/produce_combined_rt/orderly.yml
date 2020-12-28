@@ -22,83 +22,87 @@ packages:
 sources: R/utils.R
 depends:
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-08")
+    id: latest(parameter:week_ending == "2020-07-19")
     use:
-      ensemble_model_rt_samples_2020-03-08.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-07-19.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-15")
+    id: latest(parameter:week_ending == "2020-07-26")
     use:
-      ensemble_model_rt_samples_2020-03-15.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-07-26.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-22")
+    id: latest(parameter:week_ending == "2020-08-02")
     use:
-      ensemble_model_rt_samples_2020-03-22.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-08-02.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-29")
+    id: latest(parameter:week_ending == "2020-08-09")
     use:
-      ensemble_model_rt_samples_2020-03-29.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-08-09.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-04-05")
+    id: latest(parameter:week_ending == "2020-08-16")
     use:
-      ensemble_model_rt_samples_2020-04-05.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-08-16.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-04-12")
+    id: latest(parameter:week_ending == "2020-08-23")
     use:
-      ensemble_model_rt_samples_2020-04-12.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-08-23.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-04-19")
+    id: latest(parameter:week_ending == "2020-08-30")
     use:
-      ensemble_model_rt_samples_2020-04-19.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-08-30.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-04-26")
+    id: latest(parameter:week_ending == "2020-09-06")
     use:
-      ensemble_model_rt_samples_2020-04-26.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-09-06.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-03")
+    id: latest(parameter:week_ending == "2020-09-13")
     use:
-      ensemble_model_rt_samples_2020-05-03.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-09-13.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-10")
+    id: latest(parameter:week_ending == "2020-09-20")
     use:
-      ensemble_model_rt_samples_2020-05-10.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-09-20.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-17")
+    id: latest(parameter:week_ending == "2020-09-27")
     use:
-      ensemble_model_rt_samples_2020-05-17.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-09-27.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-24")
+    id: latest(parameter:week_ending == "2020-10-04")
     use:
-      ensemble_model_rt_samples_2020-05-24.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-10-04.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-31")
+    id: latest(parameter:week_ending == "2020-10-11")
     use:
-      ensemble_model_rt_samples_2020-05-31.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-10-11.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-07")
+    id: latest(parameter:week_ending == "2020-10-18")
     use:
-      ensemble_model_rt_samples_2020-06-07.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-10-18.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-14")
+    id: latest(parameter:week_ending == "2020-10-25")
     use:
-      ensemble_model_rt_samples_2020-06-14.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-10-25.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-21")
+    id: latest(parameter:week_ending == "2020-11-01")
     use:
-      ensemble_model_rt_samples_2020-06-21.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-11-01.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-06-28")
+    id: latest(parameter:week_ending == "2020-11-08")
     use:
-      ensemble_model_rt_samples_2020-06-28.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-11-08.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-07-05")
+    id: latest(parameter:week_ending == "2020-11-15")
     use:
-      ensemble_model_rt_samples_2020-07-05.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-11-15.rds: ensemble_model_rt_samples.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-07-12")
+    id: latest(parameter:week_ending == "2020-11-22")
     use:
-      ensemble_model_rt_samples_2020-07-12.rds: ensemble_model_rt_samples.rds
+      ensemble_model_rt_samples_2020-11-22.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-11-29")
+    use:
+      ensemble_model_rt_samples_2020-11-29.rds: ensemble_model_rt_samples.rds
 - produce_weights_combined_rt:
-    id: latest(parameter:week_ending == "2020-07-12")
+    id: latest(parameter:week_ending == "2020-11-29")
     use:
       across_countries_beta.rds: across_countries.rds
       per_country_beta.rds: per_country.rds

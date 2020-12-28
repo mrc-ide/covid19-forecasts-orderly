@@ -25,3 +25,4 @@ depends:
     use:
       long_forecasts_rt.rds: reff_qntls_filtered.rds
       long_forecasts_ps.rds: ps_qntls_filtered.rds
+      weekly_rt_augmented.rds: weekly_rt_augmented.rds
