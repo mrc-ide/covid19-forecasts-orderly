@@ -151,7 +151,7 @@ use_draft <- "newer"
 
 weeks <- seq(
   from = as.Date("2020-03-08"),
-  to = as.Date("2020-11-16"),
+  to = as.Date("2020-11-30"),
   by = "7 days"
 )
 
