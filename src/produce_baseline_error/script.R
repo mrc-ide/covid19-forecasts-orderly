@@ -1,4 +1,4 @@
-##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(week_ending = "2020-09-27", week_starting = "2020-03-08"))
+##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(latest_week = "2020-11-29", week_starting = "2020-03-08"))
 dir.create("figures")
 weekly_cv <- function(vec) sd(vec) / mean(vec)
 
@@ -121,7 +121,8 @@ linear_model_fits <- map(
           lm_pred <- matrix(0, ncol = window_future, nrow = nsim)
           return(lm_pred)
         }
-
+        ## If all values are the same, then we can't fit a line
+        if (sd(prev_week) == 0) return(NULL)
         ## fit a line
         df <- data.frame(x = seq_along(prev_week), y = prev_week)
         lmfit <- stan_lm(y ~ x, data = df, prior = NULL)

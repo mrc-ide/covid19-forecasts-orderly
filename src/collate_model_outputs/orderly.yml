@@ -232,6 +232,18 @@ depends:
       unwtd_ensemble_daily_qntls_2020-11-15.rds: ensemble_daily_qntls.rds
       unwtd_ensemble_model_rt_2020-11-15.rds: ensemble_model_rt.rds
       unwtd_ensemble_model_rt_samples_2020-11-15.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-11-22")
+    use:
+      unwtd_ensemble_daily_qntls_2020-11-22.rds: ensemble_daily_qntls.rds
+      unwtd_ensemble_model_rt_2020-11-22.rds: ensemble_model_rt.rds
+      unwtd_ensemble_model_rt_samples_2020-11-22.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-11-29")
+    use:
+      unwtd_ensemble_daily_qntls_2020-11-29.rds: ensemble_daily_qntls.rds
+      unwtd_ensemble_model_rt_2020-11-29.rds: ensemble_model_rt.rds
+      unwtd_ensemble_model_rt_samples_2020-11-29.rds: ensemble_model_rt_samples.rds
 - prepare_ecdc_data:
     id: latest
     use:
