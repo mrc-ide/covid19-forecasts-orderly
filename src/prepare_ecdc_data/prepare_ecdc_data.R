@@ -1,98 +1,29 @@
 params <- parameters(week_ending)
-raw_data <- read.csv(
-  "ECDC-COVID-19-global-data.csv",
-  stringsAsFactors = FALSE,
-  na.strings = ""
-)
-raw_data <- dplyr::select(raw_data, -`Cumulative_number_for_14_days_of_COVID.19_cases_per_100000`)
 
-raw_data <- dplyr::mutate_at(
-    raw_data, vars("DateRep"), ~ as.Date(., format = "%d/%m/%Y")
-  ) %>% dplyr::filter(DateRep <= as.Date(week_ending))
+## We only take the country names from here, because we have used
+## them earlier.
+ecdc <- readr::read_csv("ECDC-COVID-19-global-data.csv")
+ecdc <- select(ecdc, `Countries and territories`, countryterritoryCode)
+ecdc <- distinct(ecdc)
 
-
-######################################################################
-######################################################################
-########## Read in WHO data, and combined with ECDC data.
-########## Where number of deaths reported by WHO < 0, and deaths
-########## reported by ECDC are not, use ECDC data
-########## Similarly for case data
-######################################################################
-######################################################################
-
-who <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
+raw_data <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
   janitor::clean_names()
 
-who$date_reported <- lubridate::ymd(who$date_reported)
-who$iso3c <- countrycode::countrycode(who$country, "country.name", "iso3c")
-
-raw_data <- select(raw_data, -geoId)
-who <- select(who, -country_code)
-
-both <- left_join(
-  raw_data, who,
-  by = c("DateRep" = "date_reported", "countryterritoryCode" = "iso3c")
+raw_data$iso3c <- countrycode(raw_data$country, "country.name", "iso3c")
+raw_data <- left_join(
+  raw_data, ecdc, by = c("iso3c" = "countryterritoryCode")
 )
+## Some values were not matched unambiguously: Bonaire, Kosovo[1],
+## Other, Saba, Saint Martin, Sint Eustatius
+raw_data <- na.omit(raw_data)
 
-
-## Where are the numbers different between the two data sources
-## head(both[both$Deaths != both$new_deaths, ])
-## First look at non-Nas, and then at Nas.
-## Namibia's geoId being Na is being treated as NA by R.
-##both <- select(both, -geoId)
-both_complete <- na.omit(both)
-both_incomplete <- both[!complete.cases(both), ]
-
-## Add Kosovo and Taiwan. They don't match because they don't have a
-## country code
-both_complete <- filter(
-  both_incomplete, `Countries.and.territories` %in% c("Kosovo", "Taiwan")
-) %>% rbind(both_complete)
-
-
-## Replace WHO data with ECDC data if WHO deaths are -ve
-both_complete$new_deaths <- ifelse(
-  both_complete$new_deaths < 0 & both_complete$Deaths >=0,
-  both_complete$Deaths,
-  both_complete$new_deaths
+## Rename columns of WHO data, so that we can continue to reuse the
+## old code
+raw_data$date_reported <- lubridate::ymd(raw_data$date_reported)
+raw_data <- rename(
+  raw_data, Cases = "new_cases", Deaths = "new_deaths",
+  DateRep = "date_reported", `Countries.and.territories` = "Countries and territories"
 )
-
-
-
-## Replace WHO data with ECDC data if WHO cases are NA as for Kosovo
-## and Taiwan
-both_complete$new_cases <- ifelse(
-  is.na(both_complete$new_cases),
-  both_complete$Cases,
-  both_complete$new_cases
-)
-
-
-## Replace WHO data with ECDC data if WHO deaths are NA
-both_complete$new_deaths <- ifelse(
-  is.na(both_complete$new_deaths),
-  both_complete$Deaths,
-  both_complete$new_deaths
-)
-
-any(both_complete$new_deaths < 0)
-
-## Replace WHO data with ECDC data if WHO cases are -ve
-both_complete$new_cases <- ifelse(
-  both_complete$new_cases < 0 & both_complete$Cases >=0,
-  both_complete$Cases,
-  both_complete$new_cases
-)
-any(both_complete$new_cases < 0)
-
-## Now we can replace ECDC data completely with WHO data, and drop
-## extra columns so that the rest of the code works without change
-both_complete$Cases <- both_complete$new_cases
-both_complete$Deaths <- both_complete$new_deaths
-raw_data <- both_complete[ , colnames(raw_data)]
-
-
-#################### Apply necessary corrections
 
 raw_data$Cases[raw_data$DateRep == "2020-03-01" & raw_data$`Countries.and.territories` == "Spain"] <- 32
 raw_data$Cases[raw_data$DateRep == "2020-03-02" & raw_data$`Countries.and.territories` == "Spain"] <- 17
@@ -357,6 +288,29 @@ raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
       df
     }
   )
+
+raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
+  map_dfr(
+    function(df) {
+      if (all(df$Deaths > 0)) return(df)
+      idx <- which(df$Deaths < 0)
+      for (i in idx) {
+        date_neg <- df$DateRep[i]
+        dates_to_avg <- seq(
+          from = as.Date(date_neg) - 3,
+          to = as.Date(date_neg) + 3,
+          by = "1 day"
+        )
+        dates_to_avg <- dates_to_avg[dates_to_avg != as.Date(date_neg)]
+        dates_to_avg <- dates_to_avg[dates_to_avg <= max(as.Date(df$DateRep))]
+        df$Deaths[i] <- round(
+          mean(df$Deaths[df$DateRep %in% dates_to_avg])
+        )
+      }
+      df
+    }
+  )
+
 ## WHO erroneously notes this as 12
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-02"] <- 112
 raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$DateRep == "2020-11-02"] <- 11789
@@ -390,6 +344,13 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Portugal" & raw_data$Da
 raw_data$Cases[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep == "2020-12-13"] <- 15627
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ukraine" & raw_data$DateRep == "2020-12-13"] <- 249
 
+## Corrections 28th December. Source Worldometers
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2020-12-27"] <- 163
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2020-12-26"] <- 81
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2020-12-25"] <- 122
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Croatia" & raw_data$DateRep == "2020-12-27"] <- 58
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-12-25"] <- 55
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-12-26"] <- 44
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories

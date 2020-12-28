@@ -17,6 +17,7 @@ packages:
   - purrr
   - ggplot2
   - rincewind
+  - countrycode
 sources:
   - R/utils.R
 
