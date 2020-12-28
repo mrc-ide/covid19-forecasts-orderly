@@ -9,6 +9,9 @@ ecdc <- distinct(ecdc)
 raw_data <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
   janitor::clean_names()
 
+raw_data$date_reported <- lubridate::ymd(raw_data$date_reported)
+raw_data <- filter(raw_data, date_reported <= as.Date(week_ending))
+
 raw_data$iso3c <- countrycode(raw_data$country, "country.name", "iso3c")
 raw_data <- left_join(
   raw_data, ecdc, by = c("iso3c" = "countryterritoryCode")
@@ -19,7 +22,7 @@ raw_data <- na.omit(raw_data)
 
 ## Rename columns of WHO data, so that we can continue to reuse the
 ## old code
-raw_data$date_reported <- lubridate::ymd(raw_data$date_reported)
+
 raw_data <- rename(
   raw_data, Cases = "new_cases", Deaths = "new_deaths",
   DateRep = "date_reported", `Countries.and.territories` = "Countries and territories"
