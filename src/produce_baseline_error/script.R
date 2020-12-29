@@ -1,4 +1,4 @@
-##  orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(latest_week = "2020-11-29", week_starting = "2020-03-08"))
+## orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(latest_week = "2020-11-29", week_starting = "2020-03-08"))
 dir.create("figures")
 weekly_cv <- function(vec) sd(vec) / mean(vec)
 
@@ -55,11 +55,17 @@ by_country <- filter(weekly, weekly_cv > 0) %>%
   summarise(cv = mean(weekly_cv, na.rm = TRUE)) %>%
   ungroup()
 
-exclude <- filter(by_country, cv > 1.38) %>% pull(country)
+## Excluding countries where the mean weekly CV was greater than
+## 1.4
+## 112 countries included, 95 countries excluded
+## > quantile(by_country$cv)
+##        0%       25%       50%       75%      100%
+## 0.1264817 0.7389039 1.4095101 1.9289250 2.6457513
+exclude <- filter(by_country, cv > 1.4) %>% pull(country)
 saveRDS(exclude, "exclude.rds")
 countries <- countries[!countries %in% exclude]
 ### If our predicitons for a week were the average deaths in the last
-### week, what would the error we make?
+### week, what error would we make?
 nsim <- 4000
 window_past <- 10
 window_future <- 7
