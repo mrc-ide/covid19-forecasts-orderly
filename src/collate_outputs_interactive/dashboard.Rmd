@@ -8,9 +8,11 @@ output:
     theme: simplex
 
 ---
-
-
-
+<script>
+$("body").on("shown.bs.tab", "a[data-toggle='tab']", function(e) {
+   Shiny.setInputValue("active_tab", $(this).attr('id'));
+})
+</script>
 
 ```{r setup, include=FALSE}
 
@@ -46,7 +48,7 @@ countries <- list(
   Oceania = countries[continents == "Oceania"]
 )
 forecast_weeks <- seq(
-  as.Date("2020-03-08"), to = as.Date("2020-11-16"), by = "7 days"
+  as.Date("2020-03-08"), to = as.Date("2020-11-29"), by = "7 days"
 )
 names(forecast_weeks) <- forecast_weeks
 
@@ -302,6 +304,7 @@ plotlyOutput('long', width = "80%")
 
 
 ```
+<script>console.log(active_tab);</script>
 
 Row
 -----------------------------------------------------------------------------
