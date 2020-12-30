@@ -1,6 +1,3 @@
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-
 parameters:
   - week_ending
   - short_run
@@ -36,6 +33,6 @@ depends:
       use:
          model_input.rds: latest_model_input.rds
   - produce_baseline_error:
-      id: latest(parameter:week_ending == "2020-09-27")
+      id: latest(parameter:week_ending == "2020-11-29")
       use:
          exclude.rds: exclude.rds         

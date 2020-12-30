@@ -22,13 +22,6 @@ artefacts:
     description: Latest model outputs
     filenames:
       - DeCa_latest.rds
-      - weighted_cases.rds
-      - deaths_to_cases_qntls.rds
-      - ascertainment_qntls.rds
-      - episize_before_mu_qntls.rds
-      - episize_after_mu_qntls.rds
-      - cases_augmented.rds
-      - weighted_cases_augm.rds
       - summary_DeathToRepoted_14days.csv
 
 depends:
@@ -41,6 +34,6 @@ depends:
       use:
          population_weighted_ifr.rds: population_weighted_ifr.rds
   - produce_baseline_error:
-      id: latest(parameter:week_ending == "2020-09-27")
+      id: latest(parameter:week_ending == "2020-11-29")
       use:
          exclude.rds: exclude.rds

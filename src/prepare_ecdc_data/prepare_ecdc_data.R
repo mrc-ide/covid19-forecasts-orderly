@@ -12,7 +12,15 @@ raw_data <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
 raw_data$date_reported <- lubridate::ymd(raw_data$date_reported)
 raw_data <- filter(raw_data, date_reported <= as.Date(week_ending))
 
+
 raw_data$iso3c <- countrycode(raw_data$country, "country.name", "iso3c")
+#### To Attach Kosovo back later to the dataset, it doesn't have an
+#### ISO3 code, but is included in the list of countries
+raw_data$country[raw_data$country == "Kosovo[1]"] <- "Kosovo"
+### code used in ECDC for Kosovo
+kosovo <- ecdc$countryterritoryCode[ecdc$`Countries and territories` == "Kosovo"]
+raw_data$iso3c[raw_data$country == "Kosovo"] <- kosovo
+
 raw_data <- left_join(
   raw_data, ecdc, by = c("iso3c" = "countryterritoryCode")
 )
@@ -20,12 +28,14 @@ raw_data <- left_join(
 ## Other, Saba, Saint Martin, Sint Eustatius
 raw_data <- na.omit(raw_data)
 
+
 ## Rename columns of WHO data, so that we can continue to reuse the
 ## old code
 
 raw_data <- rename(
   raw_data, Cases = "new_cases", Deaths = "new_deaths",
-  DateRep = "date_reported", `Countries.and.territories` = "Countries and territories"
+  DateRep = "date_reported",
+  `Countries.and.territories` = "Countries and territories"
 )
 
 raw_data$Cases[raw_data$DateRep == "2020-03-01" & raw_data$`Countries.and.territories` == "Spain"] <- 32

@@ -4,26 +4,24 @@ weekly_cv <- function(vec) sd(vec) / mean(vec)
 
 week_starting <- as.Date(week_starting)
 week_ending <- as.Date(latest_week)
-
 weeks <- seq(from = week_starting, to = week_ending, by = "7 days")
+weeks_day1 <- seq(week_starting, week_ending, "7 days")
+weeks <- map(
+  weeks_day1,
+  function(x) seq(from = x + 1, length.out = 7, by = "1 day")
+)
 
+names(weeks) <- weeks_day1
+## last day of the last week
+last_day <- as.Date(tail(tail(weeks, 1)[[1]], 1))
 model_input <- readRDS("model_input.rds")
 model_input <- model_input[model_input$dates > week_starting &
-                           model_input$dates <= week_ending, ]
+                           model_input$dates <= last_day, ]
 
 countries <- setNames(
   colnames(model_input)[-1], colnames(model_input)[-1]
 )
 
-weeks_day1 <- seq(
-  week_starting, week_ending, "7 days"
-)
-
-weeks <- map(
-  weeks_day1, function(x) seq(from = x + 1, length.out = 7, by = "1 day")
-)
-
-names(weeks) <- weeks_day1
 
 tall <- tidyr::gather(model_input, country, deaths, -dates)
 
@@ -58,7 +56,7 @@ by_country <- filter(weekly, weekly_cv > 0) %>%
 ## Excluding countries where the mean weekly CV was greater than
 ## 1.4
 ## 112 countries included, 95 countries excluded
-## > quantile(by_country$cv)
+## quantile(by_country$cv)
 ##        0%       25%       50%       75%      100%
 ## 0.1264817 0.7389039 1.4095101 1.9289250 2.6457513
 exclude <- filter(by_country, cv > 1.4) %>% pull(country)
