@@ -20,3 +20,9 @@ depends:
       long_forecasts.rds: wtd_per_country_projections_qntls.rds
       ps_qntls.rds: wtd_per_country_ps_qntls.rds
       reff_qntls.rds: wtd_per_country_reff_qntls.rds
+- produce_longer_forecasts_viz:
+    id: latest
+    use:
+      long_forecasts_rt.rds: reff_qntls_filtered.rds
+      long_forecasts_ps.rds: ps_qntls_filtered.rds
+      weekly_rt_augmented.rds: weekly_rt_augmented.rds

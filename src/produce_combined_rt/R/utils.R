@@ -23,7 +23,12 @@ combine_with_previous <- function(df, country) {
     prev <- prev + 1
     prev_iqr <- c(df$`2.5%`[prev], df$`97.5%`[prev])
     overlap <- rincewind::overlaps(latest_iqr, prev_iqr, digits = 2)
-    message(prev_iqr, " overlaps ", latest_iqr)
+    message(
+      glue(
+        "({prev_iqr[1]}, {prev_iqr[2]}) overlaps ",
+        "({latest_iqr[1]}, {latest_iqr[2]})."
+      )
+    )
     if (overlap) {
       weeks <- head(df$forecast_week, prev)
       combined_rt <- rt_samples[rt_samples$model %in% weeks & rt_samples$country == country, use_si]

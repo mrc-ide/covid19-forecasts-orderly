@@ -1,4 +1,3 @@
-## Generate orderly.yml for collate_model_outputs
 x <- list(
   script = "script.R",
   parameters = c("week_ending", "use_si"),
@@ -14,7 +13,8 @@ x <- list(
   )
  ),
  packages = c(
-   "dplyr", "tidyr", "ggplot2", "purrr", "rincewind", "ggpmisc"
+   "dplyr", "tidyr", "ggplot2", "purrr", "rincewind", "ggpmisc",
+   "purrr", "glue"
  ),
  sources =  "R/utils.R"
 )
@@ -24,6 +24,16 @@ week_starting <- as.Date("2020-03-08")
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
 )
+## Generate orderly.yml for collate_model_outputs
+## In principle we could look all the way back to March when combining
+## Rt estimates. However that doesn't make a lot of sense.
+## Particularly when we produce weighted estimates, as the
+## probability decays exponentially, we would be sampling a
+## negligible number from weeks further back. Therefore we can set an
+## upper limit on the number of weeks which we are willing to combine.
+## This can have a huge difference in run time when we
+max_week_combine <- min(20, length(weeks_needed))
+weeks_needed <- tail(weeks_needed, max_week_combine)
 
 dependances <- purrr::map(
   weeks_needed,

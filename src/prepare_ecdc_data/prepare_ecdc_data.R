@@ -12,20 +12,33 @@ raw_data <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
 raw_data$date_reported <- lubridate::ymd(raw_data$date_reported)
 raw_data <- filter(raw_data, date_reported <= as.Date(week_ending))
 
+
 raw_data$iso3c <- countrycode(raw_data$country, "country.name", "iso3c")
+#### To Attach Kosovo back later to the dataset, it doesn't have an
+#### ISO3 code, but is included in the list of countries
+raw_data$country[raw_data$country == "Kosovo[1]"] <- "Kosovo"
+### code used in ECDC for Kosovo
+kosovo <- ecdc$countryterritoryCode[ecdc$`Countries and territories` == "Kosovo"]
+raw_data$iso3c[raw_data$country == "Kosovo"] <- kosovo
+
 raw_data <- left_join(
   raw_data, ecdc, by = c("iso3c" = "countryterritoryCode")
 )
+## Drop country_code, we don't use this column anyway and it causes
+## problems as it is NA for Namibia
+raw_data <- select(raw_data, -country_code)
 ## Some values were not matched unambiguously: Bonaire, Kosovo[1],
 ## Other, Saba, Saint Martin, Sint Eustatius
 raw_data <- na.omit(raw_data)
+
 
 ## Rename columns of WHO data, so that we can continue to reuse the
 ## old code
 
 raw_data <- rename(
   raw_data, Cases = "new_cases", Deaths = "new_deaths",
-  DateRep = "date_reported", `Countries.and.territories` = "Countries and territories"
+  DateRep = "date_reported",
+  `Countries.and.territories` = "Countries and territories"
 )
 
 raw_data$Cases[raw_data$DateRep == "2020-03-01" & raw_data$`Countries.and.territories` == "Spain"] <- 32
@@ -224,9 +237,23 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_deaths
 
 ######################################################################
+######################################################################
+######################################################################
+######################################################################
+## From ECDC, WHO data have a 0 for one day and 387 on the next day, while ECDC
+## report  191 and 196 respectively
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-08-02"] <- 191
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-08-03"] <- 196
+
 ### Corrections 20th September
 ### https://rpp.pe/peru/actualidad/minsa-suma-3-658-decesos-a-cifra-de-muertes-por-la-covid-19-y-casos-positivos-ya-superan-el-medio-millon-noticia-1286372?ref=rpp
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-08-15"] <- 277
+## From Worldometers. There is a lag of 2 days between the time series on worldometers
+## and that reported by WHO/ECDC in this period, with Worldometers being 2 days ahead.
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-09-22"] <- 186
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-09-24"] <- 112
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-09-25"] <- 98
+
 ## From ECDC
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-20"] <- 30
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-19"] <- 27

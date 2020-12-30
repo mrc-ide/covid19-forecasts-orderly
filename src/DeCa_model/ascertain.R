@@ -44,8 +44,6 @@ weighted_cases <- purrr::map(
   }
 )
 
-
-saveRDS(weighted_cases, "weighted_cases.rds")
 ######################################################################
 ######################################################################
 deaths_to_cases <- purrr::map(
@@ -110,7 +108,6 @@ deaths_to_cases_qntls <- purrr::imap(
   }##, .id = "country"
 )
 
-saveRDS(deaths_to_cases_qntls, "deaths_to_cases_qntls.rds")
 ## ------------------------------------------------------------------
 # # check parameters of beta dist
 # shape1 <- 2
@@ -149,8 +146,6 @@ ascertainment_qntls <- purrr::map(
     )
   }
 )
-
-saveRDS(ascertainment_qntls, "ascertainment_qntls.rds")
 
 ######################################################################
 ################# ascertainment quantiles ############################
@@ -208,7 +203,6 @@ episize_prev_qntls <- purrr::imap_dfr(
   }, .id = "country"
 )
 
-saveRDS(episize_prev_qntls, "episize_before_mu_qntls.rds")
 
 episize_projected <- purrr::map(
   countries,
@@ -255,7 +249,6 @@ episize_projected_qntls <- purrr::imap(
     cbind(date = ascertainr_deaths[["dates"]][idx], df)
   }
 )
-saveRDS(episize_projected_qntls, "episize_after_mu_qntls.rds")
 
 
 ######################################################################
@@ -309,9 +302,6 @@ cases_augmented <- purrr::map(
     cbind(i_old, i_augm)
   }
 )
-
-saveRDS(cases_augmented, "cases_augmented.rds")
-
 ######################################################################
 ######################################################################
 weighted_cases_augm <- purrr::map(
@@ -332,9 +322,6 @@ weighted_cases_augm <- purrr::map(
     out <- out[ , seq(to = ncol(out), length.out = 7)]
   }
 )
-
-
-saveRDS(weighted_cases_augm, "weighted_cases_augm.rds")
 ######################################################################
 ######################################################################
 

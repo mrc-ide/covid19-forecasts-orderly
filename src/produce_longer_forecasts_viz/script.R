@@ -60,6 +60,8 @@ weekly_rt <- split(weekly_rt, weekly_rt$country) %>%
   }
 )
 
+saveRDS(weekly_rt, "weekly_rt_augmented.rds")
+
 weekly_rt_bycountry <- split(weekly_rt, weekly_rt$country)
 
 reff_qntls <- readRDS("reff_qntls.rds")
@@ -202,6 +204,8 @@ with_dates <- map(
     map(
       seq_along(p1_list),
       function(index) {
+        message(country)
+        message(index)
         p1 <- p1_list[[index]]
         p2 <- p2_list[[index]]
         ##p3 <- p3_list[[index]]
@@ -222,7 +226,7 @@ with_dates <- map(
         )
         ## This is only to check that the dates are correctly aligned
         outfile <- glue("figures/{country}_{index}_check.png")
-        ggsave(outfile, p)
+        ##ggsave(outfile, p)
         p
       }
     )

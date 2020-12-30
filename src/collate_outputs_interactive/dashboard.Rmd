@@ -23,6 +23,11 @@ library(plotly)
 library(shinyWidgets)
 library(purrr)
 
+long_forecasts <- readRDS("long_forecasts.rds")
+long_forecasts_rt <- readRDS("long_forecasts_rt.rds")
+long_forecasts_ps <- readRDS("long_forecasts_ps.rds")
+
+
 rt_qntls <- readRDS("unweighted_rt_qntls.rds")
 rt_qntls <- rt_qntls[rt_qntls$si == "si_2", ]
 
@@ -47,7 +52,7 @@ forecast_weeks <- seq(
 )
 names(forecast_weeks) <- forecast_weeks
 
-long_forecasts <- readRDS("long_forecasts.rds")
+
 
 country_long_pred <- reactive({
   pred <- long_forecasts[long_forecasts$country == input$country &
@@ -90,6 +95,19 @@ country_restimate <- reactive({
     )
   restim$date <- as.Date(restim$date)
   restim
+})
+
+
+country_long_rt <- reactive({
+  restim <- long_forecasts_rt[long_forecasts_rt$country == input$country &
+                              long_forecasts_rt$forecast_week %in% input$forecast_week, ]
+  restim
+})
+
+country_long_ps <- reactive({
+  long_forecasts_ps[long_forecasts_ps$country == input$country &
+                    long_forecasts_ps$forecast_week %in% input$forecast_week, ]
+  
 })
 
 
@@ -189,7 +207,6 @@ Row
 
 ```{r}
 renderPlotly({
-  
   key <- country_pred()$country # This will uniquely identify tracts for Plotly
   pred <- country_pred()
   rt_country <- country_restimate()
@@ -292,12 +309,96 @@ plotlyOutput('long', width = "80%")
 Row
 -----------------------------------------------------------------------------
 
+### Proportion of population susceptible
+
+```{r}
+renderPlotly({
+  key <- country_pred()$country # This will uniquely identify tracts for Plotly
+  ps_country <- country_long_ps()
+  p1b <- ggplot(ps_country) +
+    geom_ribbon(
+      aes(
+        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_week
+      ),
+      fill = "black", alpha = 0.3
+    ) +
+    geom_ribbon(
+      aes(
+        x = date, ymin = `25%`, ymax = `75%`, group = forecast_week
+      ), alpha = 0.5
+    ) +
+    geom_line(
+      aes(date, `50%`, group = forecast_week)) +
+    scale_x_date(
+      date_breaks = "3 weeks", limits = c(as.Date("2020-03-01"), NA)
+    ) +
+    ylim(0, 1) +
+    xlab("") +
+    ylab("Reproduction Number") +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x =
+        element_text(angle = 90, hjust = 0.5, vjust = 0),
+      legend.position = "none"
+    ) 
+
+  g <- ggplotly(p1b, source = 'source') %>%
+    layout(dragmode = 'lasso', 
+           margin = list(l = 100), 
+           font = list(family = 'Open Sans', size = 16))
+  
+  build <- plotly_build(g)
+  
+  build
+    
+})  
+```
+
+
 ### Reproduction Number Estimates
 
 ```{r}
+renderPlotly({
+  key <- country_pred()$country # This will uniquely identify tracts for Plotly
+  rt_country <- country_long_rt()
+  p1b <- ggplot(rt_country) +
+    geom_ribbon(
+      aes(
+        x = date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_week
+      ),
+      fill = "black", alpha = 0.3
+    ) +
+    geom_ribbon(
+      aes(
+        x = date, ymin = `25%`, ymax = `75%`, group = forecast_week
+      ), alpha = 0.5
+    ) +
+    geom_line(
+      aes(date, `50%`, group = forecast_week)) +
+    geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
+    scale_x_date(
+      date_breaks = "3 weeks", limits = c(as.Date("2020-03-01"), NA)
+    ) +
+    expand_limits(y = 0) +
+    xlab("") +
+    ylab("Reproduction Number") +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x =
+        element_text(angle = 90, hjust = 0.5, vjust = 0),
+      legend.position = "none"
+    ) 
 
-
-
+  g <- ggplotly(p1b, source = 'source') %>%
+    layout(dragmode = 'lasso', 
+           margin = list(l = 100), 
+           font = list(family = 'Open Sans', size = 16))
+  
+  build <- plotly_build(g)
+  
+  build
+    
+})  
 ```
 
 

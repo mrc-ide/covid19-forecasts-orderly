@@ -3,12 +3,11 @@ artefacts:
   data:
     description: Forecasts collated
     filenames:
-    - 2col_Belgium_forecasts.tiff
+    - 1col_main_short_forecasts.tiff
+
 parameters:
 - use_si
 - latest_week
-sources:
-- R/utils.R
 packages:
 - dplyr
 - purrr
@@ -21,6 +20,10 @@ packages:
 - cowplot
 - rincewind
 - ggtext
+- grid
+- gridExtra
+- patchwork
+
 depends:
 - collate_model_outputs:
     id: latest
