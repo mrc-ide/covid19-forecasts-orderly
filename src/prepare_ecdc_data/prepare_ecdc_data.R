@@ -24,6 +24,9 @@ raw_data$iso3c[raw_data$country == "Kosovo"] <- kosovo
 raw_data <- left_join(
   raw_data, ecdc, by = c("iso3c" = "countryterritoryCode")
 )
+## Drop country_code, we don't use this column anyway and it causes
+## problems as it is NA for Namibia
+raw_data <- select(raw_data, -country_code)
 ## Some values were not matched unambiguously: Bonaire, Kosovo[1],
 ## Other, Saba, Saint Martin, Sint Eustatius
 raw_data <- na.omit(raw_data)
