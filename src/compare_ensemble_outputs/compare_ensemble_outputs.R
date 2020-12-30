@@ -6,6 +6,9 @@
 ### last week
 ### all forecasts from weighted ensemble with weights coming from
 ###all previous weeks
+date_labels <- "%d - %b"
+date_breaks <- "4 weeks"
+
 file_format <- ".tiff"
 
 main_text_countries <- c(
@@ -67,22 +70,11 @@ proj_plots <- map(
       continue
     }
     pred <- rincewind:::cap_predictions(pred)
-    pred <- left_join(pred, obs, by = c("date" = "dates"))
-    p1 <- all_forecasts_calendar(obs, pred, date_breaks, date_labels, proj)
-    ## Remove x-axis ticks to have them on the bottom panel only
-    p1 <- p1 +
-      ylab("Daily Deaths") +
-      theme_manuscript() +
-      theme(
-        axis.text.y = element_text(size = 8),
-        axis.text.x = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 9, angle = 90),
-        plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
-        panel.spacing = unit(c(0, 0, 0, 0), "cm")
-      )
+    ##pred <- left_join(pred, obs, by = c("date" = "dates"))
+    p1 <- all_forecasts_calendar(
+      obs, pred, date_breaks, date_labels, proj
+    ) + theme(legend.title = element_blank())
     p1
-
   }
 )
 
@@ -107,19 +99,9 @@ rt_plots <- map(
           y
       }
     )
-    p2 <- all_restimates_line(out) +
-      ylab("Effective Reproduction Number") +
-      theme_manuscript() +
-      theme(
-        strip.text = element_blank(),
-        axis.text.x = element_text(size = 8, angle = 90),
-        axis.text.y = element_text(size = 8),
-        axis.title.y = element_text(size = 8, angle = 90),
-        axis.title.x = element_blank(),
-        legend.position = "none",
-        plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
-        panel.spacing = unit(c(0, 0, 0, 0), "cm")
-      ) + coord_cartesian(clip = "off")
+    p2 <- restimates_linegraph(out, forecast_date) +
+      ylab("Reproduction Number") +
+      theme(legend.title = element_blank())
 
     p2
   }
