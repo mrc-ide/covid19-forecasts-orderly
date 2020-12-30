@@ -1,4 +1,4 @@
-### orderly::orderly_develop_start(parameters = list(use_si = "si_2", latest_week = "2020-12-06"), use_draft = "newer")
+### orderly::orderly_develop_start(parameters = list(use_si = "si_2"), use_draft = "newer")
 ### This task produces the following visualtions:
 ### comparison of unweighted and weighted ensembles for each country
 ### all forecasts from unweighted ensemble
@@ -68,10 +68,7 @@ proj_plots <- map(
     }
     pred <- rincewind:::cap_predictions(pred)
     pred <- left_join(pred, obs, by = c("date" = "dates"))
-    obs$rolling_mean <- slider::slide_dbl(
-      obs$deaths, mean, .before = 3, .after = 3
-    )
-    p1 <- all_forecasts_calendar(obs, pred)
+    p1 <- all_forecasts_calendar(obs, pred, date_breaks, date_labels, proj)
     ## Remove x-axis ticks to have them on the bottom panel only
     p1 <- p1 +
       ylab("Daily Deaths") +

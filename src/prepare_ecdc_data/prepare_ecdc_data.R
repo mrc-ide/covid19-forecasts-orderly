@@ -224,9 +224,23 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ecuador" & raw_data$DateRep == "2020-09-07"] <- ecuador_avg_deaths
 
 ######################################################################
+######################################################################
+######################################################################
+######################################################################
+## From ECDC, WHO data have a 0 for one day and 387 on the next day, while ECDC
+## report  191 and 196 respectively
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-08-02"] <- 191
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-08-03"] <- 196
+
 ### Corrections 20th September
 ### https://rpp.pe/peru/actualidad/minsa-suma-3-658-decesos-a-cifra-de-muertes-por-la-covid-19-y-casos-positivos-ya-superan-el-medio-millon-noticia-1286372?ref=rpp
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-08-15"] <- 277
+## From Worldometers. There is a lag of 2 days between the time series on worldometers
+## and that reported by WHO/ECDC in this period, with Worldometers being 2 days ahead.
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-09-22"] <- 186
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-09-24"] <- 112
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-09-25"] <- 98
+
 ## From ECDC
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-20"] <- 30
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Israel" & raw_data$DateRep == "2020-09-19"] <- 27
