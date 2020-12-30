@@ -3,11 +3,11 @@ artefacts:
   data:
     description: Forecasts collated
     filenames:
-    - 2col_Belgium_forecasts.tiff
+    - 1col_main_short_forecasts.tiff
 
 parameters:
 - use_si
-
+- latest_week
 packages:
 - dplyr
 - purrr
@@ -20,6 +20,10 @@ packages:
 - cowplot
 - rincewind
 - ggtext
+- grid
+- gridExtra
+- patchwork
+
 depends:
 - collate_model_outputs:
     id: latest
@@ -27,7 +31,7 @@ depends:
       unweighted_qntls.rds: unweighted_qntls.rds
       unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
 - prepare_ecdc_data:
-    id: latest
+    id: latest(parameter:week_ending == latest_week)
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
 - produce_baseline_error:
