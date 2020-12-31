@@ -39,7 +39,7 @@ depends:
     use:
       latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
   produce_baseline_error:
-    id: latest
+    id: latest(parameter:week_ending == "2020-11-29")
     use:
       exclude.rds: exclude.rds
   collate_model_outputs:

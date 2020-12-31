@@ -26,6 +26,531 @@ packages:
 - gridExtra
 depends:
 - produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-03-29"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-03-29.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-03-29.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-03-29.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-03-29.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-03-29.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-03-29.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-03-29.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-03-29.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-03-29.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-03-29.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-03-29.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-03-29.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-05"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-04-05.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-04-05.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-04-05.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-04-05.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-04-05.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-04-05.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-04-05.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-04-05.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-04-05.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-04-05.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-04-05.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-04-05.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-12"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-04-12.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-04-12.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-04-12.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-04-12.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-04-12.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-04-12.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-04-12.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-04-12.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-04-12.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-04-12.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-04-12.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-04-12.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-19"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-04-19.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-04-19.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-04-19.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-04-19.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-04-19.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-04-19.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-04-19.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-04-19.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-04-19.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-04-19.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-04-19.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-04-19.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-04-26"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-04-26.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-04-26.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-04-26.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-04-26.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-04-26.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-04-26.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-04-26.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-04-26.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-04-26.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-04-26.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-04-26.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-04-26.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-03"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-05-03.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-05-03.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-05-03.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-05-03.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-05-03.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-05-03.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-05-03.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-05-03.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-05-03.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-05-03.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-05-03.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-05-03.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-10"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-05-10.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-05-10.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-05-10.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-05-10.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-05-10.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-05-10.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-05-10.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-05-10.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-05-10.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-05-10.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-05-10.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-05-10.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-17"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-05-17.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-05-17.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-05-17.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-05-17.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-05-17.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-05-17.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-05-17.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-05-17.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-05-17.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-05-17.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-05-17.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-05-17.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-24"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-05-24.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-05-24.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-05-24.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-05-24.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-05-24.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-05-24.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-05-24.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-05-24.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-05-24.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-05-24.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-05-24.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-05-24.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-05-31"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-05-31.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-05-31.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-05-31.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-05-31.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-05-31.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-05-31.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-05-31.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-05-31.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-05-31.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-05-31.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-05-31.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-05-31.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-07"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-06-07.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-06-07.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-06-07.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-06-07.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-06-07.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-06-07.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-06-07.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-06-07.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-06-07.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-06-07.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-06-07.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-06-07.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-14"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-06-14.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-06-14.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-06-14.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-06-14.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-06-14.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-06-14.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-06-14.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-06-14.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-06-14.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-06-14.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-06-14.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-06-14.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-21"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-06-21.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-06-21.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-06-21.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-06-21.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-06-21.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-06-21.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-06-21.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-06-21.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-06-21.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-06-21.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-06-21.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-06-21.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-06-28"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-06-28.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-06-28.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-06-28.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-06-28.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-06-28.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-06-28.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-06-28.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-06-28.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-06-28.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-06-28.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-06-28.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-06-28.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-07-05"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-07-05.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-07-05.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-07-05.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-07-05.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-07-05.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-07-05.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-07-05.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-07-05.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-07-05.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-07-05.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-07-05.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-07-05.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-07-12"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-07-12.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-07-12.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-07-12.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-07-12.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-07-12.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-07-12.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-07-12.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-07-12.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-07-12.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-07-12.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-07-12.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-07-12.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-07-19"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-07-19.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-07-19.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-07-19.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-07-19.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-07-19.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-07-19.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-07-19.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-07-19.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-07-19.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-07-19.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-07-19.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-07-19.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-07-26"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-07-26.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-07-26.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-07-26.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-07-26.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-07-26.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-07-26.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-07-26.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-07-26.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-07-26.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-07-26.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-07-26.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-07-26.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-08-02"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-08-02.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-08-02.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-08-02.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-08-02.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-08-02.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-08-02.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-08-02.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-08-02.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-08-02.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-08-02.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-08-02.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-08-02.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-08-09"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-08-09.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-08-09.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-08-09.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-08-09.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-08-09.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-08-09.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-08-09.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-08-09.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-08-09.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-08-09.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-08-09.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-08-09.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-08-16"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-08-16.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-08-16.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-08-16.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-08-16.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-08-16.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-08-16.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-08-16.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-08-16.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-08-16.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-08-16.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-08-16.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-08-16.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-08-23"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-08-23.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-08-23.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-08-23.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-08-23.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-08-23.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-08-23.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-08-23.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-08-23.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-08-23.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-08-23.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-08-23.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-08-23.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-08-30"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-08-30.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-08-30.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-08-30.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-08-30.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-08-30.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-08-30.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-08-30.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-08-30.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-08-30.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-08-30.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-08-30.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-08-30.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-09-06"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-09-06.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-09-06.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-09-06.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-09-06.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-09-06.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-09-06.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-09-06.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-09-06.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-09-06.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-09-06.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-09-06.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-09-06.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-09-13"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-09-13.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-09-13.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-09-13.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-09-13.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-09-13.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-09-13.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-09-13.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-09-13.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-09-13.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-09-13.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-09-13.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-09-13.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-09-20"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-09-20.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-09-20.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-09-20.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-09-20.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-09-20.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-09-20.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-09-20.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-09-20.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-09-20.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-09-20.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-09-20.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-09-20.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-09-27"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-09-27.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-09-27.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-09-27.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-09-27.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-09-27.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-09-27.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-09-27.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-09-27.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-09-27.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-09-27.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-09-27.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-09-27.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-10-04"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-10-04.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-10-04.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-10-04.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-10-04.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-10-04.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-10-04.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-10-04.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-10-04.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-10-04.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-10-04.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-10-04.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-10-04.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-10-11"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-10-11.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-10-11.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-10-11.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-10-11.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-10-11.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-10-11.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-10-11.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-10-11.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-10-11.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-10-11.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-10-11.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-10-11.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-10-18"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-10-18.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-10-18.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-10-18.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-10-18.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-10-18.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-10-18.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-10-18.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-10-18.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-10-18.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-10-18.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-10-18.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-10-18.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-10-25"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-10-25.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-10-25.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-10-25.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-10-25.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-10-25.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-10-25.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-10-25.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-10-25.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-10-25.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-10-25.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-10-25.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-10-25.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-11-01"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-11-01.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-11-01.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-11-01.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-11-01.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-11-01.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-11-01.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-11-01.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-11-01.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-11-01.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-11-01.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-11-01.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-11-01.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-11-08"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-11-08.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-11-08.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-11-08.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-11-08.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-11-08.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-11-08.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-11-08.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-11-08.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-11-08.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-11-08.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-11-08.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-11-08.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-11-15"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-11-15.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-11-15.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-11-15.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-11-15.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-11-15.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-11-15.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-11-15.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-11-15.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-11-15.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-11-15.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-11-15.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-11-15.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
+    id: latest(parameter:week_ending == "2020-11-22"  && parameter:use_si == "si_2")
+    use:
+      unweighted_pred_qntls_2020-11-22.rds: unweighted_pred_qntls.rds
+      weighted_across_countries_pred_qntls_2020-11-22.rds: weighted_across_countries_pred_qntls.rds
+      weighted_per_country_pred_qntls_2020-11-22.rds: weighted_per_country_pred_qntls.rds
+      unweighted_reff_qntls_2020-11-22.rds: unweighted_reff_qntls.rds
+      unweighted_ps_qntls_2020-11-22.rds: unweighted_ps_qntls.rds
+      weighted_across_countries_ps_qntls_2020-11-22.rds: weighted_across_countries_ps_qntls.rds
+      weighted_across_countries_reff_qntls_2020-11-22.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_ps_qntls_2020-11-22.rds: weighted_per_country_ps_qntls.rds
+      weighted_per_country_reff_qntls_2020-11-22.rds: weighted_per_country_reff_qntls.rds
+      unweighted_reff_with_underreporting_2020-11-22.rds: unweighted_reff_with_underreporting.rds
+      weighted_across_countries_reff_with_underreporting_2020-11-22.rds: weighted_across_countries_reff_with_underreporting.rds
+      weighted_per_country_reff_with_underreporting_2020-11-22.rds: weighted_per_country_reff_with_underreporting.rds
+- produce_longer_forecasts:
     id: latest(parameter:week_ending == "2020-11-29"  && parameter:use_si == "si_2")
     use:
       unweighted_pred_qntls_2020-11-29.rds: unweighted_pred_qntls.rds

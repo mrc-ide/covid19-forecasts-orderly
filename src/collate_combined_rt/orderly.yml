@@ -232,3 +232,38 @@ depends:
       weekly_iqr_2020-10-25.rds: weekly_iqr.rds
       combined_weighted_estimates_per_country_2020-10-25.rds: combined_weighted_estimates_per_country.rds
       combined_weighted_estimates_across_countries_2020-10-25.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-11-01"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-11-01.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-11-01.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-11-01.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-11-01.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-11-08"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-11-08.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-11-08.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-11-08.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-11-08.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-11-15"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-11-15.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-11-15.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-11-15.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-11-15.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-11-22"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-11-22.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-11-22.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-11-22.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-11-22.rds: combined_weighted_estimates_across_countries.rds
+- produce_combined_rt:
+    id: latest(parameter:week_ending == "2020-11-29"  && parameter:use_si == "si_2")
+    use:
+      combined_rt_estimates_2020-11-29.rds: combined_rt_estimates.rds
+      weekly_iqr_2020-11-29.rds: weekly_iqr.rds
+      combined_weighted_estimates_per_country_2020-11-29.rds: combined_weighted_estimates_per_country.rds
+      combined_weighted_estimates_across_countries_2020-11-29.rds: combined_weighted_estimates_across_countries.rds
