@@ -213,7 +213,7 @@ with_dates <- map(
         )
         ## This is only to check that the dates are correctly aligned
         outfile <- glue("figures/{country}_{index}_check.png")
-        ggsave(outfile, p)
+        ##ggsave(outfile, p)
         p
       }
     )
