@@ -23,14 +23,14 @@ reff_weekly_plot <- function(reff, weekly) {
   p <- restimates_linegraph(weekly, forecast_date) +
     geom_line(
       data = reff, aes(date, `50%`, group = forecast_week),
-      col = "#4d647e", size = 1.1
+      col = "#4a8c6f"
     ) +
     geom_ribbon(
       data = reff,
       aes(
         x = date, ymin = `2.5%`, ymax = `97.5%`,
         group = forecast_week
-      ), fill = "#9ac8fc", alpha = 0.4
+      ), fill = "#4a8c6f", alpha = 0.4
     ) +
     ylim(0, ymax) +
     ylab("Reproduction Number")

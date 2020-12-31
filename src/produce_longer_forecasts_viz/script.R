@@ -169,6 +169,7 @@ augm_data <- map(
 
 pred_plots <- map_depth(
   augm_data, 2, function(df_list) {
+    if (nrow(df_list[["pred"]]) == 0) return(NULL)
     all_forecasts_calendar(
       df_list[["obs_local"]], df_list[["pred"]], date_breaks,
       date_labels, forecast_week, xmin
@@ -178,6 +179,7 @@ pred_plots <- map_depth(
 
 reff_plots <- map_depth(
   augm_data, 2, function(df_list) {
+    if (nrow(df_list[["reff"]]) == 0) return(NULL)
     reff_weekly_plot(df_list[["reff"]], df_list[["weekly_rt"]])
   }
 )
@@ -196,6 +198,7 @@ with_dates <- map(
         message(index)
         p1 <- p1_list[[index]]
         p2 <- p2_list[[index]]
+        if (is.null(p1) | is.null(p2)) return(NULL)
         ##p3 <- p3_list[[index]]
         p <- (p1 + p2 + plot_layout(ncol = 1))
 
@@ -278,7 +281,7 @@ bottom <- (p21 + p22 + p23) +
   theme(
     text = element_text(size = 6),
     axis.title = element_blank(), legend.position = "none",
-    axis.text.x = element_text(angle = 90),
+    axis.text.x = element_blank(),
     plot.margin = margin(0, 0, 0, 0, "pt")
   )
 
