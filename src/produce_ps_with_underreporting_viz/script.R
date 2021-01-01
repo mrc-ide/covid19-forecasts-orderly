@@ -42,12 +42,8 @@ observed_ps <- readRDS("ps_qntls.rds")
 ps_last_day <- map_dfr(
   observed_ps, function(x)tail(x, 1), .id = "country"
 )
-continent <- readr::read_csv("country_continent.csv") %>%
-  janitor::clean_names()
 
-ps_last_day <- left_join(
-  ps_last_day, continent, by = c("country" = "countries_and_territories")
-)
+ps_last_day <- country_to_continent(ps_last_day, "country")
 
 ps_last_day$color <- case_when(
   ps_last_day$continent == "Africa" ~ "#000000",

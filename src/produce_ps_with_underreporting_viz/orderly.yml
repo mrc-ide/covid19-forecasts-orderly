@@ -19,7 +19,6 @@ artefacts:
     filenames:
       - 2col_wider_proportion_susceptible.tiff
 
-resources: country_continent.csv
 depends:
   - produce_longer_forecasts:
       id: latest(parameter:week_ending == week_ending)
