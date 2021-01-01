@@ -76,62 +76,38 @@ ps_last_day1 <- droplevels(ps_last_day1)
 ps_last_day2 <- filter(
   ps_last_day, !continent %in% c("Africa", "Asia")
 )
-ps_last_day2 <- arrange(ps_last_day2, continent, `50%`)
-ps_last_day2$label <- factor(
-  ps_last_day2$label, unique(ps_last_day2$label), ordered = TRUE
-)
+ps_last_day2 <- droplevels(ps_last_day2)
 
 
 p1 <- ggplot(ps_last_day1) +
-  geom_point(
-    aes(label, `50%`, col = color)
-  ) +
+  geom_point(aes(label, `50%`, col = color)) +
   geom_linerange(
     aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_markdown(
-      angle = -90, hjust = 0, vjust = 0, size = 6
-    ),
-    axis.title.y = element_text(size = 6),
-    axis.title.x = element_blank(),
-    legend.position = "none",
-    legend.title = element_blank()
-  ) +
-  ylab("Population susceptible (%)") +
-  scale_color_identity() +
-  scale_y_continuous(
-    labels = scales::percent_format(accuracy = 0.1),
-    limits = c(0, 1)
   )
-
 
 
 p2 <- ggplot(ps_last_day2) +
   geom_point(aes(label, `50%`, col = color)) +
   geom_linerange(
     aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
-  ) +
-  theme_minimal() +
-    theme(
+  )
+
+
+p <- p1 + p2 + plot_layout(ncol = 1) &
+  theme_minimal() &
+  theme(
     axis.text.x = element_markdown(
       angle = -90, hjust = 0, vjust = 0, size = 6
     ),
-    axis.title.y = element_text(size =6),
+    axis.title.y = element_blank(),
     axis.title.x = element_blank(),
     legend.position = "none",
     legend.title = element_blank()
-  ) +
-  xlab("") +
-  ylab("Population susceptible (%)") +
-  scale_color_identity() +
+  ) &
+  scale_color_identity() &
   scale_y_continuous(
     labels = scales::percent_format(accuracy = 0.1),
     limits = c(0, 1)
   )
 
-
-
-p <- p1 + p2 + plot_layout(ncol = 1) #&
 
