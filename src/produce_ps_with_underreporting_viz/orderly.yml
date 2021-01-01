@@ -8,6 +8,18 @@ packages:
   - forcats
   - glue
   - rincewind
+  - grid
+  - gridExtra
+  - patchwork
+  - ggtext
+
+artefacts:
+  staticgraph:
+    description: Ps with underreporting and final ps
+    filenames:
+      - 2col_wider_proportion_susceptible.tiff
+
+resources: country_continent.csv
 depends:
   - produce_longer_forecasts:
       id: latest(parameter:week_ending == week_ending)

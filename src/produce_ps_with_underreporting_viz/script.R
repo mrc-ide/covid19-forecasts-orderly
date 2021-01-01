@@ -34,7 +34,7 @@ p <- ggplot(ps, aes(underreporting, country, fill = `50%`)) +
   xlab("Underreporting") +
   ylab("")
 
-ggsave(filename = "proportion_susceptible_underreporting.png", p)
+save_multiple(p, "proportion_susceptible_underreporting.tiff")
 
 ######### Proportion susceptible at the last day of analysis
 #########
@@ -93,6 +93,10 @@ p2 <- ggplot(ps_last_day2) +
   )
 
 
+label <- textGrob(
+  "Population susceptible (%)", rot = 90, gp = gpar(fontsize = 7)
+)
+
 p <- p1 + p2 + plot_layout(ncol = 1) &
   theme_minimal() &
   theme(
@@ -111,3 +115,8 @@ p <- p1 + p2 + plot_layout(ncol = 1) &
   )
 
 
+pfinal <- wrap_elements(label) + wrap_elements(p) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
+
+
+save_multiple(pfinal, "proportion_susceptible.tiff")
