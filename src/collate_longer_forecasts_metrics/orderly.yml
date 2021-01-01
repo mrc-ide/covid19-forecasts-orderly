@@ -133,3 +133,23 @@ depends:
     id: latest(parameter:week_ending == "2020-10-25")
     use:
       long_projections_error_2020-10-25.rds: long_projections_error.rds
+- produce_longer_forecasts_metrics:
+    id: latest(parameter:week_ending == "2020-11-01")
+    use:
+      long_projections_error_2020-11-01.rds: long_projections_error.rds
+- produce_longer_forecasts_metrics:
+    id: latest(parameter:week_ending == "2020-11-08")
+    use:
+      long_projections_error_2020-11-08.rds: long_projections_error.rds
+- produce_longer_forecasts_metrics:
+    id: latest(parameter:week_ending == "2020-11-15")
+    use:
+      long_projections_error_2020-11-15.rds: long_projections_error.rds
+- produce_longer_forecasts_metrics:
+    id: latest(parameter:week_ending == "2020-11-22")
+    use:
+      long_projections_error_2020-11-22.rds: long_projections_error.rds
+- produce_longer_forecasts_metrics:
+    id: latest(parameter:week_ending == "2020-11-29")
+    use:
+      long_projections_error_2020-11-29.rds: long_projections_error.rds

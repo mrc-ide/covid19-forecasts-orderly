@@ -5,12 +5,26 @@ packages:
   - dplyr
   - ggplot2
   - ggforce
+  - forcats
+  - glue
+  - rincewind
+  - grid
+  - gridExtra
+  - patchwork
+  - ggtext
+
+artefacts:
+  staticgraph:
+    description: Ps with underreporting and final ps
+    filenames:
+      - 2col_wider_proportion_susceptible.tiff
+
+resources: country_continent.csv
 depends:
   - produce_longer_forecasts:
       id: latest(parameter:week_ending == week_ending)
       use:
-        unweighted_reff.rds: unweighted_reff_with_underreporting.rds
-        weighted_across_countries_reff.rds: weighted_across_countries_reff_with_underreporting.rds
+        ps_qntls.rds: weighted_per_country_ps_qntls.rds
         weighted_per_country_reff.rds: weighted_per_country_reff_with_underreporting.rds
   - produce_epi_params:
       id: latest

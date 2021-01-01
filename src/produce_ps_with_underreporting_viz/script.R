@@ -1,22 +1,19 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-04-19"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-11-29"), use_draft = "newer")
 
 ifr <- readRDS("pop_wtd_ifr_qntls.rds")
 ifr$country <- snakecase::to_title_case(ifr$location)
 
-reff <- readRDS("unweighted_reff.rds")
+reff <- readRDS("weighted_per_country_reff.rds")
 reff$country <- snakecase::to_title_case(reff$country)
-
-reff <- left_join(
-  reff, ifr, by = "country", suffix = c("_underrep", "_ifr")
-)
 reff$underreporting <- as.integer(reff$underreporting)
 
 ps <- reff[reff$var == "p_s", ]
 ##ps$underreporting <- factor(ps$underreporting, levels = 1:100)
-ps$country <- forcats::fct_reorder(ps$country, ps$`50%_underrep`, max)
+ps$country <- forcats::fct_reorder(ps$country, ps$`50%`, max)
 ##ps$underreporting <- as.numeric(ps$underreporting)
+ps <- ps[ps$underreporting < 51, ]
 
-p <- ggplot(ps, aes(underreporting, country, fill = `50%_underrep`)) +
+p <- ggplot(ps, aes(underreporting, country, fill = `50%`)) +
   geom_tile() +
   scale_fill_distiller(
     palette = "Greens",
@@ -37,84 +34,89 @@ p <- ggplot(ps, aes(underreporting, country, fill = `50%_underrep`)) +
   xlab("Underreporting") +
   ylab("")
 
-ggsave(
-  filename = "proportion_susceptible_underreporting.png", p
+save_multiple(p, "proportion_susceptible_underreporting.tiff")
+
+######### Proportion susceptible at the last day of analysis
+#########
+observed_ps <- readRDS("ps_qntls.rds")
+ps_last_day <- map_dfr(
+  observed_ps, function(x)tail(x, 1), .id = "country"
+)
+continent <- readr::read_csv("country_continent.csv") %>%
+  janitor::clean_names()
+
+ps_last_day <- left_join(
+  ps_last_day, continent, by = c("country" = "countries_and_territories")
 )
 
-reff <- reff[reff$var != "p_s", ]
-reff_lim <- reff[reff$`50%_underrep` < 10, ]
-
-reff_lim <-  select(
-  reff_lim, country, underreporting,
-  `50%_underrep`, var, continent, `50%_ifr`, deaths_per_million
-) %>%
-  tidyr::spread(var, `50%_underrep`)
-
-reff_lim$`50%_ifr` <- signif(reff_lim$`50%_ifr`, digits = 2)
+ps_last_day$color <- case_when(
+  ps_last_day$continent == "Africa" ~ "#000000",
+  ps_last_day$continent == "Asia" ~ "#E69F00",
+  ps_last_day$continent == "Europe" ~ "#56B4E9",
+  ps_last_day$continent == "North America" ~ "#009E73",
+  ps_last_day$continent == "South America" ~ "#0072B2",
+  ps_last_day$continent == "Oceania" ~ "#D55E00"
+)
 
 
-labels <- reff_lim[reff_lim$`r_eff` > 3, ]
-labels <- na.omit(labels)
-labels <- group_by(labels, country) %>%
-  slice_max(underreporting) %>% ungroup()
-labels$ifr <- scales::percent(labels$`50%_ifr`, accuracy = 0.1)
+ps_last_day$country <- nice_country_name(ps_last_day$country)
 
-## Setting labels by hand
-labels$r_eff[labels$country == "Belgium"] <- 8.90
-labels$underreporting[labels$country == "France"] <- 46
-labels$r_eff[labels$country == "France"] <- 9.20
-labels$underreporting[labels$country == "Ireland"] <- 45
-labels$underreporting[labels$country == "Italy"] <- 38
-labels$r_eff[labels$country == "United Kingdom"] <- 8.8
-labels$underreporting[labels$country == "United Kingdom"] <- 45
-labels$country[labels$country == "United Kingdom"] <- "UK"
-labels$country[labels$country == "United States of America"] <- "USA"
+ps_last_day$label <- glue(
+  "<i style='color:{ps_last_day$color}'>{ps_last_day$country}</i>"
+)
 
-labels$label <- glue::glue(
-  "{labels$country} ({labels$deaths_per_million}, {labels$ifr})"
+ps_last_day <- arrange(ps_last_day, continent, `50%`)
+ps_last_day$label <- factor(
+  ps_last_day$label, unique(ps_last_day$label), ordered = TRUE
+)
+
+ps_last_day1 <- filter(ps_last_day, continent %in% c("Africa", "Asia"))
+ps_last_day1 <- droplevels(ps_last_day1)
+
+ps_last_day2 <- filter(
+  ps_last_day, !continent %in% c("Africa", "Asia")
+)
+ps_last_day2 <- droplevels(ps_last_day2)
+
+
+p1 <- ggplot(ps_last_day1) +
+  geom_point(aes(label, `50%`, col = color)) +
+  geom_linerange(
+    aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
   )
 
 
-palette <- c(
- "Africa" = "#000000",
- "Asia" = "#E69F00",
- "Europe" = "#56B4E9",
- "North America" = "#009E73",
- "South America" = "#0072B2",
- "Oceania" = "#D55E00"
+p2 <- ggplot(ps_last_day2) +
+  geom_point(aes(label, `50%`, col = color)) +
+  geom_linerange(
+    aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+  )
+
+
+label <- textGrob(
+  "Population susceptible (%)", rot = 90, gp = gpar(fontsize = 7)
 )
 
-
-p <- ggplot() +
-  geom_line(
-    data = reff_lim,
-    aes(underreporting, r_eff, group = country, col = continent)
-  ) +
-  theme_minimal() +
-  scale_color_manual(values = palette) +
-  expand_limits(y = 0) +
-  geom_hline(
-    yintercept = 1, linetype = "dashed"
-  ) +
-  ggtext::geom_richtext(
-    data = labels, aes(underreporting, r_eff, label = label),
-    size = 3,
-    fill = NA, label.color = NA, # remove background and outline
-    label.padding = grid::unit(rep(0, 4), "pt") # remove padding
-    ) +
-  xlim(1, 50) +
-  coord_cartesian(clip = "off") +
+p <- p1 + p2 + plot_layout(ncol = 1) &
+  theme_minimal() &
   theme(
-    legend.position = "bottom",
-    legend.title = element_blank(),
-    axis.text.x.bottom = element_text(
-      angle = 90, hjust = 0.5, vjust = 0.5
-    )
-  ) +
-  ylab("Effective Reproduction Number") +
-  xlab("Underreporting")
+    axis.text.x = element_markdown(
+      angle = -90, hjust = 0, vjust = 0, size = 6
+    ),
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    legend.position = "none",
+    legend.title = element_blank()
+  ) &
+  scale_color_identity() &
+  scale_y_continuous(
+    labels = scales::percent_format(accuracy = 0.1),
+    limits = c(0, 1)
+  )
 
-ggsave(
-  "reffective_underreporting.png", p
-)
- ## facet_wrap(~continent, ncol = 2)
+
+pfinal <- wrap_elements(label) + wrap_elements(p) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
+
+
+save_multiple(pfinal, "proportion_susceptible.tiff")

@@ -107,9 +107,6 @@ pred_qntls <- split(
 pred_qntls_bycountry <- split(pred_qntls, pred_qntls$country)
 
 
-palette <- alternating_palette(
-  forecast_weeks, col1 = "#9ac8fc", col2 = "#9ac8fc"
-)
 
 saveRDS(ps_qntls, "ps_qntls_filtered.rds")
 saveRDS(pred_qntls, "pred_qntls_filtered.rds")
@@ -128,7 +125,6 @@ for (i in seq_len(nweeks_projected)) {
 names(week_groups) <- seq_along(week_groups)
 
 countries <- setNames(names(ps_bycountry), names(ps_bycountry))
-countries <- countries[! countries %in% "Kosovo"]
 xmin <- min(as.Date("2020-03-01"))
 
 augm_data <- map(
@@ -137,7 +133,6 @@ augm_data <- map(
     message(country)
     pred <- pred_qntls_bycountry[[country]]
     reff <- reff_bycountry[[country]]
-    ps <- ps_bycountry[[country]]
     weekly <- weekly_rt_bycountry[[country]]
     weekly$dates <- weekly$date
     obs <- all_deaths[, c("dates", country)]
@@ -149,7 +144,6 @@ augm_data <- map(
         weeks <- as.Date(weeks)
         pred <- pred[pred$forecast_week %in% weeks, ]
         reff <- reff[as.Date(reff$forecast_week) %in% weeks, ]
-        ps <- ps[as.Date(ps$forecast_week) %in% weeks, ]
 
         obs_local <- obs[obs$dates >= xmin, ]
         obs_local <- obs_local[obs_local$dates <= max(pred$date) + 7, ]
@@ -162,11 +156,10 @@ augm_data <- map(
         weekly <- weekly[weekly$date <= max(pred$date) + 7, ]
 
         pred$forecast_week <- as.factor(pred$forecast_week)
-        ps$forecast_week <- as.factor(ps$forecast_week)
         reff$forecast_week <- as.factor(reff$forecast_week)
 
         list(
-          pred = pred, reff = reff, weekly_rt = weekly, ps = ps,
+          pred = pred, reff = reff, weekly_rt = weekly,
           obs_local = obs_local
         )
       }
@@ -174,22 +167,19 @@ augm_data <- map(
   }
 )
 
-
-ps_plots <- map_depth(
-  augm_data, 2, function(df_list) ps_plot(df_list[["ps"]])
-)
-
 pred_plots <- map_depth(
   augm_data, 2, function(df_list) {
+    if (nrow(df_list[["pred"]]) == 0) return(NULL)
     all_forecasts_calendar(
       df_list[["obs_local"]], df_list[["pred"]], date_breaks,
-      date_labels, forecast_week
+      date_labels, forecast_week, xmin
     ) + theme(legend.title = element_blank())
   }
 )
 
 reff_plots <- map_depth(
   augm_data, 2, function(df_list) {
+    if (nrow(df_list[["reff"]]) == 0) return(NULL)
     reff_weekly_plot(df_list[["reff"]], df_list[["weekly_rt"]])
   }
 )
@@ -208,14 +198,11 @@ with_dates <- map(
         message(index)
         p1 <- p1_list[[index]]
         p2 <- p2_list[[index]]
+        if (is.null(p1) | is.null(p2)) return(NULL)
         ##p3 <- p3_list[[index]]
         p <- (p1 + p2 + plot_layout(ncol = 1))
 
         p <- p &
-          scale_fill_manual(
-            values = palette, aesthetics = c("col", "fill")
-          ) &
-          expand_limits(x = xmin) &
           theme_minimal() +
           theme(
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
@@ -228,46 +215,6 @@ with_dates <- map(
         outfile <- glue("figures/{country}_{index}_check.png")
         ##ggsave(outfile, p)
         p
-      }
-    )
-  }
-)
-
-without_dates <- map(
-  countries,
-  function(country) {
-    p1_list <- pred_plots[[country]]
-    p2_list <- reff_plots[[country]]
-    ##p3_list <- ps_plots[[country]]
-    map(
-      seq_along(p1_list),
-      function(index) {
-        p1 <- p1_list[[index]]
-        p2 <- p2_list[[index]]
-        ##p3 <- p3_list[[index]]
-        p1_final <- p1 +
-          theme_minimal() +
-          theme(axis.text.x = element_blank())
-
-        p2_final <- p2 +
-          theme_minimal() +
-          theme(axis.text.x = element_blank())
-
-        p_final <- wrap_plots(
-          p1_final, p2_final, ncol = 1, heights = c(1, 0.5)
-        ) +
-          plot_annotation(title = rincewind::nice_country_name(country))
-
-        p_final <- p_final &
-          scale_fill_manual(
-            values = palette, aesthetics = c("col", "fill")
-          ) &
-          theme(
-            axis.title.x = element_blank(),
-            axis.title.y = element_text(size = 7),
-            legend.position = "none"
-          )
-        p_final
       }
     )
   }
@@ -334,7 +281,7 @@ bottom <- (p21 + p22 + p23) +
   theme(
     text = element_text(size = 6),
     axis.title = element_blank(), legend.position = "none",
-    axis.text.x = element_text(angle = 90),
+    axis.text.x = element_blank(),
     plot.margin = margin(0, 0, 0, 0, "pt")
   )
 
@@ -425,19 +372,13 @@ plots <- map(
 
     ggplot(x) +
       geom_line(
-        aes(date, country, col = phase_eff), size = 1.2,
-        position = position_nudge(x = 0, y = -0.2)
-      ) +
-      geom_line(
-        aes(date, country, col = phase_weekly),
-        size = 1.2, linetype = "dashed",
-        position = position_nudge(x = 0, y = 0.2)
+        aes(date, country, col = phase_eff), size = 1.2
       ) +
       scale_color_manual(values = palette) +
       scale_x_date(
         date_breaks = date_breaks, date_labels = date_labels
       ) +
-      facet_wrap(~week_of_forecast, ncol = 2) +
+      facet_grid(phase_weekly ~ week_of_forecast) +
       theme_minimal() +
       theme(
         legend.position = "top",

@@ -14,7 +14,7 @@ use_draft <- "newer"
 ## )
 
 weeks <- seq(
-  from  = as.Date("2020-03-29"), to = as.Date("2020-12-06"),
+  from  = as.Date("2020-03-29"), to = as.Date("2020-11-29"),
   by = "7 days"
 )
 
@@ -56,7 +56,7 @@ for (week in weeks) {
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
-  parameter <- list(week_ending = week, window = 1, latest_week = "2020-12-06")
+  parameter <- list(week_ending = week, window = 1, latest_week = "2020-12-27")
   orderly::orderly_run(
     "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
   )
