@@ -372,19 +372,13 @@ plots <- map(
 
     ggplot(x) +
       geom_line(
-        aes(date, country, col = phase_eff), size = 1.2,
-        position = position_nudge(x = 0, y = -0.2)
-      ) +
-      geom_line(
-        aes(date, country, col = phase_weekly),
-        size = 1.2, linetype = "dashed",
-        position = position_nudge(x = 0, y = 0.2)
+        aes(date, country, col = phase_eff), size = 1.2
       ) +
       scale_color_manual(values = palette) +
       scale_x_date(
         date_breaks = date_breaks, date_labels = date_labels
       ) +
-      facet_wrap(~week_of_forecast, ncol = 2) +
+      facet_grid(phase_weekly ~ week_of_forecast) +
       theme_minimal() +
       theme(
         legend.position = "top",
