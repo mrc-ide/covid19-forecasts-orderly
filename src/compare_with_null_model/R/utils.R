@@ -29,7 +29,6 @@ data_prep <- function(pred_err_df, null_err_df) {
 
   better_than_null <- arrange(better_than_null, desc(percent_less_than_1))
 
-
   weekly_compare <- left_join(weekly_compare, better_than_null)
 
   weekly_compare$country <- factor(
@@ -67,13 +66,14 @@ augment_data <- function(df, width = 1.5) {
   x_labels <- strftime(
     as.Date(x$forecast_date), format = "%d-%b"
   )
-  x_labels <- setNames(x_labels, x$x)
+  ## Every 4th date on the x-axis
+  idx <- seq(1, length(x$x), by = 3)
+  x_labels <- setNames(x_labels[idx], x$x[idx])
 
   y <- data.frame(country = rev(levels(df$country)))
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
-  y_labels <- as.character(y$country) %>%
-    snakecase::to_title_case()
+  y_labels <- rincewind::nice_country_name(y$country)
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
@@ -88,7 +88,7 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
 
 
   xmax <- max(as.numeric(df$x)) + 2
-
+  ##idx <- seq(1, length.out = length(x_labels), by = 3)
   p1 <- ggplot() +
     geom_tile(
       data = df[df$ratio <= 1, ],
@@ -108,7 +108,7 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ggnewscale::new_scale_fill() +
     geom_tile(
       data = df[df$ratio > 1 & df$ratio <= 5, ],
-      aes(x, y, fill = ratio),
+      aes(x, y, fill = ratio), alpha = 0.7,
       width = 1.4,
       height = 1.2
     ) +
@@ -123,38 +123,34 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     ggnewscale::new_scale_fill() +
     geom_tile(
-      data = df[df$ratio > 5, ],
-      aes(x, y),
-      fill = "#515bdc",
-      width = 1.4,
-      height = 1.2
+      data = df[df$ratio > 5, ], aes(x, y), fill = "#4c0000",
+      alpha = 0.7, width = 1.4, height = 1.2
     ) +
-    geom_richtext(
-      data = df, aes(x = x, y = y, label = error_values), size = 1.7,
-      fontface = "bold", fill = NA, label.color = NA, # remove background and outline
-      label.padding = grid::unit(rep(0, 4), "pt") # remove padding
-    ) +
-    geom_richtext(
-      data = df,
-      aes(x = xmax, y = y, label = percent_less_than_1), size = 2,
-      fontface = "bold", fill = NA, label.color = NA, # remove background and outline
-      label.padding = grid::unit(rep(0, 4), "pt") # remove padding
-    ) +
+    ## geom_richtext(
+    ##   data = df, aes(x = x, y = y, label = error_values), size = 1.7,
+    ##   fontface = "bold", fill = NA, label.color = NA, # remove background and outline
+    ##   label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+    ## ) +
+    ## geom_richtext(
+    ##   data = df,
+    ##   aes(x = xmax, y = y, label = percent_less_than_1), size = 2,
+    ##   fontface = "bold", fill = NA, label.color = NA, # remove background and outline
+    ##   label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+    ## ) +
     scale_y_continuous(
       breaks = sort(unique(df$y)),
       labels = y_labels,
       minor_breaks = NULL
     ) +
     scale_x_continuous(
-      breaks = sort(unique(df$x)),
+      breaks = as.numeric(names(x_labels)),
       labels = x_labels,
       minor_breaks = NULL
     ) +
     theme_minimal() +
-    xlab("") +
-    ylab("") +
     theme(
       axis.text.x = element_text(angle = 90, hjust = 0.5),
+      axis.title = element_blank(),
       legend.position = "top",
       legend.title = element_text(size = 8),
       legend.key.width = unit(2, "lines"),
