@@ -29,9 +29,6 @@ parameters:
 sources:
   - R/utils.R
 
-resources:
-  - country_continent.csv
-
 depends:        
   - collate_weighted_performance_metrics:
       id: latest
