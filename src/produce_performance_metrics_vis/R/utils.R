@@ -94,7 +94,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
       data = df[df$rel_mae_mu < 2, ],
       aes(x, y, fill = rel_mae_mu),
       width = 1.8,
-      height = 1.8, alpha = 0.7
+      height = 1.8, alpha = 0.8
     ) +
   scale_fill_distiller(
     palette = "Spectral", na.value = "white", direction = -1,
@@ -123,14 +123,15 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   ) +
   theme_minimal() +
   theme(
-      axis.text.x = element_text(angle = 90, hjust = 0.5),
-      axis.title = element_blank(),
-      legend.position = "top",
-      legend.title = element_text(size = 8),
-      legend.key.width = unit(2, "lines"),
-      legend.key.height = unit(1, "lines"),
-      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt"),
-      axis.line = element_blank()
+    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    axis.title = element_blank(),
+    legend.position = "top",
+    legend.title = element_text(size = 8),
+    legend.key.width = unit(2, "lines"),
+    legend.key.height = unit(1, "lines"),
+    legend.margin = margin(0, 0, 2, 0),
+    legend.box.margin=margin(0, -10, -10, -10),
+    axis.line = element_blank()
     ) +
   coord_cartesian(clip = "off")
 
