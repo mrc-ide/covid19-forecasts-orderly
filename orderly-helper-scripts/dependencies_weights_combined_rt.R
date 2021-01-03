@@ -54,7 +54,7 @@ dependancies5 <- list(
 dependancies6 <- list(
   list(
     produce_baseline_error = list(
-      id = glue::glue("latest(parameter:week_ending == \"2020-09-27\")"),
+      id = glue::glue("latest(parameter:latest_week == \"2020-11-29\")"),
       use = list("exclude.rds" =  "exclude.rds")
     )
   )

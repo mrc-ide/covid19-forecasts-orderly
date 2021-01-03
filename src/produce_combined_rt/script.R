@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-09-06", use_si = "si_2"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-05-03", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
 
 

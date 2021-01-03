@@ -60,12 +60,16 @@ depends:
     id: latest(parameter:week_ending == "2020-05-10")
     use:
       ensemble_model_rt_samples_2020-05-10.rds: ensemble_model_rt_samples.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2020-05-17")
+    use:
+      ensemble_model_rt_samples_2020-05-17.rds: ensemble_model_rt_samples.rds
 - prepare_ecdc_data:
     id: latest(parameter:week_ending == week_ending)
     use:
       latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
       model_input.rds: latest_model_input.rds
 - produce_baseline_error:
-    id: latest(parameter:week_ending == "2020-09-27")
+    id: latest(parameter:latest_week == "2020-11-29")
     use:
       exclude.rds: exclude.rds

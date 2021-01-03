@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-09-06", use_si = "si_2"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-05-10", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
 
 run_info <- orderly::orderly_run_info()
@@ -128,6 +128,7 @@ error <- imap(
   projections,
   function(pred, country) {
     obs <- observed[observed$dates %in% dates_projected, country]
+    obs <- obs[[country]]
     map(
       pred,
       function(pred_beta) {
