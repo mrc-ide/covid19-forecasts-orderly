@@ -33,6 +33,6 @@ depends:
       use:
          model_input.rds: latest_model_input.rds
   - produce_baseline_error:
-      id: latest(parameter:week_ending == "2020-11-29")
+      id: latest(parameter:latest_week == "2020-11-29")
       use:
          exclude.rds: exclude.rds         

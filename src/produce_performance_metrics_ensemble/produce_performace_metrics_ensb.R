@@ -50,6 +50,7 @@ unwtd_pred_error <- imap_dfr(
             y_si <- as.matrix(y_si)
             dates2 <- as.Date(colnames(y_si))
             obs <- model_input[model_input$dates %in% dates2, cntry]
+            obs <- obs[[cntry]]
             out <- all_metrics(obs, y_si)
             out$date <- dates2
             out$obs <- obs

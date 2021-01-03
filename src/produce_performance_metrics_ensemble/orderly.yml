@@ -18,10 +18,10 @@ packages:
 - purrr
 depends:
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-11-29")
+    id: latest(parameter:week_ending == "2020-05-03")
     use:
       unwtd_ensemble_model_predictions.rds: ensemble_model_predictions.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-12-06")
+    id: latest(parameter:week_ending == "2020-05-10")
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
