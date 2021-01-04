@@ -64,7 +64,10 @@ augment_data <- function(df, width = 1.5) {
   x_labels <- strftime(
     as.Date(x$forecast_date), format = "%d-%b"
   )
-  x_labels <- setNames(x_labels, x$x)
+  ## Every 4th date on the x-axis
+  idx <- seq(1, length(x$x), by = 3)
+  x_labels <- setNames(x_labels[idx], x$x[idx])
+
 
   y <- data.frame(country = rev(levels(df$country)))
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
@@ -91,7 +94,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
       data = df[df$rel_mae_mu < 2, ],
       aes(x, y, fill = rel_mae_mu),
       width = 1.8,
-      height = 1.8
+      height = 1.8, alpha = 0.8
     ) +
   scale_fill_distiller(
     palette = "Spectral", na.value = "white", direction = -1,
@@ -106,23 +109,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   geom_tile(
     data = df[df$rel_mae_mu >= 2, ],
     aes(x, y),
-    fill = "#b2b2ff", width = 1.8, height = 1.8
-  ) +
-  geom_text(
-    data = df,
-    aes(x = xmax, y = y, label = right_label),
-    parse = TRUE, size = 2
-  ) +
-  geom_text(
-    data = df,
-    aes(x = x, y = ymax, label = top_label),
-    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 2
-  ) +
-  geom_richtext(
-    data = df,
-    aes(x = x, y = y, label = cell_label), size = 1.7,
-      fontface = "bold", fill = NA, label.color = NA, # remove background and outline
-      label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+    fill = "#4c0000", width = 1.8, height = 1.8
   ) +
   scale_y_continuous(
     breaks = sort(unique(df$y)),
@@ -130,27 +117,22 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
     minor_breaks = NULL
   ) +
   scale_x_continuous(
-    breaks = sort(unique(df$x)),
+    breaks = as.numeric(names(x_labels)),
     labels = x_labels,
     minor_breaks = NULL
   ) +
   theme_minimal() +
   theme(
-    axis.text.x.bottom = element_text(
-      angle = 90, hjust = 0.5, vjust = 0.5, size = 6
-    ),
-    axis.text.y = element_text(size = 6),
-    plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
-    legend.position = "bottom",
+    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    axis.title = element_blank(),
+    legend.position = "top",
+    legend.title = element_text(size = 8),
     legend.key.width = unit(2, "lines"),
     legend.key.height = unit(1, "lines"),
-    axis.line = element_blank(),
-    legend.title = element_text(margin = margin(0, 0, 5, 0)),
-    legend.margin = margin(0, 0, 5, 0),
-    legend.box.margin = margin(-5, -5, 5, -5)
-  ) +
-  xlab("") +
-  ylab("") +
+    legend.margin = margin(0, 0, 2, 0),
+    legend.box.margin=margin(0, -10, -10, -10),
+    axis.line = element_blank()
+    ) +
   coord_cartesian(clip = "off")
 
   p

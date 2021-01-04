@@ -136,52 +136,12 @@ depends:
     id: latest(parameter:week_ending == "2020-09-20")
     use:
       ensemble_model_rt_samples_2020-09-20.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-09-27")
-    use:
-      ensemble_model_rt_samples_2020-09-27.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-10-04")
-    use:
-      ensemble_model_rt_samples_2020-10-04.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-10-11")
-    use:
-      ensemble_model_rt_samples_2020-10-11.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-10-18")
-    use:
-      ensemble_model_rt_samples_2020-10-18.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-10-25")
-    use:
-      ensemble_model_rt_samples_2020-10-25.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-11-01")
-    use:
-      ensemble_model_rt_samples_2020-11-01.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-11-08")
-    use:
-      ensemble_model_rt_samples_2020-11-08.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-11-15")
-    use:
-      ensemble_model_rt_samples_2020-11-15.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-11-22")
-    use:
-      ensemble_model_rt_samples_2020-11-22.rds: ensemble_model_rt_samples.rds
-- produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-11-29")
-    use:
-      ensemble_model_rt_samples_2020-11-29.rds: ensemble_model_rt_samples.rds
 - prepare_ecdc_data:
     id: latest(parameter:week_ending == week_ending)
     use:
       latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
       model_input.rds: latest_model_input.rds
 - produce_baseline_error:
-    id: latest(parameter:week_ending == "2020-09-27")
+    id: latest(parameter:latest_week == "2020-11-29")
     use:
       exclude.rds: exclude.rds

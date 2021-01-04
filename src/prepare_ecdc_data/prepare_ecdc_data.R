@@ -69,6 +69,14 @@ raw_data$Deaths[raw_data$DateRep == "2020-04-17" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2020-04-18" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 1951
 raw_data$Deaths[raw_data$DateRep == "2020-04-19" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 1520
 
+## Problems with WHO data for USA for these dates as well, with WHO reporting negative deaths,
+## 5000 deaths on one day and 156 on another.
+## ECDC data for these dates are used.
+raw_data$Deaths[raw_data$DateRep == "2020-05-03" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 1317
+raw_data$Deaths[raw_data$DateRep == "2020-05-04" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 1297
+raw_data$Deaths[raw_data$DateRep == "2020-05-05" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 1252
+raw_data$Deaths[raw_data$DateRep == "2020-05-06" & raw_data$`Countries.and.territories` == "United_States_of_America"] <- 2144
+
 
 raw_data$Deaths[raw_data$DateRep == "2020-04-17" & raw_data$`Countries.and.territories` == "China"] <- 0
 ## 04th May 2020. Manual tweaks against worldometer

@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-09-06", use_si = "si_2"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-05-17", use_si = "si_2"), use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
 
 run_info <- orderly::orderly_run_info()
@@ -127,10 +127,12 @@ dates_projected <- seq(week_prev + 1, length.out = 7, by = "1 day")
 error <- imap(
   projections,
   function(pred, country) {
+    message(country)
     obs <- observed[observed$dates %in% dates_projected, country]
+    ## Not sure why but sometimes obs is a tibble.
+    if (! inherits(obs, "numeric")) obs <- obs[[country]]
     map(
-      pred,
-      function(pred_beta) {
+      pred, function(pred_beta) {
         mean(assessr::rel_mae(obs, pred_beta))
       }
     )

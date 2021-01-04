@@ -17,11 +17,6 @@ labels <- c(
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
 
-continent <- readr::read_csv("country_continent.csv") %>%
-  janitor::clean_names()
-
-
-
 better_than_null <- readRDS("better_than_null.rds")
 country_groups <- readRDS("country_groups.rds")
 ######################################################################

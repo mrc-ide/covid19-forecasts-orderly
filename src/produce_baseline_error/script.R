@@ -1,5 +1,6 @@
-## orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(latest_week = "2020-11-29", week_starting = "2020-03-08"))
+## orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(latest_week = "2020-11-29", week_starting = "2020-03-08"), use_draft = "newer")
 dir.create("figures")
+
 weekly_cv <- function(vec) sd(vec) / mean(vec)
 
 week_starting <- as.Date(week_starting)
@@ -12,12 +13,14 @@ weeks <- map(
 )
 
 names(weeks) <- weeks_day1
-## last day of the last week
-last_day <- as.Date(tail(tail(weeks, 1)[[1]], 1))
 model_input <- readRDS("model_input.rds")
 model_input <- model_input[model_input$dates > week_starting &
-                           model_input$dates <= last_day, ]
+                           model_input$dates <= week_ending, ]
 
+## We only include countries with at least 100 deaths
+total_deaths <- colSums(model_input[, -1])
+include <- total_deaths[total_deaths >= 100]
+model_input <- model_input[, c("dates", names(include))]
 countries <- setNames(
   colnames(model_input)[-1], colnames(model_input)[-1]
 )
@@ -54,12 +57,12 @@ by_country <- filter(weekly, weekly_cv > 0) %>%
   ungroup()
 
 ## Excluding countries where the mean weekly CV was greater than
-## 1.4
-## 112 countries included, 95 countries excluded
-## quantile(by_country$cv)
-##        0%       25%       50%       75%      100%
-## 0.1264817 0.7389039 1.4095101 1.9289250 2.6457513
-exclude <- filter(by_country, cv > 1.4) %>% pull(country)
+## 1
+## of 133 countries with 100 or more deaths,
+## we exclude 53 countries. 80 countries are therefore included in the
+## analysis
+## 1.1 is the 60th quantile of the distribution of weekly CVs
+exclude <- filter(by_country, cv > 1.1) %>% pull(country)
 saveRDS(exclude, "exclude.rds")
 countries <- countries[!countries %in% exclude]
 ### If our predicitons for a week were the average deaths in the last

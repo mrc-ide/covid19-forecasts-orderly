@@ -69,10 +69,8 @@ dependancies5 <- list(
 dependancies6 <- list(
   list(
     produce_baseline_error = list(
-      id = "latest",
-      use = list(
-        "exclude.rds" =  "exclude.rds"
-      )
+      id = "latest(parameter:latest_week == \"2020-11-29\")",
+      use = list("exclude.rds" =  "exclude.rds")
     )
   )
 )

@@ -32,6 +32,7 @@ for (week in weeks) {
   ##orderly::orderly_commit(a)
 }
 
+
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
