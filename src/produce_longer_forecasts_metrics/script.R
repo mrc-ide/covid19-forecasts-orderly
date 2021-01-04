@@ -59,6 +59,7 @@ pred_error <- map_dfr(
           country_pred <- country_pred[, 1:length(dates_pred)]
           colnames(country_pred) <- as.character(dates_pred)
           obs <- model_input[model_input$dates %in% dates_pred, country]
+          if (! inherits(obs, "numeric")) obs <- as.numeric(obs[[country]])
           out <- all_metrics(obs, country_pred)
           out$date <- dates_pred
           out$obs <- obs

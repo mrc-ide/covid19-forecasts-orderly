@@ -6,6 +6,7 @@ packages:
 - readr
 - scales
 - ggplot2
+- tidyr
 
 resources:
 - summary.Rmd
