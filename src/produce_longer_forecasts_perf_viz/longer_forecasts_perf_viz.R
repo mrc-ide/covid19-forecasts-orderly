@@ -42,6 +42,23 @@ rel_mae_plots <- map(
   }
 )
 
+## iwalk(
+##   rel_mae_plots,
+##   function(plots, strategy) {
+##     legend <- get_legend(plots[[2]])
+##     prow <- plot_grid(
+##       plots[[2]] + theme(legend.position = "none"),
+##       plots[[3]] + theme(legend.position = "none"),
+##       plots[[4]] + theme(legend.position = "none"),
+##       ncol = 2
+##     )
+##     prel <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
+##     outfile <- glue("{strategy}_long_relative_error_heatmap_si.tiff")
+##     rincewind::save_multiple(plot = prel, filename = outfile)
+##   }
+## )
+
+
 iwalk(
   rel_mae_plots,
   function(plots, strategy) {
