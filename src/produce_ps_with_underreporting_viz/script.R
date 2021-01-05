@@ -24,15 +24,16 @@ p <- ggplot(ps, aes(underreporting, country, fill = `50%`)) +
     ),
     direction = -1,
     breaks = c(0, 0.5, 1),
-    limits = c(0, 1)
+    limits = c(0, 1),
+    labels = percent
   ) +
   theme_minimal() +
   theme(
-    legend.position = "bottom",
-    legend.key.width = unit(2, "lines")
+    legend.position = "top",
+    legend.key.width = unit(2, "lines"),
+    axis.title.y = element_blank()
   ) +
-  xlab("Underreporting") +
-  ylab("")
+  xlab("Underreporting")
 
 save_multiple(p, "proportion_susceptible_underreporting.tiff")
 
@@ -40,7 +41,7 @@ save_multiple(p, "proportion_susceptible_underreporting.tiff")
 #########
 observed_ps <- readRDS("ps_qntls.rds")
 ps_last_day <- map_dfr(
-  observed_ps, function(x)tail(x, 1), .id = "country"
+  observed_ps, function(x) tail(x, 1), .id = "country"
 )
 
 ps_last_day <- country_to_continent(ps_last_day, "country")

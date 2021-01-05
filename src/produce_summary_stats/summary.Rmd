@@ -146,4 +146,26 @@ select(across_all, strategy, week_of_projection, prop_in_975_sd) %>%
   knitr::kable()
 
 ```
+## Proportion of susceptible population at the end of December 2020
 
+```{r}
+observed_ps <- readRDS("ps_qntls.rds")
+ps_last_day <- map_dfr(
+  observed_ps, function(x) tail(x, 1), .id = "country"
+)
+
+ps_last_day <- arrange(ps_last_day, `50%`)
+
+```
+
+## Country with largest attack rate
+
+```{r}
+knitr::kable(head(ps_last_day, 1))
+```
+
+## Smallest attack rate
+
+```{r}
+knitr::kable(tail(ps_last_day, 1))
+```

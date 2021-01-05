@@ -12,6 +12,7 @@ packages:
   - gridExtra
   - patchwork
   - ggtext
+  - scales
 
 artefacts:
   staticgraph:
