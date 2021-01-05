@@ -103,6 +103,7 @@ readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
+
 plots <- imap(
   weekly_summaries,
   function(df, page) {
@@ -115,22 +116,19 @@ plots <- imap(
 )
 
 ## For SI, we put 2 plots together with a common legend.
-legend <- get_legend(
-  plots[[2]] + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
+legend <- get_legend(plots[[2]])
 
 prow <- plot_grid(
   plots[[2]] + theme(legend.position = "none"),
   plots[[3]] + theme(legend.position = "none"),
+  plots[[4]] + theme(legend.position = "none"),
   ncol = 2
 )
 
 prow <- prow + theme(title = element_text(size = 6 / .pt))
 ## Finally put the legend back in
 
-p50 <- plot_grid(
-  legend, prow, ncol = 1, rel_heights = c(0.1, 1)
-)
+p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 
 outfile <- glue("proportion_in_50_CrI_si.tiff")
 rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
@@ -166,12 +164,12 @@ plots <- imap(
   }
 )
 
-legend <- get_legend(
-  plots[[2]] + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
+legend <- get_legend(plots[[2]])
+
 prow <- plot_grid(
   plots[[2]] + theme(legend.position = "none"),
   plots[[3]] + theme(legend.position = "none"),
+  plots[[4]] + theme(legend.position = "none"),
   ncol = 2
 )
 
@@ -179,7 +177,7 @@ prow <- plot_grid(
 
 p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 outfile <- glue("proportion_in_95_CrI_si.tiff")
-rincewind::save_multiple(plot = p95, filename = outfile, two_col = TRUE)
+rincewind::save_multiple(plot = p95, filename = outfile)
 
 #####################################################################
 #####################################################################
@@ -334,7 +332,7 @@ readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 ######################################################################
 ######################################################################
 ######################################################################
-iwalk(
+plots <- imap(
   weekly_summaries,
   function(df, page) {
     df$top_label <- glue(
@@ -356,8 +354,23 @@ iwalk(
     )
     outfile <- glue("relative_error_heatmap_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile)
+    p
   }
 )
+
+legend <- get_legend(plots[[2]])
+
+prow <- plot_grid(
+  plots[[2]] + theme(legend.position = "none"),
+  plots[[3]] + theme(legend.position = "none"),
+  plots[[4]] + theme(legend.position = "none"),
+  ncol = 2
+)
+
+prel <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
+
+outfile <- glue("relative_error_heatmap_si.tiff")
+rincewind::save_multiple(plot = prel, filename = outfile)
 
 ######################################################################
 ######################################################################
@@ -465,3 +478,4 @@ ggsave("relative_error_overall.png", p2)
 ## > sd(overall$rel_mae_mu[is.finite(overall$rel_mae_mu)])
 ## [1] 0.4363448
 
+dev.off()

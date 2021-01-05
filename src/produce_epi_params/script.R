@@ -133,7 +133,9 @@ pop_wtd_ifr <- map(
 )
 
 pop_wtd_ifr_qntls <- map_dfr(
-  pop_wtd_ifr, ~ quantile(., na.rm = TRUE), .id = "location"
+  pop_wtd_ifr,
+  ~ quantile(., na.rm = TRUE, probs = c(0.025, 0.25, 0.5, 0.75, 0.975)),
+  .id = "location"
 )
 
 saveRDS(pop_wtd_ifr, "population_weighted_ifr.rds")
@@ -163,8 +165,9 @@ pop_wtd_ifr_qntls$location <- snakecase::to_title_case(pop_wtd_ifr_qntls$locatio
 pop_wtd_ifr_qntls$label <- glue(
   "<i style='color:{pop_wtd_ifr_qntls$color}'>{pop_wtd_ifr_qntls$location}</i>"
 )
-pop_wtd_ifr_qntls$label <- forcats::fct_reorder(
-  pop_wtd_ifr_qntls$label, pop_wtd_ifr_qntls$continent, min
+pop_wtd_ifr_qntls <- arrange(pop_wtd_ifr_qntls, continent, `50%`)
+pop_wtd_ifr_qntls$label <- factor(
+  pop_wtd_ifr_qntls$label, unique(pop_wtd_ifr_qntls$label)
 )
 
 pop_wtd_ifr_qntls1 <- filter(
@@ -178,26 +181,10 @@ pop_wtd_ifr_qntls2 <- filter(
 pop_wtd_ifr_qntls2 <- droplevels(pop_wtd_ifr_qntls2)
 
 p1 <- ggplot(pop_wtd_ifr_qntls1) +
-  geom_point(
-    aes(label, `50%`, col = color)
-  ) +
+  geom_point(aes(label, `50%`, col = color)) +
   geom_linerange(
-    aes(x = label, ymin = `25%`, ymax = `75%`, col = color)
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_markdown(
-      angle = -90, hjust = 0, vjust = 0, size = 6
-    ),
-    axis.title.y = element_text(size = 6),
-    legend.position = "none",
-    legend.title = element_blank()
-  ) +
-  xlab("") +
-  ylab("Infection fatality ratio") +
-  scale_color_identity() +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1))
-
+    aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+  )
 
 
 p2 <- ggplot(pop_wtd_ifr_qntls2) +
@@ -205,38 +192,30 @@ p2 <- ggplot(pop_wtd_ifr_qntls2) +
     aes(label, `50%`, col = color)
   ) +
   geom_linerange(
-    aes(x = label, ymin = `25%`, ymax = `75%`, col = color)
-  ) +
-  theme_minimal() +
-    theme(
+    aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+  )
+
+label <- textGrob(
+  "Infection fatality ratio", rot = 90, gp = gpar(fontsize = 7)
+)
+
+p <- p1 + p2 + plot_layout(ncol = 1) &
+  scale_color_identity() &
+  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) &
+  theme_minimal() &
+  theme(
     axis.text.x = element_markdown(
       angle = -90, hjust = 0, vjust = 0, size = 6
     ),
-    axis.title.y = element_text(size =6),
+    axis.title = element_blank(),
     legend.position = "none",
     legend.title = element_blank()
-  ) +
-  xlab("") +
-  ylab("Infection fatality ratio") +
-  scale_color_identity() +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1))
+  )
 
+pfinal <- wrap_elements(label) + wrap_elements(p) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
 
-
-p <- p1 + p2 + plot_layout(ncol = 1) #&
-
-
-ggsave(
-  filename = "ifr_per_country.png",
-  plot = p,
-  device = agg_png,
-  width = 25,
-  height = 12,
-  units = "cm",
-  res = 300,
-  scaling = 0.9
-)
-
+rincewind::save_multiple(pfinal, "ifr_per_country.tiff")
 #####################################################################
 #####################################################################
 ############### CFR Parameters

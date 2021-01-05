@@ -5,6 +5,7 @@ prop_in_cri_heatmap <- function(df, CrI = "50%") {
   )
   ##sorted <- sort(unique(df$forecast_date))
   df$forecast_date <- factor(df$forecast_date)
+  idx <- seq(1, length(levels(df$forecast_date)), 2)
   xmax <- max(as.numeric(df$forecast_date)) + 2.5
   ymax <- max(as.numeric(factor(df$country))) + 1
 
@@ -13,21 +14,21 @@ prop_in_cri_heatmap <- function(df, CrI = "50%") {
     aes(forecast_date, country, fill = prop_in_CrI),
     width = 0.9, height = 0.8
   ) +
-  geom_text(
-    aes(x = xmax, y = country, label = right_label),
-    parse = TRUE, size = 6 / .pt
-  ) +
-  geom_text(
-    aes(x = forecast_date, y = ymax, label = top_label),
-    parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 6 / .pt
-  ) +
+  ## geom_text(
+  ##   aes(x = xmax, y = country, label = right_label),
+  ##   parse = TRUE, size = 6 / .pt
+  ## ) +
+  ## geom_text(
+  ##   aes(x = forecast_date, y = ymax, label = top_label),
+  ##   parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 6 / .pt
+  ## ) +
     scale_y_discrete(
       limits = rev(levels(df$country)),
       labels = nice_country_name
     ) +
     scale_x_discrete(
-      breaks = unique(df$forecast_date),
-      labels = unique(df$x_labels)
+      breaks = unique(df$forecast_date)[idx],
+      labels = unique(df$x_labels)[idx]
     ) +
     theme_minimal() +
     scale_fill_distiller(
@@ -39,19 +40,16 @@ prop_in_cri_heatmap <- function(df, CrI = "50%") {
       name = glue("Proportion in {CrI} CrI")
     ) +
     theme(
-      axis.line = element_blank(),
-      axis.text.x.bottom = element_text(
-        angle = 90, hjust = 0.5, vjust = 0.5, size = 18 / .pt
-      ),
-      axis.text.y = element_text(size = 18 / .pt),
-      plot.margin = margin(t = 30, r = 20, b = 0, l = 0),
-      legend.title = element_text(size = 24 / .pt),
-      legend.position = "bottom",
+      axis.text.x = element_text(angle = 90, hjust = 0.5),
+      axis.title = element_blank(),
+      legend.position = "top",
+      legend.title = element_text(size = 8),
       legend.key.width = unit(2, "lines"),
-      legend.key.height = unit(1, "lines")
+      legend.key.height = unit(1, "lines"),
+      legend.margin = margin(0, 0, 2, 0),
+      legend.box.margin=margin(0, -10, -10, -10),
+      axis.line = element_blank()
     ) +
-    xlab("") +
-    ylab("") +
     coord_cartesian(clip = "off")
 
   p
