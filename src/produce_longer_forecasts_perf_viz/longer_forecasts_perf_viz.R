@@ -5,7 +5,6 @@ weekly_error <- readRDS("long_projections_error_weekly.rds")
 weekly_incid <- readRDS("weekly_incidence.rds")
 exclude <- readRDS("exclude.rds")
 country_groups <- readRDS("country_groups.rds")
-weekly_error <- weekly_error[weekly_error$week_of_projection %in% c(1, 2, 3, 4), ]
 weekly_error <- weekly_error[!weekly_error$country %in% exclude, ]
 
 by_strategy <- split(weekly_error, weekly_error$strategy)

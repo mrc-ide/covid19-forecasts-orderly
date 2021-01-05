@@ -58,7 +58,7 @@ for (week in weeks) {
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
-  parameter <- list(week_ending = week, window = 1, latest_week = "2020-12-27")
+  parameter <- list(week_ending = week, window = 1, latest_week = "2021-01-03")
   orderly::orderly_run(
     "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
   )
