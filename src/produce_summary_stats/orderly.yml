@@ -5,6 +5,8 @@ packages:
 - rmarkdown
 - readr
 - scales
+- ggplot2
+- tidyr
 
 resources:
 - summary.Rmd
@@ -30,3 +32,7 @@ depends:
       use:
         better_than_null.rds: better_than_null.rds
         better_than_linear.rds: better_than_linear.rds       
+  - collate_longer_forecasts_metrics:
+      id: latest
+      use:
+        long_forecasts_error_weekly.rds: long_projections_error_weekly.rds

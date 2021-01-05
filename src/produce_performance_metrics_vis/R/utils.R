@@ -93,8 +93,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
     geom_tile(
       data = df[df$rel_mae_mu < 2, ],
       aes(x, y, fill = rel_mae_mu),
-      width = 1.8,
-      height = 1.8, alpha = 0.8
+      width = 1.8, height = 1.8, alpha = 0.8
     ) +
   scale_fill_distiller(
     palette = "Spectral", na.value = "white", direction = -1,

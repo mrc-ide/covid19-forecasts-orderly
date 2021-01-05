@@ -21,11 +21,6 @@ biblio-style: apsr
 endnote: no
 ---
 
-```{r setup, eval = TRUE}
-library(dplyr)
-library(purrr)
-library(ggplot2)
-```
 ## Summary
 
 ```{r}
@@ -84,3 +79,71 @@ produced.
 - The relative error of the model was smaller than the error a null 
 model would have made in `r scales::percent(y, 0.1)` of weeks for which forecasts were
 produced.
+
+
+## Medium-term forecasts
+
+```{r}
+mid_forecasts_error <- readRDS("long_forecasts_error_weekly.rds")
+
+across_all <- group_by(mid_forecasts_error, strategy, week_of_projection) %>%
+  summarise_if(is.numeric, list(mu = mean, sd = sd))  %>%
+  ungroup()
+
+```
+### Mean relative error
+
+```{r}
+select(across_all, strategy, week_of_projection, rel_mae_mu) %>%
+  spread(week_of_projection, rel_mae_mu) %>%
+  knitr::kable()
+
+```
+
+### SD relative error
+
+```{r}
+select(across_all, strategy, week_of_projection, rel_mae_sd) %>%
+  spread(week_of_projection, rel_mae_sd) %>%
+  knitr::kable()
+
+```
+
+### Coverage probability
+
+#### In 50% Credible Interval
+
+```{r}
+
+select(across_all, strategy, week_of_projection, prop_in_50_mu) %>%
+  spread(week_of_projection, prop_in_50_mu) %>%
+  knitr::kable()
+
+```
+
+```{r}
+
+select(across_all, strategy, week_of_projection, prop_in_50_sd) %>%
+  spread(week_of_projection, prop_in_50_sd) %>%
+  knitr::kable()
+
+```
+
+#### In 95% Credible Interval
+
+```{r}
+
+select(across_all, strategy, week_of_projection, prop_in_975_mu) %>%
+  spread(week_of_projection, prop_in_975_mu) %>%
+  knitr::kable()
+
+```
+
+```{r}
+
+select(across_all, strategy, week_of_projection, prop_in_975_sd) %>%
+  spread(week_of_projection, prop_in_975_sd) %>%
+  knitr::kable()
+
+```
+

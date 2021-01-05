@@ -28,7 +28,7 @@ depends:
       country_groups.rds: country_groups.rds
       better_than_null.rds: better_than_null.rds
   produce_baseline_error:
-    id: latest
+    id: latest(parameter:latest_week == "2020-11-29")
     use:
       weekly_incidence.rds: weekly_incidence.rds
       exclude.rds: exclude.rds      
