@@ -12,24 +12,12 @@ artefacts:
         - ensmbl_pred_Asia_si_2_page_2.png
         - ensmbl_pred_Africa_si_2_page_1.png
         - ensmbl_pred_North America_si_2_page_1.png
-#        - ensmbl_pred_North America_si_2_page_2.png
         - ensmbl_pred_South America_si_2_page_1.png
         - ensemble_rt_Europe_si_2_boxplot.png
         - ensemble_rt_Asia_si_2_boxplot.png
         - ensemble_rt_Africa_si_2_boxplot.png
         - ensemble_rt_North America_si_2_boxplot.png
         - ensemble_rt_South America_si_2_boxplot.png
-        - reporting_ratio_Europe_page_1.png
-        - reporting_ratio_Europe_page_2.png
-        - reporting_ratio_Europe_page_3.png
-        - reporting_ratio_Europe_page_4.png
-        - reporting_ratio_Asia_page_1.png
-        - reporting_ratio_Asia_page_2.png
-        - reporting_ratio_Africa_page_1.png
-        - reporting_ratio_North America_page_1.png
-#        - reporting_ratio_North America_page_2.png
-        - reporting_ratio_South America_page_1.png      
-
 
 packages:
   - ggplot2
@@ -70,9 +58,4 @@ depends:
     use:
       daily_predictions_qntls.rds: daily_predictions_qntls.rds
       model_rt_qntls.rds: model_rt_qntls.rds
-      
-  DeCa_model:
-    id: latest(parameter:week_ending == week_ending)
-    use:
-      deaths_to_cases_qntls.rds: deaths_to_cases_qntls.rds
       

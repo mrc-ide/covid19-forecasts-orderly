@@ -41,9 +41,9 @@ knitr::opts_chunk$set(
 
 # Introduction 
 
-As of 28^th^ December 2020,  more than
-79,000,000 cases of COVID-19 have been reported across the world, 
-with more than 1,750,000 deaths [@whositrep]. 
+As of 4^th^ January 2021,  more than
+83,000,000 cases of COVID-19 have been reported across the world, 
+with more than 1,830,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths
@@ -374,7 +374,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-28^th^ December 2020, the observed number of deaths in the week before,
+4^th^ January 2021, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -408,104 +408,6 @@ x <- dplyr::select(
 DT::datatable(x, rownames = FALSE)
 
 ```
-
-
-
-# Analysis of Trends in Reporting
-
-## Temporal trend in the ratio of deaths to reported cases 
-
-Starting in March, we compute the average and 95% CI for the ratio of
-deaths  to reported cases (with a mean 10-day delay) using a moving window
-of 7 days. The ratio accounts for the delay between death and case
-being reported. Any temporal trend in the ratio suggests a change in
-the reporting. For instance, an increase in the ratio gives an
-indication that cases reporting is decreasing. If all cases
-(including asymptomatic cases) and death were reported, then the ratio defined
-would be equivalent to the infection fatality ratio (IFR).
-
-### Europe
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Europe_page_1.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Europe_page_2.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Europe_page_3.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Europe_page_4.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Europe_page_5.png")
-```
-
-### Asia
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Asia_page_1.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Asia_page_2.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Asia_page_3.png")
-```
-
-### Africa
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Africa_page_1.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_Africa_page_2.png")
-```
-
-
-### North & Central America 
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_North America_page_1.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_North America_page_2.png")
-```
-
-### South America
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_South America_page_1.png")
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/reporting_ratio_South America_page_2.png")
-```
-*Figure 13.*: Temporal trends in the ratio of reported
-deaths to reported cases 10 days prior (medians and 95% CIs, solid
-lines and bands respectively).
-Also plotted are the reported deaths (red dots) and reported cases
-(black dots). 
-The reported number of deaths and cases have
-been re-scaled so
-that the maximum recorded numbers of deaths or cases (with a mean 10-day
-delay) reaches 1. 
-
-*Note that if deaths exceed the number of reported cases 10 days
-before, we set the ratio at 1 (95% CI 1-1)*
-
-<br><br>
-
-
 
 # Methods
 
@@ -689,7 +591,7 @@ knitr::include_graphics("figs/Europe_si_2_page_4.png")
 ```{r}
 knitr::include_graphics("figs/Europe_si_2_page_5.png")
 ```
-*Figure 14.* Projections (7-day ahead) for the week starting 28^th^ December 2020 from individual models
+*Figure 13.* Projections (7-day ahead) for the week starting 4^th^ January 2021 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -709,7 +611,7 @@ knitr::include_graphics("figs/Asia_si_2_page_2.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_3.png")
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 28^th^ December 2020 from individual models (Models 1, 2
+*Figure 14.* Projections (7-day ahead) for the week starting 4^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -726,7 +628,7 @@ knitr::include_graphics("figs/Africa_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/Africa_si_2_page_2.png")
 ```
-*Figure 16.* Projections (7-day ahead) for the week starting 28^th^ December 2020 from individual models (Models 1, 2
+*Figure 15.* Projections (7-day ahead) for the week starting 4^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -741,7 +643,7 @@ knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_2.png")
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 28^th^ December 2020 from individual models (Models 1, 2
+*Figure 16.* Projections (7-day ahead) for the week starting 4^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -756,8 +658,8 @@ knitr::include_graphics("figs/South America_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/South America_si_2_page_2.png")
 ```
-*Figure 18.* Projections (7-day ahead) for the week starting
-28^th^ December 2020 from individual models (Models 1, 2
+*Figure 17.* Projections (7-day ahead) for the week starting
+4^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -773,9 +675,9 @@ results should be interpreted with caution.
 ```{r}
 knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
-*Figure 19.* Estimates of $R_t$ from individual models for each country in Europe with
+*Figure 18.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-28^th^ December 2020. 
+4^th^ January 2021. 
 
 
 #### Asia
@@ -787,7 +689,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 19.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-28^th^ December 2020. 
+4^th^ January 2021. 
 
 
 #### Africa
@@ -799,7 +701,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 20.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-28^th^ December 2020. 
+4^th^ January 2021. 
 
 
 #### North & Central America
@@ -811,7 +713,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 21.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-28^th^ December 2020. 
+4^th^ January 2021. 
 
 
 
@@ -824,7 +726,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 22.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-28^th^ December 2020. 
+4^th^ January 2021. 
 
 
 ## Code 

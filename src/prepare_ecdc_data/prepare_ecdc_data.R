@@ -390,6 +390,23 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Croatia" & raw_data$Dat
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-12-25"] <- 55
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2020-12-26"] <- 44
 
+## Worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-01-03" & raw_data$`Countries.and.territories` == "Greece"] <- 40
+raw_data$Deaths[raw_data$DateRep == "2021-01-03" & raw_data$`Countries.and.territories` == "South_Africa"] <- 288
+raw_data$Deaths[raw_data$DateRep == "2021-01-02" & raw_data$`Countries.and.territories` == "South_Africa"] <- 418
+raw_data$Cases[raw_data$DateRep == "2021-01-03" & raw_data$`Countries.and.territories` == "South_Africa"] <- 15002
+raw_data$Cases[raw_data$DateRep == "2021-01-02" & raw_data$`Countries.and.territories` == "South_Africa"] <- 16726
+
+raw_data$Deaths[raw_data$DateRep == "2020-12-31" & raw_data$`Countries.and.territories` == "Switzerland"] <- 101
+raw_data$Deaths[raw_data$DateRep == "2021-01-01" & raw_data$`Countries.and.territories` == "Switzerland"] <- 51
+raw_data$Deaths[raw_data$DateRep == "2021-01-02" & raw_data$`Countries.and.territories` == "Switzerland"] <- 59
+raw_data$Deaths[raw_data$DateRep == "2021-01-03" & raw_data$`Countries.and.territories` == "Switzerland"] <- 25
+
+raw_data$Cases[raw_data$DateRep == "2020-12-31" & raw_data$`Countries.and.territories` == "Switzerland"] <- 4197
+raw_data$Cases[raw_data$DateRep == "2021-01-01" & raw_data$`Countries.and.territories` == "Switzerland"] <- 5424
+raw_data$Cases[raw_data$DateRep == "2021-01-02" & raw_data$`Countries.and.territories` == "Switzerland"] <- 4391
+
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
