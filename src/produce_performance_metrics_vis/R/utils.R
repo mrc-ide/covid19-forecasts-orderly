@@ -1,17 +1,15 @@
-prop_in_cri_heatmap <- function(df, CrI = "50%") {
+prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
 
-  df$x_labels <- strftime(
-    as.Date(df$forecast_date), format = "%d-%b"
-  )
+  x_labels <- strftime(weeks, format = "%d-%b")
   ##sorted <- sort(unique(df$forecast_date))
-  df$forecast_date <- factor(df$forecast_date)
-  idx <- seq(1, length(levels(df$forecast_date)), 2)
-  xmax <- max(as.numeric(df$forecast_date)) + 2.5
+  weeks <- factor(weeks)
+  idx <- seq(1, length(weeks), 3)
+  xmax <- max(as.numeric(weeks)) + 2.5
   ymax <- max(as.numeric(factor(df$country))) + 1
 
   p <- ggplot(df) +
   geom_tile(
-    aes(forecast_date, country, fill = prop_in_CrI),
+    aes(factor(forecast_date), country, fill = prop_in_CrI),
     width = 0.9, height = 0.8
   ) +
   ## geom_text(
@@ -26,17 +24,11 @@ prop_in_cri_heatmap <- function(df, CrI = "50%") {
       limits = rev(levels(df$country)),
       labels = nice_country_name
     ) +
-    scale_x_discrete(
-      breaks = unique(df$forecast_date)[idx],
-      labels = unique(df$x_labels)[idx]
-    ) +
+    scale_x_discrete(breaks = weeks[idx], labels = x_labels[idx]) +
     theme_minimal() +
     scale_fill_distiller(
-      palette = "Greens",
-      direction = 1,
-      breaks = c(0, 0.5, 1),
-      labels = c(0, 0.5, 1),
-      limits = c(0, 1),
+      palette = "Greens", direction = 1, breaks = c(0, 0.5, 1),
+      labels = c(0, 0.5, 1), limits = c(0, 1),
       name = glue("Proportion in {CrI} CrI")
     ) +
     theme(
@@ -55,9 +47,9 @@ prop_in_cri_heatmap <- function(df, CrI = "50%") {
   p
 }
 
-augment_data <- function(df, width = 1.5) {
+augment_data <- function(df, weeks, width = 1.5) {
 
-  x <- data.frame(forecast_date = unique(df$forecast_date))
+  x <- data.frame(forecast_date = weeks)
   x$x <- seq(from = 1, by = width, length.out = nrow(x))
   x_labels <- strftime(
     as.Date(x$forecast_date), format = "%d-%b"
@@ -70,8 +62,7 @@ augment_data <- function(df, width = 1.5) {
   y <- data.frame(country = rev(levels(df$country)))
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
-  y_labels <- as.character(y$country) %>%
-    snakecase::to_title_case()
+  y_labels <- nice_country_name(y$country)
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
