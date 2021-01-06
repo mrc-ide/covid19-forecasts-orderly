@@ -15,6 +15,7 @@ packages:
   - tidyr
   - rincewind
   - assessr
+  - dplyr
  
 depends:
   produce_longer_forecasts:
