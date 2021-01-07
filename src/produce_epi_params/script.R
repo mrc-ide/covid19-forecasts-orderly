@@ -184,6 +184,14 @@ p1 <- ggplot(pop_wtd_ifr_qntls1) +
   geom_point(aes(label, `50%`, col = color)) +
   geom_linerange(
     aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+  ) +
+  scale_color_identity(
+    guide = "legend",
+    breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
+                "#D55E00"),
+    labels = c("Africa", "Asia", "Europe",  "North America",
+               "South America", "Oceania"),
+    drop = FALSE
   )
 
 
@@ -193,14 +201,23 @@ p2 <- ggplot(pop_wtd_ifr_qntls2) +
   ) +
   geom_linerange(
     aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+  ) +
+  scale_color_identity(
+    guide = "legend",
+    breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
+                "#D55E00"),
+    labels = c("Africa", "Asia", "Europe",  "North America",
+               "South America", "Oceania"),
+    drop = FALSE
   )
+
+
 
 label <- textGrob(
   "Infection fatality ratio", rot = 90, gp = gpar(fontsize = 7)
 )
 
-p <- p1 + p2 + plot_layout(ncol = 1) &
-  scale_color_identity() &
+p <- p1 + p2 + plot_layout(ncol = 1, guides = 'collect') &
   scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) &
   theme_minimal() &
   theme(
@@ -208,7 +225,7 @@ p <- p1 + p2 + plot_layout(ncol = 1) &
       angle = -90, hjust = 0, vjust = 0, size = 6
     ),
     axis.title = element_blank(),
-    legend.position = "none",
+    legend.position = "top",
     legend.title = element_blank()
   )
 
