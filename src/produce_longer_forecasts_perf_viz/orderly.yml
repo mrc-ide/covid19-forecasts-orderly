@@ -8,11 +8,12 @@ packages:
 - rincewind
 - glue
 - ggtext
+- patchwork
 
 artefacts:
   staticgraph:
     description: One of many files
-    filenames: 1col_rel_mae_by_country_unwieghted.tiff
+    filenames: figures/2col_prop_95_weighted_per_country_1.tiff
 
 sources: R/utils.R
 
@@ -21,7 +22,6 @@ depends:
     id: latest
     use:
       long_projections_error_weekly.rds: long_projections_error_weekly.rds
-      long_projections_error_daily.rds: long_projections_error_daily.rds
   compare_with_null_model:
     id: latest
     use:
@@ -31,4 +31,4 @@ depends:
     id: latest(parameter:latest_week == "2020-11-29")
     use:
       weekly_incidence.rds: weekly_incidence.rds
-      exclude.rds: exclude.rds      
+      exclude.rds: exclude.rds

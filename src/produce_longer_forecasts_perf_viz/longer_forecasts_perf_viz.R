@@ -1,11 +1,20 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 
-daily_error <- readRDS("long_projections_error_daily.rds")
+
+chosen_strategy <- "weighted_per_country"
+dir.create("figures")
 weekly_error <- readRDS("long_projections_error_weekly.rds")
+weekly_error <- weekly_error[weekly_error$strategy == chosen_strategy, ]
 weekly_incid <- readRDS("weekly_incidence.rds")
 exclude <- readRDS("exclude.rds")
-country_groups <- readRDS("country_groups.rds")
+
 weekly_error <- weekly_error[!weekly_error$country %in% exclude, ]
+country_groups <- readRDS("country_groups.rds")
+
+weeks <- seq(
+  from  = as.Date("2020-03-29"), to = as.Date("2020-11-29"),
+  by = "7 days"
+)
 
 by_strategy <- split(weekly_error, weekly_error$strategy)
 
@@ -22,7 +31,7 @@ plots <-  map(
   }
 )
 
-iwalk(plots, function(p, y) ggsave(glue("rel_mae_{y}.png"), p))
+iwalk(plots, function(p, y) ggsave(glue("figures/rel_mae_{y}.png"), p))
 
 rel_mae_plots <- map(
   by_strategy,
@@ -33,7 +42,7 @@ rel_mae_plots <- map(
         local <- df[df$country %in% countries, ]
         local <- weekly_summary(local)
         local$country <- rincewind::nice_country_name(local$country)
-        out <- augment_data(local, 2)
+        out <- augment_data(local, weeks, 2)
         long_relative_error_heatmap(
           out[[1]], high1 = 1, high2 = 3, out$x_labels, out$y_labels) +
           facet_wrap(~week_of_projection, nrow = 2)
@@ -42,33 +51,79 @@ rel_mae_plots <- map(
   }
 )
 
-## iwalk(
-##   rel_mae_plots,
-##   function(plots, strategy) {
-##     legend <- get_legend(plots[[2]])
-##     prow <- plot_grid(
-##       plots[[2]] + theme(legend.position = "none"),
-##       plots[[3]] + theme(legend.position = "none"),
-##       plots[[4]] + theme(legend.position = "none"),
-##       ncol = 2
-##     )
-##     prel <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
-##     outfile <- glue("{strategy}_long_relative_error_heatmap_si.tiff")
-##     rincewind::save_multiple(plot = prel, filename = outfile)
-##   }
-## )
-
-
 iwalk(
   rel_mae_plots,
   function(plots, strategy) {
+    plots <- customise_for_rows(plots, c(2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("rel_mae_{strategy}_{page}.tiff")
+      outfile <- glue("figures/rel_mae_{strategy}_{page}.tiff")
       rincewind::save_multiple(p, outfile)
     }
     )
   }
 )
+
+prop_50_plots <- map(
+  by_strategy,
+  function(df) {
+    map(
+      country_groups,
+      function(countries) {
+        local <- df[df$country %in% countries, ]
+        local$country <- rincewind::nice_country_name(local$country)
+        out <- augment_data(local, weeks, 2)
+        df <- out$df
+        df$fill <- df$prop_in_50
+        prop_in_ci_heatmap(df, out$x_labels, out$y_labels) +
+          facet_wrap(~week_of_projection, nrow = 2)
+      }
+    )
+  }
+)
+
+iwalk(
+  prop_50_plots,
+  function(plots, strategy) {
+    plots <- customise_for_rows(plots, c(1, 2, 3, 4))
+    iwalk(plots, function(p, page) {
+      outfile <- glue("figures/prop_50_{strategy}_{page}.tiff")
+      rincewind::save_multiple(p, outfile, one_col = FALSE)
+    }
+    )
+  }
+)
+
+
+prop_95_plots <- map(
+  by_strategy,
+  function(df) {
+    map(
+      country_groups,
+      function(countries) {
+        local <- df[df$country %in% countries, ]
+        local$country <- rincewind::nice_country_name(local$country)
+        out <- augment_data(local, weeks, 2)
+        df <- out$df
+        df$fill <- df$prop_in_975
+        prop_in_ci_heatmap(df, out$x_labels, out$y_labels, "95%") +
+          facet_wrap(~week_of_projection, nrow = 2)
+      }
+    )
+  }
+)
+
+iwalk(
+  prop_95_plots,
+  function(plots, strategy) {
+    plots <- customise_for_rows(plots, c(1, 2, 3, 4))
+    iwalk(plots, function(p, page) {
+      outfile <- glue("figures/prop_95_{strategy}_{page}.tiff")
+      rincewind::save_multiple(p, outfile, one_col = FALSE)
+    }
+    )
+  }
+)
+
 
 date_labeller <- function(x) {
   strftime(as.Date(x), format = "%d-%b")
@@ -97,48 +152,7 @@ by_week_plots <- map(
 )
 
 iwalk(by_week_plots, function(p, strategy) {
-  outfile <- glue("rel_mae_by_forecast_week_{strategy}.tiff")
+  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}.tiff")
   rincewind::save_multiple(p, outfile)
 })
 
-by_country_plots <- map(
-  by_strategy,
-  function(df) {
-    df$week_of_projection <- factor(df$week_of_projection)
-    x <- group_by(df, country) %>%
-      summarise(mu = mean(rel_mae)) %>%
-      ungroup() %>%
-      arrange(desc(mu))
-
-    df$country <- factor(
-      df$country, levels = x$country, ordered = TRUE
-    )
-
-    df$flag <- ifelse(
-      df$country %in% levels(df$country)[1:50], 1, 2
-    )
-
-    ggplot(df) +
-      geom_boxplot(
-        aes(country, log(rel_mae)),
-        position = "dodge", alpha = 0.5
-      ) +
-      scale_x_discrete(labels = rincewind::nice_country_name) +
-      facet_wrap(~flag, ncol = 1, scales = "free") +
-      ylab("(log) Relative mean error") +
-      guides(fill = guide_legend(title = "Week of forecast")) +
-      theme_minimal() +
-      theme(
-        axis.text.x = element_text(angle = 90),
-        legend.position = "top",
-        axis.title.x = element_blank(),
-        strip.text = element_blank()
-      )
-
-  }
-)
-
-iwalk(by_country_plots, function(p, strategy) {
-  outfile <- glue("rel_mae_by_country_{strategy}.tiff")
-  rincewind::save_multiple(p, outfile)
-})
