@@ -472,3 +472,4 @@ ggsave("relative_error_overall.png", p2)
 ## [1] 0.4363448
 
 
+if (! is.null(dev.list())) dev.off()
