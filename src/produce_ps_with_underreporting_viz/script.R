@@ -80,21 +80,39 @@ p1 <- ggplot(ps_last_day1) +
   geom_point(aes(label, `50%`, col = color)) +
   geom_linerange(
     aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+  ) +
+  scale_color_identity(
+    guide = "legend",
+    breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
+                "#D55E00"),
+    labels = c("Africa", "Asia", "Europe",  "North America",
+               "South America", "Oceania"),
+    drop = FALSE
   )
+
 
 
 p2 <- ggplot(ps_last_day2) +
   geom_point(aes(label, `50%`, col = color)) +
   geom_linerange(
     aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+  ) +
+  scale_color_identity(
+    guide = "legend",
+    breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
+                "#D55E00"),
+    labels = c("Africa", "Asia", "Europe",  "North America",
+               "South America", "Oceania"),
+    drop = FALSE
   )
+
 
 
 label <- textGrob(
   "Population susceptible (%)", rot = 90, gp = gpar(fontsize = 7)
 )
 
-p <- p1 + p2 + plot_layout(ncol = 1) &
+p <- p1 + p2 + plot_layout(ncol = 1, guides = 'collect') &
   theme_minimal() &
   theme(
     axis.text.x = element_markdown(
@@ -102,10 +120,9 @@ p <- p1 + p2 + plot_layout(ncol = 1) &
     ),
     axis.title.y = element_blank(),
     axis.title.x = element_blank(),
-    legend.position = "none",
+    legend.position = "top",
     legend.title = element_blank()
   ) &
-  scale_color_identity() &
   scale_y_continuous(
     labels = scales::percent_format(accuracy = 0.1),
     limits = c(0, 1)
