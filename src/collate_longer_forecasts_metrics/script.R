@@ -3,9 +3,9 @@ infiles <- run_info$depends$as
 
 ## orderly::orderly_develop_start(use_draft = "newer")
 ## infiles <- list.files(pattern = "*.rds")
+exclude <- readRDS("exclude.rds")
 
-
-
+infiles <- grep("exclude.rds", infiles, value = TRUE, invert = TRUE)
 
 
 names(infiles) <- gsub(
@@ -13,6 +13,7 @@ names(infiles) <- gsub(
 ) %>% gsub(x = ., pattern = ".rds", replacement = "")
 
 daily <- map_dfr(infiles, readRDS, .id = "forecast_week")
+daily <- daily[!daily$country %in% exclude, ]
 
 weekly <- group_by(
   daily, strategy, country, forecast_week, week_of_projection
