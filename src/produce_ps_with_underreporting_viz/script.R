@@ -109,7 +109,7 @@ p2 <- ggplot(ps_last_day2) +
 
 
 label <- textGrob(
-  "Population susceptible (%)", rot = 90, gp = gpar(fontsize = 7)
+  "Population susceptible (%)", rot = 90, gp = gpar(fontsize = 12)
 )
 
 p <- p1 + p2 + plot_layout(ncol = 1, guides = 'collect') &

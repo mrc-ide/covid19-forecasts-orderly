@@ -214,7 +214,7 @@ p2 <- ggplot(pop_wtd_ifr_qntls2) +
 
 
 label <- textGrob(
-  "Infection fatality ratio", rot = 90, gp = gpar(fontsize = 7)
+  "Infection fatality ratio", rot = 90, gp = gpar(fontsize = 10)
 )
 
 p <- p1 + p2 + plot_layout(ncol = 1, guides = 'collect') &
