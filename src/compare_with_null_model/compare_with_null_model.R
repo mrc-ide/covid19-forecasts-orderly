@@ -59,22 +59,25 @@ while (covered < nrow(better_than_null)) {
 
 saveRDS(country_groups, "country_groups.rds")
 
-iwalk(
+plots <- map(
   country_groups,
   function(countries, page) {
     df <- null_compare[null_compare$country %in% countries, ]
     df$country <- droplevels(df$country)
     out <- augment_data(df)
-    p1 <- compare_with_baseline(
+    compare_with_baseline(
       out[["df"]], out[["x_labels"]], out[["y_labels"]]
-    )
-    outfile <- glue("comparison_with_baseline_error_{page}.tiff")
-    rincewind::save_multiple(
-      filename = outfile, plot = p1, one_col = FALSE
     )
   }
 )
+plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 
+iwalk(
+  plots, function(p, page) {
+    outfile <- glue("comparison_with_baseline_error_{page}.tiff")
+    rincewind::save_multiple(filename = outfile, plot = p)
+  }
+)
 
 ######################################################################
 ######################################################################
@@ -122,18 +125,21 @@ better_than_null <- out[["better_than_null"]]
 saveRDS(better_than_null, "better_than_linear.rds")
 
 
-iwalk(
+plots <- map(
   country_groups,
   function(countries, page) {
     df <- null_compare[null_compare$country %in% countries, ]
     df$country <- droplevels(df$country)
     out <- augment_data(df)
-    p1 <- compare_with_baseline(
+    compare_with_baseline(
       out[["df"]], out[["x_labels"]], out[["y_labels"]]
-    )
-    outfile <- glue("comparison_with_linear_error_{page}.tiff")
-    rincewind::save_multiple(
-      filename = outfile, plot = p1, one_col = FALSE
     )
   }
 )
+
+plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
+
+iwalk(plots, function(p, page) {
+  outfile <- glue("comparison_with_linear_error_{page}.tiff")
+  rincewind::save_multiple(filename = outfile, plot = p)
+})

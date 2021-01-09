@@ -108,7 +108,7 @@ collation_workflow <- function(weeks, use_draft = "newer", commit = FALSE) {
   a <- orderly_run("collate_model_outputs", use_draft = use_draft)
   if (commit) orderly_commit(a)
 
-  weeks <- head(weeks, -1)
+  ##weeks <- head(weeks, -1)
   source(
     "orderly-helper-scripts/dependencies_collate_weighted_perf.R"
   )

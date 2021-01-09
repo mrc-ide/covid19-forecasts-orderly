@@ -22,7 +22,22 @@ endnote: no
 ---
 
 ## Summary
-
+```{r}
+## global, number of significant digits
+digits <- 3
+quantile_as_df <- function(vec,
+                           probs = c(0.025, 0.25, 0.5, 0.75, 0.975)) {
+  out <- data.frame(val = quantile(vec, probs), check.names = FALSE)
+  out <- tibble::rownames_to_column(out, "var")
+  out <- rbind(
+    out,
+    data.frame(var = "mu", val = mean(vec)),
+    data.frame(var = "sd", val = sd(vec))
+  )
+  out <- tidyr::spread(out, var, val)
+  signif(out, digits)
+}
+```
 ```{r}
 countries_included <- readr::read_csv("countries_included_each_week.csv")
 countries_included <- group_by(countries_included, week_starting) %>%
@@ -41,26 +56,30 @@ countries_included <- group_by(countries_included, week_starting) %>%
 
 ```{r}
 unwtd_pred_error <- readr::read_csv("unwtd_pred_weekly_summary.csv")
-x <- mean(unwtd_pred_error$prop_in_50_mu)
-x_sd <- sd(unwtd_pred_error$prop_in_50_mu)
-
-y <- mean(unwtd_pred_error$prop_in_975_mu)
-y_sd <- sd(unwtd_pred_error$prop_in_975_mu)
-
-mae <- mean(unwtd_pred_error$rel_mae_mu)
-mae_sd <- sd(unwtd_pred_error$rel_mae_mu)
-
 ```
 
-- Overall the proportion of observations in 50% CrI is
-`r scales::percent(x, 0.1)`, SD: `r scales::percent(x_sd, 0.1)` .
+### In 50% CrI
 
-- Overall the proportion of observations in 95% CrI is
-`r scales::percent(y, 0.1)`, SD: `r scales::percent(y_sd, 0.1)`.
+```{r}
 
-- Mean relative error across all countries and all weeks of 
-forecasts was `r signif(mae, 3)`. SD of relative
-mean error was `r signif(mae_sd, 3)`.
+quantile_as_df(unwtd_pred_error$prop_in_50_mu) %>%
+  knitr::kable()
+
+```
+### In 95% CrI
+
+```{r}
+quantile_as_df(unwtd_pred_error$prop_in_975_mu) %>%
+  knitr::kable()
+```
+
+## Relative error
+
+
+```{r}
+quantile_as_df(unwtd_pred_error$rel_mae_mu) %>%
+  knitr::kable()
+```
 
 
 ```{r}
@@ -85,27 +104,19 @@ produced.
 
 ```{r}
 mid_forecasts_error <- readRDS("long_forecasts_error_weekly.rds")
-
-across_all <- group_by(mid_forecasts_error, strategy, week_of_projection) %>%
-  summarise_if(is.numeric, list(mu = mean, sd = sd))  %>%
-  ungroup()
-
+by_strategy <- split(
+  mid_forecasts_error, mid_forecasts_error$strategy
+)
 ```
 ### Mean relative error
 
 ```{r}
-select(across_all, strategy, week_of_projection, rel_mae_mu) %>%
-  spread(week_of_projection, rel_mae_mu) %>%
-  knitr::kable()
-
-```
-
-### SD relative error
-
-```{r}
-select(across_all, strategy, week_of_projection, rel_mae_sd) %>%
-  spread(week_of_projection, rel_mae_sd) %>%
-  knitr::kable()
+map_dfr(
+  by_strategy, function(x) {
+    split(x, x$week_of_projection) %>%
+      map_dfr(~ quantile_as_df(.$rel_mae), .id = "week_of_projection")
+  }, .id = "strategy"
+) %>% knitr::kable()
 
 ```
 
@@ -115,35 +126,28 @@ select(across_all, strategy, week_of_projection, rel_mae_sd) %>%
 
 ```{r}
 
-select(across_all, strategy, week_of_projection, prop_in_50_mu) %>%
-  spread(week_of_projection, prop_in_50_mu) %>%
-  knitr::kable()
+map_dfr(
+  by_strategy, function(x) {
+    split(x, x$week_of_projection) %>%
+      map_dfr(
+        ~ quantile_as_df(.$prop_in_50), .id = "week_of_projection"
+      )
+  }, .id = "strategy"
+) %>% knitr::kable()
 
 ```
-
-```{r}
-
-select(across_all, strategy, week_of_projection, prop_in_50_sd) %>%
-  spread(week_of_projection, prop_in_50_sd) %>%
-  knitr::kable()
-
-```
-
 #### In 95% Credible Interval
 
 ```{r}
 
-select(across_all, strategy, week_of_projection, prop_in_975_mu) %>%
-  spread(week_of_projection, prop_in_975_mu) %>%
-  knitr::kable()
-
-```
-
-```{r}
-
-select(across_all, strategy, week_of_projection, prop_in_975_sd) %>%
-  spread(week_of_projection, prop_in_975_sd) %>%
-  knitr::kable()
+map_dfr(
+  by_strategy, function(x) {
+    split(x, x$week_of_projection) %>%
+      map_dfr(
+        ~ quantile_as_df(.$prop_in_975), .id = "week_of_projection"
+      )
+  }, .id = "strategy"
+) %>% knitr::kable()
 
 ```
 ## Proportion of susceptible population at the end of December 2020

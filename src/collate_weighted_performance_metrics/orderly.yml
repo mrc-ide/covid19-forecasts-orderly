@@ -161,3 +161,7 @@ depends:
     id: latest(parameter:week_ending == "2020-11-22")
     use:
       unwtd_pred_error_2020-11-22.csv: unwtd_pred_error.csv
+- produce_performance_metrics_ensemble:
+    id: latest(parameter:week_ending == "2020-11-29")
+    use:
+      unwtd_pred_error_2020-11-29.csv: unwtd_pred_error.csv

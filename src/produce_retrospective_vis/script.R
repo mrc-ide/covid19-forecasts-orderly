@@ -76,6 +76,30 @@ pline <- ggplot() +
 
 ggsave("n_included_line.png", pline)
 
+## One version for SI.
+
+pline <- ggplot() +
+  geom_line(
+    data = x, aes(week_starting, n, col = continent_name), size = 1.5
+  ) +
+  scale_x_date(
+    breaks = seq(
+      from = as.Date("2020-03-01"),
+      to = week_ending,
+      by = "6 weeks"
+    ),
+    limits = c(as.Date("2020-03-01"), as.Date("2020-12-10")),
+    date_labels = "%d - %b"
+  ) +
+  coord_cartesian(clip = 'off') +
+  theme_minimal() +
+  theme(legend.position = "top", legend.title = element_blank()) +
+  scale_color_manual(values = palette) +
+  ylab("Countries with active transmission") +
+  xlab("Week Starting")
+
+ggsave("n_included_line_si.png", pline)
+
 #####################################################################
 #####################################################################
 ############# Epicurve by continent #################################

@@ -103,11 +103,17 @@ readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
+weeks <- seq(
+  from = as.Date("2020-03-08"),
+  to = as.Date("2020-11-30"),
+  by = "7 days"
+)
+
 plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
-    p <- prop_in_cri_heatmap(x)
+    p <- prop_in_cri_heatmap(x, weeks)
     outfile <- glue("proportion_in_50_CrI_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
     p
@@ -115,24 +121,26 @@ plots <- imap(
 )
 
 ## For SI, we put 2 plots together with a common legend.
-legend <- get_legend(
-  plots[[2]] + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
+legend <- get_legend(plots[[2]])
 
 prow <- plot_grid(
-  plots[[2]] + theme(legend.position = "none"),
-  plots[[3]] + theme(legend.position = "none"),
+  plots[[1]] +
+  theme(legend.position = "none", axis.text.x = element_blank()),
+  plots[[2]] +
+  theme(legend.position = "none", axis.text.x = element_blank()),
+  plots[[3]] +
+  theme(legend.position = "none"),
+  plots[[4]] +
+  theme(legend.position = "none"),
   ncol = 2
 )
 
 prow <- prow + theme(title = element_text(size = 6 / .pt))
 ## Finally put the legend back in
 
-p50 <- plot_grid(
-  legend, prow, ncol = 1, rel_heights = c(0.1, 1)
-)
+p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 
-outfile <- glue("proportion_in_50_CrI_si.tiff")
+outfile <- "proportion_in_50_CrI_si.tiff"
 rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
 #### Overall metrics
 ## > mean(unwtd_pred_error$prop_in_50)
@@ -151,27 +159,23 @@ plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_975_mu")
-    x$top_label <- glue(
-      "{round_and_format(x$prop_in_975_d_mu)}",
-      " %+-% {round_and_format(x$prop_in_975_d_sd)}"
-    )
-
-    x$right_label <- glue(
-      "{round_and_format(x$prop_in_975_c_mu)}",
-      " %+-% {round_and_format(x$prop_in_975_c_sd)}"
-    )
-    p <- prop_in_cri_heatmap(x, CrI = "95%")
+    p <- prop_in_cri_heatmap(x, weeks, CrI = "95%")
     outfile <- glue("proportion_in_95_CrI_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
+    p
   }
 )
 
-legend <- get_legend(
-  plots[[2]] + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
+
+legend <- get_legend(plots[[2]])
+
 prow <- plot_grid(
-  plots[[2]] + theme(legend.position = "none"),
+  plots[[1]] +
+  theme(legend.position = "none", axis.text.x = element_blank()),
+  plots[[2]] +
+  theme(legend.position = "none", axis.text.x = element_blank()),
   plots[[3]] + theme(legend.position = "none"),
+  plots[[4]] + theme(legend.position = "none"),
   ncol = 2
 )
 
@@ -179,7 +183,7 @@ prow <- plot_grid(
 
 p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 outfile <- glue("proportion_in_95_CrI_si.tiff")
-rincewind::save_multiple(plot = p95, filename = outfile, two_col = TRUE)
+rincewind::save_multiple(plot = p95, filename = outfile)
 
 #####################################################################
 #####################################################################
@@ -334,30 +338,24 @@ readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 ######################################################################
 ######################################################################
 ######################################################################
-iwalk(
+plots <- map(
   weekly_summaries,
-  function(df, page) {
-    df$top_label <- glue(
-      "{round_and_format(df$rel_mae_d_mu)}",
-      " %+-% {round_and_format(df$rel_mae_d_sd)}"
-    )
-
-    df$right_label <- glue(
-      "{round_and_format(df$rel_mae_c_mu)}",
-      " %+-% {round_and_format(df$rel_mae_c_sd)}"
-    )
-
-    df$cell_label <- glue(
-      "{round_and_format(df$rel_mae_mu)}"
-    )
-    out <- augment_data(df, width = 2)
-    p <- relative_error_heatmap(
+  function(df) {
+    out <- augment_data(df, weeks, width = 2)
+    relative_error_heatmap(
       out[["df"]], out[["x_labels"]], out[["y_labels"]]
     )
+  }
+)
+
+plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
+iwalk(
+  plots, function(p, page) {
     outfile <- glue("relative_error_heatmap_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile)
   }
 )
+
 
 ######################################################################
 ######################################################################
@@ -465,3 +463,5 @@ ggsave("relative_error_overall.png", p2)
 ## > sd(overall$rel_mae_mu[is.finite(overall$rel_mae_mu)])
 ## [1] 0.4363448
 
+
+if (! is.null(dev.list())) dev.off()

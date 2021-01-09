@@ -153,3 +153,7 @@ depends:
     id: latest(parameter:week_ending == "2020-11-29")
     use:
       long_projections_error_2020-11-29.rds: long_projections_error.rds
+- produce_baseline_error:
+    id: latest(parameter:latest_week == "2020-11-29")
+    use:
+      exclude.rds: exclude.rds

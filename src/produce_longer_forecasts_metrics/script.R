@@ -11,6 +11,31 @@ all_metrics <- function(obs, pred) {
     t(apply(pred, 2, quantile, probs = c(0.025, 0.25, 0.5, 0.75, 0.975)))
 
   qntls <- data.frame(qntls, check.names = FALSE)
+
+  ## We need to compute proportion in observations in Credible Interval
+  ## by week upfront, because otherwise you will just get the proportion
+  ## of obs in CrI across all weeks.
+  idx <- seq(1, length(obs), 7)
+  prop_in_cri <- map(idx, function(start) {
+    idx_week <- seq(start, length.out = 7, by = 1)
+    obs_week <- obs[idx_week]
+    qntls_week <- t(
+      apply(
+        pred[ ,idx_week], 2, quantile, probs = c(0.025, 0.25, 0.5, 0.75, 0.975)
+      )
+    )
+    qntls_week <- data.frame(qntls_week, check.names = FALSE)
+    list(
+      in_50 = prop_in_ci(
+        obs_week, qntls_week[["25%"]], qntls_week[["75%"]]
+      ),
+      in_95 = prop_in_ci(
+        obs_week, qntls_week[["2.5%"]], qntls_week[["97.5%"]]
+      )
+    )
+  })
+  prop_in_50 <- map_dbl(prop_in_cri, ~ .$in_50) %>% rep(each = 7)
+  prop_in_95 <- map_dbl(prop_in_cri, ~ .$in_95) %>% rep(each = 7)
   pred <- t(pred)
   data.frame(
     mae = assessr::mae(obs, pred),
@@ -18,8 +43,8 @@ all_metrics <- function(obs, pred) {
     rel_mse = assessr::rel_mse(obs, pred),
     rel_sharpness = assessr::rel_mean_dvtn(pred),
     bias = assessr::bias(obs, pred),
-    prop_in_50 = assessr::prop_in_ci(obs, qntls[["25%"]], qntls[["75%"]]),
-    prop_in_975 = assessr::prop_in_ci(obs, qntls[["2.5%"]], qntls[["97.5%"]]),
+    prop_in_50 = prop_in_50,
+    prop_in_975 = prop_in_95,
     median_pred = qntls[["50%"]]
   )
 }
