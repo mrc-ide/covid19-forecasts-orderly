@@ -88,7 +88,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
     palette = "Spectral", na.value = "white", direction = -1,
     guide = guide_colourbar(
       title = "Relative Error",
-      title.position = "left",
+      title.position = "top",
       title.vjust = 0.5,
       order = 1
     )

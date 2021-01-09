@@ -166,6 +166,7 @@ plots <- imap(
   }
 )
 
+
 legend <- get_legend(plots[[2]])
 
 prow <- plot_grid(
@@ -337,33 +338,24 @@ readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 ######################################################################
 ######################################################################
 ######################################################################
-plots <- imap(
+plots <- map(
   weekly_summaries,
-  function(df, page) {
+  function(df) {
     out <- augment_data(df, weeks, width = 2)
-    p <- relative_error_heatmap(
+    relative_error_heatmap(
       out[["df"]], out[["x_labels"]], out[["y_labels"]]
     )
-    outfile <- glue("relative_error_heatmap_{page}.tiff")
-    rincewind::save_multiple(plot = p, filename = outfile)
-    p
   }
 )
 
-legend <- get_legend(plots[[2]])
-
-prow <- plot_grid(
-  plots[[2]] +
-    theme(legend.position = "none", axis.text.x = element_blank()),
-  plots[[3]] + theme(legend.position = "none"),
-  plots[[4]] + theme(legend.position = "none"),
-  ncol = 2
+plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
+iwalk(
+  plots, function(p, page) {
+    outfile <- glue("relative_error_heatmap_{page}.tiff")
+    rincewind::save_multiple(plot = p, filename = outfile)
+  }
 )
 
-prel <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
-
-outfile <- glue("relative_error_heatmap_si.tiff")
-rincewind::save_multiple(plot = prel, filename = outfile)
 
 ######################################################################
 ######################################################################

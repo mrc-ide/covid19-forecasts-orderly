@@ -155,7 +155,7 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
       legend.title = element_text(size = 8),
       legend.key.width = unit(2, "lines"),
       legend.key.height = unit(1, "lines"),
-      plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt"),
+      ##plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt"),
       axis.line = element_blank()
     ) +
     coord_cartesian(clip = "off")

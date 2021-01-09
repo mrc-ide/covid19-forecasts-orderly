@@ -41,10 +41,10 @@ infections <- data.frame(
   age_group = c("[15-44)", "[45-64)", "[65-74)", "75+"),
   mu = c(1536000, 895000, 181000, 166000),
   sigma = 1000 * c(
-  (1635 - 1437) / 2,
-  (953 - 837) / 2,
-  (209 - 153) / 2,
-  (201 - 131) / 2
+  (1635 - 1437) / (2 * 1.96),
+  (953 - 837) / (2 * 1.96),
+  (209 - 153) / (2 * 1.96),
+  (201 - 131) / (2 * 1.96)
   )
 )
 c19_deaths <- data.frame(
@@ -107,7 +107,7 @@ pop_pyramid <- map(
     out <- data.frame(
       location = location,
       "[0-15)" = rowSums(select(x, `0-4`:`10-14`)),
-      "[15-44)" = rowSums(select(x, `5-9`:`40-44`)),
+      "[15-44)" = rowSums(select(x, `15-19`:`40-44`)),
       "[45-64)" = rowSums(select(x, `45-49`:`60-64`)),
       "[65-74)" = rowSums(select(x, `65-69`:`70-74`)),
       "75+" = rowSums(select(x, `75-79`:`100+`)),
@@ -127,7 +127,7 @@ pop_wtd_ifr <- map(
   function(pop) {
     out <- slider::slide(
       pop, ~ ifr_distr[[as.character(.x$age_group)]] * .x$prop
-      )
+    )
     out[[5]] + out[[2]] + out[[3]] + out[[4]]
   }
 )
