@@ -38,12 +38,11 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
       legend.title = element_text(size = 8),
       legend.key.width = unit(2, "lines"),
       legend.key.height = unit(1, "lines"),
-      legend.margin = margin(0, 0, 2, 0),
-      legend.box.margin=margin(0, -10, -10, -10),
+      ##legend.margin = margin(0, 0, 2, 0),
+      ##legend.box.margin=margin(0, -10, -10, -10),
       axis.line = element_blank()
     ) +
     coord_cartesian(clip = "off")
-
   p
 }
 
