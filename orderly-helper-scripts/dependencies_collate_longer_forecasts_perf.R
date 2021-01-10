@@ -32,7 +32,17 @@ dependancies <- purrr::map(
   }
 )
 
-x$depends <- dependancies
+
+dependancies6 <- list(
+  list(
+    produce_baseline_error = list(
+      id = "latest(parameter:latest_week == \"2020-11-29\")",
+      use = list("exclude.rds" =  "exclude.rds")
+    )
+  )
+)
+
+x$depends <- c(dependancies, dependancies6)
 
 
 con <- file(

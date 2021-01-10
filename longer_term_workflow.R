@@ -92,3 +92,7 @@ source("orderly-helper-scripts/dependencies_collate_longer_forecasts_perf.R")
 orderly::orderly_run(
   "collate_longer_forecasts_metrics", use_draft = "newer"
 )
+
+orderly::orderly_run(
+  "src/produce_longer_forecasts_perf_viz/", use_draft = "newer"
+)
