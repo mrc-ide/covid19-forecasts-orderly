@@ -10,11 +10,10 @@ augment_data <- function(df, weeks, width = 1.5) {
   x_labels <- setNames(x_labels[idx], x$x[idx])
   x$forecast_week <- factor(x$forecast_week)
   ##y <- data.frame(country = rev(levels(df$country)))
-  y <- data.frame(country = unique(df$country))
+  y <- data.frame(country = rev(levels(df$country)))
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
-  y_labels <- as.character(y$country) %>%
-    snakecase::to_title_case()
+  y_labels <- nice_country_name(y$country)
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
@@ -33,8 +32,8 @@ long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
 
  p <- ggplot() +
     geom_tile(
-      data = df[df$rel_mae_mu <= high1, ],
-      aes(x, y, fill = rel_mae_mu),
+      data = df[df$rel_mae <= high1, ],
+      aes(x, y, fill = rel_mae),
       width = 1.8, height = 1.8, alpha = 0.8
     ) +
   scale_fill_distiller(
@@ -48,8 +47,8 @@ long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
   ) +
   ggnewscale::new_scale_fill() +
   geom_tile(
-    data = df[df$rel_mae_mu > high1 & df$rel_mae_mu <= high2, ],
-    aes(x, y, fill = rel_mae_mu),
+    data = df[df$rel_mae > high1 & df$rel_mae <= high2, ],
+    aes(x, y, fill = rel_mae),
     width = 1.8, height = 1.8, alpha = 0.8
   ) +
   scale_fill_distiller(
@@ -63,7 +62,7 @@ long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
   ) +
   ggnewscale::new_scale_fill() +
   geom_tile(
-    data = df[df$rel_mae_mu > high2, ],
+    data = df[df$rel_mae > high2, ],
     aes(x, y), fill = "#4c0000", width = 1.8, height = 1.8
   ) +
   scale_y_continuous(
