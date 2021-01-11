@@ -115,7 +115,7 @@ plots <- imap(
     x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
     p <- prop_in_cri_heatmap(x, weeks)
     outfile <- glue("proportion_in_50_CrI_{page}.tiff")
-    rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
+    rincewind::save_multiple(plot = p, filename = outfile)
     p
   }
 )
@@ -135,7 +135,6 @@ prow <- plot_grid(
   ncol = 2
 )
 
-prow <- prow + theme(title = element_text(size = 6 / .pt))
 ## Finally put the legend back in
 
 p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
@@ -352,6 +351,16 @@ plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 iwalk(
   plots, function(p, page) {
     outfile <- glue("relative_error_heatmap_{page}.tiff")
+    rincewind::save_multiple(plot = p, filename = outfile)
+  }
+)
+
+## Comparison with linear error is all in SI.
+
+plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
+iwalk(
+  plots, function(p, page) {
+    outfile <- glue("relative_error_heatmap_{page}_2.tiff")
     rincewind::save_multiple(plot = p, filename = outfile)
   }
 )

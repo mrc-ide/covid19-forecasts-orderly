@@ -4,12 +4,17 @@
 chosen_strategy <- "weighted_per_country"
 dir.create("figures")
 weekly_error <- readRDS("long_projections_error_weekly.rds")
-weekly_error <- weekly_error[weekly_error$strategy == chosen_strategy, ]
 weekly_incid <- readRDS("weekly_incidence.rds")
 exclude <- readRDS("exclude.rds")
-
-weekly_error <- weekly_error[!weekly_error$country %in% exclude, ]
+better_than_null <- readRDS("better_than_null.rds")
 country_groups <- readRDS("country_groups.rds")
+
+weekly_error <- weekly_error[weekly_error$strategy == chosen_strategy, ]
+weekly_error <- weekly_error[!weekly_error$country %in% exclude, ]
+weekly_error$country <- factor(
+  weekly_error$country,
+  levels = better_than_null$country, ordered = TRUE
+)
 
 weeks <- seq(
   from  = as.Date("2020-03-29"), to = as.Date("2020-11-29"),
@@ -40,8 +45,9 @@ rel_mae_plots <- map(
       country_groups,
       function(countries) {
         local <- df[df$country %in% countries, ]
-        local <- weekly_summary(local)
-        local$country <- rincewind::nice_country_name(local$country)
+        local <- droplevels(local)
+        ##local <- weekly_summary(local)
+        ##local$country <- rincewind::nice_country_name(local$country)
         out <- augment_data(local, weeks, 2)
         long_relative_error_heatmap(
           out[[1]], high1 = 1, high2 = 3, out$x_labels, out$y_labels) +
@@ -70,7 +76,7 @@ prop_50_plots <- map(
       country_groups,
       function(countries) {
         local <- df[df$country %in% countries, ]
-        local$country <- rincewind::nice_country_name(local$country)
+        local <- droplevels(local)
         out <- augment_data(local, weeks, 2)
         df <- out$df
         df$fill <- df$prop_in_50
@@ -101,7 +107,7 @@ prop_95_plots <- map(
       country_groups,
       function(countries) {
         local <- df[df$country %in% countries, ]
-        local$country <- rincewind::nice_country_name(local$country)
+        local <- droplevels(local)
         out <- augment_data(local, weeks, 2)
         df <- out$df
         df$fill <- df$prop_in_975
