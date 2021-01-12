@@ -12,6 +12,7 @@ packages:
 - purrr
 - ggplot2
 - glue
+- rincewind
 
 parameters: week_ending
 
@@ -19,7 +20,7 @@ depends:
 - produce_longer_forecasts:
     id: latest(parameter:week_ending == week_ending  && parameter:use_si == "si_2")
     use:
-      weighted_across_countries_reff_qntls.rds: weighted_across_countries_reff_qntls.rds
+      weighted_per_country_reff_qntls.rds: weighted_per_country_reff_qntls.rds
 - collate_combined_rt:
     id: latest
     use:
