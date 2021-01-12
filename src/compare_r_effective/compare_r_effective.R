@@ -1,15 +1,7 @@
-## orderly::orderly_develop_start(use_draft = "newer",
-## parameters = list(week_ending = "2020-10-04"))
-dir.create("figures")
-
-reff_qntls <- readRDS("weighted_per_country_reff_qntls.rds")
-## Add day
-reff_qntls <- map_dfr(reff_qntls, function(df) {
-  df$day <- seq_len(nrow(df))
-  df
-}, .id = "country")
+## orderly::orderly_develop_start(use_draft = "newer")
 
 
+reff_qntls <- readRDS("reff_qntls.rds")
 reff_qntls <- rincewind::assign_epidemic_phase(reff_qntls)
 ## We assume transmissibility remains constant for 1 week.
 ## Therefore, for each country, for each week, repeat the rows for 7
@@ -21,12 +13,21 @@ weekly_rt <- na.omit(weekly_rt)
 ######################################################################
 ######### Compare phase assigned by the two Rts ######################
 ######################################################################
-reff_qntls$date <- as.Date(reff_qntls$date)
-compare_phase <- dplyr::left_join(
-  reff_qntls, weekly_rt,
-  by = c("country", "date"),
-  suffix = c("_eff", "_weekly")
-  )
+## There will be instances (countries and weeks) where we will have
+## Rt from medium-term forecasts, but not from weekly Rt
+## Therefore it is better to join weekly_rt to reff_qntls
+## rather than the other way around
+compare_phase <- left_join(
+  weekly_rt, reff_qntls, by = c("country", "date"),
+  suffix = c("_weekly", "_eff")
+)
+## The only NAs should now be from the first three weeks
+## for which we did not produce medium-term forecasts.
+## x <- compare_phase[! complete.cases(compare_phase), ]
+## unique(x$forecast_date)
+## [1] "2020-03-22" "2020-03-08" "2020-03-15"]
+## Therefore we can safely omit these
+compare_phase <- na.omit(compare_phase)
 
 compare_phase$week_of_forecast <- case_when(
   compare_phase$day <= 7 ~ "Week 1",
@@ -60,6 +61,52 @@ ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
   theme_minimal() +
   theme(legend.position = "top", legend.title = element_blank())
 
+
+
+## phase_eff is estimated on a daily scale. Before aggregating it to
+## a weekly metric, check if there are instances where it different
+## within a week
+## group_by(compare_phase, forecast_week, country, week_of_forecast) %>%
+##   summarise(n = length(unique(phase_eff))) %>%
+##   filter(n > 1) %>%
+##   arrange(desc(n))
+## A maximum of 2 different phases have been assigned within a week
+out <- tabyl(x, phase_weekly, phase_eff, day) %>%
+  adorn_percentages(denominator = "row") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  bind_rows(.id = "day")
+
+out <- gather(out, phase_eff, label, decline:unclear)
+out$val <- readr::parse_number(out$label)
+
+out$week_of_forecast <- case_when(
+  out$day <= 7 ~ "Week 1",
+  7 < out$day & out$day <= 14 ~ "Week 2",
+  14 < out$day & out$day <= 21 ~ "Week 3",
+  21 < out$day  ~ "Week 4"
+)
+
+out$day <- factor(out$day, levels = 1:28, ordered = TRUE)
+
+## scales will multiply whatever you give it by a 100.
+## whereas our values are already in (0, 100). We just want anice
+## % sign
+mypercent <- function(vec) scales::percent(vec/100, accuracy = 0.1)
+
+ggplot(out, aes(day, phase_eff, fill = val)) +
+  geom_tile(width = 0.8, height = 0.5) +
+  ##geom_text(aes(day, phase_eff, label = label)) +
+  facet_wrap(~ phase_weekly, nrow = 2) +
+  scale_fill_distiller(
+    palette = "Greens", direction = 1, breaks = c(0, 50, 100),
+    limits = c(0, 100), label = mypercent
+  ) +
+  xlab("Day of forecast") +
+  ylab("Epidemic phase (Rs)") +
+  theme_minimal() +
+  theme(legend.position = "top", legend.title = element_blank())
+
+
 ######################################################################
 ####### Option 2: Compare the overlap ################################
 ######################################################################
@@ -91,23 +138,25 @@ out50 <- tabyl(x, week_of_forecast, overlaps50) %>%
   adorn_percentages(denominator = "row") %>%
   adorn_pct_formatting(digits = 2)
 
-## |week_of_forecast |FALSE  |TRUE   |
+## knitr::kable(out50)
+## week_of_forecast |FALSE  |TRUE   |
 ## |:----------------|:------|:------|
-## |Week 1           |4.29%  |95.71% |
-## |Week 2           |27.35% |72.65% |
-## |Week 3           |41.43% |58.57% |
-## |Week 4           |40.00% |60.00% |
+## |Week 1           |1.80%  |98.20% |
+## |Week 2           |33.01% |66.99% |
+## |Week 3           |38.80% |61.20% |
+## |Week 4           |42.68% |57.32% |
 
 out95 <- tabyl(x, week_of_forecast, overlaps95) %>%
   adorn_percentages(denominator = "row") %>%
   adorn_pct_formatting(digits = 2)
 
-## |week_of_forecast |FALSE |TRUE    |
-## |:----------------|:-----|:-------|
-## |Week 1           |0.00% |100.00% |
-## |Week 2           |2.86% |97.14%  |
-## |Week 3           |4.29% |95.71%  |
-## |Week 4           |7.14% |92.86%  |
+## knitr::kable(out95)
+## |week_of_forecast |FALSE  |TRUE   |
+## |:----------------|:------|:------|
+## |Week 1           |0.28%  |99.72% |
+## |Week 2           |4.06%  |95.94% |
+## |Week 3           |7.44%  |92.56% |
+## |Week 4           |10.36% |89.64% |
 
 ######################################################################
 ####### Option 3: Compare correlation ################################
@@ -118,13 +167,12 @@ x <- split(compare_phase, compare_phase$week_of_forecast) %>%
   }, .id = "week_of_forecast"
   )
 
-
-## |week_of_forecast |column1 |column2 |  estimate|   n| p.value|
-## |:----------------|:-------|:-------|---------:|---:|-------:|
-## |Week 1           |y       |x       | 0.8561548| 490|       0|
-## |Week 2           |y       |x       | 0.6358706| 490|       0|
-## |Week 3           |y       |x       | 0.4090670| 490|       0|
-## |Week 4           |y       |x       | 0.4094750| 490|       0|
-
+## knitr::kable(x)
+## |week_of_forecast |column1 |column2 |  estimate|     n| p.value|
+## |:----------------|:-------|:-------|---------:|-----:|-------:|
+## |Week 1           |y       |x       | 0.9514270| 15155|       0|
+## |Week 2           |y       |x       | 0.5678541| 14371|       0|
+## |Week 3           |y       |x       | 0.3671123| 13699|       0|
+## |Week 4           |y       |x       | 0.2522769| 13069|       0|
 
 
