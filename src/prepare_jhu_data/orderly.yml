@@ -1,0 +1,22 @@
+script: prepare_jhu_data.R
+
+parameters: week_ending
+
+artefacts:
+  - data:
+      description: Input data for modeling 
+      filenames:
+        - latest_model_input.rds
+        - latest_deaths_wide_no_filter.rds
+
+packages:
+  - dplyr
+  - tidyr
+  - readr
+  - purrr
+  - ggplot2
+  - rincewind
+  - countrycode
+
+sources:
+  - R/utils.R
