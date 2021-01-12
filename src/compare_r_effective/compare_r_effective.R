@@ -2,20 +2,6 @@
 ## parameters = list(week_ending = "2020-10-04"))
 dir.create("figures")
 
-reff_overlaps_weekly <- function(reff, weekly) {
-  x <- left_join(
-    reff, weekly, by = c("date" = "date"),
-    suffix = c("_reff", "_weekly")
-  )
-  x <- na.omit(x)
-  x$day <- seq_len(nrow(x))
-  x$reff_overlaps_weekly <-
-    (x$`2.5%_weekly` > x$`2.5%_reff`) &
-    (x$`97.5%_weekly` < x$`97.5%_reff`)
-
-  x
-}
-
 reff_qntls <- readRDS("weighted_per_country_reff_qntls.rds")
 ## Add day
 reff_qntls <- map_dfr(reff_qntls, function(df) {
@@ -48,6 +34,7 @@ compare_phase$week_of_forecast <- case_when(
   14 < compare_phase$day & compare_phase$day <= 21 ~ "Week 3",
   21 < compare_phase$day  ~ "Week 4"
 )
+
 ######################################################################
 ####### Option 1: Compare the phase assigned #########################
 ######################################################################
@@ -55,87 +42,89 @@ x <- select(
   compare_phase, day, week_of_forecast, phase_eff, phase_weekly
 )
 
-tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
+out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
   adorn_percentages(denominator = "row") %>%
   adorn_pct_formatting(digits = 2) %>%
   bind_rows(.id = "Week of forecast")
 
-ggplot(compare_phase, aes(`50%_weekly`, `50%_eff`)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-facet_wrap(~week_of_forecast, nrow = 2, scales = "free")
+out <- gather(out, phase_eff, label, decline:unclear)
+out$val <- readr::parse_number(out$label)
 
-##compare_phase <- na.omit(compare_phase)
+ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
+  geom_tile() +
+  geom_text(aes(phase_weekly, phase_eff, label = label)) +
+  facet_wrap(~ `Week of forecast`, nrow = 2) +
+  scale_fill_distiller(palette = "Greens", direction = -1) +
+  xlab("Epidemic phase (weekly Rt)") +
+  ylab("Epidemic phase (Rs)") +
+  theme_minimal() +
+  theme(legend.position = "top", legend.title = element_blank())
 
-saveRDS(compare_phase, "compare_phase_weekly_effevtive.rds")
-
-compare_phase$flag <- case_when(
-  compare_phase$phase_weekly == compare_phase$phase_eff ~ "same",
-  TRUE ~ "different"
+######################################################################
+####### Option 2: Compare the overlap ################################
+######################################################################
+x <- select(
+  compare_phase, day, week_of_forecast,
+  `2.5%_eff`, `97.5%_eff`, `25%_eff`, `75%_eff`,
+  `2.5%_weekly`, `97.5%_weekly`, `25%_weekly`, `75%_weekly`
 )
 
-country_groups <- readRDS("country_groups.rds")
-
-palette <- c(
-  decline = "018571", growing = "#a6611a", unclear = "#dfc27d",
-  `stable/growing slowly` = "#80cdc1"
-)
-
-
-plots <- map(
-  country_groups,
-  function(countries) {
-    x <- compare_phase[compare_phase$country %in% countries, ]
-    x$country <- rincewind::nice_country_name(x$country)
-    ##x <- select(x, country, date, phase_eff, phase_weekly)
-    ## This might work!
-    ## p <- ggplot(x, aes(date, country, fill = phase_eff)) +
-    ##   geom_tile() +
-    ##   facet_grid(week_of_forecast ~ phase_weekly, scales = "free_x")
-
-    ggplot(x) +
-      geom_line(
-        aes(date, country, col = phase_eff), size = 1.2
-      ) +
-      scale_color_manual(values = palette) +
-      scale_x_date(
-        date_breaks = date_breaks, date_labels = date_labels
-      ) +
-      facet_grid(phase_weekly ~ week_of_forecast) +
-      theme_minimal() +
-      theme(
-        legend.position = "top",
-        legend.title = element_blank(),
-        axis.title = element_blank()
-      )
+x$overlaps95 <- pmap_lgl(
+  select(x, `2.5%_eff`, `97.5%_eff`, `2.5%_weekly`, `97.5%_weekly`),
+  function(`2.5%_eff`, `97.5%_eff`, `2.5%_weekly`, `97.5%_weekly`) {
+    x1 <- c(`2.5%_eff`, `97.5%_eff`)
+    x2 <- c(`2.5%_weekly`, `97.5%_weekly`)
+    overlaps(x1, x2, 2)
   }
 )
 
-iwalk(plots, function(p, index) {
-  outfile <- glue("compare_phase_{index}.tiff")
-  rincewind::save_multiple(p, outfile)
-})
+x$overlaps50 <- pmap_lgl(
+  select(x, `25%_eff`, `75%_eff`, `25%_weekly`, `75%_weekly`),
+  function(`25%_eff`, `75%_eff`, `25%_weekly`, `75%_weekly`) {
+    x1 <- c(`25%_eff`, `75%_eff`)
+    x2 <- c(`25%_weekly`, `75%_weekly`)
+    overlaps(x1, x2, 2)
+  }
+)
 
-compare_phase <- na.omit(compare_phase)
-x <- count(compare_phase, phase_weekly, phase_eff, day)
-## x <- tidyr::spread(x, phase_eff, n, 0)
-## x$total <- rowSums(x[, -c(1, 2)])
-## x <- mutate_at(
-##   x,
-##   vars("decline", "growing", "stable/growing slowly", "unclear"),
-##   ~ . / total
-## )
+out50 <- tabyl(x, week_of_forecast, overlaps50) %>%
+  adorn_percentages(denominator = "row") %>%
+  adorn_pct_formatting(digits = 2)
 
-x <- split(compare_phase, compare_phase$country) %>%
-  map_dfr(
-    function(by_country) {
-      split(by_country, by_country$day) %>%
-          map_dfr(function(df) {
-            Hmisc::rcorr(df$`50%_weekly`, df$`50%_eff`) %>% broom::tidy()
-          }, .id = "day"
-       )
-    }, .id = "country"
+## |week_of_forecast |FALSE  |TRUE   |
+## |:----------------|:------|:------|
+## |Week 1           |4.29%  |95.71% |
+## |Week 2           |27.35% |72.65% |
+## |Week 3           |41.43% |58.57% |
+## |Week 4           |40.00% |60.00% |
+
+out95 <- tabyl(x, week_of_forecast, overlaps95) %>%
+  adorn_percentages(denominator = "row") %>%
+  adorn_pct_formatting(digits = 2)
+
+## |week_of_forecast |FALSE |TRUE    |
+## |:----------------|:-----|:-------|
+## |Week 1           |0.00% |100.00% |
+## |Week 2           |2.86% |97.14%  |
+## |Week 3           |4.29% |95.71%  |
+## |Week 4           |7.14% |92.86%  |
+
+######################################################################
+####### Option 3: Compare correlation ################################
+######################################################################
+x <- split(compare_phase, compare_phase$week_of_forecast) %>%
+  map_dfr(function(df) {
+    Hmisc::rcorr(df$`50%_weekly`, df$`50%_eff`) %>% broom::tidy()
+  }, .id = "week_of_forecast"
   )
 
 
-ggplot(x, aes(as.integer(day), country, fill = estimate)) + geom_tile()
+## |week_of_forecast |column1 |column2 |  estimate|   n| p.value|
+## |:----------------|:-------|:-------|---------:|---:|-------:|
+## |Week 1           |y       |x       | 0.8561548| 490|       0|
+## |Week 2           |y       |x       | 0.6358706| 490|       0|
+## |Week 3           |y       |x       | 0.4090670| 490|       0|
+## |Week 4           |y       |x       | 0.4094750| 490|       0|
+
+
+
