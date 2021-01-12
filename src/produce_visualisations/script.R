@@ -52,9 +52,11 @@ by_continent_si <- split(
   sep = "_"
 )
 n_cntrs <- map_int(by_continent_si, ~ length(unique(.$country)))
-npanels <- 6
+
 nrows <- 3
-ncols <- 2
+ncols <- 1
+npanels <- nrows * ncols
+
 n_pages <- ceiling(n_cntrs / npanels)
 nice_names <- snakecase::to_title_case(unique(ensb_pred$country))
 names(nice_names) <- unique(ensb_pred$country)

@@ -41,14 +41,14 @@ knitr::opts_chunk$set(
 
 # Introduction 
 
-As of 4^th^ January 2021,  more than
-83,000,000 cases of COVID-19 have been reported across the world, 
-with more than 1,830,000 deaths [@whositrep]. 
+As of 11^th^ January 2021,  more than
+88,000,000 cases of COVID-19 have been reported across the world, 
+with more than 1,910,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 69 countries with active transmission.
+ascertainment) for 70 countries with active transmission.
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -103,8 +103,8 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week starting 4^th^ January 2021, 
-the number of countries/regions included based on these thresholds is 69.
+two weeks. For the week starting 11^th^ January 2021, 
+the number of countries/regions included based on these thresholds is 70.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
@@ -135,7 +135,7 @@ In this analysis, key assumptions are:
 
 # Projections and Effective Reproduction Number Estimates {.nav .nav-tabs} 
 
-## Projections
+## Projections {.tabset}
 
 **Current and past forecasts**
 
@@ -149,32 +149,15 @@ always hold.
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_1.png")
-
-```
-
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_2.png")
-
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_3.png")
-
-```
-
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_4.png")
-
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_5.png")
+knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_6.png")
+knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_7.png")
+knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_8.png")
+knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_9.png")
+knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_10.png")
 
 ```
 *Figure 2.* Reported daily deaths and current forecasts based on the ensemble
@@ -192,19 +175,11 @@ in the section Methods.
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_1.png")
-
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_2.png")
-
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
-
+knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_4.png")
+knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_5.png")
+knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_6.png")
 ```
 *Figure 3.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Asia with active transmission (see Methods),
@@ -219,13 +194,8 @@ and 3, see Methods).
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_1.png")
-
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_2.png")
-
+knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_3.png")
 ```
 *Figure 4.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Africa with active transmission (see Methods),
@@ -261,14 +231,9 @@ and 3, see Methods).
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_South America_si_2_page_1.png")
-```
-
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensmbl_pred_South America_si_2_page_2.png")
+knitr::include_graphics("figs/ensmbl_pred_South America_si_2_page_3.png")
 ```
 *Figure 6.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in South America with active transmission (see Methods),
@@ -281,7 +246,7 @@ and 3, see Methods). The reporting of deaths and cases in Brazil is currently ch
 
 <br><br>
 
-## Estimates of the current Effective Reproduction Number
+## Estimates of the current Effective Reproduction Number {.tabset}
 
 ### Global Summary
 
@@ -374,7 +339,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-4^th^ January 2021, the observed number of deaths in the week before,
+11^th^ January 2021, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -568,7 +533,7 @@ the ensemble model is built from Models 1, 2 and 3.
 
 ## Individual Model Outputs
 
-### Projections
+### Projections {.tabset}
 
 #### Europe
 
@@ -591,7 +556,26 @@ knitr::include_graphics("figs/Europe_si_2_page_4.png")
 ```{r}
 knitr::include_graphics("figs/Europe_si_2_page_5.png")
 ```
-*Figure 13.* Projections (7-day ahead) for the week starting 4^th^ January 2021 from individual models
+```{r}
+knitr::include_graphics("figs/Europe_si_2_page_6.png")
+```
+
+```{r}
+knitr::include_graphics("figs/Europe_si_2_page_7.png")
+```
+
+```{r}
+knitr::include_graphics("figs/Europe_si_2_page_8.png")
+```
+
+```{r}
+knitr::include_graphics("figs/Europe_si_2_page_9.png")
+```
+
+```{r}
+knitr::include_graphics("figs/Europe_si_2_page_10.png")
+```
+*Figure 13.* Projections (7-day ahead) for the week starting 11^th^ January 2021 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -611,24 +595,33 @@ knitr::include_graphics("figs/Asia_si_2_page_2.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_3.png")
 ```
-*Figure 14.* Projections (7-day ahead) for the week starting 4^th^ January 2021 from individual models (Models 1, 2
+```{r}
+knitr::include_graphics("figs/Asia_si_2_page_4.png")
+```
+
+```{r}
+knitr::include_graphics("figs/Asia_si_2_page_5.png")
+```
+
+```{r}
+knitr::include_graphics("figs/Asia_si_2_page_6.png")
+```
+*Figure 14.* Projections (7-day ahead) for the week starting 11^th^
+January 2021 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
-
-
 
 #### Africa
 
 
 ```{r}
 knitr::include_graphics("figs/Africa_si_2_page_1.png")
-```
-```{r}
 knitr::include_graphics("figs/Africa_si_2_page_2.png")
+knitr::include_graphics("figs/Africa_si_2_page_3.png")
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 4^th^ January 2021 from individual models (Models 1, 2
+*Figure 15.* Projections (7-day ahead) for the week starting 11^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -643,7 +636,7 @@ knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_2.png")
 ```
-*Figure 16.* Projections (7-day ahead) for the week starting 4^th^ January 2021 from individual models (Models 1, 2
+*Figure 16.* Projections (7-day ahead) for the week starting 11^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -654,12 +647,11 @@ CrI of the projections.
 
 ```{r}
 knitr::include_graphics("figs/South America_si_2_page_1.png")
-```
-```{r}
 knitr::include_graphics("figs/South America_si_2_page_2.png")
+knitr::include_graphics("figs/South America_si_2_page_3.png")
 ```
 *Figure 17.* Projections (7-day ahead) for the week starting
-4^th^ January 2021 from individual models (Models 1, 2
+11^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -668,7 +660,7 @@ The reporting of deaths and cases in Brazil is currently changing;
 results should be interpreted with caution.
 
 
-### Effective Reproduction Number
+### Effective Reproduction Number {.tabset}
 
 #### Europe
 
@@ -677,7 +669,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 18.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-4^th^ January 2021. 
+11^th^ January 2021. 
 
 
 #### Asia
@@ -689,7 +681,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 19.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-4^th^ January 2021. 
+11^th^ January 2021. 
 
 
 #### Africa
@@ -701,7 +693,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 20.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-4^th^ January 2021. 
+11^th^ January 2021. 
 
 
 #### North & Central America
@@ -713,7 +705,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 21.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-4^th^ January 2021. 
+11^th^ January 2021. 
 
 
 
@@ -726,7 +718,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 22.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-4^th^ January 2021. 
+11^th^ January 2021. 
 
 
 ## Code 
@@ -742,7 +734,6 @@ COVID-19 response team:</a> the WHO Collaborating Centre for Infectious Disease 
 within the MRC Centre for Global Infectious Disease Analysis, Abdul
 Latif Jameel Institute for Disease and Emergency Analytics (J-IDEA),
 Imperial College London.
-
 
 Sangeeta Bhatia, Anne Cori, Kris V Parag, Swapnil Mishra, Laura V Cooper,
 Kylie E C Ainslie, Marc Baguelin, Samir Bhatt, Adhiratha Boonyasiri,

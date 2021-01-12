@@ -406,6 +406,15 @@ raw_data$Cases[raw_data$DateRep == "2020-12-31" & raw_data$`Countries.and.territ
 raw_data$Cases[raw_data$DateRep == "2021-01-01" & raw_data$`Countries.and.territories` == "Switzerland"] <- 5424
 raw_data$Cases[raw_data$DateRep == "2021-01-02" & raw_data$`Countries.and.territories` == "Switzerland"] <- 4391
 
+## Corrections for report on 11th Jan 2021
+## WHO reports 0 on 9th and 429 on 10th. Corrections from worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-01-09" & raw_data$`Countries.and.territories` == "India"] <- 229
+raw_data$Deaths[raw_data$DateRep == "2021-01-10" & raw_data$`Countries.and.territories` == "India"] <- 213
+
+## Backlog of 293 deaths reported in Lithuania
+## https://www.delfi.lt/news/daily/lithuania/nvsc-vadovas-ministrui-pateike-atsakymus-del-neapskaitytu-mirciu.d?id=86144987
+raw_data$Deaths[raw_data$DateRep == "2021-01-04" & raw_data$`Countries.and.territories` == "Lithuania"] <- 307 - 293
+
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
@@ -479,9 +488,11 @@ exclude <- c(
   "Kosovo",
   "Uganda",
   "Sudan",
-  "Sweden",
-  "Switzerland", ## Numbers do not agree with those on worldometers
-  "Spain" ## latest data not yet available.
+  "Slovenia",
+  "Mauritania"
+  ##"Sweden",
+  ##"Switzerland", ## Numbers do not agree with those on worldometers
+  ##"Spain" ## latest data not yet available.
 )
 
 saveRDS(exclude, "exclude.rds")

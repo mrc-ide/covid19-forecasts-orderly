@@ -78,7 +78,7 @@ ggsave("n_included_line.png", pline)
 
 ## One version for SI.
 
-pline <- ggplot() +
+pline2 <- ggplot() +
   geom_line(
     data = x, aes(week_starting, n, col = continent_name), size = 1.5
   ) +
@@ -98,7 +98,7 @@ pline <- ggplot() +
   ylab("Countries with active transmission") +
   xlab("Week Starting")
 
-ggsave("n_included_line_si.png", pline)
+ggsave("n_included_line_si.png", pline2)
 
 #####################################################################
 #####################################################################
