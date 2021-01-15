@@ -13,7 +13,6 @@ artefacts:
 
 resources:
   - PopulationAgeSex-20200831015935.xlsx
-#   - country_continent.csv
 
 depends:
   - prepare_jhu_data:
