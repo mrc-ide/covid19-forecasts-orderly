@@ -1,7 +1,6 @@
-environment:
-  covid_19_path: COVID19_INPUT_PATH
+parameters: week_ending
 
-script: script.R
+script: produce_epi_params.R
 
 artefacts:
   data:
@@ -14,7 +13,13 @@ artefacts:
 
 resources:
   - PopulationAgeSex-20200831015935.xlsx
-  - country_continent.csv
+#   - country_continent.csv
+
+depends:
+  - prepare_jhu_data:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         model_input.rds: latest_model_input.rds
   
 packages:
   - purrr
