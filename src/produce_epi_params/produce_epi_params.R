@@ -1,8 +1,4 @@
-week_ending <- "2020-08-16"
-indir <- dirname(covid_19_path)
-raw_data <- readRDS(
-  glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
-)
+raw_data <- readRDS("model_input.rds")
 
 si_distrs <- map2(
   raw_data[["si_mean"]],
@@ -73,32 +69,14 @@ colnames(pop_by_age) <- pop_by_age[1, ]
 pop_by_age <- pop_by_age[-1, ]
 
 ## First re-organise the population in the desired age brakets
-## Fix names so that names in ECDC match with those in population
-## estimates excel sheet
-pop_by_age$Location[pop_by_age$Location == "Bolivia (Plurinational State of)"] <- "Bolivia"
-pop_by_age$Location[pop_by_age$Location == "Côte d'Ivoire"] <- "Cote_dIvoire"
-pop_by_age$Location[pop_by_age$Location == "Iran (Islamic Republic of)"] <- "Iran"
-pop_by_age$Location[pop_by_age$Location == "Lao People's Democratic Republic"] <- "Laos"
-pop_by_age$Location[pop_by_age$Location == "Republic of Moldova"] <- "Moldova"
-pop_by_age$Location[pop_by_age$Location == "State of Palestine"] <- "Palestine"
-pop_by_age$Location[pop_by_age$Location == "Russian Federation"] <- "Russia"
-pop_by_age$Location[pop_by_age$Location == "Republic of Korea"] <- "South Korea"
-pop_by_age$Location[pop_by_age$Location == "Syrian Arab Republic"] <- "Syria"
-pop_by_age$Location[pop_by_age$Location == "China, Taiwan Province of China"] <- "Taiwan"
-pop_by_age$Location[pop_by_age$Location == "Venezuela (Bolivarian Republic of)"] <- "Venezuela"
-pop_by_age$Location[pop_by_age$Location == "Viet Nam"] <- "Vietnam"
-## Kosovo is not present in the population estimates
-## We use the age distribution of its nearest neighbor
-df <- pop_by_age[pop_by_age$Location == "Serbia", ]
-df$Location <- "Kosovo"
-pop_by_age <- rbind(pop_by_age, df)
-
+## Filter to extract United States estimates only
+pop_by_age <- pop_by_age[pop_by_age$Location == "United States of America", ]
 
 locations <- setNames(
   unique(pop_by_age$Location), unique(pop_by_age$Location)
 )
 
-
+# Following map function left in case we want to create state specific estimates in future
 pop_pyramid <- map(
   locations,
   function(location) {
@@ -140,99 +118,102 @@ pop_wtd_ifr_qntls <- map_dfr(
 
 saveRDS(pop_wtd_ifr, "population_weighted_ifr.rds")
 
-continent <- readr::read_csv("country_continent.csv") %>%
-  janitor::clean_names()
-continent$countries_and_territories <- tolower(continent$countries_and_territories)
+## Can modify following code if we look at ifr per state in the future
 
-pop_wtd_ifr_qntls$location <- snakecase::to_snake_case(pop_wtd_ifr_qntls$location)
-pop_wtd_ifr_qntls <- left_join(
-  pop_wtd_ifr_qntls, continent, by = c("location" = "countries_and_territories")
-)
-pop_wtd_ifr_qntls <- na.omit(pop_wtd_ifr_qntls)
+# continent <- readr::read_csv("country_continent.csv") %>%
+#   janitor::clean_names()
+# continent$countries_and_territories <- tolower(continent$countries_and_territories)
+# 
+# pop_wtd_ifr_qntls$location <- snakecase::to_snake_case(pop_wtd_ifr_qntls$location)
+# pop_wtd_ifr_qntls <- left_join(
+#   pop_wtd_ifr_qntls, continent, by = c("location" = "countries_and_territories")
+# )
+# pop_wtd_ifr_qntls <- na.omit(pop_wtd_ifr_qntls)
+# 
+# saveRDS(pop_wtd_ifr_qntls, "pop_wtd_ifr_qntls.rds")
+# 
+# pop_wtd_ifr_qntls$color <- case_when(
+#   pop_wtd_ifr_qntls$continent == "Africa" ~ "#000000",
+#   pop_wtd_ifr_qntls$continent == "Asia" ~ "#E69F00",
+#   pop_wtd_ifr_qntls$continent == "Europe" ~ "#56B4E9",
+#   pop_wtd_ifr_qntls$continent == "North America" ~ "#009E73",
+#   pop_wtd_ifr_qntls$continent == "South America" ~ "#0072B2",
+#   pop_wtd_ifr_qntls$continent == "Oceania" ~ "#D55E00"
+# )
+# 
+# pop_wtd_ifr_qntls$location <- snakecase::to_title_case(pop_wtd_ifr_qntls$location)
+# pop_wtd_ifr_qntls$label <- glue(
+#   "<i style='color:{pop_wtd_ifr_qntls$color}'>{pop_wtd_ifr_qntls$location}</i>"
+# )
+# pop_wtd_ifr_qntls <- arrange(pop_wtd_ifr_qntls, continent, `50%`)
+# pop_wtd_ifr_qntls$label <- factor(
+#   pop_wtd_ifr_qntls$label, unique(pop_wtd_ifr_qntls$label)
+# )
+# 
+# pop_wtd_ifr_qntls1 <- filter(
+#   pop_wtd_ifr_qntls, continent %in% c("Africa", "Asia")
+# )
+# pop_wtd_ifr_qntls1 <- droplevels(pop_wtd_ifr_qntls1)
+# 
+# pop_wtd_ifr_qntls2 <- filter(
+#   pop_wtd_ifr_qntls, !continent %in% c("Africa", "Asia")
+# )
+# pop_wtd_ifr_qntls2 <- droplevels(pop_wtd_ifr_qntls2)
+# 
+# p1 <- ggplot(pop_wtd_ifr_qntls1) +
+#   geom_point(aes(label, `50%`, col = color)) +
+#   geom_linerange(
+#     aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+#   ) +
+#   scale_color_identity(
+#     guide = "legend",
+#     breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
+#                "#D55E00"),
+#     labels = c("Africa", "Asia", "Europe",  "North America",
+#                "South America", "Oceania"),
+#     drop = FALSE
+#   )
+# 
+# 
+# p2 <- ggplot(pop_wtd_ifr_qntls2) +
+#   geom_point(
+#     aes(label, `50%`, col = color)
+#   ) +
+#   geom_linerange(
+#     aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+#   ) +
+#   scale_color_identity(
+#     guide = "legend",
+#     breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
+#                "#D55E00"),
+#     labels = c("Africa", "Asia", "Europe",  "North America",
+#                "South America", "Oceania"),
+#     drop = FALSE
+#   )
+# 
+# 
+# 
+# label <- textGrob(
+#   "Infection fatality ratio", rot = 90, gp = gpar(fontsize = 10)
+# )
+# 
+# p <- p1 + p2 + plot_layout(ncol = 1, guides = 'collect') &
+#   scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) &
+#   theme_minimal() &
+#   theme(
+#     axis.text.x = element_markdown(
+#       angle = -90, hjust = 0, vjust = 0, size = 6
+#     ),
+#     axis.title = element_blank(),
+#     legend.position = "top",
+#     legend.title = element_blank()
+#   )
+# 
+# pfinal <- wrap_elements(label) + wrap_elements(p) +
+#   plot_layout(ncol = 2, widths = c(0.03, 1))
+# 
+# rincewind::save_multiple(pfinal, "ifr_per_country.tiff")
 
-saveRDS(pop_wtd_ifr_qntls, "pop_wtd_ifr_qntls.rds")
-
-pop_wtd_ifr_qntls$color <- case_when(
-  pop_wtd_ifr_qntls$continent == "Africa" ~ "#000000",
-  pop_wtd_ifr_qntls$continent == "Asia" ~ "#E69F00",
-  pop_wtd_ifr_qntls$continent == "Europe" ~ "#56B4E9",
-  pop_wtd_ifr_qntls$continent == "North America" ~ "#009E73",
-  pop_wtd_ifr_qntls$continent == "South America" ~ "#0072B2",
-  pop_wtd_ifr_qntls$continent == "Oceania" ~ "#D55E00"
-)
-
-pop_wtd_ifr_qntls$location <- snakecase::to_title_case(pop_wtd_ifr_qntls$location)
-pop_wtd_ifr_qntls$label <- glue(
-  "<i style='color:{pop_wtd_ifr_qntls$color}'>{pop_wtd_ifr_qntls$location}</i>"
-)
-pop_wtd_ifr_qntls <- arrange(pop_wtd_ifr_qntls, continent, `50%`)
-pop_wtd_ifr_qntls$label <- factor(
-  pop_wtd_ifr_qntls$label, unique(pop_wtd_ifr_qntls$label)
-)
-
-pop_wtd_ifr_qntls1 <- filter(
-  pop_wtd_ifr_qntls, continent %in% c("Africa", "Asia")
-)
-pop_wtd_ifr_qntls1 <- droplevels(pop_wtd_ifr_qntls1)
-
-pop_wtd_ifr_qntls2 <- filter(
-  pop_wtd_ifr_qntls, !continent %in% c("Africa", "Asia")
-)
-pop_wtd_ifr_qntls2 <- droplevels(pop_wtd_ifr_qntls2)
-
-p1 <- ggplot(pop_wtd_ifr_qntls1) +
-  geom_point(aes(label, `50%`, col = color)) +
-  geom_linerange(
-    aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
-  ) +
-  scale_color_identity(
-    guide = "legend",
-    breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
-               "#D55E00"),
-    labels = c("Africa", "Asia", "Europe",  "North America",
-               "South America", "Oceania"),
-    drop = FALSE
-  )
-
-
-p2 <- ggplot(pop_wtd_ifr_qntls2) +
-  geom_point(
-    aes(label, `50%`, col = color)
-  ) +
-  geom_linerange(
-    aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
-  ) +
-  scale_color_identity(
-    guide = "legend",
-    breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
-               "#D55E00"),
-    labels = c("Africa", "Asia", "Europe",  "North America",
-               "South America", "Oceania"),
-    drop = FALSE
-  )
-
-
-
-label <- textGrob(
-  "Infection fatality ratio", rot = 90, gp = gpar(fontsize = 10)
-)
-
-p <- p1 + p2 + plot_layout(ncol = 1, guides = 'collect') &
-  scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) &
-  theme_minimal() &
-  theme(
-    axis.text.x = element_markdown(
-      angle = -90, hjust = 0, vjust = 0, size = 6
-    ),
-    axis.title = element_blank(),
-    legend.position = "top",
-    legend.title = element_blank()
-  )
-
-pfinal <- wrap_elements(label) + wrap_elements(p) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-rincewind::save_multiple(pfinal, "ifr_per_country.tiff")
 #####################################################################
 #####################################################################
 ############### CFR Parameters
