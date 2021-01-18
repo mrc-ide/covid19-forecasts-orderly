@@ -201,7 +201,7 @@ x50_all <- filter(x50_all, obs >= 0)
 ##ymax <- max(x50_all$log_median_pred, x50_all$log_obs, na.rm = TRUE)
 ##ymax <- ceiling(ymax)
 
-bin_start <- seq(0, 2000, by = 100)
+bin_start <- seq(0, 5000, by = 100)
 bin_end  <- bin_start + 100
 ##bin_start <- c(-Inf, bin_start)
 ##bin_end <- c(0, bin_end)
@@ -231,10 +231,10 @@ x50_all$pred_category <- apply(
   }
 )
 
-x50_all$pred_category[x50_all$median_pred >= 2100] <- "[2100, Inf)"
+x50_all$pred_category[x50_all$median_pred >= 5100] <- "[5100, Inf)"
 
 categories <- glue::glue("[{bin_start}, {bin_end})")
-categories <- c(categories, "[2100, Inf)")
+categories <- c(categories, "[5100, Inf)")
 
 ##y <- dplyr::count(x50_all, pred_category, obs_category)
 x50_all$forecast_month <- lubridate::month(
@@ -275,14 +275,27 @@ normalised <- group_by(
 ) %>% summarise(proportion = sum(proportion)) %>%
   ungroup()
 
+## Zoom in on the [2100, Inf) region
+normalised$facet <- case_when(
+  (normalised$obs_category %in% categories[1:25]) &
+  (normalised$pred_category %in% categories[1:25])  ~ "less_than_2500",
+  TRUE ~ "greater_than_2500"
+)
+
+less_than_2500 <- normalised[normalised$facet == "less_than_2500", ]
+less_than_2500 <- droplevels(less_than_2500)
+
+more_than_2500 <- normalised[normalised$facet != "less_than_2500", ]
+more_than_2500 <- droplevels(more_than_2500)
+
 pdensity <- ggplot() +
   geom_tile(
-    data = normalised,
+    data = more_than_2500,
     aes(obs_category, pred_category, fill = proportion),
     width = 0.9, height = 0.9
   ) +
-  scale_x_discrete(drop = FALSE) +
-  scale_y_discrete(drop = FALSE) +
+  scale_x_discrete(limits = categories[26:52], drop = FALSE) +
+  scale_y_discrete(limits = categories[26:52], drop = FALSE) +
   scale_fill_distiller(
     palette = "YlOrRd", direction = 1,
     breaks = c(0, 0.5, 1),
@@ -303,8 +316,8 @@ pdensity <- ggplot() +
     axis.title = element_text(size = 6),
     legend.key.width = unit(1, "lines"),
     legend.key.height = unit(1, "lines")
-  ) +
-  ggforce::facet_wrap_paginate(~wave, ncol = 2, nrow = 1, page = 1)
+  )
+  ##facet_wrap(~wave)
 
 y <- data.frame(pred_category = categories, obs_category = categories)
 
