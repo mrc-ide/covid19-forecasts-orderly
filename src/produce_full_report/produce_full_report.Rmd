@@ -179,7 +179,7 @@ knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_2.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_4.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_5.png")
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_6.png")
+
 ```
 *Figure 3.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Asia with active transmission (see Methods),
@@ -196,6 +196,7 @@ and 3, see Methods).
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_1.png")
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_2.png")
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_3.png")
+knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_4.png")
 ```
 *Figure 4.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Africa with active transmission (see Methods),
@@ -588,10 +589,6 @@ knitr::include_graphics("figs/Asia_si_2_page_4.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_5.png")
 ```
-
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_6.png")
-```
 *Figure 14.* Projections (7-day ahead) for the week starting 18^th^
 January 2021 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
@@ -603,9 +600,12 @@ CrI of the projections.
 
 
 ```{r}
+
 knitr::include_graphics("figs/Africa_si_2_page_1.png")
 knitr::include_graphics("figs/Africa_si_2_page_2.png")
 knitr::include_graphics("figs/Africa_si_2_page_3.png")
+knitr::include_graphics("figs/Africa_si_2_page_4.png")
+
 ```
 *Figure 15.* Projections (7-day ahead) for the week starting 18^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
