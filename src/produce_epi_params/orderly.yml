@@ -1,5 +1,3 @@
-parameters: week_ending
-
 script: produce_epi_params.R
 
 artefacts:
@@ -7,29 +5,15 @@ artefacts:
     description: Projections
     filenames:
       - si_distrs.rds
-      - cfr_shape_params.rds
       - population_weighted_ifr.rds
       - pop_wtd_ifr_qntls.rds
 
-resources:
-  - PopulationAgeSex-20200831015935.xlsx
-
 depends:
   - prepare_jhu_data:
-      id: latest(parameter:week_ending == week_ending)
+      id: latest
       use:
          model_input.rds: latest_model_input.rds
   
 packages:
   - purrr
-  - readxl
-  - ggplot2
-  - ggtext
-  - glue
-  - forcats
-  - janitor
-  - dplyr
-  - tidyr
-  - patchwork
-  - grid
-  - gridExtra
+  - rincewind
