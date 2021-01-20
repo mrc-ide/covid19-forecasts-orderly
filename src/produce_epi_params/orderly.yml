@@ -1,0 +1,19 @@
+script: produce_epi_params.R
+
+artefacts:
+  data:
+    description: Projections
+    filenames:
+      - si_distrs.rds
+      - population_weighted_ifr.rds
+      - pop_wtd_ifr_qntls.rds
+
+depends:
+  - prepare_jhu_data:
+      id: latest
+      use:
+         model_input.rds: latest_model_input.rds
+  
+packages:
+  - purrr
+  - rincewind
