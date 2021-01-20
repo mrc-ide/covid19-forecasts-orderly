@@ -1,0 +1,21 @@
+script: script.R
+
+packages:
+- ggplot2
+- ggtext
+- patchwork
+
+artefacts:
+  staticgraph:
+    description: Method schematic
+    filenames:
+      - rti0.png
+      - apeestim.png
+      - deca.png
+
+
+depends:
+  - DeCa_model:
+      id: latest
+      use:
+         DeCa_Std_results.rds: DeCa_latest.rds
