@@ -66,7 +66,7 @@ nice_names[names(nice_names) %in% sbsm_countries] <-
 nice_names[! names(nice_names) %in% sbsm_countries] <-
   glue::glue("{nice_names[! names(nice_names) %in% sbsm_countries]}*")
 
-plots <- purrr::imap(
+plots <- imap(
   by_continent_si,
   function(pred, continent_si) {
     pred$date <- as.Date(pred$date)
@@ -100,10 +100,10 @@ plots <- purrr::imap(
 )
 
 
-purrr::iwalk(
+iwalk(
   plots,
   function(ps, continent_si) {
-    purrr::iwalk(
+    iwalk(
       ps,
       function(p, page_num) {
         outfile <- glue::glue("ensmbl_pred_{continent_si}_page_{page_num}.png")
@@ -145,9 +145,9 @@ by_model_si <- split(
   sep = "_"
 )
 
-by_model_si <- purrr::keep(by_model_si, ~ nrow(.) >= 1)
+by_model_si <- keep(by_model_si, ~ nrow(.) >= 1)
 
-plots <- purrr::imap(
+plots <- imap(
   by_model_si,
   function(pred, continent_si) {
     pred$date <- as.Date(pred$date)
@@ -222,9 +222,9 @@ plots <- split(
     ensemble_rt_wide$si
   ),
   sep = "_"
-) %>% purrr::map(~ rt_boxplot(., nice_names) + theme(legend.position = "none"))
+) %>% map(~ rt_boxplot(., nice_names) + theme(legend.position = "none"))
 
-purrr::iwalk(
+iwalk(
   plots,
   function(p, date_si) {
     outfile <- glue::glue("ensemble_rt_{date_si}_boxplot.png")
@@ -274,9 +274,10 @@ plots <- split(
   rt_both,
   list(rt_both$si, rt_both$continent),
   sep = "_"
-) %>% purrr::map(~ rt_lineplot(., nice_names))
+) %>%
+  map(~ rt_lineplot(., nice_names))
 
-purrr::iwalk(
+iwalk(
   plots,
   function(p, model_si) {
     outfile <- glue::glue("rt_{model_si}.png")

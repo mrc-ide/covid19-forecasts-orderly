@@ -41,9 +41,9 @@ knitr::opts_chunk$set(
 
 # Introduction 
 
-As of 11^th^ January 2021,  more than
-88,000,000 cases of COVID-19 have been reported across the world, 
-with more than 1,910,000 deaths [@whositrep]. 
+As of 18^th^ January 2021,  more than
+93,000,000 cases of COVID-19 have been reported across the world, 
+with more than 2,000,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths
@@ -103,7 +103,7 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week starting 11^th^ January 2021, 
+two weeks. For the week starting 18^th^ January 2021, 
 the number of countries/regions included based on these thresholds is 70.
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -179,7 +179,7 @@ knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_2.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_4.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_5.png")
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_6.png")
+
 ```
 *Figure 3.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Asia with active transmission (see Methods),
@@ -196,6 +196,7 @@ and 3, see Methods).
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_1.png")
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_2.png")
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_3.png")
+knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_4.png")
 ```
 *Figure 4.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Africa with active transmission (see Methods),
@@ -339,7 +340,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-11^th^ January 2021, the observed number of deaths in the week before,
+18^th^ January 2021, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -502,7 +503,7 @@ $k^{*} = \arg{\min_{k}{\text{AP}E_{k}}}$.  Here
 
 Forward projections are made assuming that the transmissibility
 remains unchanged over the projection horizon and same as the transmissibility
-in the last time-window.  The projections are made using the standard
+in the last time-window. The projections are made using the standard
 branching process model using a Poisson offspring distribution. 
 
 
@@ -511,25 +512,11 @@ branching process model using a Poisson offspring distribution.
 ```{r child = "case_ascertainment_methods.Rmd"}
 ```
 
-## Model 4
-
-Model 4 is a Bayesian model that calculates backwards from the deaths
-observed over time to estimate transmission that occurred several
-weeks prior. This model estimates the number of infections, deaths and
-the changes in transmissibility due to the non-pharmaceutical
-interventions for 12 European countries (Austria, Belgium,
-Denmark, France, Germany, Italy, Netherlands, Portugal, Spain, 
-Sweden, Switzerland and United Kingdom). Details for this model and
-its results can be
-found [here](https://imperialcollegelondon.github.io/covid19estimates/).
-
 ## Ensemble Model
 
-For the 12 European countries where we have results from Model 4 (Austria, Belgium,
-Denmark, France, Germany, Italy, Netherlands, Portugal, Spain, 
-Sweden, Switzerland and United Kingdom), the ensemble model is an
-unweighted ensemble of Models 1, 2, 3 and 4. For all other countries,
-the ensemble model is built from Models 1, 2 and 3.
+For all countries included in the analysis, the ensemble model is
+built from Models 1, 2 and 3.
+
 
 ## Individual Model Outputs
 
@@ -575,7 +562,7 @@ knitr::include_graphics("figs/Europe_si_2_page_9.png")
 ```{r}
 knitr::include_graphics("figs/Europe_si_2_page_10.png")
 ```
-*Figure 13.* Projections (7-day ahead) for the week starting 11^th^ January 2021 from individual models
+*Figure 13.* Projections (7-day ahead) for the week starting 18^th^ January 2021 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -602,11 +589,7 @@ knitr::include_graphics("figs/Asia_si_2_page_4.png")
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_5.png")
 ```
-
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_6.png")
-```
-*Figure 14.* Projections (7-day ahead) for the week starting 11^th^
+*Figure 14.* Projections (7-day ahead) for the week starting 18^th^
 January 2021 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
@@ -617,11 +600,14 @@ CrI of the projections.
 
 
 ```{r}
+
 knitr::include_graphics("figs/Africa_si_2_page_1.png")
 knitr::include_graphics("figs/Africa_si_2_page_2.png")
 knitr::include_graphics("figs/Africa_si_2_page_3.png")
+knitr::include_graphics("figs/Africa_si_2_page_4.png")
+
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 11^th^ January 2021 from individual models (Models 1, 2
+*Figure 15.* Projections (7-day ahead) for the week starting 18^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -636,7 +622,7 @@ knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_2.png")
 ```
-*Figure 16.* Projections (7-day ahead) for the week starting 11^th^ January 2021 from individual models (Models 1, 2
+*Figure 16.* Projections (7-day ahead) for the week starting 18^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -651,7 +637,7 @@ knitr::include_graphics("figs/South America_si_2_page_2.png")
 knitr::include_graphics("figs/South America_si_2_page_3.png")
 ```
 *Figure 17.* Projections (7-day ahead) for the week starting
-11^th^ January 2021 from individual models (Models 1, 2
+18^th^ January 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -669,7 +655,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 18.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-11^th^ January 2021. 
+18^th^ January 2021. 
 
 
 #### Asia
@@ -681,7 +667,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 19.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-11^th^ January 2021. 
+18^th^ January 2021. 
 
 
 #### Africa
@@ -693,7 +679,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 20.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-11^th^ January 2021. 
+18^th^ January 2021. 
 
 
 #### North & Central America
@@ -705,7 +691,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 21.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-11^th^ January 2021. 
+18^th^ January 2021. 
 
 
 
@@ -718,7 +704,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 22.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-11^th^ January 2021. 
+18^th^ January 2021. 
 
 
 ## Code 
