@@ -26,6 +26,7 @@ artefacts:
     description: Latest model output
     filenames:
        - RtI0_latest_output.rds
+       - rti0_all_results.rds
 
 depends:
   - prepare_ecdc_data:
