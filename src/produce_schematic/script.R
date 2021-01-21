@@ -1,4 +1,17 @@
 ##orderly::orderly_develop_start(use_draft = "newer")
+## Random
+si <- rgamma(1e4, shape = 2.3, rate = 1.28)
+
+psi <- ggplot() +
+  geom_density(aes(si), fill = "red", col = NA, alpha = 0.2) +
+  xlab("Serial interval") +
+  theme_classic() +
+  theme(
+    axis.text = element_blank(), axis.ticks = element_blank(),
+    axis.title.y = element_blank()
+  )
+
+
 model_outputs <- readRDS("DeCa_Std_results.rds")
 ## Anyone will do, for illustration
 obs_deaths <- model_outputs$D_active_transmission[ , c("dates", "Peru")]
