@@ -34,14 +34,15 @@ obs_m1 <- obs +
     xintercept = c(as.numeric(now), as.numeric(now_minus_tau)),
     linetype = "dashed"
   ) +
-  geom_text(aes(x = now + 5, y = 190, label = "now")) +
+  geom_text(aes(x = now + 3, y = 190, label = "now"), size = 8 / .pt) +
   geom_text(
-    aes(x = now_minus_tau - 8, y = 190, label = "now - tau")
+    aes(x = now_minus_tau - 6, y = 190, label = "now - tau"),
+    size = 8 / .pt
   ) +
   geom_text(
     aes(x = now_minus_tau - 38, y = 150,
         label = "Data not used for model calibration"
-    )
+    ), size = 8 / .pt
   ) +
   ## Arrow below the label "Data not used for model calibration"
   geom_segment(
@@ -54,17 +55,18 @@ obs_m1 <- obs +
   geom_text(
     aes(x = now_minus_tau - 38, y = 150,
         label = "Data not used for model calibration"
-    )
+    ), size = 8 / .pt
   ) +
   geom_text(
     aes(
-      x = now, y = 195, label = "Assume constant Rt in window"
-    )
+      x = now_minus_tau + 20, y = 200,
+      label = "Assume constant Rt in window"
+    ), size = 8 / .pt
   ) +
   geom_segment(
     aes(
-      x = now_minus_tau, xend = now, y = 194, yend = 194
+      x = now_minus_tau, xend = now, y = 195, yend = 195
     ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
-  )
+  ) + coord_trans(clip = "off")
 
 
