@@ -26,7 +26,7 @@ sources:
   - R/util.R
 
 depends:
-  - prepare_ecdc_data:
+  - prepare_jhu_data:
       id: latest(parameter:week_ending == week_ending)
       use:
          model_input.rds: latest_model_input.rds
@@ -34,7 +34,3 @@ depends:
       id: latest
       use:
          si_distrs.rds: si_distrs.rds
-  # - produce_baseline_error:
-  #     id: latest(parameter:latest_week == "2020-11-29")
-  #     use:
-  #        exclude.rds: exclude.rds
