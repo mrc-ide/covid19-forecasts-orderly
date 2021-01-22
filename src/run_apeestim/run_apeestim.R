@@ -3,13 +3,16 @@ dir.create("figures")
 
 model_input <- readRDS("model_input.rds")
 deaths_to_use <- model_input$D_active_transmission
-# exclude <- readRDS("exclude.rds")     ## ignoring baseline error for now
+
+locations <- model_input$State
+## Can modify this if we want to run for a smaller selection of states
+## Possibly base this on another file
+locations <- c("Alabama", "Wyoming", "California")
 
 ## Convert to incidence object
 tall_deaths <- gather(
   deaths_to_use, key = province_state, value = deaths, -dates
 ) %>%
-  # dplyr::filter(! province_state %in% exclude) %>%     ## ignoring baseline error for now
   split(.$province_state) %>%
   map(
     function(x) {
@@ -17,6 +20,8 @@ tall_deaths <- gather(
       ts_to_incid(ts = x, date_col = "dates", case_col = "deaths")
     }
   )
+
+tall_deaths <- tall_deaths[names(tall_deaths) %in% locations]
 
 si_distrs <- readRDS("si_distrs.rds")
 
