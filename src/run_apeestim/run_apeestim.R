@@ -7,7 +7,6 @@ deaths_to_use <- model_input$D_active_transmission
 locations <- model_input$State
 ## Can modify this if we want to run for a smaller selection of states
 ## Possibly base this on another file
-locations <- c("Alabama", "Wyoming", "California")
 
 ## Convert to incidence object
 tall_deaths <- gather(
