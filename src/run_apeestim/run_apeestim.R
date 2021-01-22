@@ -3,22 +3,21 @@ dir.create("figures")
 
 model_input <- readRDS("model_input.rds")
 deaths_to_use <- model_input$D_active_transmission
-exclude <- readRDS("exclude.rds")
+# exclude <- readRDS("exclude.rds")     ## ignoring baseline error for now
 
 ## Convert to incidence object
 tall_deaths <- gather(
-  deaths_to_use, key = country, value = deaths, -dates
+  deaths_to_use, key = province_state, value = deaths, -dates
 ) %>%
-  dplyr::filter(! country %in% exclude) %>%
-  split(.$country) %>%
+  # dplyr::filter(! province_state %in% exclude) %>%     ## ignoring baseline error for now
+  split(.$province_state) %>%
   map(
     function(x) {
-      message(x$country[1])
+      message(x$province_state[1])
       ts_to_incid(ts = x, date_col = "dates", case_col = "deaths")
     }
   )
 
-##tall_deaths <- tall_deaths[!tall_deaths$country %in% exclude, ]
 si_distrs <- readRDS("si_distrs.rds")
 
 ##apeestim
@@ -40,12 +39,12 @@ inftvty <- purrr::map(
 ## For each country, for each SI Distribution,
 r_apeestim <- purrr::imap(
   tall_deaths,
-  function(deaths, country) {
+  function(deaths, province_state) {
     ##deaths <- tall_deaths[[country]]
     r_prior <- c(1, 5)
     a <- 0.025
     trunctime <- first_nonzero_incidence(deaths)
-    message("Truncating for ", country, " at ", trunctime)
+    message("Truncating for ", province_state, " at ", trunctime)
     out <- purrr::map(
       si_distrs,
       function(si_distr) {
@@ -60,7 +59,7 @@ r_apeestim <- purrr::imap(
           r_prior,
           a,
           trunctime,
-          country
+          province_state
         )
       }
     )
@@ -78,9 +77,9 @@ r_apeestim <- purrr::imap(
 n_sim <- 1000
 rsamples_ape <- map(
   r_apeestim,
-  function(r_country) {
+  function(r_state) {
     out <- map(
-      r_country,
+      r_state,
       function(r_si) {
         shape <- tail(
           r_si[["best_set_ape"]][["alpha"]], 1
@@ -142,42 +141,24 @@ pred_qntls <- purrr::map(
 
 purrr::iwalk(
   pred_qntls,
-  function(pred, cntry) {
-    obs <- deaths_to_use[, c("dates", cntry)]
-    obs$deaths <- obs[[cntry]]
+  function(pred, state) {
+    obs <- deaths_to_use[, c("dates", state)]
+    obs$deaths <- obs[[state]]
     p <- rincewind::plot_projections(obs, pred)
     p <- p +
       ggtitle(
-        glue::glue("Projections for {cntry} for week starting {week_ending}")
+        glue::glue("Projections for {state} for week starting {week_ending}")
       )
-    ggsave(glue::glue("figures/projections_{cntry}.png"), p)
+    ggsave(glue::glue("figures/projections_{state}.png"), p)
   }
 )
 
-n_sim <- 10000
-rsamples_ape <- map(
-  r_apeestim,
-  function(r_country) {
-    out <- map(
-      r_country,
-      function(r_si) {
-        shape <- tail(
-          r_si[["best_set_ape"]][["alpha"]], 1
-        )
-        scale <- tail(
-          r_si[["best_set_ape"]][["beta"]], 1
-        )
-        rgamma(n_sim, shape = shape, scale = scale)
-      }
-    )
-  }
-)
 ## ## Save in format required
 out <- saveRDS(
   object = list(
     I_active_transmission = model_input[["I_active_transmission"]],
     D_active_transmission = model_input[["D_active_transmission"]],
-    Country = model_input[["Country"]],
+    State = model_input[["State"]],
     R_last = rsamples_ape,
     Predictions = ape_projections
   ),
