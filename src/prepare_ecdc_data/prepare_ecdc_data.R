@@ -425,6 +425,8 @@ raw_data$Deaths[raw_data$DateRep == "2021-01-17" & raw_data$`Countries.and.terri
 
 raw_data$Deaths[raw_data$DateRep == "2021-01-14" & raw_data$`Countries.and.territories` == "Peru"] <- 64
 raw_data$Deaths[raw_data$DateRep == "2021-01-15" & raw_data$`Countries.and.territories` == "Peru"] <- 74
+## Source Worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-01-24" & raw_data$`Countries.and.territories` == "Switzerland"] <- 16
 
 
 
@@ -485,7 +487,7 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
-  "Philippines", ## Erratic data
+##  "Philippines", ## Erratic data
   "Kazakhstan",
   "Kyrgyzstan",
   "Tunisia",
@@ -502,10 +504,10 @@ exclude <- c(
   "Uganda",
   "Sudan",
   "Slovenia",
-  "Mauritania"
+  "Mauritania",
   ##"Sweden",
   ##"Switzerland", ## Numbers do not agree with those on worldometers
-  ##"Spain" ## latest data not yet available.
+  "Spain" ## latest data not yet available.
 )
 
 saveRDS(exclude, "exclude.rds")
