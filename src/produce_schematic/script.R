@@ -10,11 +10,8 @@ theme_schematic <- function() {
 psi <- ggplot() +
   geom_density(aes(si), fill = "red", col = NA, alpha = 0.2) +
   xlab("Serial interval") +
-  theme_classic() +
-  theme(
-    axis.text = element_blank(), axis.ticks = element_blank(),
-    axis.title.y = element_blank()
-  )
+  theme_schematic() +
+  theme(axis.title.y = element_blank())
 
 
 model_outputs <- readRDS("DeCa_Std_results.rds")
@@ -25,10 +22,11 @@ obs_deaths$deaths <- slide_dbl(
   obs_deaths$Peru, mean, .before = 5, .after = 5
 )
 
+earliest <- as.Date("2020-03-31")
 now <- as.Date("2020-07-15")
 now_minus_tau <- as.Date("2020-06-05")
 obs_deaths <- obs_deaths[obs_deaths$dates <= now, ]
-obs_deaths <- obs_deaths[obs_deaths$dates >= as.Date("2020-03-31"), ]
+obs_deaths <- obs_deaths[obs_deaths$dates >= earliest, ]
 
 
 obs_deaths$seen <- ifelse(obs_deaths$dates < now_minus_tau, 0.3, 1)
@@ -56,7 +54,9 @@ obs_m1 <- obs +
   geom_text(
     aes(x = now_minus_tau - 6, y = 190, label = "now - tau"),
     size = 8 / .pt
-  ) +
+  )
+
+m1_left <- obs_m1 +
   geom_text(
     aes(x = now_minus_tau - 38, y = 150,
         label = "Data not used for model calibration"
@@ -71,15 +71,94 @@ obs_m1 <- obs +
   ) +
   ## Arrow below the label "Assume constant Rt in this window"
   geom_text(
-    aes(x = now_minus_tau - 38, y = 150,
-        label = "Data not used for model calibration"
+    aes(
+      x = now_minus_tau + 20, y = 200,
+      label = "Assume constant Rt in window"
     ), size = 8 / .pt
+  ) +
+  geom_segment(
+    aes(
+      x = now_minus_tau, xend = now, y = 195, yend = 195
+    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
+  ) + coord_trans(clip = "off")
+
+
+dates <- seq(from = earliest,  to = now_minus_tau, by = "1 day")
+i0_est <- map_dfr(
+  1:1000,
+  function(index) {
+    lambda <- floor(
+      slider::slide_dbl(obs_deaths$deaths, mean, .before = 3, .after = 3)
+    )
+    deaths <- rpois(length(dates), lambda)
+    deaths <- floor(
+      slider::slide_dbl(deaths, mean, .before = 3, .after = 3)
+    )
+    data.frame(dates = dates, deaths = deaths)
+  }, .id = "sim"
+)
+
+i0_est <- group_by(i0_est, dates) %>%
+  summarise(
+    val = quantile(deaths, probs = seq(0.1, 1, 0.05)),
+    probs = seq(0.1, 1, 0.05)
+  )
+i0_est <- ungroup(i0_est)
+
+
+###### Model 1 jointly estimates Rt and incidence prior to window
+dates_future <- seq(from = now, length.out = 21, by = "1 day")
+i0_future <- map_dfr(
+  1:1000,
+  function(index) {
+    deaths <- rpois(
+      length(dates), seq(185, length.out = length(dates), by = 1)
+    )
+    deaths <- floor(
+      slider::slide_dbl(deaths, mean, .before = 3, .after = 3)
+    )
+    data.frame(dates = dates_future, deaths = deaths)
+  }, .id = "sim"
+)
+
+i0_future <- group_by(i0_future, dates) %>%
+  summarise(
+    val = quantile(deaths, probs = seq(0.1, 1, 0.05)),
+    probs = seq(0.1, 1, 0.05)
+  ) %>% ungroup()
+
+m1_right <- obs_m1 +
+  geom_line(
+    data = i0_est, aes(dates, val, group = probs),
+    linetype = "dashed", alpha = 0.2, col = "red"
+  ) +
+  geom_line(
+    data = i0_future, aes(dates, val, group = probs),
+    linetype = "dashed", alpha = 0.2, col = "red"
+  ) +
+  geom_segment(
+    aes(
+      x = as.Date("2020-04-01"), xend = now_minus_tau, y = 144,
+      yend = 144
+    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
+  ) +
+  ## Arrow below the label "Assume constant Rt in this window"
+  geom_text(
+    aes(x = now_minus_tau - 38, y = 150,
+        label = "Jointly estimated with Rt"
+    ), size = 8 / .pt, col = "red"
   ) +
   geom_text(
     aes(
       x = now_minus_tau + 20, y = 200,
       label = "Assume constant Rt in window"
     ), size = 8 / .pt
+  ) +
+  geom_text(
+    aes(
+      x = now + 11, y = 220,
+      label = "Forecasts assuming \n constant Rt"
+    ), size = 8 / .pt, col = "red"
   ) +
   geom_segment(
     aes(
@@ -94,24 +173,6 @@ p <- ggplot() + geom_point(aes(x, x), alpha = 0) + theme_void()
 grid.brackets(52, 24, 49, 350, h = 0.1, lwd = 4)
 dev.copy(png, "paren.png", height = 1000, width = 1000, res = 200)
 dev.off()
-
-
-###### Model 1 jointly estimates Rt and incidence prior to window
-sim_deaths <- map_dfr(
-  1:1000,
-  function(i) {
-    df <- obs_deaths[obs_deaths$seen == 0.3, ]
-    df$deaths <- df$deaths + rnorm(nrow(df), 5, 5)
-    df
-  }, .id = "sim"
-)
-
-p <- ggplot() +
-  geom_line(
-    data = sim_deaths, aes(dates, deaths, group = sim),
-    linetype = "dashed", alpha = 0.1
-  )
-
 
 ######################################################################
 ######## Model 3: Death to Cases
