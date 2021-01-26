@@ -39,9 +39,9 @@ now_minus_tau <- as.Date("2020-06-05")
 obs_deaths <- obs_deaths[obs_deaths$dates <= now, ]
 obs_deaths <- obs_deaths[obs_deaths$dates >= earliest, ]
 
-#######################################################################
+######################################################################
 ########### RtI0 Model ###############################################
-#######################################################################
+######################################################################
 ###### Model 1 jointly estimates Rt and incidence prior to window
 ## Generate dummy data
 dates <- seq(from = earliest,  to = now_minus_tau, by = "1 day")
@@ -176,7 +176,10 @@ m1_right <- obs_m1 +
   ) + coord_trans(clip = "off")
 
 ######################################################################
+######################################################################
 ######## Model 3: Death to Cases
+######################################################################
+######################################################################
 report_to_death_distr <- function(mu, std, trunc) {
   out <- EpiEstim::discr_si(seq(0, trunc), mu, std)
   out / sum(out)
@@ -288,3 +291,79 @@ pdelay <- ggplot() +
   xlab("Days since case reported") +
   ylab("Probability of death") +
   theme_schematic()
+
+
+######################################################################
+######################################################################
+################# Model 2 ############################################
+######################################################################
+######################################################################
+
+m2_left <- ggplot() +
+  geom_line(data = obs_deaths, aes(dates, deaths)) +
+  geom_vline(
+    xintercept = as.numeric(now), linetype = "dashed"
+  ) +
+  geom_text(aes(x = now + 3, y = 220, label = "Now"), size = 8 / .pt) +
+  xlab("Time") + ylab("Daily Deaths") +
+  theme_schematic()
+
+m2_right <- m2_left +
+  geom_vline(
+    xintercept = as.numeric(now_minus_tau), linetype = "dashed"
+  ) +
+  geom_text(
+    aes(x = now_minus_tau - 5, y = 220, label = "Now - k*"), size = 8 / .pt
+  ) +
+  geom_segment(
+    aes(x = now - 15, xend = now, y = 90, yend = 90),
+    linetype = "dotted"
+  ) +
+  geom_segment(
+    aes(x = now - 20, xend = now, y = 100, yend = 100),
+    linetype = "dotted"
+  ) +
+  geom_segment(
+    aes(x = now - 25, xend = now, y = 110, yend = 110),
+    linetype = "dotted"
+  ) +
+  geom_segment(
+    aes(x = now - 35, xend = now, y = 120, yend = 120),
+    linetype = "dotted"
+  ) +
+  geom_text(
+    aes(
+      x = now + 11, y = 90,
+      label = "Different possible"
+    ), size = 8 / .pt
+  ) +
+    geom_text(
+    aes(
+      x = now + 14, y = 85,
+      label = "windows. Choose best (k*)"
+    ), size = 8 / .pt
+  ) +
+  geom_line(
+    data = i0_future, aes(dates, val, group = probs),
+    linetype = "dashed", alpha = 0.2, col = "red"
+  ) +
+  geom_text(
+    aes(
+      x = now_minus_tau + 20, y = 200,
+      label = "Assume constant Rt in window"
+    ), size = 8 / .pt
+  ) +
+  geom_segment(
+    aes(
+      x = now_minus_tau, xend = now, y = 195, yend = 195
+    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
+  ) +
+  geom_text(
+    aes(
+      x = now + 12, y = 170,
+      label = "Forecasts assuming \n constant Rt"
+    ), size = 8 / .pt, col = "red"
+  ) +
+  coord_trans(clip = "off")
+
+
