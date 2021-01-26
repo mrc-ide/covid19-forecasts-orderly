@@ -5,19 +5,13 @@ parameters:
 - location
 
 packages:
-  - Hmisc
   - EpiEstim
-  - binom
   - ascertainr
   - purrr
   - dplyr
   - ggforce
   - rincewind
-
-sources:
-  - R/utils.R
-  - R/gamma_dist_EpiEstim.R
-
+  - epitrix
 
 artefacts:
   data:
