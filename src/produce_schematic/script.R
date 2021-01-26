@@ -169,6 +169,7 @@ m1_right <- obs_m1 +
 
 ## https://stackoverflow.com/questions/35633239/add-curly-braces-to-ggplot2-and-then-use-ggsave
 x <- seq(0, 1, 0.1)
+dev.new()
 p <- ggplot() + geom_point(aes(x, x), alpha = 0) + theme_void()
 grid.brackets(52, 24, 49, 350, h = 0.1, lwd = 4)
 dev.copy(png, "paren.png", height = 1000, width = 1000, res = 200)
