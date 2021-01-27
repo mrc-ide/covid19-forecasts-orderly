@@ -15,7 +15,6 @@ psi <- ggplot() +
   xlab("Serial interval") +
   theme_schematic() +
   theme(axis.title.y = element_blank())
-
 ######################################################################
 model_outputs <- readRDS("DeCa_Std_results.rds")
 ## Anyone will do, for illustration
@@ -127,7 +126,7 @@ m1_left <- obs_m1 +
     aes(
       x = now_minus_tau, xend = now, y = 195, yend = 195
     ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
-  ) + coord_trans(clip = "off") + ggtitle("Model 1")
+  ) + coord_trans(clip = "off")
 
 m1_right <- obs_m1 +
   geom_line(
@@ -170,9 +169,11 @@ m1_right <- obs_m1 +
 
 
 left <- plot_grid(
-  m1_left, psi, nrow = 2, rel_heights = c(0.7, 0.3),
+  m1_left + ggtitle("Model 1"),
+  psi, nrow = 2, rel_heights = c(0.7, 0.3),
   align = "hv", axis = "l"
 )
+
 
 ggsave("rti0_left.png", left)
 ggsave("rti0_right.png", m1_right)
@@ -228,8 +229,7 @@ m3_left <- ggplot() +
   ) +
   ##scale_x_date(limits = earliest, as.Date("2020-07-31")) +
   xlab("Time") + ylab("Daily Cases/Deaths") +
-  theme_schematic() +
-  ggtitle("Model 3")
+  theme_schematic()
 
 m3_right <- m3_left +
   geom_line(
@@ -295,8 +295,8 @@ pdelay <- ggplot() +
   theme_schematic()
 
 m3_left <- plot_grid(
-  m3_left, pdelay, nrow = 2, rel_heights = c(0.7, 0.3),
-  align = "hv", axis = "l"
+  m3_left + ggtitle("Model 3"), pdelay, nrow = 2,
+  rel_heights = c(0.7, 0.3), align = "hv", axis = "l"
 )
 
 ggsave("m3_left.png", m3_left)
@@ -315,8 +315,7 @@ m2_left <- ggplot() +
   ) +
   geom_text(aes(x = now + 3, y = 220, label = "Now"), size = 8 / .pt) +
   xlab("Time") + ylab("Daily Deaths") +
-  theme_schematic() +
-  ggtitle("Model 2")
+  theme_schematic()
 
 m2_right <- m2_left +
   geom_vline(
@@ -378,8 +377,8 @@ m2_right <- m2_left +
 
 
 m2_left <- plot_grid(
-  m2_left, psi, nrow = 2, rel_heights = c(0.7, 0.3),
-  align = "hv", axis = "l"
+  m2_left +  ggtitle("Model 2"), psi, nrow = 2,
+  rel_heights = c(0.7, 0.3), align = "hv", axis = "l"
 )
 
 ggsave("m2_left.png", m2_left)
@@ -400,31 +399,54 @@ rt <- data.frame(
   stringsAsFactors = FALSE
 )
 
-arrows <- data.frame(
-  x = c("Week 2", "Week 3", "Week 4"),
-  xend = "Week 5",
-  y = c(15, 12, 10),
-  yend = c(5, 6, 7),
-  stringsAsFactors = FALSE
-)
-
-rt <- left_join(rt, arrows, by = c("week" = "x"))
-
-ggplot(rt) +
+rt_plot <- ggplot(rt) +
   geom_half_violin(
     aes(week, rt, fill = fill), draw_quantiles = c(0.25, 0.5, 0.75),
     alpha = 0.3
   ) +
   scale_fill_identity() +
-  scale_x_discrete(position = "top") +
+  scale_x_discrete(
+    position = "top",
+    breaks = c("Week 1", "Week 2", "Week 3", "Week 4", "Week 5"),
+    labels = c("Week (K - 4)", "Week (K - 3)", "Week (K - 2)",
+               "Week (K - 1)", "Week K")
+  ) +
   theme_schematic() +
   ylab("Reproduction number") +
   theme(
     axis.line.x = element_blank(), axis.title.x = element_blank(),
-    axis.text.x = element_text(size = 10)
+    axis.text.x = element_text(size = 6, angle = 90),
+    axis.title.y = element_text(size = 8)
   ) +
   ## Arrows to show sampling
   annotate(
     "curve", x = "Week 2", xend = "Week 5", y = 12, yend = 5,
-    curvature = -0.5
+    curvature = -0.5, alpha = 0.2, linetype = "dashed",
+    arrow = arrow(length = unit(0.03, "npc")
   )
+  ) +
+  annotate(
+    "curve", x = "Week 3", xend = "Week 5", y = 9, yend = 4,
+    curvature = -0.3, alpha = 0.5, linetype = "dashed",
+    arrow = arrow(length = unit(0.03, "npc")
+  )
+) +
+  annotate(
+    "curve", x = "Week 4", xend = "Week 5", y = 7, yend = 3,
+    curvature = -0.2, alpha = 1, linetype = "dashed",
+    arrow = arrow(length = unit(0.03, "npc")
+  )
+)
+
+
+medium_algo <- ggdraw() +
+  draw_image("medium-term-forecasts-algo.png", scale = 1.5)
+
+
+final <- plot_grid(
+  rt_plot, medium_algo, nrow = 2, rel_heights = c(0.7, 0.3)
+)
+
+ggsave("medium-term-schematic.png", final)
+
+

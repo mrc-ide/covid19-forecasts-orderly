@@ -8,6 +8,9 @@ packages:
 - purrr
 - dplyr
 - gghalves
+- cowplot
+
+resources: medium-term-forecasts-algo.png
 
 artefacts:
   staticgraph:
