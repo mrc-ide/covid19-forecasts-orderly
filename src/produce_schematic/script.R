@@ -127,7 +127,7 @@ m1_left <- obs_m1 +
     aes(
       x = now_minus_tau, xend = now, y = 195, yend = 195
     ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
-  ) + coord_trans(clip = "off")
+  ) + coord_trans(clip = "off") + ggtitle("Model 1")
 
 m1_right <- obs_m1 +
   geom_line(
@@ -228,7 +228,8 @@ m3_left <- ggplot() +
   ) +
   ##scale_x_date(limits = earliest, as.Date("2020-07-31")) +
   xlab("Time") + ylab("Daily Cases/Deaths") +
-  theme_schematic() ##+ theme(axis.title.y = element_blank())
+  theme_schematic() +
+  ggtitle("Model 3")
 
 m3_right <- m3_left +
   geom_line(
@@ -314,7 +315,8 @@ m2_left <- ggplot() +
   ) +
   geom_text(aes(x = now + 3, y = 220, label = "Now"), size = 8 / .pt) +
   xlab("Time") + ylab("Daily Deaths") +
-  theme_schematic()
+  theme_schematic() +
+  ggtitle("Model 2")
 
 m2_right <- m2_left +
   geom_vline(
@@ -382,3 +384,47 @@ m2_left <- plot_grid(
 
 ggsave("m2_left.png", m2_left)
 ggsave("m2_right.png", m2_right)
+
+
+########### Medium-term forecasts schematic
+###########
+
+## Rt distributions
+rt <- data.frame(
+  week = rep(paste("Week", 1:5), each = 1e3),
+  rt = c(
+    rnorm(1e3, 8, 2), rnorm(1e3, 4, 2), rnorm(1e3, 2, 2),
+    rnorm(1e3, 0, 2), rnorm(1e3, 0, 1)
+  ),
+  fill = rep(c(rep("gray", 4), "blue"), each = 1e3),
+  stringsAsFactors = FALSE
+)
+
+arrows <- data.frame(
+  x = c("Week 2", "Week 3", "Week 4"),
+  xend = "Week 5",
+  y = c(15, 12, 10),
+  yend = c(5, 6, 7),
+  stringsAsFactors = FALSE
+)
+
+rt <- left_join(rt, arrows, by = c("week" = "x"))
+
+ggplot(rt) +
+  geom_half_violin(
+    aes(week, rt, fill = fill), draw_quantiles = c(0.25, 0.5, 0.75),
+    alpha = 0.3
+  ) +
+  scale_fill_identity() +
+  scale_x_discrete(position = "top") +
+  theme_schematic() +
+  ylab("Reproduction number") +
+  theme(
+    axis.line.x = element_blank(), axis.title.x = element_blank(),
+    axis.text.x = element_text(size = 10)
+  ) +
+  ## Arrows to show sampling
+  annotate(
+    "curve", x = "Week 2", xend = "Week 5", y = 12, yend = 5,
+    curvature = -0.5
+  )
