@@ -16,14 +16,6 @@ psi <- ggplot() +
   theme_schematic() +
   theme(axis.title.y = element_blank())
 
-## https://stackoverflow.com/questions/35633239/add-curly-braces-to-ggplot2-and-then-use-ggsave
-x <- seq(0, 1, 0.1)
-dev.new()
-p <- ggplot() + geom_point(aes(x, x), alpha = 0) + theme_void()
-grid.brackets(52, 24, 49, 350, h = 0.1, lwd = 4)
-dev.copy(png, "paren.png", height = 1000, width = 1000, res = 200)
-dev.off()
-
 ######################################################################
 model_outputs <- readRDS("DeCa_Std_results.rds")
 ## Anyone will do, for illustration
@@ -72,7 +64,8 @@ i0_future <- map_dfr(
   1:1000,
   function(index) {
     deaths <- rpois(
-      length(dates), seq(185, length.out = length(dates), by = 1)
+      length(dates_future),
+      seq(185, length.out = length(dates_future), by = 1)
     )
     deaths <- floor(
       slider::slide_dbl(deaths, mean, .before = 3, .after = 3)
@@ -175,6 +168,16 @@ m1_right <- obs_m1 +
     ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
   ) + coord_trans(clip = "off")
 
+
+left <- plot_grid(
+  m1_left, psi, nrow = 2, rel_heights = c(0.7, 0.3),
+  align = "hv", axis = "l"
+)
+
+ggsave("rti0_left.png", left)
+ggsave("rti0_right.png", m1_right)
+
+
 ######################################################################
 ######################################################################
 ######## Model 3: Death to Cases
@@ -223,11 +226,9 @@ m3_left <- ggplot() +
   geom_text(
     aes(x = as.Date("2020-07-10"), y = 200, label = "Deaths")
   ) +
-  scale_x_date(
-    limits = earliest, as.Date("2020-07-31"))
-  ) +
-  xlab("Time") +
-  theme_schematic() + theme(axis.title.y = element_blank())
+  ##scale_x_date(limits = earliest, as.Date("2020-07-31")) +
+  xlab("Time") + ylab("Daily Cases/Deaths") +
+  theme_schematic() ##+ theme(axis.title.y = element_blank())
 
 m3_right <- m3_left +
   geom_line(
@@ -292,6 +293,13 @@ pdelay <- ggplot() +
   ylab("Probability of death") +
   theme_schematic()
 
+m3_left <- plot_grid(
+  m3_left, pdelay, nrow = 2, rel_heights = c(0.7, 0.3),
+  align = "hv", axis = "l"
+)
+
+ggsave("m3_left.png", m3_left)
+ggsave("m3_right.png", m3_right)
 
 ######################################################################
 ######################################################################
@@ -367,3 +375,10 @@ m2_right <- m2_left +
   coord_trans(clip = "off")
 
 
+m2_left <- plot_grid(
+  m2_left, psi, nrow = 2, rel_heights = c(0.7, 0.3),
+  align = "hv", axis = "l"
+)
+
+ggsave("m2_left.png", m2_left)
+ggsave("m2_right.png", m2_right)

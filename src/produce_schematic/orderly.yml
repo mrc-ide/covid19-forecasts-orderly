@@ -5,14 +5,19 @@ packages:
 - ggtext
 - patchwork
 - slider
+- purrr
+- dplyr
 
 artefacts:
   staticgraph:
     description: Method schematic
     filenames:
-      - rti0.png
-      - apeestim.png
-      - deca.png
+      - m1_left.png
+      - m1_right.png
+      - m2_left.png
+      - m2_right.png
+      - m3_left.png
+      - m3_right.png
 
 
 depends:
@@ -20,7 +25,3 @@ depends:
       id: latest(parameter:week_ending == "2020-07-19")
       use:
          DeCa_Std_results.rds: DeCa_latest.rds
-  - run_rti0:
-      id: latest(parameter:week_ending == "2020-07-19")
-      use:
-         rti0_results.rds: rti0_all_results.rds
