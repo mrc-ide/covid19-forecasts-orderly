@@ -13,7 +13,7 @@ packages:
 - ggplot2
 - glue
 - rincewind
-
+- janitor
 
 depends:
 - collate_combined_rt:

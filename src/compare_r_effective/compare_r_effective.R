@@ -50,17 +50,42 @@ out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
 
 out <- gather(out, phase_eff, label, decline:unclear)
 out$val <- readr::parse_number(out$label)
+out$label_weekly <- rincewind::nice_country_name(out$phase_weekly)
+out$label_eff <- rincewind::nice_country_name(out$phase_eff)
 
-ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
-  geom_tile() +
-  geom_text(aes(phase_weekly, phase_eff, label = label)) +
+p <- ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
+  geom_tile(width = 0.8, height = 0.8) +
+  geom_text(
+    aes(phase_weekly, phase_eff, label = label),
+    size = 7 /.pt
+  ) +
   facet_wrap(~ `Week of forecast`, nrow = 2) +
-  scale_fill_distiller(palette = "Greens", direction = -1) +
-  xlab("Epidemic phase (weekly Rt)") +
-  ylab("Epidemic phase (Rs)") +
+  scale_fill_distiller(
+    palette = "Greens", direction = 1,
+    labels = c("0.00%", "50.00%", "100.00%"),
+    breaks = c(0, 50, 100),
+    limits = c(0, 100)
+  ) +
+  scale_x_discrete(
+    breaks = c("decline", "growing", "stable/growing slowly",
+               "unclear"),
+    labels = c("Declining", "Growing", "Stable \n growing slowly",
+               "Unclear")
+  ) +
+  scale_y_discrete(
+    breaks = c("decline", "growing", "stable/growing slowly",
+               "unclear"),
+    labels = c("Declining", "Growing", "Stable \n growing slowly",
+               "Unclear")
+  ) +
+  xlab(expression(paste("Epidemic phase ", R[t]))) +
+  ylab(expression(paste("Epidemic phase ", R^S))) +
   theme_minimal() +
-  theme(legend.position = "top", legend.title = element_blank())
+  theme(
+    legend.position = "top", legend.title = element_blank()
+  )
 
+save_multiple(p, "test.tiff")
 
 
 ## phase_eff is estimated on a daily scale. Before aggregating it to
