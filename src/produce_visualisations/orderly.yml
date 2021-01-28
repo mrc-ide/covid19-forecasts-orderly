@@ -28,6 +28,7 @@ packages:
   - dplyr
   - purrr
   - gridExtra
+  - purrr
 
 sources:
   - R/utils.R

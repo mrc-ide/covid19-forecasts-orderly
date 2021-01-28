@@ -39,9 +39,7 @@ projection_plot <- function(obs, pred) {
     dplyr::summarise(date = min(date)) %>%
     dplyr::ungroup()
 
-  window_eps$xintercepts <- as.numeric(
-    window_eps$date - 1
-  ) + 0.5
+  window_eps$xintercepts <- as.numeric(window_eps$date - 1) + 0.5
   ## To get nice labels
   ## https://joshuacook.netlify.com/post/integer-values-ggplot-axis/
   integer_breaks <- function(n = 5, ...) {
@@ -96,38 +94,34 @@ rt_lineplot <- function(rt, nice_names) {
   palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7")
   names(palette) <- c("Model 4", "Model 2", "Model 1", "Model 3", "Ensemble")
 
+  rt$country <- reorder(rt$country, -rt$`50%`)
+  if (length(unique(rt$model)) == 1) width <- 0.1
+  else width <- 0.7
 
-
-    rt$country <- reorder(rt$country, -rt$`50%`)
-    if (length(unique(rt$model)) == 1) width <- 0.1
-    else width <- 0.7
-
-    p <- ggplot() +
-        geom_errorbar(
-            data = rt,
-            aes(x = country, ymin = `2.5%`, ymax = `97.5%`, col = proj),
-            position = position_dodge(width = width),
-            size = 1.1
-        ) +
-        geom_point(
-            data = rt,
-            aes(x = country, y = `50%`, col = proj),
-            position = position_dodge(width = width),
-            size = 4
-        ) +
-      theme_project() +
-        xlab("") +
-        ylab("Effective Reproduction Number") +
-        scale_x_discrete(labels = nice_names) +
-        geom_hline(
-            yintercept = 1,
-            linetype = "dashed"
-        ) + theme_project() +
-          scale_color_manual(
-            values = palette
-          ) +
-      ylim(0, 5) +
-      coord_flip()
+  p <- ggplot() +
+    geom_errorbar(
+      data = rt,
+      aes(x = country, ymin = `2.5%`, ymax = `97.5%`, col = proj),
+      position = position_dodge(width = width),
+      size = 1.1
+    ) +
+    geom_point(
+      data = rt,
+      aes(x = country, y = `50%`, col = proj),
+      position = position_dodge(width = width),
+      size = 4
+    ) +
+    theme_project() +
+    xlab("") +
+    ylab("Effective Reproduction Number") +
+    scale_x_discrete(labels = nice_names) +
+    geom_hline(
+      yintercept = 1,
+      linetype = "dashed"
+    ) + theme_project() +
+    scale_color_manual(values = palette) +
+    ylim(0, 5) +
+    coord_flip()
 
     p
 }

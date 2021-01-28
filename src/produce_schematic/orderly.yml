@@ -1,0 +1,31 @@
+script: script.R
+
+packages:
+- ggplot2
+- ggtext
+- patchwork
+- slider
+- purrr
+- dplyr
+- gghalves
+- cowplot
+
+resources: medium-term-forecasts-algo.png
+
+artefacts:
+  staticgraph:
+    description: Method schematic
+    filenames:
+      - m1_left.png
+      - m1_right.png
+      - m2_left.png
+      - m2_right.png
+      - m3_left.png
+      - m3_right.png
+
+
+depends:
+  - DeCa_model:
+      id: latest(parameter:week_ending == "2020-07-19")
+      use:
+         DeCa_Std_results.rds: DeCa_latest.rds

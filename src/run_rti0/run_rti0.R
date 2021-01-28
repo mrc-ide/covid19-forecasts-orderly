@@ -101,34 +101,35 @@ acc <- purrr::map(res, ~ colSums(diff(.$theta) != 0) / iterations)
 acc[[1]]
 acc[[2]]
 
-R_est <- purrr::map(
-  res,
-  function(r) {
-    if (N_geo > 1) {
-      apply(
-        r$theta[, 1:N_geo], 2, quantile, c(0.5, 0.025, 0.975)
-      )
-    } else {
-      quantile(r$theta[, 1], c(0.5, 0.025, 0.975))
-    }
-  }
-)
+## R_est <- purrr::map(
+##   res,
+##   function(r) {
+##     if (N_geo > 1) {
+##       apply(
+##         r$theta[, 1:N_geo], 2, quantile, c(0.5, 0.025, 0.975)
+##       )
+##     } else {
+##       quantile(r$theta[, 1], c(0.5, 0.025, 0.975))
+##     }
+##   }
+## )
 
 
-I0_est <- purrr::map(
-  res,
-  function(r) {
-    if (N_geo > 1) {
-      apply(
-        r$theta[, (N_geo + 1):(2 * N_geo)],
-        2,
-        quantile, c(0.5, 0.025, 0.975)
-      )
-    } else {
-      quantile(r$theta[, 2], c(0.5, 0.025, 0.975))
-    }
-  }
-)
+## I0_est <- purrr::map(
+##   res,
+##   function(r) {
+##     if (N_geo > 1) {
+##       apply(
+##         r$theta[, (N_geo + 1):(2 * N_geo)],
+##         2,
+##         quantile, c(0.5, 0.025, 0.975)
+##       )
+##     } else {
+##       quantile(r$theta[, 2], c(0.5, 0.025, 0.975))
+##     }
+##   }
+##   )
+saveRDS(res, "rti0_all_results.rds")
 
 ### Project forward
 
