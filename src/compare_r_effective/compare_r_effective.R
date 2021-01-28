@@ -1,5 +1,5 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
-
+dir.create("figures")
 
 reff_qntls <- readRDS("reff_qntls.rds")
 reff_qntls <- rincewind::assign_epidemic_phase(reff_qntls)
@@ -50,8 +50,6 @@ out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
 
 out <- gather(out, phase_eff, label, decline:unclear)
 out$val <- readr::parse_number(out$label)
-out$label_weekly <- rincewind::nice_country_name(out$phase_weekly)
-out$label_eff <- rincewind::nice_country_name(out$phase_eff)
 
 p <- ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
   geom_tile(width = 0.8, height = 0.8) +
@@ -85,7 +83,7 @@ p <- ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
     legend.position = "top", legend.title = element_blank()
   )
 
-save_multiple(p, "test.tiff")
+save_multiple(p, "figures/percentage_phase_agree.tiff")
 
 
 ## phase_eff is estimated on a daily scale. Before aggregating it to
@@ -112,14 +110,101 @@ out$week_of_forecast <- case_when(
 )
 
 out$day <- factor(out$day, levels = 1:28, ordered = TRUE)
+out$y <- case_when(
+  out$phase_eff == "decline" ~ 0.4,
+  out$phase_eff == "growing" ~ 0.8,
+  out$phase_eff == "stable/growing slowly" ~ 1.2,
+  out$phase_eff == "unclear" ~ 1.6
+)
+
 
 ## scales will multiply whatever you give it by a 100.
 ## whereas our values are already in (0, 100). We just want anice
 ## % sign
 mypercent <- function(vec) scales::percent(vec/100, accuracy = 0.1)
 
+daily_phase_compare <- function(x, phase) {
+  p <- ggplot() +
+    geom_tile(
+      data = x[x$phase_eff == phase, ], aes(day, phase_eff, fill = val),
+      width = 0.9, height = 0.3
+  ) +
+  scale_fill_distiller(
+    palette = "Greens", direction = 1, breaks = c(0, 50, 100),
+    limits = c(0, 100), label = mypercent
+  ) +
+  ggnewscale::new_scale_fill() +
+  geom_tile(
+    data = x[x$phase_eff != phase, ], aes(day, phase_eff, fill = val),
+    width = 0.9, height = 0.3
+  ) +
+  scale_fill_distiller(
+    palette = "OrRd", direction = 1, breaks = c(0, 50, 100),
+    limits = c(0, 100), label = mypercent
+  )
+  p
+}
+
+plots <- split(out, out$phase_weekly) %>%
+  imap(function(y, phase) daily_phase_compare(y, phase))
+
+## Top left
+unclear <- plots[["unclear"]] +
+  scale_y_discrete(
+    breaks = c("decline", "growing", "stable/growing slowly",
+               "unclear"),
+    labels = c("Declining", "Growing", "Stable \n growing slowly",
+               "Unclear")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_blank(), axis.ticks.x = element_blank()
+  )
+## Top right
+growing <- plots[["growing"]] +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(), axis.ticks = element_blank()
+  )
+
+## Bottom left
+stable <- plots[["stable/growing slowly"]] +
+  theme_minimal() +
+  scale_y_discrete(
+    breaks = c("decline", "growing", "stable/growing slowly",
+               "unclear"),
+    labels = c("Declining", "Growing", "Stable \n growing slowly",
+               "Unclear")
+  )
+
+## Bottom right
+decline <- plots[["decline"]] +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_blank(), axis.ticks.y = element_blank()
+  )
+
+final <- unclear + growing + stable + decline +
+  plot_layout(ncol = 2, nrow = 2, byrow = TRUE, guides = "collect") &
+  theme(
+    legend.position = "top",
+    legend.title = element_blank(),
+    axis.title = element_blank(),
+  )
+
+xlab <-
+
+  xlab("Day of forecast") +
+  ylab(expression(paste("Epidemic phase ", R^S))) +
+  theme_minimal() +
+  theme(
+    legend.position = "top", legend.title = element_blank(),
+    axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)
+  )
+
+
 ggplot(out, aes(day, phase_eff, fill = val)) +
-  geom_tile(width = 0.8, height = 0.5) +
+  geom_tile(width = 0.9, height = 0.5) +
   ##geom_text(aes(day, phase_eff, label = label)) +
   facet_wrap(~ phase_weekly, nrow = 2) +
   scale_fill_distiller(
@@ -127,9 +212,12 @@ ggplot(out, aes(day, phase_eff, fill = val)) +
     limits = c(0, 100), label = mypercent
   ) +
   xlab("Day of forecast") +
-  ylab("Epidemic phase (Rs)") +
+  ylab(expression(paste("Epidemic phase ", R^S))) +
   theme_minimal() +
-  theme(legend.position = "top", legend.title = element_blank())
+  theme(
+    legend.position = "top", legend.title = element_blank(),
+    axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)
+  )
 
 
 ######################################################################
