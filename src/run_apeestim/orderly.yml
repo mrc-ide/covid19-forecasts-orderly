@@ -1,6 +1,8 @@
 script: run_apeestim.R
 
-parameters: week_ending
+parameters:
+  - week_ending
+  - location
 
 packages:
   - purrr

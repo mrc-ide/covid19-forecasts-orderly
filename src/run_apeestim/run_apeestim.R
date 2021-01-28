@@ -1,10 +1,9 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-08"), use_draft = "newer")
-dir.create("figures")
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona"))
 
 model_input <- readRDS("model_input.rds")
 deaths_to_use <- model_input$D_active_transmission
 
-locations <- model_input$State
+## locations <- model_input$State
 ## Can modify this if we want to run for a smaller selection of states
 ## Possibly base this on another file
 
@@ -20,56 +19,46 @@ tall_deaths <- gather(
     }
   )
 
-tall_deaths <- tall_deaths[names(tall_deaths) %in% locations]
+tall_deaths <- tall_deaths[[location]]
 
 si_distrs <- readRDS("si_distrs.rds")
 
 ##apeestim
 inftvty <- purrr::map(
-  tall_deaths,
-  function(deaths) {
-    map(
-      si_distrs,
-      function(si_distr) {
-        incid <- as.numeric(incidence::get_counts(deaths))
-        EpiEstim::overall_infectivity(
-          incid, si_distr
-        )
-      }
+  si_distrs,
+  function(si_distr) {
+    incid <- as.numeric(incidence::get_counts(tall_deaths))
+    EpiEstim::overall_infectivity(
+      incid, si_distr
     )
   }
 )
 
-## For each country, for each SI Distribution,
-r_apeestim <- purrr::imap(
-  tall_deaths,
-  function(deaths, province_state) {
-    ##deaths <- tall_deaths[[country]]
-    r_prior <- c(1, 5)
-    a <- 0.025
-    trunctime <- first_nonzero_incidence(deaths)
-    message("Truncating for ", province_state, " at ", trunctime)
-    out <- purrr::map(
-      si_distrs,
-      function(si_distr) {
-        incid <- as.numeric(incidence::get_counts(deaths))
-        inftvty <- EpiEstim::overall_infectivity(
-          incid, si_distr
-        )
-        apeEstim(
-          incid,
-          si_distr,
-          inftvty,
-          r_prior,
-          a,
-          trunctime,
-          province_state
-        )
-      }
+
+## Run for selected location, for each SI Distribution,
+r_prior <- c(1, 5)
+a <- 0.025
+trunctime <- first_nonzero_incidence(y)
+
+r_apeestim <- purrr::map(
+  si_distrs,
+  function(si_distr) {
+    incid <- as.numeric(incidence::get_counts(y))
+    inftvty <- EpiEstim::overall_infectivity(
+      incid, si_distr
     )
-    out
+    apeEstim(
+      incid,
+      si_distr,
+      inftvty,
+      r_prior,
+      a,
+      trunctime,
+      province_state
+    )
   }
 )
+
 
 ## Each element of r_apeestim is a list with the following
 ## components: "best_k_ape", "best_set_ape", "best_k_pmse",
@@ -79,54 +68,45 @@ r_apeestim <- purrr::imap(
 ## "tplus1_ci", "alpha", "beta", "post_negbin_pr". We want the
 ## last values of alpha and beta.
 n_sim <- 1000
-rsamples_ape <- map(
-  r_apeestim,
-  function(r_state) {
-    out <- map(
-      r_state,
-      function(r_si) {
-        shape <- tail(
-          r_si[["best_set_ape"]][["alpha"]], 1
-        )
-        scale <- tail(
-          r_si[["best_set_ape"]][["beta"]], 1
-        )
-        rgamma(n_sim, shape = shape, scale = scale)
-      }
+y_rsamples_ape <- map(
+  y_r_apeestim,
+  function(r_si) {
+    shape <- tail(
+      r_si[["best_set_ape"]][["alpha"]], 1
     )
+    scale <- tail(
+      r_si[["best_set_ape"]][["beta"]], 1
+    )
+    rgamma(n_sim, shape = shape, scale = scale)
   }
 )
+
 date_to_project_from <- as.Date(week_ending)
 sims_per_rt <- 10
 n_days <- 7
 ## Projections using projections package with
 ## Poisson offspring distribution
+df <- subset(tall_deaths, to = as.Date(date_to_project_from))
+
 ape_projections <- purrr::map2(
-  tall_deaths,
-  rsamples_ape,
-  function(df, rt) {
-    df <- subset(df, to = as.Date(date_to_project_from))
-    purrr::map2(
-      rt, si_distrs,
-      function(rt_si, si) {
-        out <- map(
-          seq_len(sims_per_rt),
-          function(i) {
-            projections::project(
-              x = df,
-              R = rt_si,
-              si = si,
-              n_sim = n_sim,
-              n_days = n_days,
-              R_fix_within = TRUE,
-              model = "poisson"
-            ) %>%
-              as.matrix() %>% t
-          }
-        )
-        do.call(what = "rbind", args = out)
+  rsamples_ape, si_distrs,
+  function(rt_si, si) {
+    out <- map(
+      seq_len(sims_per_rt),
+      function(i) {
+        projections::project(
+          x = df,
+          R = rt_si,
+          si = si,
+          n_sim = n_sim,
+          n_days = n_days,
+          R_fix_within = TRUE,
+          model = "poisson"
+        ) %>%
+          as.matrix() %>% t
       }
     )
+    do.call(what = "rbind", args = out)
   }
 )
 
