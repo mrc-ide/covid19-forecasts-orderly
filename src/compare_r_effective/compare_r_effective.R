@@ -76,8 +76,8 @@ p <- ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
     labels = c("Declining", "Growing", "Stable \n growing slowly",
                "Unclear")
   ) +
-  xlab(expression(paste("Epidemic phase ", R[t]))) +
-  ylab(expression(paste("Epidemic phase ", R^S))) +
+  xlab(expression(paste("Epidemic phase using ", R[t]))) +
+  ylab(expression(paste("Epidemic phase using ", R^S))) +
   theme_minimal() +
   theme(
     legend.position = "top", legend.title = element_blank()
@@ -110,13 +110,8 @@ out$week_of_forecast <- case_when(
 )
 
 out$day <- factor(out$day, levels = 1:28, ordered = TRUE)
-out$y <- case_when(
-  out$phase_eff == "decline" ~ 0.4,
-  out$phase_eff == "growing" ~ 0.8,
-  out$phase_eff == "stable/growing slowly" ~ 1.2,
-  out$phase_eff == "unclear" ~ 1.6
-)
 
+saveRDS(out, "phase_compare_daily.rds")
 
 ## scales will multiply whatever you give it by a 100.
 ## whereas our values are already in (0, 100). We just want anice
@@ -127,7 +122,7 @@ daily_phase_compare <- function(x, phase) {
   p <- ggplot() +
     geom_tile(
       data = x[x$phase_eff == phase, ], aes(day, phase_eff, fill = val),
-      width = 0.9, height = 0.3
+      width = 0.5, height = 0.5
   ) +
   scale_fill_distiller(
     palette = "Greens", direction = 1, breaks = c(0, 50, 100),
@@ -136,7 +131,7 @@ daily_phase_compare <- function(x, phase) {
   ggnewscale::new_scale_fill() +
   geom_tile(
     data = x[x$phase_eff != phase, ], aes(day, phase_eff, fill = val),
-    width = 0.9, height = 0.3
+      width = 0.5, height = 0.5
   ) +
   scale_fill_distiller(
     palette = "OrRd", direction = 1, breaks = c(0, 50, 100),
@@ -159,13 +154,19 @@ unclear <- plots[["unclear"]] +
   theme_minimal() +
   theme(
     axis.text.x = element_blank(), axis.ticks.x = element_blank()
+  ) +
+  ggtitle(
+    label = NULL,
+    subtitle = expression(
+      paste("Epidemic phase using ", R[t], ": Unclear")
+    )
   )
 ## Top right
 growing <- plots[["growing"]] +
   theme_minimal() +
   theme(
     axis.text = element_blank(), axis.ticks = element_blank()
-  )
+    ) + ggtitle(label = NULL, subtitle = "Growing")
 
 ## Bottom left
 stable <- plots[["stable/growing slowly"]] +
@@ -175,50 +176,44 @@ stable <- plots[["stable/growing slowly"]] +
                "unclear"),
     labels = c("Declining", "Growing", "Stable \n growing slowly",
                "Unclear")
-  )
+  ) +
+  theme(axis.text.x = element_text(size = 6, angle = 90)) +
+  ggtitle(label = NULL, subtitle = "Stable/growing slowly")
 
 ## Bottom right
 decline <- plots[["decline"]] +
   theme_minimal() +
   theme(
     axis.text.y = element_blank(), axis.ticks.y = element_blank()
-  )
+  ) +
+  theme(
+    axis.text.x = element_text(size = 6, angle = 90)
+  ) +
+  ggtitle(label = NULL, subtitle = "Declining")
 
 final <- unclear + growing + stable + decline +
+  ## Horizontal legend is placed *below* the subtitles for some reason
   plot_layout(ncol = 2, nrow = 2, byrow = TRUE, guides = "collect") &
   theme(
-    legend.position = "top",
     legend.title = element_blank(),
     axis.title = element_blank(),
+    plot.subtitle = element_text(size = 8)
   )
 
-xlab <-
+label1 <- textGrob(
+  expression(paste("Epidemic phase using ", R^S)), rot = 90,
+  gp = gpar(fontsize = 8)
+)
 
-  xlab("Day of forecast") +
-  ylab(expression(paste("Epidemic phase ", R^S))) +
-  theme_minimal() +
-  theme(
-    legend.position = "top", legend.title = element_blank(),
-    axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)
-  )
+label2 <- textGrob("Day of forecast", gp = gpar(fontsize = 8))
 
+with_ylabel <- wrap_elements(label1) + wrap_elements(final) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
 
-ggplot(out, aes(day, phase_eff, fill = val)) +
-  geom_tile(width = 0.9, height = 0.5) +
-  ##geom_text(aes(day, phase_eff, label = label)) +
-  facet_wrap(~ phase_weekly, nrow = 2) +
-  scale_fill_distiller(
-    palette = "Greens", direction = 1, breaks = c(0, 50, 100),
-    limits = c(0, 100), label = mypercent
-  ) +
-  xlab("Day of forecast") +
-  ylab(expression(paste("Epidemic phase ", R^S))) +
-  theme_minimal() +
-  theme(
-    legend.position = "top", legend.title = element_blank(),
-    axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)
-  )
+with_xlabel <- wrap_elements(with_ylabel) + wrap_elements(label2) +
+  plot_layout(ncol = 1, heights = c(1, 0.03))
 
+save_multiple(with_xlabel, "figures/si_compare_phase_daily.tiff")
 
 ######################################################################
 ####### Option 2: Compare the overlap ################################
@@ -271,21 +266,7 @@ out95 <- tabyl(x, week_of_forecast, overlaps95) %>%
 ## |Week 3           |7.44%  |92.56% |
 ## |Week 4           |10.36% |89.64% |
 
-######################################################################
-####### Option 3: Compare correlation ################################
-######################################################################
-x <- split(compare_phase, compare_phase$week_of_forecast) %>%
-  map_dfr(function(df) {
-    Hmisc::rcorr(df$`50%_weekly`, df$`50%_eff`) %>% broom::tidy()
-  }, .id = "week_of_forecast"
-  )
-
-## knitr::kable(x)
-## |week_of_forecast |column1 |column2 |  estimate|     n| p.value|
-## |:----------------|:-------|:-------|---------:|-----:|-------:|
-## |Week 1           |y       |x       | 0.9514270| 15155|       0|
-## |Week 2           |y       |x       | 0.5678541| 14371|       0|
-## |Week 3           |y       |x       | 0.3671123| 13699|       0|
-## |Week 4           |y       |x       | 0.2522769| 13069|       0|
-
-
+overlap <- left_join(
+  out50, out95, by = "week_of_forecast", suffix = c('_50', '_95')
+)
+saveRDS(overlap, "overlap.rds")
