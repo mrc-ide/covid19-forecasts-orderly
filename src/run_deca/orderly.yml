@@ -1,0 +1,32 @@
+script: ascertain.R
+
+parameters:
+- week_ending
+- location
+
+packages:
+  - EpiEstim
+  - ascertainr
+  - purrr
+  - dplyr
+  - ggforce
+  - rincewind
+  - epitrix
+
+artefacts:
+  data:
+    description: Latest model outputs
+    filenames:
+      - DeCa_latest.rds
+
+
+depends:
+  - prepare_jhu_data:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         model_input.rds: latest_model_input.rds
+  - produce_epi_params:
+      id: latest
+      use:
+         population_weighted_ifr.rds: population_weighted_ifr.rds
+         si_distrs.rds: si_distrs.rds
