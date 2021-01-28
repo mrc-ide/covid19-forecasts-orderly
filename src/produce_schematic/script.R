@@ -175,8 +175,8 @@ left <- plot_grid(
 )
 
 
-ggsave("rti0_left.png", left)
-ggsave("rti0_right.png", m1_right)
+ggsave("m1_left.png", left)
+ggsave("m1_right.png", m1_right)
 
 
 ######################################################################
