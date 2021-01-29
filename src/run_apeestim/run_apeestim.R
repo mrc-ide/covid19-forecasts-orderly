@@ -9,17 +9,9 @@ deaths_to_use <- model_input$D_active_transmission
 
 ## Convert to incidence object
 tall_deaths <- gather(
-  deaths_to_use, key = province_state, value = deaths, -dates
-) %>%
-  split(.$province_state) %>%
-  map(
-    function(x) {
-      message(x$province_state[1])
-      ts_to_incid(ts = x, date_col = "dates", case_col = "deaths")
-    }
-  )
-
-tall_deaths <- tall_deaths[[location]]
+  deaths_to_use[,c("dates", location)], key = province_state, value = deaths, -dates
+) %>% 
+  ts_to_incid(date_col = "dates", case_col = "deaths")
 
 si_distrs <- readRDS("si_distrs.rds")
 
@@ -38,12 +30,12 @@ inftvty <- purrr::map(
 ## Run for selected location, for each SI Distribution,
 r_prior <- c(1, 5)
 a <- 0.025
-trunctime <- first_nonzero_incidence(y)
+trunctime <- first_nonzero_incidence(tall_deaths)
 
 r_apeestim <- purrr::map(
   si_distrs,
   function(si_distr) {
-    incid <- as.numeric(incidence::get_counts(y))
+    incid <- as.numeric(incidence::get_counts(tall_deaths))
     inftvty <- EpiEstim::overall_infectivity(
       incid, si_distr
     )
@@ -68,8 +60,8 @@ r_apeestim <- purrr::map(
 ## "tplus1_ci", "alpha", "beta", "post_negbin_pr". We want the
 ## last values of alpha and beta.
 n_sim <- 1000
-y_rsamples_ape <- map(
-  y_r_apeestim,
+rsamples_ape <- map(
+  r_apeestim,
   function(r_si) {
     shape <- tail(
       r_si[["best_set_ape"]][["alpha"]], 1
@@ -110,39 +102,30 @@ ape_projections <- purrr::map2(
   }
 )
 
-pred_qntls <- purrr::map(
-  ape_projections,
-  function(pred) {
-    pred <- pred[[2]]
-    pred <- data.frame(pred, check.names = FALSE)
-    pred <- tidyr::gather(pred, dates, val)
-    qntls <- dplyr::group_by(pred, dates) %>%
-      ggdist::median_qi(.width = c(0.75, 0.95))
-    qntls$dates <- as.Date(qntls$dates)
-    qntls
-  }
-)
+pred_qntls <- data.frame(ape_projections[[2]], check.names = FALSE) %>% 
+  tidyr::pivot_longer(cols = everything(),
+                      names_to = "dates",
+                      values_to = "val") %>% 
+  dplyr::group_by(dates) %>% 
+  ggdist::median_qi(.width = c(0.75, 0.95))
 
-purrr::iwalk(
-  pred_qntls,
-  function(pred, state) {
-    obs <- deaths_to_use[, c("dates", state)]
-    obs$deaths <- obs[[state]]
-    p <- rincewind::plot_projections(obs, pred)
-    p <- p +
-      ggtitle(
-        glue::glue("Projections for {state} for week starting {week_ending}")
-      )
-    ggsave(glue::glue("figures/projections_{state}.png"), p)
-  }
-)
+pred_qntls$dates <- as.Date(pred_qntls$dates)
+
+obs <- deaths_to_use[, c("dates", location)]
+obs$deaths <- obs[[location]]
+p <- rincewind::plot_projections(obs, pred_qntls)
+p <- p +
+  ggtitle(
+    glue::glue("Projections for {location} for week starting {week_ending}")
+  )
+ggsave(glue::glue("projections_{location}.png"), p)
 
 ## ## Save in format required
 out <- saveRDS(
   object = list(
-    I_active_transmission = model_input[["I_active_transmission"]],
-    D_active_transmission = model_input[["D_active_transmission"]],
-    State = model_input[["State"]],
+    I_active_transmission = model_input[["I_active_transmission"]][, c("dates", location)],
+    D_active_transmission = model_input[["D_active_transmission"]][, c("dates", location)],
+    State = location,
     R_last = rsamples_ape,
     Predictions = ape_projections
   ),
