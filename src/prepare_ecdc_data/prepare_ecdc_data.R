@@ -431,6 +431,9 @@ raw_data$Deaths[raw_data$DateRep == "2021-01-24" & raw_data$`Countries.and.terri
 ## WHO data has 0s for UK. Corrected from Worldometers
 raw_data$Deaths[raw_data$DateRep == "2021-01-30" & raw_data$`Countries.and.territories` == "United_Kingdom"] <- 1245
 raw_data$Deaths[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.territories` == "United_Kingdom"] <- 1200
+
+raw_data$Cases[raw_data$DateRep == "2021-01-30" & raw_data$`Countries.and.territories` == "United_Kingdom"] <- 29079
+raw_data$Cases[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.territories` == "United_Kingdom"] <- 21088
 ## from Worldometers
 raw_data$Deaths[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.territories` == "Bolivia"] <- 53
 ## Erroneously recorded as 351 in WHO data
