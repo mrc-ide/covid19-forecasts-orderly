@@ -1,0 +1,38 @@
+script: produce_ensemble_outputs.R
+
+artefacts:
+  - data:
+      description: Ensemble Model Outputs
+      filenames:
+        - ensemble_model_predictions.rds
+        - ensemble_daily_qntls.rds
+        - ensemble_model_rt_samples.rds
+        - ensemble_model_rt.rds
+        - ensemble_weekly_qntls.rds
+
+parameters:
+  week_ending
+
+packages:
+  - purrr
+  - dplyr
+  - ggplot2
+  - ggforce
+  - rincewind
+
+sources:
+  - R/utils.R
+
+depends:
+  - run_rti0:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         RtI0_Std_results.rds: RtI0_latest_output.rds
+  - run_apeestim:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         sbkp_Std_results.rds: apeestim_model_outputs.rds
+  - DeCa_model:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         DeCa_Std_results.rds: DeCa_latest.rds
