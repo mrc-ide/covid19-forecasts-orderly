@@ -428,7 +428,16 @@ raw_data$Deaths[raw_data$DateRep == "2021-01-15" & raw_data$`Countries.and.terri
 ## Source Worldometers
 raw_data$Deaths[raw_data$DateRep == "2021-01-24" & raw_data$`Countries.and.territories` == "Switzerland"] <- 16
 
+## WHO data has 0s for UK. Corrected from Worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-01-30" & raw_data$`Countries.and.territories` == "United_Kingdom"] <- 1245
+raw_data$Deaths[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.territories` == "United_Kingdom"] <- 1200
 
+raw_data$Cases[raw_data$DateRep == "2021-01-30" & raw_data$`Countries.and.territories` == "United_Kingdom"] <- 29079
+raw_data$Cases[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.territories` == "United_Kingdom"] <- 21088
+## from Worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.territories` == "Bolivia"] <- 53
+## Erroneously recorded as 351 in WHO data
+raw_data$Deaths[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.territories` == "Lebanon"] <- 51
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
