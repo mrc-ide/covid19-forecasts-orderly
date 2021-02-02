@@ -1,7 +1,7 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 ## Random
 fontsize <- 12 / .pt
-forecast_text <- paste("Forecasts with constant", expression(R[t]))
+forecast_text <- "Forecasts with \n constant Rt"
 
 theme_schematic <- function() {
   theme_classic() %+replace%
@@ -27,6 +27,7 @@ obs_deaths$deaths <- slide_dbl(
 )
 
 earliest <- as.Date("2020-03-31")
+latest <- as.Date("2020-08-10")
 now <- as.Date("2020-07-15")
 now_minus_tau <- as.Date("2020-05-25")
 obs_deaths <- obs_deaths[obs_deaths$dates <= now, ]
@@ -83,11 +84,10 @@ i0_future <- group_by(i0_future, dates) %>%
 
 
 obs_deaths$seen <- ifelse(obs_deaths$dates < now_minus_tau, 0.3, 1)
+
 obs <- ggplot() +
   geom_line(data = obs_deaths, aes(dates, deaths, alpha = seen)) +
-  scale_x_date(
-    limits = c(as.Date("2020-03-31"), as.Date("2020-07-31"))
-  ) +
+  scale_x_date(limits = c(earliest, latest)) +
   scale_alpha_identity() +
   xlab("Time") +
   ylab("Daily Deaths") +
@@ -98,36 +98,36 @@ obs_m1 <- obs +
     xintercept = c(as.numeric(now), as.numeric(now_minus_tau)),
     linetype = "dashed"
   ) +
-  geom_text(aes(x = now + 4, y = 220, label = "Now"), size = fontsize) +
+  geom_text(aes(x = now + 5, y = 220, label = "Now"), size = fontsize) +
   geom_text(
-    aes(x = now_minus_tau - 7, y = 220,
+    aes(x = now_minus_tau - 8, y = 220,
         label = paste("Now -", expression(tau))),
     size = fontsize, parse = TRUE
   )
 
 m1_left <- obs_m1 +
   geom_text(
-    aes(x = now_minus_tau - 38, y = 150,
+    aes(x = earliest + 25, y = 150,
         label = "Data not used for model calibration"
     ), size = fontsize
   ) +
   ## Arrow below the label "Data not used for model calibration"
   geom_segment(
     aes(
-      x = as.Date("2020-04-01"), xend = now_minus_tau, y = 144,
+      x = earliest, xend = now_minus_tau - 15, y = 144,
       yend = 144
     ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
   ) +
   ## Arrow below the label "Assume constant Rt in this window"
   geom_text(
     aes(
-      x = now_minus_tau + 20, y = 212,
-      label = paste("Assume constant", expression(R[t]),"\n in window")
+      x = now_minus_tau + 20, y = 210,
+      label = "Assume constant Rt in \n window"
     ), size = fontsize
   ) +
   geom_segment(
     aes(
-      x = now_minus_tau, xend = now, y = 195, yend = 195
+      x = now_minus_tau, xend = now, y = 197, yend = 197
     ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
   ) + coord_trans(clip = "off")
 
@@ -153,7 +153,7 @@ m1_right <- obs_m1 +
     ), size = fontsize
   ) +
   geom_text(
-    aes(x = now_minus_tau - 35, y = 140,
+    aes(x = now_minus_tau - 35, y = 135,
         label = "Jointly estimated with Rt"
     ), size = fontsize, col = "red"
   ) +
@@ -165,8 +165,8 @@ m1_right <- obs_m1 +
   ) +
   geom_text(
     aes(
-      x = now + 11, y = 170,
-      label = paste("Forecasts with", "constant Rt", sep = "\n")
+      x = now + 12, y = 170,
+      label = forecast_text,
     ), size = fontsize, col = "red"
   ) +
   geom_segment(
@@ -183,8 +183,8 @@ left <- plot_grid(
 )
 
 
-ggsave("m1_left.png", left)
-ggsave("m1_right.png", m1_right)
+ggsave("m1_left.pdf", left)
+ggsave("m1_right.pdf", m1_right)
 
 
 ######################################################################
@@ -235,7 +235,7 @@ m3_left <- ggplot() +
   geom_text(
     aes(x = as.Date("2020-07-04"), y = 200, label = "Deaths")
   ) +
-  ##scale_x_date(limits = earliest, as.Date("2020-07-31")) +
+  scale_x_date(limits = c(earliest, latest)) +
   xlab("Time") + ylab("Daily Cases/Deaths") +
   theme_schematic()
 
@@ -254,7 +254,7 @@ m3_right <- m3_left +
   ) +
   geom_text(
     aes(
-      x = now + 12, y = 150,
+      x = now + 12, y = 130,
       label = "Forecasts \n assuming constant \n Rt"
     ), size = fontsize, col = "red"
   ) +
@@ -309,8 +309,8 @@ m3_left <- plot_grid(
   rel_heights = c(0.7, 0.3), align = "hv", axis = "l"
 )
 
-ggsave("m3_left.png", m3_left)
-ggsave("m3_right.png", m3_right)
+ggsave("m3_left.pdf", m3_left)
+ggsave("m3_right.pdf", m3_right)
 
 ######################################################################
 ######################################################################
@@ -324,6 +324,7 @@ m2_left <- ggplot() +
     xintercept = as.numeric(now), linetype = "dashed"
   ) +
   geom_text(aes(x = now + 4, y = 220, label = "Now"), size = fontsize) +
+  scale_x_date(limits = c(earliest, latest)) +
   xlab("Time") + ylab("Daily Deaths") +
   theme_schematic()
 
@@ -337,7 +338,7 @@ m2_right <- m2_left +
   ) +
   geom_text(
     aes(
-      x = now_minus_tau + 25, y = 212,
+      x = now_minus_tau + 25, y = 214,
       label = "Assume constant Rt in window"
     ), size = fontsize
   ) +
@@ -370,7 +371,7 @@ m2_right <- m2_left +
   ) +
   geom_text(
     aes(
-      x = now + 15, y = 110,
+      x = now + 15, y = 107,
       label = "windows. \n Choose best (k*)"
     ), size = fontsize
   ) +
@@ -380,12 +381,11 @@ m2_right <- m2_left +
   ) +
   geom_text(
     aes(
-      x = now + 12, y = 170,
-      label = "Forecasts \n assuming \n constant Rt"
+      x = now + 17, y = 160,
+      label = "Forecasts assuming \n constant Rt"
     ), size = fontsize, col = "red"
   ) +
   ## So that text is not chopped off
-  expand_limits(x = as.Date(c(NA, "2020-08-10"))) +
   coord_trans(clip = "off")
 
 
@@ -394,8 +394,8 @@ m2_left <- plot_grid(
   rel_heights = c(0.7, 0.3), align = "hv", axis = "l"
 )
 
-ggsave("m2_left.png", m2_left)
-ggsave("m2_right.png", m2_right)
+ggsave("m2_left.pdf", m2_left)
+ggsave("m2_right.pdf", m2_right)
 
 
 ########### Medium-term forecasts schematic
@@ -428,8 +428,8 @@ rt_plot <- ggplot(rt) +
   ylab("Reproduction number") +
   theme(
     axis.line.x = element_blank(), axis.title.x = element_blank(),
-    axis.text.x = element_text(size = 6, angle = 90),
-    axis.title.y = element_text(size = 8)
+    axis.text.x = element_text(size = 12, angle = 90),
+    axis.title.y = element_text(size = 12)
   ) +
   ## Arrows to show sampling
   annotate(
@@ -449,15 +449,15 @@ rt_plot <- ggplot(rt) +
     curvature = -0.2, alpha = 1, linetype = "dashed",
     arrow = arrow(length = unit(0.03, "npc")
   )
-)
+  ) +
+  ## Text to show probabilities
+  geom_text(
+    aes(x = "Week 2", y = 13, label = "e^(-2 * beta)"),
+    parse = TRUE, size = fontsize
+  ) +
+  geom_text(
+    aes(x = "Week 3", y = 10, label = "e^(-beta)"),
+    parse = TRUE, size = fontsize
+  )
 
-
-medium_algo <- ggdraw() +
-  draw_image("medium-term-forecasts-algo.png", scale = 1.5)
-
-
-final <- plot_grid(
-  rt_plot, medium_algo, nrow = 2, rel_heights = c(0.7, 0.3)
-)
-
-ggsave("medium-term-schematic.png", final)
+ggsave("rt_plot.pdf", rt_plot)
