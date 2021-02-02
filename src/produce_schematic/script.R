@@ -123,7 +123,7 @@ m1_left <- obs_m1 +
     aes(
       x = now_minus_tau + 20, y = 212,
       label = paste("Assume constant", expression(R[t]),"\n in window")
-    ), size = fontsize, parse = T
+    ), size = fontsize
   ) +
   geom_segment(
     aes(
@@ -261,7 +261,7 @@ m3_right <- m3_left +
   ## Midway between deaths and weighted cases on this day
   geom_text(
     aes(now - 5, 260, label = "rho"), parse = TRUE,
-    size = fontsize
+    size = fontsize, fontface = "bold"
   ) +
   ## Arrows above and below
   geom_segment(
@@ -277,7 +277,7 @@ m3_right <- m3_left +
   ## Delay from report to death
   geom_text(
     aes(earliest + 35, 200, label = "gamma"), parse = TRUE,
-    size = fontsize
+    size = fontsize, fontface = "bold"
   ) +
   ## Arrows left and right
   geom_segment(
@@ -332,14 +332,19 @@ m2_right <- m2_left +
     xintercept = as.numeric(now_minus_tau), linetype = "dashed"
   ) +
   geom_text(
-    aes(x = now_minus_tau - 5, y = 220, label = "Now - k*"),
+    aes(x = now_minus_tau - 7, y = 220, label = "Now - k*"),
     size = fontsize
   ) +
   geom_text(
     aes(
-      x = now_minus_tau + 22, y = 212,
+      x = now_minus_tau + 25, y = 212,
       label = "Assume constant Rt in window"
     ), size = fontsize
+  ) +
+  geom_segment(
+    aes(
+      x = now_minus_tau, xend = now, y = 209, yend = 209
+    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
   ) +
   geom_segment(
     aes(x = now - 15, xend = now, y = 90, yend = 90),
@@ -359,31 +364,28 @@ m2_right <- m2_left +
   ) +
   geom_text(
     aes(
-      x = now + 11, y = 90,
+      x = now + 15, y = 120,
       label = "Different possible"
     ), size = fontsize
   ) +
   geom_text(
     aes(
-      x = now + 14, y = 85,
-      label = "windows. Choose best (k*)"
+      x = now + 15, y = 110,
+      label = "windows. \n Choose best (k*)"
     ), size = fontsize
   ) +
   geom_line(
     data = i0_future, aes(dates, val, group = probs),
     linetype = "dashed", alpha = 0.2, col = "red"
   ) +
-  geom_segment(
-    aes(
-      x = now_minus_tau, xend = now, y = 195, yend = 195
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
-  ) +
   geom_text(
     aes(
       x = now + 12, y = 170,
-      label = "Forecasts assuming \n constant Rt"
+      label = "Forecasts \n assuming \n constant Rt"
     ), size = fontsize, col = "red"
   ) +
+  ## So that text is not chopped off
+  expand_limits(x = as.Date(c(NA, "2020-08-10"))) +
   coord_trans(clip = "off")
 
 
@@ -459,5 +461,3 @@ final <- plot_grid(
 )
 
 ggsave("medium-term-schematic.png", final)
-
-
