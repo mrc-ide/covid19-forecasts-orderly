@@ -1,6 +1,7 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 ## Random
-si <- rgamma(1e4, shape = 2.3, rate = 1.28)
+fontsize <- 12 / .pt
+forecast_text <- paste("Forecasts with constant", expression(R[t]))
 
 theme_schematic <- function() {
   theme_classic() %+replace%
@@ -10,6 +11,7 @@ theme_schematic <- function() {
 ######################################################################
 ###### Common bits
 ######################################################################
+si <- rgamma(1e4, shape = 2.3, rate = 1.28)
 psi <- ggplot() +
   geom_density(aes(si), fill = "red", col = NA, alpha = 0.2) +
   xlab("Serial interval") +
@@ -26,7 +28,7 @@ obs_deaths$deaths <- slide_dbl(
 
 earliest <- as.Date("2020-03-31")
 now <- as.Date("2020-07-15")
-now_minus_tau <- as.Date("2020-06-05")
+now_minus_tau <- as.Date("2020-05-25")
 obs_deaths <- obs_deaths[obs_deaths$dates <= now, ]
 obs_deaths <- obs_deaths[obs_deaths$dates >= earliest, ]
 
@@ -96,17 +98,18 @@ obs_m1 <- obs +
     xintercept = c(as.numeric(now), as.numeric(now_minus_tau)),
     linetype = "dashed"
   ) +
-  geom_text(aes(x = now + 3, y = 190, label = "now"), size = 8 / .pt) +
+  geom_text(aes(x = now + 4, y = 220, label = "Now"), size = fontsize) +
   geom_text(
-    aes(x = now_minus_tau - 6, y = 190, label = "now - tau"),
-    size = 8 / .pt
+    aes(x = now_minus_tau - 7, y = 220,
+        label = paste("Now -", expression(tau))),
+    size = fontsize, parse = TRUE
   )
 
 m1_left <- obs_m1 +
   geom_text(
     aes(x = now_minus_tau - 38, y = 150,
         label = "Data not used for model calibration"
-    ), size = 8 / .pt
+    ), size = fontsize
   ) +
   ## Arrow below the label "Data not used for model calibration"
   geom_segment(
@@ -118,9 +121,9 @@ m1_left <- obs_m1 +
   ## Arrow below the label "Assume constant Rt in this window"
   geom_text(
     aes(
-      x = now_minus_tau + 20, y = 200,
-      label = "Assume constant Rt in window"
-    ), size = 8 / .pt
+      x = now_minus_tau + 20, y = 212,
+      label = paste("Assume constant", expression(R[t]),"\n in window")
+    ), size = fontsize, parse = T
   ) +
   geom_segment(
     aes(
@@ -145,21 +148,26 @@ m1_right <- obs_m1 +
   ) +
   ## Arrow below the label "Assume constant Rt in this window"
   geom_text(
-    aes(x = now_minus_tau - 38, y = 150,
+    aes(x = now_minus_tau - 30, y = 150,
+        label = "Data not used for model calibration"
+    ), size = fontsize
+  ) +
+  geom_text(
+    aes(x = now_minus_tau - 35, y = 140,
         label = "Jointly estimated with Rt"
-    ), size = 8 / .pt, col = "red"
+    ), size = fontsize, col = "red"
   ) +
   geom_text(
     aes(
-      x = now_minus_tau + 20, y = 200,
+      x = now_minus_tau + 25, y = 200,
       label = "Assume constant Rt in window"
-    ), size = 8 / .pt
+    ), size = fontsize
   ) +
   geom_text(
     aes(
-      x = now + 11, y = 220,
-      label = "Forecasts assuming \n constant Rt"
-    ), size = 8 / .pt, col = "red"
+      x = now + 11, y = 170,
+      label = paste("Forecasts with", "constant Rt", sep = "\n")
+    ), size = fontsize, col = "red"
   ) +
   geom_segment(
     aes(
@@ -219,13 +227,13 @@ m3_left <- ggplot() +
   geom_line(data = obs_deaths, aes(dates, deaths)) +
   geom_line(data = obs_cases, aes(dates, cases), col = "blue") +
   geom_vline(xintercept = as.numeric(now), linetype = "dashed") +
-  geom_text(aes(x = now + 3, y = 500, label = "Now"), size = 8 / .pt) +
+  geom_text(aes(x = now + 5, y = 500, label = "Now"), size = fontsize) +
   geom_text(
-    aes(x = as.Date("2020-07-10"), y = 375, label = "Cases"),
+    aes(x = as.Date("2020-07-05"), y = 360, label = "Cases"),
     color = "blue"
   ) +
   geom_text(
-    aes(x = as.Date("2020-07-10"), y = 200, label = "Deaths")
+    aes(x = as.Date("2020-07-04"), y = 200, label = "Deaths")
   ) +
   ##scale_x_date(limits = earliest, as.Date("2020-07-31")) +
   xlab("Time") + ylab("Daily Cases/Deaths") +
@@ -241,18 +249,19 @@ m3_right <- m3_left +
     linetype = "dashed", alpha = 0.2, col = "red"
   ) +
   geom_text(
-    aes(x = now + 9, y = 330, label = "Weighted cases"),
-    size = 8 / .pt, col = "#6666ff"
+    aes(x = now + 15, y = 330, label = "Weighted cases"),
+    size = fontsize, col = "#6666ff"
   ) +
   geom_text(
     aes(
-      x = now + 11, y = 230,
-      label = "Forecasts assuming \n constant Rt"
-    ), size = 8 / .pt, col = "red"
+      x = now + 12, y = 150,
+      label = "Forecasts \n assuming constant \n Rt"
+    ), size = fontsize, col = "red"
   ) +
   ## Midway between deaths and weighted cases on this day
   geom_text(
-    aes(now - 5, 260, label = "rho"), parse = TRUE
+    aes(now - 5, 260, label = "rho"), parse = TRUE,
+    size = fontsize
   ) +
   ## Arrows above and below
   geom_segment(
@@ -267,7 +276,8 @@ m3_right <- m3_left +
   ) +
   ## Delay from report to death
   geom_text(
-    aes(earliest + 35, 200, label = "gamma"), parse = TRUE
+    aes(earliest + 35, 200, label = "gamma"), parse = TRUE,
+    size = fontsize
   ) +
   ## Arrows left and right
   geom_segment(
@@ -313,7 +323,7 @@ m2_left <- ggplot() +
   geom_vline(
     xintercept = as.numeric(now), linetype = "dashed"
   ) +
-  geom_text(aes(x = now + 3, y = 220, label = "Now"), size = 8 / .pt) +
+  geom_text(aes(x = now + 4, y = 220, label = "Now"), size = fontsize) +
   xlab("Time") + ylab("Daily Deaths") +
   theme_schematic()
 
@@ -322,7 +332,14 @@ m2_right <- m2_left +
     xintercept = as.numeric(now_minus_tau), linetype = "dashed"
   ) +
   geom_text(
-    aes(x = now_minus_tau - 5, y = 220, label = "Now - k*"), size = 8 / .pt
+    aes(x = now_minus_tau - 5, y = 220, label = "Now - k*"),
+    size = fontsize
+  ) +
+  geom_text(
+    aes(
+      x = now_minus_tau + 22, y = 212,
+      label = "Assume constant Rt in window"
+    ), size = fontsize
   ) +
   geom_segment(
     aes(x = now - 15, xend = now, y = 90, yend = 90),
@@ -344,23 +361,17 @@ m2_right <- m2_left +
     aes(
       x = now + 11, y = 90,
       label = "Different possible"
-    ), size = 8 / .pt
+    ), size = fontsize
   ) +
-    geom_text(
+  geom_text(
     aes(
       x = now + 14, y = 85,
       label = "windows. Choose best (k*)"
-    ), size = 8 / .pt
+    ), size = fontsize
   ) +
   geom_line(
     data = i0_future, aes(dates, val, group = probs),
     linetype = "dashed", alpha = 0.2, col = "red"
-  ) +
-  geom_text(
-    aes(
-      x = now_minus_tau + 20, y = 200,
-      label = "Assume constant Rt in window"
-    ), size = 8 / .pt
   ) +
   geom_segment(
     aes(
@@ -371,7 +382,7 @@ m2_right <- m2_left +
     aes(
       x = now + 12, y = 170,
       label = "Forecasts assuming \n constant Rt"
-    ), size = 8 / .pt, col = "red"
+    ), size = fontsize, col = "red"
   ) +
   coord_trans(clip = "off")
 
