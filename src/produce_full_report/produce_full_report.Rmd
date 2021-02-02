@@ -220,6 +220,7 @@ knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_1.png")
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_2.png")
+knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_3.png")
 
 ```
 *Figure 5.* Reported daily deaths and current forecasts based on the ensemble
@@ -625,6 +626,7 @@ knitr::include_graphics("figs/North America_si_2_page_1.png")
 ```
 ```{r}
 knitr::include_graphics("figs/North America_si_2_page_2.png")
+knitr::include_graphics("figs/North America_si_2_page_3.png")
 ```
 *Figure 16.* Projections (7-day ahead) for the week starting 31^st^ January 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
