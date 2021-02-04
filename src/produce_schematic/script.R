@@ -1,7 +1,7 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 ## Random
-fontsize <- 12 / .pt
-forecast_text <- "Forecasts with \n constant Rt"
+fontsize <- 11 / .pt
+forecast_text <- deparse(bquote("Forecasts with \n constant"~R[t]))
 
 theme_schematic <- function() {
   theme_classic() %+replace%
@@ -27,7 +27,7 @@ obs_deaths$deaths <- slide_dbl(
 )
 
 earliest <- as.Date("2020-03-31")
-latest <- as.Date("2020-08-10")
+latest <- as.Date("2020-08-22")
 now <- as.Date("2020-07-15")
 now_minus_tau <- as.Date("2020-05-25")
 obs_deaths <- obs_deaths[obs_deaths$dates <= now, ]
@@ -121,9 +121,9 @@ m1_left <- obs_m1 +
   ## Arrow below the label "Assume constant Rt in this window"
   geom_text(
     aes(
-      x = now_minus_tau + 20, y = 210,
-      label = "Assume constant Rt in \n window"
-    ), size = fontsize
+      x = now_minus_tau + 25, y = 210,
+      label = deparse(bquote("Assume constant "~R[t]~" in window"))
+    ), size = fontsize, parse = TRUE
   ) +
   geom_segment(
     aes(
@@ -154,20 +154,20 @@ m1_right <- obs_m1 +
   ) +
   geom_text(
     aes(x = now_minus_tau - 35, y = 135,
-        label = "Jointly estimated with Rt"
-    ), size = fontsize, col = "red"
+        label = deparse(bquote("Jointly estimated with "~R[t]))
+    ), size = fontsize, col = "red", parse = TRUE
   ) +
   geom_text(
     aes(
       x = now_minus_tau + 25, y = 200,
-      label = "Assume constant Rt in window"
-    ), size = fontsize
+      label = deparse(bquote("Assume constant "~R[t]~" in window"))
+    ), size = fontsize, parse = TRUE
   ) +
   geom_text(
     aes(
-      x = now + 12, y = 170,
-      label = forecast_text,
-    ), size = fontsize, col = "red"
+      x = now + 22, y = 170,
+      label = deparse(bquote("Forecasts with constant "~R[t]))
+    ), size = fontsize, col = "red", parse = TRUE
   ) +
   geom_segment(
     aes(
@@ -254,8 +254,7 @@ m3_right <- m3_left +
   ) +
   geom_text(
     aes(
-      x = now + 12, y = 130,
-      label = "Forecasts \n assuming constant \n Rt"
+      x = now + 10, y = 140, label = "Forecasts"
     ), size = fontsize, col = "red"
   ) +
   ## Midway between deaths and weighted cases on this day
@@ -339,8 +338,8 @@ m2_right <- m2_left +
   geom_text(
     aes(
       x = now_minus_tau + 25, y = 214,
-      label = "Assume constant Rt in window"
-    ), size = fontsize
+      label = deparse(bquote("Assume constant "~R[t]~" in window"))
+    ), size = fontsize, parse = TRUE
   ) +
   geom_segment(
     aes(
@@ -381,9 +380,9 @@ m2_right <- m2_left +
   ) +
   geom_text(
     aes(
-      x = now + 17, y = 160,
-      label = "Forecasts assuming \n constant Rt"
-    ), size = fontsize, col = "red"
+      x = now + 22, y = 160,
+      label = deparse(bquote("Forecasts with constant "~R[t]))
+    ), size = fontsize, col = "red", parse = TRUE
   ) +
   ## So that text is not chopped off
   coord_trans(clip = "off")
