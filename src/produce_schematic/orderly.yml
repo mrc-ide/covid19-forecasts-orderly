@@ -10,19 +10,17 @@ packages:
 - gghalves
 - cowplot
 
-resources: medium-term-forecasts-algo.png
 
 artefacts:
   staticgraph:
     description: Method schematic
     filenames:
-      - m1_left.png
-      - m1_right.png
-      - m2_left.png
-      - m2_right.png
-      - m3_left.png
-      - m3_right.png
-
+      - m1_left.pdf
+      - m1_right.pdf
+      - m2_left.pdf
+      - m2_right.pdf
+      - m3_left.pdf
+      - m3_right.pdf
 
 depends:
   - DeCa_model:
