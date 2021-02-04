@@ -5,7 +5,7 @@ df_to_list <- function(df) {
   out
 }
 
-f <- function(outputs, weights) {
+produce_ensemble <- function(outputs, weights) {
   
   y <- outputs
   models_this_week <- names(y)
