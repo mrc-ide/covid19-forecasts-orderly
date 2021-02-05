@@ -127,7 +127,7 @@ out <- saveRDS(
     D_active_transmission = model_input[["D_active_transmission"]][, c("dates", location)],
     State = location,
     R_last = rsamples_ape,
-    Predictions = ape_projections
+    Predictions = purrr::map(ape_projections, as.data.frame)
   ),
   file = "apeestim_model_outputs.rds"
 )
