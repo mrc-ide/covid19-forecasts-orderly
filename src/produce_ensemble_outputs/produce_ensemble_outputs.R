@@ -1,93 +1,39 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-05-10"))
-## probs <- c(0.025, 0.25, 0.5, 0.75, 0.975)
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona"))
+
 probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
-## weeks_ending <- readr::read_rds("latest_week_ending.rds")
 
 run_info <- orderly::orderly_run_info()
 output_files <- run_info$depends$as
 output_files <- output_files[output_files != "model_input.rds"]
 
-names(output_files) <- paste(
-  gsub(
-    pattern = ".rds", replacement = "", x = output_files
-  ), week_ending, sep = "_"
-)
-
-names(week_ending) <- week_ending
-message("For week ending ", week_ending)
-
-message("Output Files ", paste(output_files, collapse = "\n"))
+## Only need this during report development stage
+output_files <- list("sbkp_Std_results.rds",
+                     "DeCa_Std_results.rds")
 
 model_outputs <- purrr::map(output_files, readRDS)
 
+## Names and data formats don't match in dependency files so changing manually here
+## To do: Change in the prior tasks so that this can be deleted
+names(model_outputs) <- c("sbkp", "DeCa")
+names(model_outputs[["DeCa"]]) <- c("R_last", "Predictions")
+
+outputs <- purrr::map(model_outputs, ~ .[["Predictions"]])
+outputs[["sbkp"]] <- purrr::map(outputs[["sbkp"]], as.data.frame)
+
+
 ## Equal weighted models
-## First Level is model, 2nd is country, 3rd is SI.
-idx <- grep(x = names(model_outputs), pattern = week_ending)
-outputs <- purrr::map(model_outputs[idx], ~ .[["Predictions"]])
-names(outputs) <-  sapply(
-  names(outputs), function(x) strsplit(x, "_")[[1]][1]
-)
 
-countries <- names(outputs[[1]])
-names(countries) <- countries
+ensemble_model_predictions <- produce_ensemble(outputs, weights = NULL)
 
-ensemble_model_predictions <- purrr::map(
-  week_ending,
-  function(week) {
-    purrr::map(
-      countries,
-      function(country) {
-        message(country)
-        message(paste(names(outputs), collapse = "\n"))
-        f(outputs, country, weights = NULL)
-      }
-    )
-  }
-)
+ensemble_daily_qntls <- rincewind::extract_predictions_qntls(ensemble_model_predictions, probs)
 
-ensemble_daily_qntls <- purrr::map_dfr(
-  ensemble_model_predictions,
-  function(pred) {
-    purrr::map_dfr(
-      pred, function(x) rincewind::extract_predictions_qntls(x, probs),
-      .id = "country"
-    )
-  },
-  .id = "proj"
-)
-
-ensemble_weekly_qntls <- purrr::map_dfr(
-  ensemble_model_predictions,
-  function(pred) {
-    purrr::map_dfr(
-      pred,
-      function(x) {
-        message(colnames(x))
-        rincewind::daily_to_weekly(x)
-      },
-      .id = "country"
-    )
-  },
-  .id = "proj"
-)
-
+ensemble_weekly_qntls <- rincewind::daily_to_weekly(ensemble_model_predictions)
 
 
 saveRDS(
   object = ensemble_model_predictions,
   file = "ensemble_model_predictions.rds"
 )
-
-## saveRDS(
-##   object = wtd_ensb_prev_week,
-##   file = "wtd_ensb_prev_week.rds"
-## )
-
-## saveRDS(
-##   object = wtd_ensb_all_prev_weeks,
-##   file = "wtd_ensb_all_prev_weeks.rds"
-## )
-
 
 saveRDS(
   object = ensemble_daily_qntls,
@@ -98,6 +44,7 @@ saveRDS(
   object = ensemble_weekly_qntls,
   file = "ensemble_weekly_qntls.rds"
 )
+
 
 
 ######################################################################
