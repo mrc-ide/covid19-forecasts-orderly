@@ -5,7 +5,7 @@ probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 run_info <- orderly::orderly_run_info()
 output_files <- run_info$depends$as
 
-## Only need this during report development stage
+# ## Only need this during report development stage
 # output_files <- list("sbkp_Std_results.rds",
 #                      "DeCa_Std_results.rds")
 
@@ -48,17 +48,53 @@ saveRDS(
 ######################################################################
 outputs <- purrr::map(model_outputs, ~ .[["R_last"]])
 
-ensemble_model_rt <- ensemble_rt(outputs)
+## Sample 10,000 times from the Rt values from the different models
 
+y <- outputs
+models_this_week <- names(y)
 
-si_1 <- purrr::map(outputs, ~ .[[1]]) 
-si_2 <- purrr::map(outputs, ~ .[[2]])
+wts <- data.frame(
+  model = models_this_week,
+  normalised_wt = 1
+)
+weights <- list(si_1 = wts, si_2 = wts)
 
-ensemble_model_rt_samples <- data.frame(
-  si_1 = unlist(si_1),
-  si_2 = unlist(si_2)
+y_1 <- purrr::map(y, ~ .[[1]])
+y_2 <- purrr::map(y, ~ .[[2]])
+weights <- purrr::map(weights, df_to_list)
+
+ensemble_model_rt_samples <-  list(
+  si_1 = pool_rt_weighted(y_1, weights$si_1),
+  si_2 = pool_rt_weighted(y_2, weights$si_2)
 )
 
+
+## Calculate quantiles from these rt samples
+  
+ensemble_model_rt_qntls <- purrr::imap(outputs, function(si, label) {
+  
+  qntls <- quantile(
+    ensemble_model_rt_samples[[1]],
+    probs = probs
+  )
+  
+  qntls <- tibble::rownames_to_column(
+    data.frame(out2 = qntls),
+    var = "quantile"
+  )
+  qntls$si <- label
+  
+  qntls
+  
+}
+)
+
+ensemble_model_rt_qntls <- dplyr::bind_rows(ensemble_model_rt_qntls)
+
+
+## Save outputs
+
+ensemble_model_rt_samples <- as.data.frame(ensemble_model_rt_samples)
 
 saveRDS(
   object = ensemble_model_rt_samples,
@@ -66,7 +102,7 @@ saveRDS(
 )
 
 saveRDS(
-  object = ensemble_model_rt,
+  object = ensemble_model_rt_qntls,
   file = "ensemble_model_rt.rds"
 )
 

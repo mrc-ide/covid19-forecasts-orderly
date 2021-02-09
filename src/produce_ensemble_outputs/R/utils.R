@@ -34,39 +34,31 @@ ensemble_predictions <- function(outputs, weights) {
 
 #####
 
-ensemble_rt <- function(outputs) {
+pool_rt_weighted <- function(outputs, weights, nsim = 10000) {
   
-  ## y is the state-specific outputs
-  y <- outputs
-  ## Each model in y has 2 components, one for each SI.
-  ## Determine quantiles
-  
-  y_1 <- purrr::map(y, ~ .[[1]]) ## si_1
-  y_1_all <- unlist(y_1)
-  y_1 <- quantile(
-    y_1_all,
-    probs = probs
+  models <- names(weights)
+  ## Sample model with weights
+  n_1 <- sample(
+    x = names(weights), nsim, replace = TRUE, prob = weights
   )
-  y_1 <- tibble::rownames_to_column(
-    data.frame(out2 = y_1),
-    var = "quantile"
-  )
-  y_1$si <- "si_1"
+  n_1 <- table(n_1)
+  if (! all(models %in% names(n_1))) {
+    idx <- which(! models %in% names(n_1))
+    n_1[[models[idx]]] <- 0
+  }
+  message("Number of times models picked ")
+  message(paste(n_1, collapse = "\n"))
   
-  y_2 <- purrr::map(y, ~ .[[2]]) ## si_2
-  y_2_all <- unlist(y_2)
-  y_2 <- quantile(
-    y_2_all,
-    probs = probs
+  out <- purrr::imap(
+    outputs,
+    function(output, model) {
+      sample(output, size = n_1[[model]])
+    }
   )
-  y_2 <- tibble::rownames_to_column(
-    data.frame(out2 = y_2),
-    var = "quantile"
-  )
-  y_2$si <- "si_2"
-  
-  out <- rbind(y_1, y_2)
-  
+  out <- Reduce(c, out)
   out
-  
 }
+
+
+
+
