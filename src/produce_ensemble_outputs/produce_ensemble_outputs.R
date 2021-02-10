@@ -71,10 +71,10 @@ ensemble_model_rt_samples <-  list(
 
 ## Calculate quantiles from these rt samples
   
-ensemble_model_rt_qntls <- purrr::imap(outputs, function(si, label) {
+ensemble_model_rt_qntls <- purrr::imap(ensemble_model_rt_samples, function(si, label) {
   
   qntls <- quantile(
-    ensemble_model_rt_samples[[1]],
+    si,
     probs = probs
   )
   
