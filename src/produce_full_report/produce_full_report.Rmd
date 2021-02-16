@@ -48,7 +48,7 @@ with more than 2,380,000 deaths [@whositrep].
 This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 75 countries with active transmission.
+ascertainment) for 73 countries with active transmission.
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -105,7 +105,7 @@ deaths have been reported in a country so far, and
 at least *ten* deaths were observed in the country in each of the past
 two weeks. For the week starting 15^th^ February 2021, 
 the number of countries/regions included based on these thresholds is 
-75.
+73.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
@@ -180,7 +180,7 @@ knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_2.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_4.png")
 knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_5.png")
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_6.png")
+##knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_6.png")
 
 ```
 *Figure 3.* Reported daily deaths and current forecasts based on the ensemble
@@ -592,7 +592,7 @@ knitr::include_graphics("figs/Asia_si_2_page_4.png")
 
 ```{r}
 knitr::include_graphics("figs/Asia_si_2_page_5.png")
-knitr::include_graphics("figs/Asia_si_2_page_6.png")
+##knitr::include_graphics("figs/Asia_si_2_page_6.png")
 ```
 *Figure 14.* Projections (7-day ahead) for the week starting 31^st^
 January 2021 from individual models (Models 1, 2
