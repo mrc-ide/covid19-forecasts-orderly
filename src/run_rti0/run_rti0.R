@@ -95,7 +95,7 @@ res <- purrr::pmap(
 
 ## Diagnostics
 theta <- res[[1]][[1]]
-iwalk(
+purrr::iwalk(
   country,
   function(country_to_use, index) {
     rt_trace <- theta[, index]
@@ -165,7 +165,7 @@ I_pred <- purrr::map2(
   res,
   si_distrs,
   function(r, si_distr) {
-    NR_samples <- nrow(r$theta) / 10
+    NR_samples <- 1000 ##nrow(r$theta) / 10
     out <- Proj_Pois(
       Results = r,
       NR_samples = NR_samples,
