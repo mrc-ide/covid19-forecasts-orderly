@@ -1,7 +1,7 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 ## Random
-fontsize <- 14
-linesize <- 1.5
+fontsize <- 12
+linesize <- 1.2
 forecast_text <- deparse(bquote("Forecasts with \n constant"~R[t]))
 
 theme_schematic <- function() {
@@ -93,9 +93,20 @@ obs <- ggplot(obs_deaths) +
   xlab("Time") +
   ylab("Daily Deaths") +
   theme_schematic() +
-  theme(axis.title = element_text(size = 14))
+  theme(axis.title = element_text(size = fontsize))
 
 obs_m1 <- obs +
+  geom_text_repel(
+    data = obs_deaths[obs_deaths$dates == now, ],
+    aes(x = now, y = 220, label = "Now"), nudge_x = 3,
+    size = fontsize
+  ) +
+  geom_text_repel(
+    data = obs_deaths[obs_deaths$dates == now_minus_tau, ],
+    aes(x = now_minus_tau, y = 220,
+        label = paste("Now -", expression(tau))),
+    nudge_x = -8, parse = TRUE, size = fontsize
+  ) +
   geom_vline(
     xintercept = c(as.numeric(now), as.numeric(now_minus_tau)),
     linetype = "dashed", size = linesize
@@ -141,7 +152,7 @@ m1_right <- obs_m1 +
   ) + coord_trans(clip = "off")
 
 
-ggsave("m1_right.pdf", m1_right)
+cowplot::save_plot("m1_right.pdf", m1_right)
 
 
 ######################################################################
@@ -207,37 +218,37 @@ m3_right <- m3_left +
   geom_segment(
     aes(
       x = now - 5, y = 183, yend = 230, xend = now - 5
-    ), arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
     size = linesize
   ) +
   geom_segment(
     aes(
       x = now - 5, y = 285, yend = 335, xend = now - 5
-    ), arrow = arrow(length = unit(0.25, "cm"), ends = "first"),
+    ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
     size = linesize
   ) +
   geom_segment(
     aes(
       x = earliest + 28, y = 200, yend = 200, xend = earliest + 33
-    ), arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
     size = linesize
   ) +
   geom_segment(
     aes(
       x = earliest + 37, y = 200, yend = 200, xend = earliest + 46
-    ), arrow = arrow(length = unit(0.25, "cm"), ends = "first"),
+    ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
     size = linesize
   ) +
   geom_text(
     aes(now - 5, 260, label = "rho"), parse = TRUE,
-    size = fontsize, fontface = "bold"
+    size = 11, fontface = "bold"
   ) +
   geom_text(
-    aes(earliest + 35, 200, label = "gamma"), parse = TRUE,
-    size = fontsize, fontface = "bold"
+    aes(earliest + 35, 200, label = "mu"), parse = TRUE,
+    size = 11, fontface = "bold"
   )
 
-ggsave("m3_right.pdf", m3_right)
+cowplot::save_plot("m3_right.pdf", m3_right)
 
 ######################################################################
 ######################################################################
@@ -289,7 +300,7 @@ m2_right <- m2_left +
   coord_trans(clip = "off")
 
 
-ggsave("m2_right.pdf", m2_right)
+cowplot::save_plot("m2_right.pdf", m2_right)
 
 
 ########### Medium-term forecasts schematic
@@ -315,8 +326,8 @@ rt_plot <- ggplot(rt) +
   scale_x_discrete(
     position = "top",
     breaks = c("Week 1", "Week 2", "Week 3", "Week 4", "Week 5"),
-    labels = c("Week (K - 4)", "Week (K - 3)", "Week (K - 2)",
-               "Week (K - 1)", "Week K")
+    labels = c("Week of (T - 28)", "Week of (T - 21)",
+               "Week of (T - 14)", "Week of (T - 7)", "Week of T")
   ) +
   theme_schematic() +
   ylab("Reproduction number") +
@@ -344,4 +355,4 @@ rt_plot <- ggplot(rt) +
     size = linesize
   )
 
-ggsave("rt_plot.pdf", rt_plot)
+cowplot::save_plot("rt_plot.pdf", rt_plot)
