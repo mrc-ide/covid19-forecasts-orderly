@@ -9,7 +9,7 @@ packages:
 - dplyr
 - gghalves
 - cowplot
-
+- ggrepel
 
 artefacts:
   staticgraph:

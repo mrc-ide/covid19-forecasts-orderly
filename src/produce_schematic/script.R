@@ -1,6 +1,6 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 ## Random
-fontsize <- 12 / .pt
+fontsize <- 16 ##12 / .pt
 forecast_text <- "Forecasts with \n constant Rt"
 
 theme_schematic <- function() {
@@ -98,11 +98,14 @@ obs_m1 <- obs +
     xintercept = c(as.numeric(now), as.numeric(now_minus_tau)),
     linetype = "dashed"
   ) +
-  geom_text(aes(x = now + 5, y = 220, label = "Now"), size = fontsize) +
-  geom_text(
-    aes(x = now_minus_tau - 8, y = 220,
+  geom_text_repel(
+    aes(x = now, y = 220, label = "Now"), size = fontsize,
+    nudge_x = 2, nudge_y = 0
+  ) +
+  geom_text_repel(
+    aes(x = now_minus_tau, y = 220,
         label = paste("Now -", expression(tau))),
-    size = fontsize, parse = TRUE
+    size = fontsize, parse = TRUE, nudge_x = -8
   )
 
 m1_left <- obs_m1 +
