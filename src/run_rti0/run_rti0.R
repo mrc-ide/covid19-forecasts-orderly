@@ -8,7 +8,7 @@ t.window.range <- 10
 if (short_run) {
   iterations <- 5e2
 } else {
-  iterations <- 5e5
+  iterations <- 10e4
 }
 
 
@@ -21,7 +21,7 @@ exclude <- readRDS("exclude.rds")
 country <- model_input$Country
 country <- country[! country %in% exclude]
 
-country <- c("Iran", "Iraq", "Brazil", "Peru", "India")
+## country <- c("Iran", "Iraq", "Brazil", "Peru", "India")
 
 deaths_to_use <- deaths_to_use[ ,c("dates", country)]
 
@@ -105,16 +105,9 @@ res <- purrr::pmap(
   }
 )
 
-## Diagnostics
-theta <- res[[1]][[1]]
-purrr::iwalk(
-  country,
-  function(country_to_use, index) {
-    rt_trace <- theta[, index]
-    i0_trace <- theta[, index + N_geo]
 
 ## Thinned sample
-index <- seq(1, iterations, by = 50)
+index <- seq(1, iterations, by = 20)
 res <- purrr::map_depth(res, 2, function(x) x[index, ])
 
 ## Diagnostics
