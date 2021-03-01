@@ -25,7 +25,7 @@
 #' @export
 #'
 
-MCMC_iter <- function(incidence,N_geo,iter,theta0,s,SI,mu0,over_disp = NA){
+MCMC_iter <- function(incidence,N_geo,iter,theta0,s,SI,mu0,over_disp = NA, upper_log_i0){
 
   I <- incidence[,-1]     # remove dates (everything needs to be consecutive days)
 
@@ -55,9 +55,14 @@ MCMC_iter <- function(incidence,N_geo,iter,theta0,s,SI,mu0,over_disp = NA){
       J <- (j-1)*N_geo+(1:N_geo)
       # propose new parameter j
       if (j <= 1){
-        Ts[J] <- Ts[J]*exp(s[J]*rnorm(1,0,1))
+        Ts[J] <- Ts[J]*exp(s[J]*rnorm(N_geo, 0, 1))
+        idx <- which(Ts[J] > 10)
+        Ts[J][idx] <- theta0[J][idx]
+
       }else{
-        Ts[J] <- Ts[J]+(s[J]*rnorm(1,0,1))
+        Ts[J] <- Ts[J]+(s[J]*rnorm(N_geo, 0 , 1))
+        idx <- which(Ts[J] > upper_log_i0)
+        Ts[J][idx] <- theta0[J][idx]
       }
       # get the new 'force of infection'
       lambdaT <- lambda_fct(param = Ts , I = t(I), N_l = N_geo ,
@@ -74,10 +79,9 @@ MCMC_iter <- function(incidence,N_geo,iter,theta0,s,SI,mu0,over_disp = NA){
       }else{
         r <- exp(Lint-L1)   #*exp(1/mu0[j-N_geo]*(theta0[j]-Ts[j])) # with weak exponential prior
       }
-
-      # accept or reject
+     # accept or reject
       for (h in 1:N_geo){
-        if (runif(1,0,1) <= r[h]){
+        if (runif(1,0,1) <= r[h]) {
           theta0[J[h]] <- Ts[J[h]]  # if accept, keep new parameter value
           lambda[h,] <- lambdaT[h,]   # if accept, keep new force of infection
           L1[h] <- Lint[h]          # if accept, keep new lieklihood
@@ -85,7 +89,6 @@ MCMC_iter <- function(incidence,N_geo,iter,theta0,s,SI,mu0,over_disp = NA){
       }
       L[i,J] <- L1    # store final likelihood
     }
-
     thetas[i,] <- theta0  # store final parameter values for this iteration
   }
 

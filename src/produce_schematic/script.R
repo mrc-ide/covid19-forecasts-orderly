@@ -1,14 +1,14 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 ## Random
-fontsize <- 12
+fontsize <- 6
 linesize <- 1.2
 forecast_text <- deparse(bquote("Forecasts with \n constant"~R[t]))
 
 theme_schematic <- function() {
   theme_classic() %+replace%
     theme(
-      text = element_text(size = 14),
-      line = element_line(size = 1,5),
+      text = element_text(size = 10),
+      line = element_line(size = 1.2),
       axis.text = element_blank(), axis.ticks = element_blank()
     )
 }
@@ -92,21 +92,10 @@ obs <- ggplot(obs_deaths) +
   scale_alpha_identity() +
   xlab("Time") +
   ylab("Daily Deaths") +
-  theme_schematic() +
-  theme(axis.title = element_text(size = fontsize))
+  theme_schematic()
+  ##theme(axis.title = element_text(size = fontsize))
 
 obs_m1 <- obs +
-  geom_text_repel(
-    data = obs_deaths[obs_deaths$dates == now, ],
-    aes(x = now, y = 220, label = "Now"), nudge_x = 3,
-    size = fontsize
-  ) +
-  geom_text_repel(
-    data = obs_deaths[obs_deaths$dates == now_minus_tau, ],
-    aes(x = now_minus_tau, y = 220,
-        label = paste("Now -", expression(tau))),
-    nudge_x = -8, parse = TRUE, size = fontsize
-  ) +
   geom_vline(
     xintercept = c(as.numeric(now), as.numeric(now_minus_tau)),
     linetype = "dashed", size = linesize
@@ -241,11 +230,11 @@ m3_right <- m3_left +
   ) +
   geom_text(
     aes(now - 5, 260, label = "rho"), parse = TRUE,
-    size = 11, fontface = "bold"
+    size = 6, fontface = "bold"
   ) +
   geom_text(
     aes(earliest + 35, 200, label = "mu"), parse = TRUE,
-    size = 11, fontface = "bold"
+    size = 6, fontface = "bold"
   )
 
 cowplot::save_plot("m3_right.pdf", m3_right)
@@ -310,46 +299,60 @@ cowplot::save_plot("m2_right.pdf", m2_right)
 rt <- data.frame(
   week = rep(paste("Week", 1:5), each = 1e3),
   rt = c(
-    rnorm(1e3, 8, 2), rnorm(1e3, 4, 2), rnorm(1e3, 2, 2),
-    rnorm(1e3, 0, 2), rnorm(1e3, 0, 1)
+    rnorm(1e3, 12, 2), rnorm(1e3, 6, 4), rnorm(1e3, 4, 4),
+    rnorm(1e3, 2, 4), rnorm(1e3, 0, 2)
   ),
-  fill = rep(c(rep("gray", 4), "blue"), each = 1e3),
+  ## The one not combined in gray, the ones comnined in blue
+  ## and the weighted in red
+  fill = rep(c("gray", rep("blue", 3), "red"), each = 1e3),
   stringsAsFactors = FALSE
 )
 
+## Horizontal Lines
+week4_qntls <- rt[rt$week == "Week 4", ]
+ci_high <- quantile(week4_qntls$rt, probs = 0.975)
+ci_low <- quantile(week4_qntls$rt, probs = 0.025)
+
 rt_plot <- ggplot(rt) +
   geom_half_violin(
-    aes(week, rt, fill = fill), draw_quantiles = c(0.25, 0.5, 0.75),
-    alpha = 0.3
+    aes(week, rt, fill = fill, alpha = week),
+    draw_quantiles = c(0.025, 0.975)
   ) +
+  ## Horizontal lines to show 95% CrI of the most recent estimate
+  geom_hline(yintercept = c(ci_low, ci_high), linetype = "dashed") +
   scale_fill_identity() +
+  scale_alpha_manual(
+    values = c("Week 1" = 0.3, "Week 2" = 0.3, "Week 3" = 0.3,
+               "Week 4" = 0.7, "Week 5" = 0.3)
+  ) +
   scale_x_discrete(
     position = "top",
     breaks = c("Week 1", "Week 2", "Week 3", "Week 4", "Week 5"),
-    labels = c("Week of (T - 28)", "Week of (T - 21)",
-               "Week of (T - 14)", "Week of (T - 7)", "Week of T")
+    labels = c("Week of (T - 21)", "Week of (T - 14)",
+               "Week of (T - 7)", "Week of T", expression({R^{"w"}}(T)))
   ) +
   theme_schematic() +
+  theme(legend.position = "none") +
   ylab("Reproduction number") +
   theme(
-    axis.line.x = element_blank(), axis.title.x = element_blank(),
+    axis.line = element_blank(), axis.title.x = element_blank(),
     axis.text.x = element_text(angle = 90)
   ) +
   ## Arrows to show sampling
   annotate(
-    "curve", x = "Week 2", xend = "Week 5", y = 12, yend = 5,
-    curvature = -0.5, alpha = 0.4, linetype = "dashed",
+    "curve", x = "Week 2", xend = "Week 5", y = 14, yend = 8,
+    curvature = -0.3, alpha = 0.4, linetype = "dashed",
     arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
     size = linesize
   ) +
   annotate(
-    "curve", x = "Week 3", xend = "Week 5", y = 9, yend = 4,
+    "curve", x = "Week 3", xend = "Week 5", y = 11, yend = 7,
     curvature = -0.3, alpha = 0.5, linetype = "dashed",
     arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
     size = linesize
   ) +
   annotate(
-    "curve", x = "Week 4", xend = "Week 5", y = 7, yend = 3,
+    "curve", x = "Week 4", xend = "Week 5", y = 9, yend = 6,
     curvature = -0.2, alpha = 1, linetype = "dashed",
     arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
     size = linesize
