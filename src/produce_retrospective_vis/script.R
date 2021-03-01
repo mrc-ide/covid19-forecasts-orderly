@@ -62,7 +62,7 @@ pline <- ggplot() +
     breaks = seq(
       from = as.Date("2020-03-01"),
       to = week_ending,
-      by = "6 weeks"
+      by = "8 weeks"
     ),
     limits = c(as.Date("2020-03-01"), week_ending)
   ) +
@@ -86,7 +86,7 @@ pline2 <- ggplot() +
     breaks = seq(
       from = as.Date("2020-03-01"),
       to = week_ending,
-      by = "6 weeks"
+      by = "8 weeks"
     ),
     limits = c(as.Date("2020-03-01"), as.Date("2020-12-10")),
     date_labels = "%d - %b"
@@ -131,7 +131,7 @@ epicurve <- ggplot() +
     breaks = seq(
       from = as.Date("2020-03-01"),
       to = week_ending,
-      by = "6 weeks"
+      by = "8 weeks"
     ),
     limits = c(as.Date("2020-03-01"), week_ending)
   ) +

@@ -105,6 +105,13 @@ res <- purrr::pmap(
   }
 )
 
+## Diagnostics
+theta <- res[[1]][[1]]
+purrr::iwalk(
+  country,
+  function(country_to_use, index) {
+    rt_trace <- theta[, index]
+    i0_trace <- theta[, index + N_geo]
 
 ## Thinned sample
 index <- seq(1, iterations, by = 50)
@@ -178,7 +185,7 @@ I_pred <- purrr::map2(
   res,
   si_distrs,
   function(r, si_distr) {
-    NR_samples <- nrow(r$theta) / 10
+    NR_samples <- 1000 ##nrow(r$theta) / 10
     out <- Proj_Pois(
       Results = r,
       NR_samples = NR_samples,
@@ -254,62 +261,6 @@ Std_results <- list(
 saveRDS(object = Std_results, file = paste0("RtI0_latest_output.rds"))
 
 #### Diagonistic Plots ##############################################
-## pdf("likelihood.pdf")
-## plot(res[[2]]$logL[, 1]) # of likelihood
-## dev.off()
-
-## plot("r0.pdf")
-## layout(matrix(1:4, 2, 2, byrow = TRUE))
-## for (i in 1:N_geo) {
-##   plot(res[[2]]$theta[, i], main = paste("R0", country[i]))
-## }
-## for (i in 1:N_geo) {
-##   plot(
-##     res[[2]]$theta[, N_geo + i] * res[[2]]$theta[, i],
-##     main = paste("I0", country[i])
-##   )
-## }
-## dev.off()
-I_plot <- tail(deaths_to_use, 14)
-I_plot <- data.frame(I_plot)
-                                        # incidence_inference
-incidence_inference <- data.frame(incidence_inference)
-pdf("ci_pred.pdf")
-layout(matrix(1:4, 2, 2, byrow = TRUE))
-
-for (i in 1:N_geo) {
-  CI_pred <- apply(
-    I_pred[[2]][[i]], 2, quantile, c(.5, .025, .975),
-    na.rm = TRUE
-  )
-
-  plot(I_plot$dates, I_plot[, i + 1],
-       xlim = c(
-         I_plot$dates[1], tail(incidence_inference$dates, 1) + day.project
-       ),
-       ylim = c(
-         0, 1 + max(c(incidence_inference[, 1 + i], as.vector(CI_pred)))
-       ),
-    xlab = "time", ylab = "incidence", main = country[i], bty = "n"
-  )
-
-  lines(
-    incidence_inference$dates,
-    incidence_inference[, i + 1],
-    type = "p",
-    pch = 16,
-    col = "black"
-  )
-
-  x <- 1:ncol(CI_pred) + incidence_inference$dates[1] - 1
-  lines(x, CI_pred[1, ], col = "blue", lwd = 2)
-  polygon(c(x, rev(x)), c(CI_pred[2, ], rev(CI_pred[3, ])),
-    col = rgb(0, 0, 1, .2), border = FALSE
-  )
-
-  legend("topleft", legend = c("for inference"), pch = 16, col = "black", bty = "n")
-}
-dev.off()
 
 
 
