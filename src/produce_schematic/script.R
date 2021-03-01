@@ -1,22 +1,21 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 ## Random
-fontsize <- 16 ##12 / .pt
-forecast_text <- "Forecasts with \n constant Rt"
+fontsize <- 6
+linesize <- 1.2
+forecast_text <- deparse(bquote("Forecasts with \n constant"~R[t]))
 
 theme_schematic <- function() {
   theme_classic() %+replace%
-    theme(axis.text = element_blank(), axis.ticks = element_blank())
+    theme(
+      text = element_text(size = 10),
+      line = element_line(size = 1.2),
+      axis.text = element_blank(), axis.ticks = element_blank()
+    )
 }
 
 ######################################################################
 ###### Common bits
 ######################################################################
-si <- rgamma(1e4, shape = 2.3, rate = 1.28)
-psi <- ggplot() +
-  geom_density(aes(si), fill = "red", col = NA, alpha = 0.2) +
-  xlab("Serial interval") +
-  theme_schematic() +
-  theme(axis.title.y = element_blank())
 ######################################################################
 model_outputs <- readRDS("DeCa_Std_results.rds")
 ## Anyone will do, for illustration
@@ -27,7 +26,7 @@ obs_deaths$deaths <- slide_dbl(
 )
 
 earliest <- as.Date("2020-03-31")
-latest <- as.Date("2020-08-10")
+latest <- as.Date("2020-08-22")
 now <- as.Date("2020-07-15")
 now_minus_tau <- as.Date("2020-05-25")
 obs_deaths <- obs_deaths[obs_deaths$dates <= now, ]
@@ -84,110 +83,65 @@ i0_future <- group_by(i0_future, dates) %>%
 
 
 obs_deaths$seen <- ifelse(obs_deaths$dates < now_minus_tau, 0.3, 1)
+obs_deaths$label <- ""
+obs_deaths$label[obs_deaths$dates == now] <- "Now"
 
-obs <- ggplot() +
-  geom_line(data = obs_deaths, aes(dates, deaths, alpha = seen)) +
+obs <- ggplot(obs_deaths) +
+  geom_line(aes(dates, deaths, alpha = seen), size = linesize) +
   scale_x_date(limits = c(earliest, latest)) +
   scale_alpha_identity() +
   xlab("Time") +
   ylab("Daily Deaths") +
   theme_schematic()
+  ##theme(axis.title = element_text(size = fontsize))
 
 obs_m1 <- obs +
   geom_vline(
     xintercept = c(as.numeric(now), as.numeric(now_minus_tau)),
-    linetype = "dashed"
-  ) +
-  geom_text_repel(
-    aes(x = now, y = 220, label = "Now"), size = fontsize,
-    nudge_x = 2, nudge_y = 0
-  ) +
-  geom_text_repel(
-    aes(x = now_minus_tau, y = 220,
-        label = paste("Now -", expression(tau))),
-    size = fontsize, parse = TRUE, nudge_x = -8
+    linetype = "dashed", size = linesize
   )
 
 m1_left <- obs_m1 +
-  geom_text(
-    aes(x = earliest + 25, y = 150,
-        label = "Data not used for model calibration"
-    ), size = fontsize
-  ) +
   ## Arrow below the label "Data not used for model calibration"
   geom_segment(
     aes(
       x = earliest, xend = now_minus_tau - 15, y = 144,
       yend = 144
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
-  ) +
-  ## Arrow below the label "Assume constant Rt in this window"
-  geom_text(
-    aes(
-      x = now_minus_tau + 20, y = 210,
-      label = "Assume constant Rt in \n window"
-    ), size = fontsize
+    ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
   ) +
   geom_segment(
     aes(
       x = now_minus_tau, xend = now, y = 197, yend = 197
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
+    ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
   ) + coord_trans(clip = "off")
 
 m1_right <- obs_m1 +
   geom_line(
     data = i0_est, aes(dates, val, group = probs),
-    linetype = "dashed", alpha = 0.2, col = "red"
+    linetype = "dashed", alpha = 0.4, col = "red"
   ) +
   geom_line(
     data = i0_future, aes(dates, val, group = probs),
-    linetype = "dashed", alpha = 0.2, col = "red"
+    linetype = "dashed", alpha = 0.4, col = "red"
   ) +
   geom_segment(
     aes(
       x = as.Date("2020-04-01"), xend = now_minus_tau, y = 144,
       yend = 144
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
-  ) +
-  ## Arrow below the label "Assume constant Rt in this window"
-  geom_text(
-    aes(x = now_minus_tau - 30, y = 150,
-        label = "Data not used for model calibration"
-    ), size = fontsize
-  ) +
-  geom_text(
-    aes(x = now_minus_tau - 35, y = 135,
-        label = "Jointly estimated with Rt"
-    ), size = fontsize, col = "red"
-  ) +
-  geom_text(
-    aes(
-      x = now_minus_tau + 25, y = 200,
-      label = "Assume constant Rt in window"
-    ), size = fontsize
-  ) +
-  geom_text(
-    aes(
-      x = now + 12, y = 170,
-      label = forecast_text,
-    ), size = fontsize, col = "red"
+    ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
   ) +
   geom_segment(
     aes(
       x = now_minus_tau, xend = now, y = 195, yend = 195
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
+    ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
   ) + coord_trans(clip = "off")
 
 
-left <- plot_grid(
-  m1_left + ggtitle("Model 1"),
-  psi, nrow = 2, rel_heights = c(0.7, 0.3),
-  align = "hv", axis = "l"
-)
-
-
-ggsave("m1_left.pdf", left)
-ggsave("m1_right.pdf", m1_right)
+cowplot::save_plot("m1_right.pdf", m1_right)
 
 
 ######################################################################
@@ -227,16 +181,15 @@ wtd_cases <- data.frame(
 )
 
 m3_left <- ggplot() +
-  geom_line(data = obs_deaths, aes(dates, deaths)) +
-  geom_line(data = obs_cases, aes(dates, cases), col = "blue") +
-  geom_vline(xintercept = as.numeric(now), linetype = "dashed") +
-  geom_text(aes(x = now + 5, y = 500, label = "Now"), size = fontsize) +
-  geom_text(
-    aes(x = as.Date("2020-07-05"), y = 360, label = "Cases"),
-    color = "blue"
+  geom_line(
+    data = obs_deaths, aes(dates, deaths), size = linesize
   ) +
-  geom_text(
-    aes(x = as.Date("2020-07-04"), y = 200, label = "Deaths")
+  geom_line(
+    data = obs_cases, aes(dates, cases), col = "blue",
+    size = linesize
+  ) +
+  geom_vline(
+    xintercept = as.numeric(now), linetype = "dashed", size = linesize
   ) +
   scale_x_date(limits = c(earliest, latest)) +
   xlab("Time") + ylab("Daily Cases/Deaths") +
@@ -245,75 +198,46 @@ m3_left <- ggplot() +
 m3_right <- m3_left +
   geom_line(
     data = wtd_cases, aes(dates, wtd_cases), col = "#6666ff",
-    linetype = "longdash"
+    linetype = "longdash", size = linesize
   ) +
   geom_line(
     data = i0_future, aes(dates, val, group = probs),
-    linetype = "dashed", alpha = 0.2, col = "red"
-  ) +
-  geom_text(
-    aes(x = now + 15, y = 330, label = "Weighted cases"),
-    size = fontsize, col = "#6666ff"
-  ) +
-  geom_text(
-    aes(
-      x = now + 12, y = 130,
-      label = "Forecasts \n assuming constant \n Rt"
-    ), size = fontsize, col = "red"
-  ) +
-  ## Midway between deaths and weighted cases on this day
-  geom_text(
-    aes(now - 5, 260, label = "rho"), parse = TRUE,
-    size = fontsize, fontface = "bold"
-  ) +
-  ## Arrows above and below
-  geom_segment(
-    aes(
-      x = now - 5, y = 183, yend = 250, xend = now - 5
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "last")
+    linetype = "dashed", alpha = 0.4, col = "red"
   ) +
   geom_segment(
     aes(
-      x = now - 5, y = 270, yend = 345, xend = now - 5
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "first")
+      x = now - 5, y = 183, yend = 230, xend = now - 5
+    ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
+    size = linesize
   ) +
-  ## Delay from report to death
-  geom_text(
-    aes(earliest + 35, 200, label = "gamma"), parse = TRUE,
-    size = fontsize, fontface = "bold"
+  geom_segment(
+    aes(
+      x = now - 5, y = 285, yend = 335, xend = now - 5
+    ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
+    size = linesize
   ) +
-  ## Arrows left and right
   geom_segment(
     aes(
       x = earliest + 28, y = 200, yend = 200, xend = earliest + 33
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "last")
+    ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
+    size = linesize
   ) +
   geom_segment(
     aes(
       x = earliest + 37, y = 200, yend = 200, xend = earliest + 46
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "first")
+    ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
+    size = linesize
+  ) +
+  geom_text(
+    aes(now - 5, 260, label = "rho"), parse = TRUE,
+    size = 6, fontface = "bold"
+  ) +
+  geom_text(
+    aes(earliest + 35, 200, label = "mu"), parse = TRUE,
+    size = 6, fontface = "bold"
   )
 
-
-
-delay <- rgamma(1e4, shape = 4, scale = 2.5)
-pdelay <- ggplot() +
-  geom_density(aes(delay), fill = "black", col = NA, alpha = 0.2) +
-  geom_vline(xintercept = 7.5, linetype = "dashed") +
-  geom_text(
-    aes(x = 8.5, 0.1, label = "gamma"), parse = TRUE
-  ) +
-  xlab("Days since case reported") +
-  ylab("Probability of death") +
-  theme_schematic()
-
-m3_left <- plot_grid(
-  m3_left + ggtitle("Model 3"), pdelay, nrow = 2,
-  rel_heights = c(0.7, 0.3), align = "hv", axis = "l"
-)
-
-ggsave("m3_left.pdf", m3_left)
-ggsave("m3_right.pdf", m3_right)
+cowplot::save_plot("m3_right.pdf", m3_right)
 
 ######################################################################
 ######################################################################
@@ -322,83 +246,50 @@ ggsave("m3_right.pdf", m3_right)
 ######################################################################
 
 m2_left <- ggplot() +
-  geom_line(data = obs_deaths, aes(dates, deaths)) +
+  geom_line(data = obs_deaths, aes(dates, deaths), size = linesize) +
   geom_vline(
-    xintercept = as.numeric(now), linetype = "dashed"
+    xintercept = as.numeric(now), linetype = "dashed", size = linesize
   ) +
-  geom_text(aes(x = now + 4, y = 220, label = "Now"), size = fontsize) +
   scale_x_date(limits = c(earliest, latest)) +
   xlab("Time") + ylab("Daily Deaths") +
   theme_schematic()
 
 m2_right <- m2_left +
   geom_vline(
-    xintercept = as.numeric(now_minus_tau), linetype = "dashed"
-  ) +
-  geom_text(
-    aes(x = now_minus_tau - 7, y = 220, label = "Now - k*"),
-    size = fontsize
-  ) +
-  geom_text(
-    aes(
-      x = now_minus_tau + 25, y = 214,
-      label = "Assume constant Rt in window"
-    ), size = fontsize
+    xintercept = as.numeric(now_minus_tau), linetype = "dashed",
+    size = linesize
   ) +
   geom_segment(
     aes(
       x = now_minus_tau, xend = now, y = 209, yend = 209
-    ), arrow = arrow(length = unit(0.15, "cm"), ends = "both")
+    ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
   ) +
   geom_segment(
     aes(x = now - 15, xend = now, y = 90, yend = 90),
-    linetype = "dotted"
+    linetype = "dotted", size = linesize
   ) +
   geom_segment(
     aes(x = now - 20, xend = now, y = 100, yend = 100),
-    linetype = "dotted"
+    linetype = "dotted", size = linesize
   ) +
   geom_segment(
     aes(x = now - 25, xend = now, y = 110, yend = 110),
-    linetype = "dotted"
+    linetype = "dotted", size = linesize
   ) +
   geom_segment(
     aes(x = now - 35, xend = now, y = 120, yend = 120),
-    linetype = "dotted"
-  ) +
-  geom_text(
-    aes(
-      x = now + 15, y = 120,
-      label = "Different possible"
-    ), size = fontsize
-  ) +
-  geom_text(
-    aes(
-      x = now + 15, y = 107,
-      label = "windows. \n Choose best (k*)"
-    ), size = fontsize
+    linetype = "dotted", size = linesize
   ) +
   geom_line(
     data = i0_future, aes(dates, val, group = probs),
-    linetype = "dashed", alpha = 0.2, col = "red"
-  ) +
-  geom_text(
-    aes(
-      x = now + 17, y = 160,
-      label = "Forecasts assuming \n constant Rt"
-    ), size = fontsize, col = "red"
+    linetype = "dashed", alpha = 0.4, col = "red"
   ) +
   ## So that text is not chopped off
   coord_trans(clip = "off")
 
 
-m2_left <- plot_grid(
-  m2_left +  ggtitle("Model 2"), psi, nrow = 2,
-  rel_heights = c(0.7, 0.3), align = "hv", axis = "l"
-)
-
-ggsave("m2_left.pdf", m2_left)
-ggsave("m2_right.pdf", m2_right)
+cowplot::save_plot("m2_right.pdf", m2_right)
 
 
 ########### Medium-term forecasts schematic
@@ -408,59 +299,63 @@ ggsave("m2_right.pdf", m2_right)
 rt <- data.frame(
   week = rep(paste("Week", 1:5), each = 1e3),
   rt = c(
-    rnorm(1e3, 8, 2), rnorm(1e3, 4, 2), rnorm(1e3, 2, 2),
-    rnorm(1e3, 0, 2), rnorm(1e3, 0, 1)
+    rnorm(1e3, 12, 2), rnorm(1e3, 6, 4), rnorm(1e3, 4, 4),
+    rnorm(1e3, 2, 4), rnorm(1e3, 0, 2)
   ),
-  fill = rep(c(rep("gray", 4), "blue"), each = 1e3),
+  ## The one not combined in gray, the ones comnined in blue
+  ## and the weighted in red
+  fill = rep(c("gray", rep("blue", 3), "red"), each = 1e3),
   stringsAsFactors = FALSE
 )
 
+## Horizontal Lines
+week4_qntls <- rt[rt$week == "Week 4", ]
+ci_high <- quantile(week4_qntls$rt, probs = 0.975)
+ci_low <- quantile(week4_qntls$rt, probs = 0.025)
+
 rt_plot <- ggplot(rt) +
   geom_half_violin(
-    aes(week, rt, fill = fill), draw_quantiles = c(0.25, 0.5, 0.75),
-    alpha = 0.3
+    aes(week, rt, fill = fill, alpha = week),
+    draw_quantiles = c(0.025, 0.975)
   ) +
+  ## Horizontal lines to show 95% CrI of the most recent estimate
+  geom_hline(yintercept = c(ci_low, ci_high), linetype = "dashed") +
   scale_fill_identity() +
+  scale_alpha_manual(
+    values = c("Week 1" = 0.3, "Week 2" = 0.3, "Week 3" = 0.3,
+               "Week 4" = 0.7, "Week 5" = 0.3)
+  ) +
   scale_x_discrete(
     position = "top",
     breaks = c("Week 1", "Week 2", "Week 3", "Week 4", "Week 5"),
-    labels = c("Week (K - 4)", "Week (K - 3)", "Week (K - 2)",
-               "Week (K - 1)", "Week K")
+    labels = c("Week of (T - 21)", "Week of (T - 14)",
+               "Week of (T - 7)", "Week of T", expression({R^{"w"}}(T)))
   ) +
   theme_schematic() +
+  theme(legend.position = "none") +
   ylab("Reproduction number") +
   theme(
-    axis.line.x = element_blank(), axis.title.x = element_blank(),
-    axis.text.x = element_text(size = 12, angle = 90),
-    axis.title.y = element_text(size = 12)
+    axis.line = element_blank(), axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 90)
   ) +
   ## Arrows to show sampling
   annotate(
-    "curve", x = "Week 2", xend = "Week 5", y = 12, yend = 5,
-    curvature = -0.5, alpha = 0.2, linetype = "dashed",
-    arrow = arrow(length = unit(0.03, "npc")
-  )
+    "curve", x = "Week 2", xend = "Week 5", y = 14, yend = 8,
+    curvature = -0.3, alpha = 0.4, linetype = "dashed",
+    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    size = linesize
   ) +
   annotate(
-    "curve", x = "Week 3", xend = "Week 5", y = 9, yend = 4,
+    "curve", x = "Week 3", xend = "Week 5", y = 11, yend = 7,
     curvature = -0.3, alpha = 0.5, linetype = "dashed",
-    arrow = arrow(length = unit(0.03, "npc")
-  )
-) +
+    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    size = linesize
+  ) +
   annotate(
-    "curve", x = "Week 4", xend = "Week 5", y = 7, yend = 3,
+    "curve", x = "Week 4", xend = "Week 5", y = 9, yend = 6,
     curvature = -0.2, alpha = 1, linetype = "dashed",
-    arrow = arrow(length = unit(0.03, "npc")
-  )
-  ) +
-  ## Text to show probabilities
-  geom_text(
-    aes(x = "Week 2", y = 13, label = "e^(-2 * beta)"),
-    parse = TRUE, size = fontsize
-  ) +
-  geom_text(
-    aes(x = "Week 3", y = 10, label = "e^(-beta)"),
-    parse = TRUE, size = fontsize
+    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    size = linesize
   )
 
-ggsave("rt_plot.pdf", rt_plot)
+cowplot::save_plot("rt_plot.pdf", rt_plot)

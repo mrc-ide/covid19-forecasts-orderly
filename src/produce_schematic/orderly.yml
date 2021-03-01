@@ -15,11 +15,8 @@ artefacts:
   staticgraph:
     description: Method schematic
     filenames:
-      - m1_left.pdf
       - m1_right.pdf
-      - m2_left.pdf
       - m2_right.pdf
-      - m3_left.pdf
       - m3_right.pdf
 
 depends:

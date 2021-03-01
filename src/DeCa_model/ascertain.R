@@ -301,7 +301,66 @@ cases_augmented <- purrr::map(
     )
     cbind(i_old, i_augm)
   }
-)
+  )
+######################################################################
+######################################################################
+####### Figures for SI
+## dates <- seq(
+##   from = tail(ascertainr_cases$dates, 1) + 1, length.out = 7, by = "1 day"
+## )
+
+## augm_incid <- cases_augmented[["Spain"]][ , 31:37]
+## qntls <- apply(augm_incid, 2, quantile, probs = c(0.025, 0.5, 0.975))
+## qntls <- as.data.frame(qntls)
+## colnames(qntls) <- dates
+
+## qntls <- tibble::rownames_to_column(qntls) %>%
+##   tidyr::gather(date, val, -rowname) %>%
+##   tidyr::spread(rowname, val)
+
+
+## obs <- ascertainr_cases[, c("dates", "Spain")]
+## qntls$date <- as.Date(qntls$date)
+## obs$dates <- as.Date(obs$dates)
+
+## p1 <- ggplot() +
+##   geom_line(data = obs, aes(dates, Spain), size = 1.1) +
+##   geom_segment(
+##     aes(
+##       x = tail(obs$dates, 7)[1], xend = tail(obs$dates, 7)[7],
+##       y = mean(tail(obs$Spain, 7)),
+##       yend = mean(tail(obs$Spain, 7))
+##     ), linetype = "dashed"
+##   ) +
+##   geom_vline(
+##     xintercept = as.numeric(tail(obs$dates, 7)[1]), alpha = 0.5
+##   ) +
+##   geom_vline(
+##     xintercept = as.numeric(tail(obs$dates, 7)[7]), alpha = 0.5
+##   ) +
+##   geom_ribbon(
+##     data = qntls, aes(x = date, ymin = `2.5%`, ymax = `97.5%`),
+##     alpha = 0.2, fill = "red"
+##   ) +
+##   geom_line(data = qntls, aes(date, `50%`), col = "red") +
+##   scale_x_date(
+##     date_breaks = "2 weeks", date_labels = "%d - %b",
+##     limits = c(as.Date("2020-02-15"), NA)
+##   ) +
+##   ylab("Daily cases") +
+##   theme_minimal() + theme(axis.title.x = element_blank())
+
+## p2 <- ggplot() +
+##   geom_col(aes(1:31, report_to_death), alpha = 0.5) +
+##   geom_vline(xintercept = 7) +
+##   ylab("Probability of death") +
+##   xlab("Days since case report") +
+##   theme_minimal()
+
+## p <- cowplot::plot_grid(p1, p2, ncol = 2, labels = "auto")
+
+## ggsave("case_augmentation.png", p)
+
 ######################################################################
 ######################################################################
 weighted_cases_augm <- purrr::map(
