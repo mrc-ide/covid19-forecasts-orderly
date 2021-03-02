@@ -55,7 +55,10 @@ if (N_geo > 1) {
   )
 }
 ## 6 is the generation day.
-upper_log_i0 <- purrr::map(mu0, function(x) x - log(0.5) * 100/6)
+lower_r <- 0.1
+upper_r <- 10
+lower_log_i0 <- purrr::map(mu0, function(x) x - log(upper_r) * 100/6)
+upper_log_i0 <- purrr::map(mu0, function(x) x - log(lower_r) * 100/6)
 ## # initially, we assume R=1 and choose initial condition accordingly,
 ## # i.e. with mu0 case and R=1
 ## # we expect the number of daily cases to stabilised at the mean
@@ -87,9 +90,10 @@ res <- purrr::pmap(
     si_distr = si_distrs,
     theta = theta0,
     mu = mu0,
-    ul = upper_log_i0
+    ul = upper_log_i0,
+    ll = lower_log_i0
   ),
-  function(si_distr, theta, mu, ul) {
+  function(si_distr, theta, mu, ul, ll) {
     MCMC_full(
       I = incidence_inference,
       N_geo = N_geo,
@@ -100,7 +104,10 @@ res <- purrr::pmap(
       mu0 = mu,
       repli_adapt = 10,
       within_iter = iterations / 10,
-      upper_log_i0 = ul
+      upper_log_i0 = ul,
+      lower_log_i0 = ll,
+      lower_r = lower_r,
+      upper_r = upper_r
     )
   }
 )

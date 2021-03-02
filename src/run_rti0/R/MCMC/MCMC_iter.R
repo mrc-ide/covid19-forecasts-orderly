@@ -25,7 +25,9 @@
 #' @export
 #'
 
-MCMC_iter <- function(incidence,N_geo,iter,theta0,s,SI,mu0,over_disp = NA, upper_log_i0){
+MCMC_iter <- function(incidence, N_geo, iter, theta0, s, SI, mu0,
+                      over_disp = NA, upper_log_i0,
+                      lower_log_i0, lower_r, upper_r) {
 
   I <- incidence[,-1]     # remove dates (everything needs to be consecutive days)
 
@@ -56,13 +58,22 @@ MCMC_iter <- function(incidence,N_geo,iter,theta0,s,SI,mu0,over_disp = NA, upper
       # propose new parameter j
       if (j <= 1){
         Ts[J] <- Ts[J]*exp(s[J]*rnorm(N_geo, 0, 1))
-        idx <- which(Ts[J] > 10)
+        idx <- which(Ts[J] > upper_r)
         Ts[J][idx] <- theta0[J][idx]
 
-      }else{
+        idx <- which(Ts[J] < lower_r)
+        Ts[J][idx] <- theta0[J][idx]
+
+
+        idx <- which(Ts[J] < lower_r)
+        Ts[J][idx] <- theta0[J][idx]
+      } else {
         Ts[J] <- Ts[J]+(s[J]*rnorm(N_geo, 0 , 1))
         idx <- which(Ts[J] > upper_log_i0)
         Ts[J][idx] <- theta0[J][idx]
+        idx <- which(Ts[J] < lower_log_i0)
+        Ts[J][idx] <- theta0[J][idx]
+
       }
       # get the new 'force of infection'
       lambdaT <- lambda_fct(param = Ts , I = t(I), N_l = N_geo ,
