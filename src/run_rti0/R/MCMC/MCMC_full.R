@@ -56,7 +56,7 @@ MCMC_full <- function(I,N_geo,iter,theta0,s,SI,mu0,repli_adapt,
   res <- MCMC_iter(
     incidence = I, N_geo = N_geo, iter = iter, theta0 = res0$theta0,
     s = res0$sigma, SI = SI, mu0 = mu0, over_disp = over_disp,
-    upper_log_i0, lower_log_i0 = lower_log_i0, lower_r = lower_r,
+    upper_log_i0 = upper_log_i0, lower_log_i0 = lower_log_i0, lower_r = lower_r,
     upper_r = upper_r
   )
   # run the MCMC to sample posterior of R and initial coniditions at each location
