@@ -1,16 +1,16 @@
 ##orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-03-14"))
 
+## Use ISO2c codes from the hub
+## https://github.com/epiforecasts/covid19-forecast-hub-europe/blob/main/data-locations/locations_eu.csv
+countrycode <- readr::read_csv("locations_eu.csv")
 
 forecast_date <- as.Date(week_ending) + 1
 prefix <- glue::glue("{forecast_date}-Imperial")
 forecasts <- readRDS("weekly_predictions_qntls.rds")
 forecasts <- forecasts[forecasts$si == "si_2", ]
 
-
-forecasts$continent <- countrycode(
-  forecasts$country, origin = "country.name", destination = "continent"
-)
-forecasts <- forecasts[forecasts$continent == "Europe", ]
+forecasts$country <- rincewind::nice_country_name(forecasts$country)
+forecasts <- left_join(forecasts, countrycode, by = c("country" = "location_name"))
 forecasts <- forecasts[complete.cases(forecasts), ]
 
 ## Date as YYYY-MM-DD, last day (Monday) of submission window
@@ -23,10 +23,6 @@ forecasts$target <- "1 wk ahead inc death"
 ## Date as YYYY-MM-DD, the last day (Saturday) of the target week
 forecasts$target_end_date <- as.Date(week_ending) + 6
 
-## ISO-2 country code
-forecasts$location <- countrycode(
-  forecasts$country, origin = "country.name", destination = "iso2c"
-)
 
 ## type One of "point" or "quantile"
 forecasts$type <- "quantile"

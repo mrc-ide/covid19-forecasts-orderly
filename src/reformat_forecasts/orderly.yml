@@ -10,6 +10,8 @@ artefacts:
 
 parameters: week_ending
 
+resources: locations_eu.csv
+
 packages:
   - purrr
   - stringr
