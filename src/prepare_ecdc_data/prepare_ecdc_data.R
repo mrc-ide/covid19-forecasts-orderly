@@ -439,6 +439,11 @@ raw_data$Deaths[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.terri
 ## Erroneously recorded as 351 in WHO data
 raw_data$Deaths[raw_data$DateRep == "2021-01-31" & raw_data$`Countries.and.territories` == "Lebanon"] <- 51
 
+## Corrections 15th March 2021
+raw_data$Deaths[raw_data$DateRep == "2021-03-14" & raw_data$`Countries.and.territories` == "Albania"] <- 12
+raw_data$Cases[raw_data$DateRep == "2021-03-14" & raw_data$`Countries.and.territories` == "Albania"] <- 698
+
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%

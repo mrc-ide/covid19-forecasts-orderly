@@ -1,0 +1,24 @@
+script: reformat_outputs_for_hub.R
+  
+artefacts:
+  - data:
+      description: Weekly incident deaths
+      filenames:
+        - DeCa.csv
+        - RtI0.csv
+        - sbkp.csv
+
+parameters: week_ending
+
+packages:
+  - purrr
+  - stringr
+  - countrycode
+  - tidyr
+  - dplyr
+
+depends:
+  - process_individual_models:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         weekly_predictions_qntls.rds: weekly_predictions_qntls.rds
