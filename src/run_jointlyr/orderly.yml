@@ -6,10 +6,6 @@ parameters:
   
 packages:
   - purrr
-  - dplyr
-  - ggplot2
-  - gghalves
-  - EpiEstim
   - jointlyr
   - rstan
   
@@ -17,7 +13,8 @@ artefacts:
   data:
     description: Model outputs
     filenames:
-      - jointly_model_outputs.rds
+      - rti0_model_outputs.rds
+      - r_rti0.rds
 
 depends:
   - prepare_jhu_data:
