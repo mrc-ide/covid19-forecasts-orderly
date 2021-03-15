@@ -10,5 +10,60 @@ si_distrs <- readRDS("si_distrs.rds")
 
 
 ## Generate stan fit
-fit <- jointlyr::jointly_estimate(10, 100, incid, si_distr = si_distrs[[2]],
-                                  seed = 42, iter = 20000, chains = 4)
+fit <- purrr::map(
+  si_distrs,
+  function(si_distr) {
+    jointlyr::jointly_estimate(10, 100, incid, si_distr = si_distr,
+                               seed = 42, iter = 20000, chains = 4)
+  }
+)
+    
+## Extract values from stan fit
+samples <- purrr::map(
+  fit,
+  function(fit) {
+    rstan::extract(fit)
+  }
+)
+
+## Take 1000 samples of foi and draw 10 samples from Poisson distribution
+projections <- purrr::map(
+  samples,
+  function(samples) {
+    foi <- samples[["incid_est"]][, 111:117]
+    index <- sample(nrow(foi), 1000, replace = FALSE)
+    foi <- foi[index, ]
+    projections <- matrix(NA, nrow = 10000, ncol = 7)
+    for (day in 1:7) {
+      projections[, day] <- rep(foi[, day], each = 10)
+    }
+    projections <- apply(projections, c(1, 2), function(x) rpois(1, x))
+  }
+)
+
+
+## Take 10000 samples from r_est estimates to be consistent with other model outputs
+r_est <- purrr::map(
+  samples,
+  function(samples) {
+    r_est <- samples[['rt_est']]
+    sample(r_est, 10000, replace = FALSE)
+  }
+)
+
+## Save in format required
+out <- saveRDS(
+  object = list(
+    I_active_transmission = model_input[["I_active_transmission"]][, c("dates", location)],
+    D_active_transmission = model_input[["D_active_transmission"]][, c("dates", location)],
+    State = location,
+    R_last = r_est,
+    Predictions = projections
+  ),
+  file = "rti0_model_outputs.rds"
+)
+
+saveRDS(object = r_est, file = "r_rti0.rds")
+
+
+
