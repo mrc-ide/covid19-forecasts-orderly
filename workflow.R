@@ -148,7 +148,8 @@ source("orderly-helper-scripts/dependencies_weighted_performance.R")
 source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
 
 use_draft <- "newer"
-
+## This is the sunday before the Monday for which we are producing
+## the report.
 weeks <- seq(
   from = as.Date("2020-03-08"),
   to = as.Date("2021-03-01"),
