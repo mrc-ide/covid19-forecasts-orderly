@@ -25,10 +25,10 @@ sources:
   - R/utils.R
 
 depends:
-  # - run_rti0:
-  #     id: latest(parameter:week_ending == week_ending)
-  #     use:
-  #        RtI0_Std_results.rds: RtI0_latest_output.rds
+  - run_jointlyr:
+      id: latest(parameter:week_ending == week_ending && location == location)
+      use:
+         RtI0_Std_results.rds: rti0_model_outputs.rds
   - run_apeestim:
       id: latest(parameter:week_ending == week_ending && location == location)
       use:
