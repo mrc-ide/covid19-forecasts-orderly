@@ -1,0 +1,27 @@
+script: run_jointlyr.R
+
+parameters:
+  - week_ending
+  - location
+  
+packages:
+  - purrr
+  - jointlyr
+  - rstan
+  
+artefacts:
+  data:
+    description: Model outputs
+    filenames:
+      - rti0_model_outputs.rds
+      - r_rti0.rds
+
+depends:
+  - prepare_jhu_data:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         model_input.rds: latest_model_input.rds
+  - produce_epi_params:
+      id: latest
+      use:
+         si_distrs.rds: si_distrs.rds
