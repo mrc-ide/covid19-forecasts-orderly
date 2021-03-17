@@ -49,16 +49,16 @@ deaths <- deaths %>%
 
 deaths$date_reported <- lubridate::mdy(deaths$date_reported)
 
-deaths <- deaths %>% 
-  dplyr::group_by(province_state, date_reported) %>% 
-  dplyr::summarise(all_deaths = sum(all_deaths)) %>% 
+deaths <- deaths %>%
+  dplyr::group_by(province_state, date_reported) %>%
+  dplyr::summarise(all_deaths = sum(all_deaths)) %>%
   dplyr::mutate(new_deaths = diff(c(0, all_deaths)))
 
 ## Join case and death data
 
 raw_data <- dplyr::left_join(cases, deaths,
-                             by = c("province_state", "date_reported")) %>% 
-  dplyr::select(date_reported, everything()) %>% 
+                             by = c("province_state", "date_reported")) %>%
+  dplyr::select(date_reported, everything()) %>%
   dplyr::filter(date_reported <= as.Date(week_ending))
 
 
@@ -75,7 +75,7 @@ raw_data <- filter(raw_data, !(province_state %in% remove_location))
 raw_data <- rename(
   raw_data, Cases = "new_cases", Deaths = "new_deaths",
   DateRep = "date_reported"
-) %>% 
+) %>%
   select(DateRep, province_state, Cases, Deaths)
 
 ## Average out any negative reports over the preceding and subsequent 3 days
