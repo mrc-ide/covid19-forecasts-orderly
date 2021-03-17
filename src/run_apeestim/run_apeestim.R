@@ -59,7 +59,7 @@ r_apeestim <- purrr::map(
 ## "ape", "pmse", "prob", "rhat", "rhatci", "post_mean_tplus1",
 ## "tplus1_ci", "alpha", "beta", "post_negbin_pr". We want the
 ## last values of alpha and beta.
-n_sim <- 1000
+n_sim <- 1e4
 rsamples_ape <- map(
   r_apeestim,
   function(r_si) {
@@ -102,6 +102,13 @@ ape_projections <- purrr::map2(
   }
 )
 
+## Sample 10,000 values for consistent output with other models
+ape_projections <- purrr::map(ape_projections,
+    function(projections) {
+      apply(projections, 2, function(y) sample(y, size = 1e4))
+    }
+)
+
 pred_qntls <- data.frame(ape_projections[[2]], check.names = FALSE) %>% 
   tidyr::pivot_longer(cols = everything(),
                       names_to = "dates",
@@ -127,7 +134,7 @@ out <- saveRDS(
     D_active_transmission = model_input[["D_active_transmission"]][, c("dates", location)],
     State = location,
     R_last = rsamples_ape,
-    Predictions = ape_projections
+    Predictions = purrr::map(ape_projections, as.data.frame)
   ),
   file = "apeestim_model_outputs.rds"
 )
