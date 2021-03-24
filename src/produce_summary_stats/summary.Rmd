@@ -120,6 +120,26 @@ map_dfr(
 
 ```
 
+### Mean relative error less than 1
+
+
+```{r}
+map_dfr(
+  by_strategy, function(x) {
+    out <- group_by(x, week_of_projection) %>%
+      summarise(
+        nless1 = sum(rel_mae < 1), nlesshalf = sum(rel_mae < 0.5), n = n()
+      ) %>% ungroup()
+    out$nless1 <- scales::percent(out$nless1 / out$n, accuracy = 0.01)
+    out$nlesshalf <- scales::percent(out$nlesshalf / out$n, accuracy = 0.01)
+    out
+  }, .id = "strategy"
+) %>% knitr::kable()
+
+```
+
+
+
 ### Coverage probability
 
 #### In 50% Credible Interval
