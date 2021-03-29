@@ -444,6 +444,15 @@ raw_data$Deaths[raw_data$DateRep == "2021-03-14" & raw_data$`Countries.and.terri
 raw_data$Cases[raw_data$DateRep == "2021-03-14" & raw_data$`Countries.and.territories` == "Albania"] <- 698
 
 
+## Corrections 29th March 2021; Worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-03-28" & raw_data$`Countries.and.territories` == "Croatia"] <- 21
+raw_data$Cases[raw_data$DateRep == "2021-03-28" & raw_data$`Countries.and.territories` == "Croatia"] <- 1321
+
+## French Government reported 897 new deaths, of which 594 deaths in EMS and EHAPD and 303 deaths in hospitals.
+raw_data$Deaths[raw_data$DateRep == "2021-03-27" & raw_data$`Countries.and.territories` == "France"] <- 363
+raw_data$Deaths[raw_data$DateRep == "2021-03-28" & raw_data$`Countries.and.territories` == "France"] <- 190
+raw_data$Cases[raw_data$DateRep == "2021-03-28" & raw_data$`Countries.and.territories` == "France"] <- 42619
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -519,9 +528,10 @@ exclude <- c(
   "Sudan",
   "Slovenia",
   "Mauritania",
+  "Rwanda"
   ##"Sweden",
   ##"Switzerland", ## Numbers do not agree with those on worldometers
-  "Spain" ## latest data not yet available.
+  ##"Spain" ## latest data not yet available.
 )
 
 saveRDS(exclude, "exclude.rds")
