@@ -101,21 +101,6 @@ obs_m1 <- obs +
     linetype = "dashed", size = linesize
   )
 
-m1_left <- obs_m1 +
-  ## Arrow below the label "Data not used for model calibration"
-  geom_segment(
-    aes(
-      x = earliest, xend = now_minus_tau - 15, y = 144,
-      yend = 144
-    ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
-    size = linesize
-  ) +
-  geom_segment(
-    aes(
-      x = now_minus_tau, xend = now, y = 197, yend = 197
-    ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
-    size = linesize
-  ) + coord_trans(clip = "off")
 
 m1_right <- obs_m1 +
   geom_line(
@@ -135,7 +120,7 @@ m1_right <- obs_m1 +
   ) +
   geom_segment(
     aes(
-      x = now_minus_tau, xend = now, y = 195, yend = 195
+      x = earliest, xend = now, y = 195, yend = 195
     ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) + coord_trans(clip = "off")
