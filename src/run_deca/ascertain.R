@@ -139,7 +139,9 @@ r_estim <-map(
 
 ## Repeat predictions to be consistent with outputs from other models
 predictions <- list(si_1 = predictions, si_2 = predictions)
-out <- list(R_last = r_estim, Predictions = predictions)
+out <- list(
+  R_last = r_estim, Predictions = predictions, State = location
+)
 
 saveRDS(object = out, file = paste0('DeCa_latest.rds'))
 

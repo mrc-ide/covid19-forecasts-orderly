@@ -2,17 +2,15 @@ library(orderly)
 library(purrr)
 library(glue)
 
-weeks <- seq(
-  from = as.Date("2021-01-03"), to = as.Date("2021-03-17"),
-  by = "7 days"
-)
-
+week <- "2021-03-28"
 a <- orderly_run(
   "prepare_jhu_data/",
   parameters = list(week_ending = as.character(week))
 )
 
-model_input <- glue("draft/prepare_jhu_data/{a}/latest_model_input.rds")
+model_input <- readRDS(
+  glue("draft/prepare_jhu_data/{a}/latest_model_input.rds")
+)
 locations <- model_input$State
 
 
@@ -60,6 +58,13 @@ walk(
   }
 )
 
+
+source("orderly-helper-scripts/dependancies_collate_weekly.R")
+
+orderly_run(
+  "collate_weekly_outputs", parameters = list(location = location),
+  use_draft = "newer"
+)
 
 
 orderly_run(
