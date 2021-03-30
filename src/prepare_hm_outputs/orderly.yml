@@ -1,0 +1,24 @@
+script: script.R
+
+artefacts:
+  data:
+    description: Outputs for HealthMap
+    filenames:
+      - cases_all.csv
+      - deaths_all.csv
+      - deaths_per_1e6.csv
+      - cases_per_1e6.csv
+      - latest_model_outputs.csv
+
+parameters: week_ending
+
+depends:
+  - prepare_ecdc_data:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         model_input.rds: latest_model_input.rds
+  - produce_ensemble_outputs:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         ensemble_model_predictions.rds: ensemble_model_predictions.rds
+         
