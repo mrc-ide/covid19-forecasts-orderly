@@ -27,7 +27,14 @@ si <- EpiEstim::discr_si(0:30, model_input$si_mean[2], model_input$si_std[2])
 
 ## countries included in the week_prev week of analysis
 countries <- setNames(model_input$Country, model_input$Country)
-countries <- countries[! countries %in% exclude]
+europe <- c("Belgium", "Bulgaria", "Czechia", "Denmark", "Germany", "Estonia",
+"Ireland", "Greece", "Spain", "France", "Croatia", "Italy", "Cyprus",
+"Latvia", "Lithuania", "Luxembourg", "Hungary", "Malta", "Netherlands",
+"Austria", "Poland", "Portugal", "Romania", "Slovenia", "Slovakia",
+"Finland", "Sweden", "United Kingdom", "Iceland", "Liechtenstein",
+"Norway", "Switzerland")
+
+countries <- countries[countries %in% europe]
 message("################ Including countries ######################")
 message(paste(countries, collapse = "\n"))
 
