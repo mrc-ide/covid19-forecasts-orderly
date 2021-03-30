@@ -1,0 +1,71 @@
+script: collate_weekly_outputs.R
+artefacts:
+  data:
+    description: Collated model outputs for all locations
+    filenames:
+    - us-ensemble-rt.rds
+    - us-ensemble-forecasts.rds
+    - rti0-rt.rds
+    - rti0-forecasts.rds
+    - apestim-rt.rds
+    - apeestim-forecasts.rds
+    - deca-rt.rds
+    - deca-forecasts.rds
+packages:
+- dplyr
+- tidyr
+- ggdist
+- purrr
+- ggplot2
+depends:
+- run_jointlyr:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "A")
+    use:
+      rti0_model_outputs_A.rds: rti0_model_outputs.rds
+- run_jointlyr:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "V")
+    use:
+      rti0_model_outputs_V.rds: rti0_model_outputs.rds
+- run_jointlyr:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "C")
+    use:
+      rti0_model_outputs_C.rds: rti0_model_outputs.rds
+- run_deca:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "A")
+    use:
+      DeCa_latest_A.rds: DeCa_latest.rds
+- run_deca:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "V")
+    use:
+      DeCa_latest_V.rds: DeCa_latest.rds
+- run_deca:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "C")
+    use:
+      DeCa_latest_C.rds: DeCa_latest.rds
+- run_apeestim:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "A")
+    use:
+      apeestim_model_outputs_A.rds: apeestim_model_outputs.rds
+- run_apeestim:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "V")
+    use:
+      apeestim_model_outputs_V.rds: apeestim_model_outputs.rds
+- run_apeestim:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "C")
+    use:
+      apeestim_model_outputs_C.rds: apeestim_model_outputs.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "A")
+    use:
+      ensemble_model_rt_samples_A.rds: ensemble_model_rt_samples.rds
+      ensemble_model_predictions_A.rds: ensemble_model_predictions.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "V")
+    use:
+      ensemble_model_rt_samples_V.rds: ensemble_model_rt_samples.rds
+      ensemble_model_predictions_V.rds: ensemble_model_predictions.rds
+- produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "C")
+    use:
+      ensemble_model_rt_samples_C.rds: ensemble_model_rt_samples.rds
+      ensemble_model_predictions_C.rds: ensemble_model_predictions.rds
