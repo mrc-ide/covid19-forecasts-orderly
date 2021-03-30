@@ -15,17 +15,17 @@ x <- list(
     )
     )
   ),
-  packages = c("dplyr", "tidyr",
-               "ggdist", "purrr", "ggplot2")
+  packages = c("dplyr", "tidyr", "ggdist", "purrr", "ggplot2")
 )
 
-d1 <- map(
-  locations,
-  function(location) {
-    query <- glue(
-      "latest(parameter:week_ending == \"{week}\" ",
-       " && parameter:location == \"{location}\")"
-    )
+queries <- glue(
+  "latest(parameter:week_ending == \"{week}\" ",
+  " && parameter:location == \"{locations}\")"
+)
+
+
+d1 <- map2(
+  locations, queries, function(location, query) {
     y <- list(
       run_jointlyr = list(
         id = query,
@@ -43,13 +43,8 @@ d1 <- map(
  }
 )
 
-d2 <- map(
-  locations,
-  function(location) {
-    query <- glue(
-      "latest(parameter:week_ending == \"{week}\" ",
-       " && parameter:location == \"{location}\")"
-    )
+d2 <- map2(
+  locations, queries, function(location, query) {
     y <- list(
       run_deca = list(
         id = query,
@@ -65,13 +60,9 @@ d2 <- map(
  }
 )
 
-d3 <- map(
-  locations,
-  function(location) {
-    query <- glue(
-      "latest(parameter:week_ending == \"{week}\" ",
-       " && parameter:location == \"{location}\")"
-    )
+
+d3 <- map2(
+  locations, queries, function(location, query) {
     y <- list(
       run_apeestim = list(
         id = query,
@@ -87,13 +78,8 @@ d3 <- map(
  }
 )
 
-d4 <- map(
-  locations,
-  function(location) {
-    query <- glue(
-      "latest(parameter:week_ending == \"{week}\" ",
-       " && parameter:location == \"{location}\")"
-    )
+d4 <- map2(
+  locations, queries, function(location, query) {
     y <- list(
       produce_ensemble_outputs = list(
         id = query,

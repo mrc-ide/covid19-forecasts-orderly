@@ -19,53 +19,53 @@ packages:
 - ggplot2
 depends:
 - run_jointlyr:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "A")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "a")
     use:
-      rti0_model_outputs_A.rds: rti0_model_outputs.rds
+      rti0_model_outputs_a.rds: rti0_model_outputs.rds
 - run_jointlyr:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "V")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "b")
     use:
-      rti0_model_outputs_V.rds: rti0_model_outputs.rds
+      rti0_model_outputs_b.rds: rti0_model_outputs.rds
 - run_jointlyr:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "C")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "c")
     use:
-      rti0_model_outputs_C.rds: rti0_model_outputs.rds
+      rti0_model_outputs_c.rds: rti0_model_outputs.rds
 - run_deca:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "A")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "a")
     use:
-      DeCa_latest_A.rds: DeCa_latest.rds
+      DeCa_latest_a.rds: DeCa_latest.rds
 - run_deca:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "V")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "b")
     use:
-      DeCa_latest_V.rds: DeCa_latest.rds
+      DeCa_latest_b.rds: DeCa_latest.rds
 - run_deca:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "C")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "c")
     use:
-      DeCa_latest_C.rds: DeCa_latest.rds
+      DeCa_latest_c.rds: DeCa_latest.rds
 - run_apeestim:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "A")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "a")
     use:
-      apeestim_model_outputs_A.rds: apeestim_model_outputs.rds
+      apeestim_model_outputs_a.rds: apeestim_model_outputs.rds
 - run_apeestim:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "V")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "b")
     use:
-      apeestim_model_outputs_V.rds: apeestim_model_outputs.rds
+      apeestim_model_outputs_b.rds: apeestim_model_outputs.rds
 - run_apeestim:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "C")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "c")
     use:
-      apeestim_model_outputs_C.rds: apeestim_model_outputs.rds
+      apeestim_model_outputs_c.rds: apeestim_model_outputs.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "A")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "a")
     use:
-      ensemble_model_rt_samples_A.rds: ensemble_model_rt_samples.rds
-      ensemble_model_predictions_A.rds: ensemble_model_predictions.rds
+      ensemble_model_rt_samples_a.rds: ensemble_model_rt_samples.rds
+      ensemble_model_predictions_a.rds: ensemble_model_predictions.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "V")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "b")
     use:
-      ensemble_model_rt_samples_V.rds: ensemble_model_rt_samples.rds
-      ensemble_model_predictions_V.rds: ensemble_model_predictions.rds
+      ensemble_model_rt_samples_b.rds: ensemble_model_rt_samples.rds
+      ensemble_model_predictions_b.rds: ensemble_model_predictions.rds
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "C")
+    id: latest(parameter:week_ending == "2021-03-28"  && parameter:location == "c")
     use:
-      ensemble_model_rt_samples_C.rds: ensemble_model_rt_samples.rds
-      ensemble_model_predictions_C.rds: ensemble_model_predictions.rds
+      ensemble_model_rt_samples_c.rds: ensemble_model_rt_samples.rds
+      ensemble_model_predictions_c.rds: ensemble_model_predictions.rds

@@ -1,7 +1,7 @@
 library(orderly)
 library(purrr)
 library(glue)
-location <- "Florida"
+
 weeks <- seq(
   from = as.Date("2021-01-03"), to = as.Date("2021-03-17"),
   by = "7 days"
