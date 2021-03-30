@@ -33,19 +33,16 @@
 #' @export
 #'
 
-MCMC_full <- function(I,N_geo,iter,theta0,s,SI,mu0,repli_adapt,within_iter, over_disp = NA, upper_log_i0){
+MCMC_full <- function(I,N_geo,iter,theta0,s,SI,mu0,repli_adapt,
+                      within_iter, over_disp = NA, upper_log_i0,
+                      lower_log_i0, lower_r, upper_r){
 
-  res0 <- adapt_tuning(repli = repli_adapt,
-                       I = I,
-                       N_geo = N_geo,
-                       within_iter = within_iter,
-                       theta0 = theta0,
-                       sigma = s,
-                       SI = SI,
-                       mu0 = mu0,
-                       over_disp = over_disp,
-                       upper_log_i0
-                       )
+  res0 <- adapt_tuning(
+    repli = repli_adapt, I = I, N_geo = N_geo,
+    within_iter = within_iter, theta0 = theta0, sigma = s, SI = SI,
+    mu0 = mu0, over_disp = over_disp, upper_log_i0 = upper_log_i0,
+    lower_log_i0 = lower_log_i0, lower_r = lower_r, upper_r = upper_r
+  )
   # adaptative tuning bit: we run an MCMC with rep/10 iterations, then
   # adjust the proposal variance to reach 0.2
   # do again using parameter value from the last iteration of the previous MCMC
@@ -56,15 +53,12 @@ MCMC_full <- function(I,N_geo,iter,theta0,s,SI,mu0,repli_adapt,within_iter, over
 
   # print('halfway!')             # message halfway through (effectively, including tuning, we do 2xrep iterations)
 
-  res <- MCMC_iter(incidence = I ,
-                   N_geo = N_geo,
-                   iter = iter,
-                   theta0 = res0$theta0,
-                   s = res0$sigma,
-                   SI = SI,
-                   mu0 = mu0,
-                   over_disp = over_disp,
-                   upper_log_i0)
+  res <- MCMC_iter(
+    incidence = I, N_geo = N_geo, iter = iter, theta0 = res0$theta0,
+    s = res0$sigma, SI = SI, mu0 = mu0, over_disp = over_disp,
+    upper_log_i0 = upper_log_i0, lower_log_i0 = lower_log_i0, lower_r = lower_r,
+    upper_r = upper_r
+  )
   # run the MCMC to sample posterior of R and initial coniditions at each location
   # FYI: this is called internally by adapt_tuning
   # see Rscript/MCMC_Rt_2018.R for full function
