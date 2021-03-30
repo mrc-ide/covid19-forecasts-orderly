@@ -12,13 +12,20 @@ artefacts:
 
 parameters: week_ending
 
+resources: ECDC-COVID-19-global-data.csv
+
+packages:
+- dplyr
+- readr
+- purrr
+
 depends:
   - prepare_ecdc_data:
       id: latest(parameter:week_ending == week_ending)
       use:
-         model_input.rds: latest_model_input.rds
+         latest_deaths.rds: latest_deaths_wide_no_filter.rds
+         latest_cases.rds: latest_deaths_wide_no_filter.rds         
   - produce_ensemble_outputs:
       id: latest(parameter:week_ending == week_ending)
       use:
-         ensemble_model_predictions.rds: ensemble_model_predictions.rds
-         
+         ensemble_model_predictions.rds: ensemble_daily_qntls.rds

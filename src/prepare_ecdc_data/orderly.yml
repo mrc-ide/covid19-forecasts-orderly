@@ -8,6 +8,7 @@ artefacts:
       filenames:
         - latest_model_input.rds
         - latest_deaths_wide_no_filter.rds
+        - latest_cases_wide_no_filter.rds        
         - exclude.rds
 
 packages:
