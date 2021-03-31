@@ -4,22 +4,23 @@ x <- list(
     data = list(
     description = "Collated model outputs for all locations",
     filenames = c(
-      "us-ensemble-rt.rds",
-      "us-ensemble-forecasts.rds",
-      "rti0-rt.rds",
-      "rti0-forecasts.rds",
-      "apestim-rt.rds",
-      "apeestim-forecasts.rds",
-      "deca-rt.rds",
-      "deca-forecasts.rds"
+      "us_ensemble_rt_qntls.rds",
+      "us_ensemble_forecasts_qntls.rds",
+      "rti0_qntls.rds",
+      "apeestim_qntls.rds",
+      "deca_qntls.rds",
+      "rti0_rt_qntls.rds",
+      "apeestim_rt_qntls.rds",
+      "deca_rt_qntls.rds"
     )
     )
   ),
-  packages = c("dplyr", "tidyr", "ggdist", "purrr", "ggplot2")
+  packages = c("dplyr", "tidyr", "purrr", "tibble"),
+  parameters = "week_ending"
 )
 
 queries <- glue(
-  "latest(parameter:week_ending == \"{week}\" ",
+  "latest(parameter:week_ending == week_ending",
   " && parameter:location == \"{locations}\")"
 )
 
@@ -84,8 +85,8 @@ d4 <- map2(
       produce_ensemble_outputs = list(
         id = query,
         use =  list(
-          "ensemble_model_rt_samples.rds",
-          "ensemble_model_predictions.rds"
+          "ensemble_model_rt.rds",
+          "ensemble_daily_qntls.rds"
         )
       )
     )

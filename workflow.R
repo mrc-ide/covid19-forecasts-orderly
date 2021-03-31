@@ -7,7 +7,7 @@ a <- orderly_run(
   "prepare_jhu_data/",
   parameters = list(week_ending = as.character(week))
 )
-
+a <- "20210330-173949-f6ba30b8"
 model_input <- readRDS(
   glue("draft/prepare_jhu_data/{a}/latest_model_input.rds")
 )
@@ -62,7 +62,7 @@ walk(
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
 
 orderly_run(
-  "collate_weekly_outputs", parameters = list(location = location),
+  "collate_weekly_outputs", parameters = list(week_ending = week),
   use_draft = "newer"
 )
 
