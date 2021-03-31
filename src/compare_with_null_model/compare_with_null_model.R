@@ -143,3 +143,9 @@ iwalk(plots, function(p, page) {
   outfile <- glue("comparison_with_linear_error_{page}.tiff")
   rincewind::save_multiple(filename = outfile, plot = p)
 })
+
+
+### Comparison by phase
+x <- na.omit(null_compare)
+phase <- readRDS("unweighted_rt_qntls.rds")
+by_phase <- left_join(x, phase)

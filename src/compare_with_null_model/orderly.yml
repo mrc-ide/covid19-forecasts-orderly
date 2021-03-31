@@ -20,6 +20,7 @@ packages:
   - ggnewscale
   - purrr
   - ggtext
+  - rincewind
 
 ## use_si should be one of si_1 or si_2
 parameters:
@@ -33,7 +34,10 @@ depends:
       id: latest
       use:
         unwtd_pred_error.csv: unwtd_pred_error.csv
-
+  - collate_model_outputs:
+      id: latest
+      use:
+        unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
   - produce_baseline_error:
       id: latest
       use:
