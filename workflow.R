@@ -67,12 +67,4 @@ orderly_run(
 )
 
 
-orderly_run(
-  "src/produce_figures/", parameters = list(location = location),
-  use_draft = "newer"
-)
-
-
-
-
 
