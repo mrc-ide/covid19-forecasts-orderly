@@ -6,7 +6,7 @@ projection_plot <- function(obs, pred) {
   names(palette) <- c(
     "Model 2", "Model 1", "Model 3", "Ensemble"
   )
-  date_min <- as.Date("2020-03-01")
+  date_min <- as.Date("2021-01-01")
   date_max <- max(pred$date) + 2
   dates_to_mark <- seq(
     from = date_min,
@@ -52,7 +52,7 @@ projection_plot <- function(obs, pred) {
       values = palette,
       aesthetics = c("color", "fill"),
     ) +
-    theme_project() +
+    theme_minimal() +
     theme(legend.position = "top", legend.title = element_blank()) +
     scale_x_date(breaks = dates_to_mark, limits = c(date_min, date_max)) +
     scale_y_continuous(breaks = integer_breaks()) +
@@ -74,4 +74,11 @@ projection_plot <- function(obs, pred) {
 
 ## ensemble projections
 ensemble_forecasts_qntls <- readRDS("us_ensemble_forecasts_qntls.rds")
+ensemble_forecasts_qntls <- ensemble_forecasts_qntls[ensemble_forecasts_qntls$si == "si_2", ]
 model_inputs <- readRDS("latest_model_input.rds")
+tall <- tidyr::gather(model_inputs$D_active_transmission, state, deaths, -dates)
+ensemble_forecasts_qntls$date <- as.Date(ensemble_forecasts_qntls$date)
+ensemble_forecasts_qntls$proj <- "Ensemble"
+
+p <- projection_plot(tall, ensemble_forecasts_qntls) +
+  ggforce::facet_wrap_paginate(~state, ncol = 1, nrow = 3, page = 5, scales = "free_y")
