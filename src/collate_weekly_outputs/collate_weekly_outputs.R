@@ -69,10 +69,10 @@ apeestim_rt_qntls <- collate_rt(infiles, "apeestim_model_outputs")
 
 
 model_files <- grep(
-  "ensemble_model_predictions", infiles, value = TRUE
+  "ensemble_daily_qntls", infiles, value = TRUE
 )
 
-states <- gsub("ensemble_model_predictions", "", model_files) %>%
+states <- gsub("ensemble_daily_qntls", "", model_files) %>%
   gsub("_", "", x = .) %>%
   gsub(".rds", "", x = .)
 
@@ -82,7 +82,7 @@ ensemble_qntls <- map_dfr(model_files, readRDS, .id = "state")
 
 
 model_files <- grep(
-  "ensemble_model_rt_qntls", infiles, value = TRUE
+  "ensemble_model_rt", infiles, value = TRUE
 )
 names(model_files) <- states
 ensemble_rt_qntls <- map_dfr(model_files, readRDS, .id = "state")
