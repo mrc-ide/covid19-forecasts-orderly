@@ -35,8 +35,15 @@ unwtd_pred_error$country[unwtd_pred_error$country == "Czech Republic"] <- "Czech
 ######################################################################
 ######################################################################
 out <- data_prep(unwtd_pred_error, null_error)
-null_compare <- out[["weekly_compare"]]
+null_compare <- na.omit(out[["weekly_compare"]])
 better_than_null <- out[["better_than_null"]]
+
+phase <- readRDS("unweighted_rt_qntls.rds")
+### We don't care about the quantiles of Rt for this analysis
+phase <- select(phase, forecast_date:phase)
+phase <- distinct(phase)
+null_compare <- left_join(null_compare, phase)
+null_compare$country <- as.factor(null_compare$country)
 
 saveRDS(better_than_null, "better_than_null.rds")
 
@@ -70,6 +77,7 @@ plots <- map(
     )
   }
 )
+
 plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 
 iwalk(
