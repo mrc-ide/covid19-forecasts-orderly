@@ -148,4 +148,14 @@ iwalk(plots, function(p, page) {
 ### Comparison by phase
 x <- na.omit(null_compare)
 phase <- readRDS("unweighted_rt_qntls.rds")
+### We don't care about the quantiles of Rt for this analysis
+phase <- select(phase, forecast_date:phase)
+phase <- distinct(phase)
 by_phase <- left_join(x, phase)
+
+y <- dplyr::count(by_phase, phase, err_level) %>%
+  tidyr::spread(err_level, n)
+y$greater_than_1_perc <- y$greater_than_1 / (y$greater_than_1 + y$less_than_1)
+y$less_than_1_perc <- y$less_than_1 / (y$greater_than_1 + y$less_than_1)
+y$greater_than_1_perc <- scales::percent(y$greater_than_1_perc, 0.1)
+y$less_than_1_perc <- scales::percent(y$less_than_1_perc, 0.1)
