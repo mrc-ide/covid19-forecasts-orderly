@@ -2,11 +2,20 @@ script: script.R
 
 parameters: week_ending
 packages:
-- ggplot2
-- rincewind
-- glue
 - dplyr
 - ggforce
+- glue
+- ggplot2
+- rincewind
+- tidyr
+
+sources: R/utils.R
+
+artefacts:
+  staticgraph:
+    description: Ensemble model forecasts
+    filenames:
+      - us_ensemble_forecasts_1.png
 
 depends:
   collate_weekly_outputs:
