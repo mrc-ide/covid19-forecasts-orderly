@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona"))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-01", location = "Alabama"))
 message("############################################################")
 message("LOCATION ", location)
 message("week_ending ", week_ending)
@@ -9,9 +9,9 @@ run_info <- orderly::orderly_run_info()
 output_files <- run_info$depends$as
 
 # ## Only need this during report development stage
-# output_files <- list("RtI0_Std_results.rds",
-#                      "sbkp_Std_results.rds",
-#                      "DeCa_Std_results.rds")
+## output_files <- list("RtI0_Std_results.rds",
+##                      "sbkp_Std_results.rds",
+##                      "DeCa_Std_results.rds")
 
 model_outputs <- map(output_files, readRDS)
 names(model_outputs) <- sub("\\_.*", "", output_files)
@@ -27,6 +27,9 @@ ensemble_daily_qntls <- rincewind::extract_predictions_qntls(ensemble_model_pred
 
 ensemble_weekly_qntls <- rincewind::daily_to_weekly(ensemble_model_predictions)
 
+
+ensemble_daily_qntls$forecast_date <- week_ending
+ensemble_daily_qntls$state <- location
 
 saveRDS(
   object = ensemble_model_predictions,
@@ -78,7 +81,6 @@ ensemble_model_rt_samples <-  list(
 ensemble_model_rt_qntls <- imap(ensemble_model_rt_samples, function(si, label) {
 
   qntls <- quantile(si, probs = probs)
-
   qntls <- tibble::rownames_to_column(
     data.frame(out2 = qntls),
     var = "quantile"
@@ -91,7 +93,8 @@ ensemble_model_rt_qntls <- imap(ensemble_model_rt_samples, function(si, label) {
 )
 
 ensemble_model_rt_qntls <- dplyr::bind_rows(ensemble_model_rt_qntls)
-
+ensemble_model_rt_qntls$forecast_date <- week_ending
+ensemble_model_rt_qntls$state <- location
 
 ## Save outputs
 

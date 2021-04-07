@@ -20,8 +20,8 @@ x <- list(
 )
 
 queries <- glue(
-  "latest(parameter:week_ending == week_ending",
-  " && parameter:location == \"{locations}\")"
+  "latest(parameter:week_ending == \"{week}\" ",
+  "&& parameter:location == \"{locations}\")"
 )
 
 

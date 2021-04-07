@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2021-03-28"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2021-01-01"), use_draft = "newer")
 dir.create("figures")
 palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7")
 names(palette) <- c("Model 4", "Model 2", "Model 1", "Model 3", "Ensemble")
@@ -12,12 +12,15 @@ dates_forecast <- seq(
 ensemble_forecasts_qntls <- readRDS("us_ensemble_forecasts_qntls.rds")
 ensemble_forecasts_qntls <- ensemble_forecasts_qntls[ensemble_forecasts_qntls$si == "si_2", ]
 model_inputs <- readRDS("latest_model_input.rds")
+
 tall <- gather(model_inputs$D_active_transmission, state, deaths, -dates)
+tall <- tall[tall$state %in% unique(ensemble_forecasts_qntls$state), ]
 ensemble_forecasts_qntls$date <- as.Date(ensemble_forecasts_qntls$date)
 ensemble_forecasts_qntls$proj <- "Ensemble"
 
 nrows <- 3
 ncols <- 1
+
 pbase <- projection_plot(tall, ensemble_forecasts_qntls)
 p <- pbase +
   facet_wrap_paginate(
