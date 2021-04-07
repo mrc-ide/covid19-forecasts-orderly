@@ -4,6 +4,9 @@ parameters: week_ending
 packages:
 - ggplot2
 - rincewind
+- glue
+- dplyr
+- ggforce
 
 depends:
   collate_weekly_outputs:
