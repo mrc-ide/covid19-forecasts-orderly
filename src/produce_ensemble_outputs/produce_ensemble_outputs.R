@@ -1,5 +1,8 @@
 ## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona"))
-
+message("############################################################")
+message("LOCATION ", location)
+message("week_ending ", week_ending)
+message("############################################################")
 probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 
 run_info <- orderly::orderly_run_info()
@@ -10,13 +13,13 @@ output_files <- run_info$depends$as
 #                      "sbkp_Std_results.rds",
 #                      "DeCa_Std_results.rds")
 
-model_outputs <- purrr::map(output_files, readRDS)
+model_outputs <- map(output_files, readRDS)
 names(model_outputs) <- sub("\\_.*", "", output_files)
 
 
 ## Equal weighted models
 
-outputs <- purrr::map(model_outputs, ~ .[["Predictions"]])
+outputs <- map(model_outputs, ~ .[["Predictions"]])
 
 ensemble_model_predictions <- ensemble_predictions(outputs, weights = NULL)
 
@@ -47,7 +50,7 @@ saveRDS(
 ########### Unweighted ###############################################
 ######################################################################
 ######################################################################
-outputs <- purrr::map(model_outputs, ~ .[["R_last"]])
+outputs <- map(model_outputs, ~ .[["R_last"]])
 
 ## Sample 10,000 times from the Rt values from the different models
 
@@ -60,9 +63,9 @@ wts <- data.frame(
 )
 weights <- list(si_1 = wts, si_2 = wts)
 
-y_1 <- purrr::map(y, ~ .[[1]])
-y_2 <- purrr::map(y, ~ .[[2]])
-weights <- purrr::map(weights, df_to_list)
+y_1 <- map(y, ~ .[[1]])
+y_2 <- map(y, ~ .[[2]])
+weights <- map(weights, df_to_list)
 
 ensemble_model_rt_samples <-  list(
   si_1 = pool_rt_weighted(y_1, weights$si_1),
@@ -71,22 +74,19 @@ ensemble_model_rt_samples <-  list(
 
 
 ## Calculate quantiles from these rt samples
-  
-ensemble_model_rt_qntls <- purrr::imap(ensemble_model_rt_samples, function(si, label) {
-  
-  qntls <- quantile(
-    si,
-    probs = probs
-  )
-  
+
+ensemble_model_rt_qntls <- imap(ensemble_model_rt_samples, function(si, label) {
+
+  qntls <- quantile(si, probs = probs)
+
   qntls <- tibble::rownames_to_column(
     data.frame(out2 = qntls),
     var = "quantile"
   )
   qntls$si <- label
-  
+
   qntls
-  
+
 }
 )
 
@@ -114,7 +114,7 @@ saveRDS(
 ##
 ##
 ## countries <- names(ensemble_model_predictions[[1]])
-## purrr::walk(
+## walk(
 ##   countries,
 ##   function(country) {
 
