@@ -15,8 +15,7 @@ x <- list(
     )
     )
   ),
-  packages = c("dplyr", "tidyr", "purrr", "tibble"),
-  parameters = "week_ending"
+  packages = c("dplyr", "tidyr", "purrr", "tibble")
 )
 
 queries <- glue(
