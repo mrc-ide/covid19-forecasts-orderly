@@ -81,4 +81,4 @@ ensemble_forecasts_qntls$date <- as.Date(ensemble_forecasts_qntls$date)
 ensemble_forecasts_qntls$proj <- "Ensemble"
 
 p <- projection_plot(tall, ensemble_forecasts_qntls) +
-  ggforce::facet_wrap_paginate(~state, ncol = 1, nrow = 3, page = 5, scales = "free_y")
+  ggforce::facet_wrap_paginate(~state, ncol = 1, nrow = 3, page = 15, scales = "free_y")
