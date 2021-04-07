@@ -246,7 +246,30 @@ for the week ahead are shown in red (median and 95% CrI). Vertical
 dashed line shows the start of the week (Monday).
 Projections for countries marked with
 a * are based on an unweighted ensemble of three models (Models 1, 2
-and 3, see Methods). The reporting of deaths and cases in Brazil is currently changing; results should be interpreted with caution.
+and 3, see Methods). The reporting of deaths and cases in Brazil is
+currently changing; results should be interpreted with caution.
+
+
+### USA (sub-national)
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+knitr::include_graphics("figs/us_ensemble_forecasts_1.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_2.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_3.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_4.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_5.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_6.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_7.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_8.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_9.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_10.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_11.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_12.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_13.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_14.png")
+knitr::include_graphics("figs/us_ensemble_forecasts_15.png")
+
+```
 
 <br><br>
 
@@ -339,7 +362,14 @@ a * are based on an unweighted ensemble of Models 1, 2 and 3.
 Results from individual models are shown
 in the section Methods. 
 
+### USA (sub-national)
 
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/us_ensemble_rt_box_1.png")
+knitr::include_graphics("figs/us_ensemble_rt_box_2.png")
+
+```
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
@@ -649,6 +679,26 @@ CrI of the projections.
 The reporting of deaths and cases in Brazil is currently changing;
 results should be interpreted with caution.
 
+#### USA (sub-national)
+
+```{r}
+knitr::include_graphics("figs/us_indvdl_forecasts_1.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_2.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_3.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_4.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_5.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_6.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_7.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_8.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_9.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_10.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_11.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_12.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_13.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_14.png")
+knitr::include_graphics("figs/us_indvdl_forecasts_15.png")
+
+```
 
 ### Effective Reproduction Number {.tabset}
 
@@ -710,6 +760,12 @@ country in South America with
 active transmission (see Methods) for the week starting
 29^th^ March 2021. 
 
+#### USA (sub-national)
+
+```{r}
+knitr::include_graphics("figs/us_indvdl_rt_line_1.png")
+knitr::include_graphics("figs/us_indvdl_rt_line_2.png")
+```
 
 ## Code 
 
