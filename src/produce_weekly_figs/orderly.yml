@@ -15,7 +15,7 @@ artefacts:
   staticgraph:
     description: Ensemble model forecasts
     filenames:
-      - us_ensemble_forecasts_1.png
+      - figures/us_ensemble_forecasts_1.png
 
 depends:
   collate_weekly_outputs:

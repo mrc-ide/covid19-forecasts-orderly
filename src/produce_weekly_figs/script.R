@@ -1,4 +1,5 @@
 ## orderly::orderly_develop_start(parameters = list(week_ending = "2021-03-28"), use_draft = "newer")
+dir.create("figures")
 palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7")
 names(palette) <- c("Model 4", "Model 2", "Model 1", "Model 3", "Ensemble")
 
@@ -31,7 +32,7 @@ for (page in seq_len(npages)) {
     facet_wrap_paginate(
       ~state, ncol = ncols, nrow = nrows, page = page, scales = "free_y"
     )
-  ggsave(glue("us_ensemble_forecasts_{page}.png"), p)
+  ggsave(glue("figures/us_ensemble_forecasts_{page}.png"), p)
 
 }
 
@@ -71,7 +72,7 @@ for (page in seq_len(npages)) {
     facet_wrap_paginate(
       ~state, ncol = ncols, nrow = nrows, page = page, scales = "free_y"
     )
-  ggsave(glue("us_indvdl_forecasts_{page}.png"), p)
+  ggsave(glue("figures/us_indvdl_forecasts_{page}.png"), p)
 
 }
 
@@ -105,11 +106,11 @@ pline2 <- rt_lineplot(x, rincewind::nice_country_name(unique(x$state)))
 
 p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2)
 
-ggsave("us_ensemble_rt_line_1.png", pline1)
-ggsave("us_ensemble_rt_line_2.png", pline2)
-ggsave("us_ensemble_rt_box_1.png", p1)
-ggsave("us_ensemble_rt_box_2.png", p2)
-ggsave("us_ensemble_rt_box.png", p)
+ggsave("figures/us_ensemble_rt_line_1.png", pline1)
+ggsave("figures/us_ensemble_rt_line_2.png", pline2)
+ggsave("figures/us_ensemble_rt_box_1.png", p1)
+ggsave("figures/us_ensemble_rt_box_2.png", p2)
+ggsave("figures/us_ensemble_rt_box.png", p)
 
 #############################################################
 ############ Rt plots for individual models
@@ -143,7 +144,7 @@ p2 <- rt_lineplot(x1, rincewind::nice_country_name(unique(x1$state)))
 
 p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2)
 
-ggsave("us_indvdl_rt_line_1.png", p1)
-ggsave("us_indvdl_rt_line_2.png", p2)
-ggsave("us_indvdl_rt_line.png", p)
+ggsave("figures/us_indvdl_rt_line_1.png", p1)
+ggsave("figures/us_indvdl_rt_line_2.png", p2)
+ggsave("figures/us_indvdl_rt_line.png", p)
 
