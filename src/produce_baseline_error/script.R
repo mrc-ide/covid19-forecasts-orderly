@@ -1,7 +1,10 @@
-## orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(latest_week = "2020-11-29", week_starting = "2020-03-08"), use_draft = "newer")
+## orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(latest_week = "2020-12-13", week_starting = "2020-02-22"), use_draft = "newer")
 dir.create("figures")
 
 weekly_cv <- function(vec) sd(vec) / mean(vec)
+
+window_past <- 10
+window_future <- 7
 
 week_starting <- as.Date(week_starting)
 week_ending <- as.Date(latest_week)
@@ -14,7 +17,7 @@ weeks <- map(
 
 names(weeks) <- weeks_day1
 model_input <- readRDS("model_input.rds")
-model_input <- model_input[model_input$dates > week_starting &
+model_input <- model_input[model_input$dates > week_starting - window_past &
                            model_input$dates <= week_ending, ]
 
 ## We only include countries with at least 100 deaths
@@ -37,6 +40,7 @@ weekly <- map_dfr(
       function(week, week_starting) {
         message(paste(week, collapse = " "))
         incid <- model_input[model_input$dates %in% week, country]
+        if (inherits(incid, "data.frame")) incid <- as.numeric(incid[[country]])
         cv <- weekly_cv(incid)
         data.frame(
           week_starting = week_starting,
@@ -68,8 +72,6 @@ countries <- countries[!countries %in% exclude]
 ### If our predicitons for a week were the average deaths in the last
 ### week, what error would we make?
 nsim <- 4000
-window_past <- 10
-window_future <- 7
 
 null_model_error <- map_dfr(
   countries,
@@ -80,6 +82,7 @@ null_model_error <- map_dfr(
       function(week, week_starting) {
         message(paste(week, collapse = " "))
         obs <- model_input[model_input$dates %in% week, country]
+        if (inherits(obs, "data.frame")) obs <- as.numeric(obs[[country]])
         if (length(obs) == 0) return(NULL)
         dates_prev <- seq(
           from = as.Date(week_starting) - window_past + 1,
@@ -88,6 +91,9 @@ null_model_error <- map_dfr(
         )
         prev_week <- model_input[model_input$dates %in% dates_prev,
                                  country]
+        if (inherits(prev_week, "data.frame")) {
+          prev_week <- as.numeric(prev_week[[country]])
+        }
         if (length(prev_week) == 0) return(NULL)
         if (length(prev_week) < window_past) return(NULL)
 
@@ -121,6 +127,9 @@ linear_model_fits <- map(
         )
         prev_week <- model_input[model_input$dates %in% dates_prev,
                                  country]
+        if (inherits(prev_week, "data.frame")) {
+          prev_week <- as.numeric(prev_week[[country]])
+        }
         if (length(prev_week) == 0) return(NULL)
         if (length(prev_week) < window_past) return(NULL)
 
@@ -238,6 +247,7 @@ linear_model_error <- map_dfr(
       function(week, week_starting) {
         message(paste(week, collapse = " "))
         obs <- model_input[model_input$dates %in% week, country]
+        if (inherits(obs, "data.frame")) obs <- as.numeric(obs[[country]])
         if (length(obs) == 0) return(NULL)
         lm_pred <- linear_model_predictions[[country]][[week_starting]]
         if (is.null(lm_pred)) return(NULL)
