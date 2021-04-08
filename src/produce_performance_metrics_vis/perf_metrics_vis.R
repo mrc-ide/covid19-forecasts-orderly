@@ -94,8 +94,16 @@ weekly_summaries <- map(
 )
 
 overall <- weekly_summary(unwtd_pred_error)
-overall <- left_join(overall, phase)
 readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
+######################################################################
+################## Summary by phase######## ##########################
+######################################################################
+by_phase <- group_by(unwtd_pred_error, phase) %>%
+    summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
+    ungroup()
+
+readr::write_csv(by_phase, "unwtd_pred_summary_by_phase.csv")
+
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
