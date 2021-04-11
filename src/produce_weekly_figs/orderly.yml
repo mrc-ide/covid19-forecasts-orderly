@@ -1,0 +1,35 @@
+script: script.R
+
+parameters: week_ending
+packages:
+- dplyr
+- ggforce
+- glue
+- ggplot2
+- rincewind
+- tidyr
+
+sources: R/utils.R
+
+artefacts:
+  staticgraph:
+    description: Ensemble model forecasts
+    filenames:
+      - figures/us_ensemble_forecasts_1.png
+
+depends:
+  collate_weekly_outputs:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      us_ensemble_rt_qntls.rds: us_ensemble_rt_qntls.rds
+      us_ensemble_forecasts_qntls.rds: us_ensemble_forecasts_qntls.rds
+      rti0_qntls.rds: rti0_qntls.rds
+      apeestim_qntls.rds: apeestim_qntls.rds
+      deca_qntls.rds: deca_qntls.rds
+      rti0_rt_qntls.rds: rti0_rt_qntls.rds
+      apeestim_rt_qntls.rds: apeestim_rt_qntls.rds
+      deca_rt_qntls.rds: deca_rt_qntls.rds
+  prepare_jhu_data:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      latest_model_input.rds: latest_model_input.rds

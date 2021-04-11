@@ -15,13 +15,12 @@ x <- list(
     )
     )
   ),
-  packages = c("dplyr", "tidyr", "purrr", "tibble"),
-  parameters = "week_ending"
+  packages = c("dplyr", "tidyr", "purrr", "tibble")
 )
 
 queries <- glue(
-  "latest(parameter:week_ending == week_ending",
-  " && parameter:location == \"{locations}\")"
+  "latest(parameter:week_ending == \"{week}\" ",
+  "&& parameter:location == \"{locations}\")"
 )
 
 
