@@ -34,7 +34,7 @@ for (page in seq_len(npages)) {
   p <- pbase +
     facet_wrap_paginate(
       ~state, ncol = ncols, nrow = nrows, page = page, scales = "free_y"
-    )
+    ) + theme(legend.position = "none")
   ggsave(glue("figures/us_ensemble_forecasts_{page}.png"), p)
 
 }
@@ -75,6 +75,7 @@ for (page in seq_len(npages)) {
     facet_wrap_paginate(
       ~state, ncol = ncols, nrow = nrows, page = page, scales = "free_y"
     )
+  if (page > 1) p <-  p + theme(legend.position = "none")
   ggsave(glue("figures/us_indvdl_forecasts_{page}.png"), p)
 
 }
