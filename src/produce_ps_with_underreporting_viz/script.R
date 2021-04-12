@@ -67,19 +67,10 @@ ps_last_day$label <- factor(
   ps_last_day$label, unique(ps_last_day$label), ordered = TRUE
 )
 
-ps_last_day1 <- filter(ps_last_day, continent %in% c("Africa", "Asia"))
-ps_last_day1 <- droplevels(ps_last_day1)
-
-ps_last_day2 <- filter(
-  ps_last_day, !continent %in% c("Africa", "Asia")
-)
-ps_last_day2 <- droplevels(ps_last_day2)
-
-
-p1 <- ggplot(ps_last_day1) +
-  geom_point(aes(label, `50%`, col = color)) +
+p1 <- ggplot(ps_last_day) +
+  geom_point(aes(`50%`, label, col = color)) +
   geom_linerange(
-    aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
+    aes(xmin = `2.5%`, xmax = `97.5%`, y = label, col = color)
   ) +
   scale_color_identity(
     guide = "legend",
@@ -88,49 +79,20 @@ p1 <- ggplot(ps_last_day1) +
     labels = c("Africa", "Asia", "Europe",  "North America",
                "South America", "Oceania"),
     drop = FALSE
-  )
-
-
-
-p2 <- ggplot(ps_last_day2) +
-  geom_point(aes(label, `50%`, col = color)) +
-  geom_linerange(
-    aes(x = label, ymin = `2.5%`, ymax = `97.5%`, col = color)
   ) +
-  scale_color_identity(
-    guide = "legend",
-    breaks = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#0072B2",
-                "#D55E00"),
-    labels = c("Africa", "Asia", "Europe",  "North America",
-               "South America", "Oceania"),
-    drop = FALSE
-  )
-
-
-
-label <- textGrob(
-  "Population susceptible (%)", rot = 90, gp = gpar(fontsize = 12)
-)
-
-p <- p1 + p2 + plot_layout(ncol = 1, guides = 'collect') &
-  theme_minimal() &
+  scale_x_continuous(
+    labels = scales::percent_format(accuracy = 0.1),
+    limits = c(0.75, 1)
+  ) +
+  xlab("Population susceptible (%)") +
+  theme_minimal() +
   theme(
-    axis.text.x = element_markdown(
-      angle = -90, hjust = 0, vjust = 0, size = 6
-    ),
+    axis.text.y = element_markdown(hjust = 0, vjust = 0, size = 6),
     axis.title.y = element_blank(),
-    axis.title.x = element_blank(),
+    ##axis.title.x = element_blank(),
     legend.position = "top",
     legend.title = element_blank()
-  ) &
-  scale_y_continuous(
-    labels = scales::percent_format(accuracy = 0.1),
-    limits = c(0, 1)
   )
 
 
-pfinal <- wrap_elements(label) + wrap_elements(p) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-
-save_multiple(pfinal, "proportion_susceptible.tiff")
+ggsave("2col_wider_proportion_susceptible.png", p1)
