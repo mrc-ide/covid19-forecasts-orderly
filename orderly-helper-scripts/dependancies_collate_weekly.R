@@ -15,6 +15,7 @@ x <- list(
     )
     )
   ),
+  parameters = "week_ending",
   packages = c("dplyr", "tidyr", "purrr", "tibble")
 )
 
