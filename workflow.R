@@ -2,12 +2,12 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-03-28"
+week <- "2021-04-11"
 a <- orderly_run(
   "prepare_jhu_data/",
   parameters = list(week_ending = as.character(week))
 )
-## a <- "20210330-173949-f6ba30b8"
+## a <- "20210412-135535-3e5ac231"
 model_input <- readRDS(
   glue("draft/prepare_jhu_data/{a}/latest_model_input.rds")
 )
@@ -27,6 +27,23 @@ walk(
     )
   }
 )
+
+
+## re-run model 1 for locations with manual cleaning of JHU data that was applied later
+cleaned_locations <- c("California", "Iowa", "Kentucky", "New York", "Oklahoma", "West Virginia")
+
+walk(
+  cleaned_locations, function(location) {
+    orderly_run(
+      "src/run_jointlyr",
+      parameters = list(
+        location = location, week_ending = as.character(week)
+      ), use_draft = "newer"
+    )
+  }
+)
+
+
 
 walk(
   locations, function(location) {
@@ -64,7 +81,9 @@ walk(
 
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
 
-orderly_run("collate_weekly_outputs", use_draft = "newer")
+orderly_run("collate_weekly_outputs",
+            parameters = list(week_ending = as.character(week)),
+            use_draft = "newer")
 
 orderly_run(
   "produce_weekly_figs", parameters = list(week_ending = week),
