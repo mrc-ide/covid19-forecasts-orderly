@@ -127,6 +127,38 @@ raw_data <- split(raw_data, raw_data$province_state) %>%
     }
   )
 
+
+## Manual cleaning for days where reported deaths are much higher or lower (e.g due to batch reporting)
+## Corrections for 12 April 2021 report
+
+## California
+## 25 March 2021 entry corrected with Worldometer value.
+
+raw_data$Deaths[raw_data$DateRep == "2021-03-25" & raw_data$province_state == "California"] <- 242
+
+## Kentucky
+## Entries from 25, 27 and 28 March 2021 corrected with Worldometer values.
+
+raw_data$Deaths[raw_data$DateRep == "2021-03-25" & raw_data$province_state == "Kentucky"] <- 19
+raw_data$Deaths[raw_data$DateRep == "2021-03-27" & raw_data$province_state == "Kentucky"] <- 15
+raw_data$Deaths[raw_data$DateRep == "2021-03-28" & raw_data$province_state == "Kentucky"] <- 8
+
+## New York
+## Large entry on 24 March 2021 distributed over 23/24 March as per Worldometer.
+
+raw_data$Deaths[raw_data$DateRep == "2021-03-23" & raw_data$province_state == "New York"] <- 131
+raw_data$Deaths[raw_data$DateRep == "2021-03-24" & raw_data$province_state == "New York"] <- 154
+
+## Oklahoma
+## Batch upload of ~1700 deaths on 7 April 2021. As per COVID-19 Forecast Hub email from Jeremy Ratcliff (10/4/21)  
+
+raw_data$Deaths[raw_data$DateRep == "2021-04-07" & raw_data$province_state == "Oklahoma"] <- 16
+
+## West Virginia
+## 165 backlogged deaths published on 12 March 2021. As per COVID-19 Forecast Hub email from Jeremy Ratcliff (14/4/21)  
+
+raw_data$Deaths[raw_data$DateRep == "2021-03-12" & raw_data$province_state == "West Virginia"] <- 8
+
 ## Save wide versions of death and case data
 
 by_state_deaths_all <- dplyr::select(
