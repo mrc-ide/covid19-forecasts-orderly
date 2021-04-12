@@ -161,7 +161,7 @@ plots <- imap(
       obs_local <- obs[obs$country %in% cntry_local, ]
       pred_local <- pred[pred$country %in% cntry_local, ]
       p <- projection_plot(obs_local, pred_local) +
-        theme(legend.position = "none") +
+        ##theme(legend.position = "none") +
          facet_wrap(
            ~country, scales = "free_y", ncol = ncols, nrow = nrows,
            labeller = as_labeller(nice_names),
@@ -188,6 +188,7 @@ iwalk(
     iwalk(
       ps,
       function(p, page_num) {
+        if (page_num > 1) p <- p + theme(legend.position = "none")
         outfile <- glue::glue("{model_si}_page_{page_num}.png")
         message("Saving ", outfile)
         ggsave(
