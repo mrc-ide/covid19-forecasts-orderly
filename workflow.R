@@ -28,23 +28,6 @@ walk(
   }
 )
 
-
-## re-run model 1 for locations with manual cleaning of JHU data that was applied later
-cleaned_locations <- c("California", "Iowa", "Kentucky", "New York", "Oklahoma", "West Virginia")
-
-walk(
-  cleaned_locations, function(location) {
-    orderly_run(
-      "src/run_jointlyr",
-      parameters = list(
-        location = location, week_ending = as.character(week)
-      ), use_draft = "newer"
-    )
-  }
-)
-
-
-
 walk(
   locations, function(location) {
     orderly_run(
