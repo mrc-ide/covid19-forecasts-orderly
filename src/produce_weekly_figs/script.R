@@ -7,14 +7,19 @@ dates_forecast <- seq(
   as.Date(week_ending) + 1, length.out = 7, by = "1 day"
 )
 
+exclude <- c("Iowa", "Oklahoma")
+
 
 ## ensemble projections
 ensemble_forecasts_qntls <- readRDS("us_ensemble_forecasts_qntls.rds")
 ensemble_forecasts_qntls <- ensemble_forecasts_qntls[ensemble_forecasts_qntls$si == "si_2", ]
 model_inputs <- readRDS("latest_model_input.rds")
 
+ensemble_forecasts_qntls <- ensemble_forecasts_qntls[! ensemble_forecasts_qntls$state %in% exclude, ]
+
 tall <- gather(model_inputs$D_active_transmission, state, deaths, -dates)
 tall <- tall[tall$state %in% unique(ensemble_forecasts_qntls$state), ]
+tall <- tall[! tall$state %in% exclude, ]
 ensemble_forecasts_qntls$date <- as.Date(ensemble_forecasts_qntls$date)
 ensemble_forecasts_qntls$proj <- "Ensemble"
 
@@ -44,14 +49,17 @@ for (page in seq_len(npages)) {
 #############################################################
 
 m1_forecasts <- readRDS("rti0_qntls.rds") %>%
+  filter(! state %in% exclude) %>% 
   pivot_longer(cols = as.character(dates_forecast), names_to = "date") %>%
   pivot_wider(names_from = "qntl", values_from = "value")
 
 m2_forecasts <- readRDS("apeestim_qntls.rds") %>%
+  filter(! state %in% exclude) %>% 
     pivot_longer(cols = as.character(dates_forecast), names_to = "date") %>%
   pivot_wider(names_from = "qntl", values_from = "value")
 
 m3_forecasts <- readRDS("deca_qntls.rds") %>%
+  filter(! state %in% exclude) %>% 
   pivot_longer(cols = as.character(dates_forecast), names_to = "date") %>%
   pivot_wider(names_from = "qntl", values_from = "value")
 
@@ -84,7 +92,8 @@ for (page in seq_len(npages)) {
 ######################## Rt Line graph
 #############################################################
 
-ensemble_rt <- readRDS("us_ensemble_rt_qntls.rds")
+ensemble_rt <- readRDS("us_ensemble_rt_qntls.rds") %>% 
+  filter(! state %in% exclude)
 ensemble_rt_wide <- spread(
   ensemble_rt, quantile, out2
 )
@@ -122,12 +131,15 @@ ggsave("figures/us_ensemble_rt_box.png", p)
 #############################################################
 
 m1_rt <- readRDS("rti0_rt_qntls.rds") %>%
+  filter(! state %in% exclude) %>% 
   spread(qntl, out2)
 
 m2_rt <- readRDS("apeestim_rt_qntls.rds") %>%
+  filter(! state %in% exclude) %>% 
   spread(qntl, out2)
 
 m3_rt <- readRDS("deca_rt_qntls.rds") %>%
+  filter(! state %in% exclude) %>% 
     spread(qntl, out2)
 
 m1_rt$proj <- "Model 1"
