@@ -4,9 +4,10 @@ artefacts:
   data:
     description: Comparison with null model
     filenames:
-      - log_ratio_vs_delta.tiff
+      - better_than_null_by_phase.rds
       - better_than_null.rds
       - better_than_linear.rds
+      - better_than_linear_by_phase.rds
       - country_groups.rds
       
   
@@ -20,6 +21,8 @@ packages:
   - ggnewscale
   - purrr
   - ggtext
+  - rincewind
+  - janitor
 
 ## use_si should be one of si_1 or si_2
 parameters:
@@ -33,10 +36,14 @@ depends:
       id: latest
       use:
         unwtd_pred_error.csv: unwtd_pred_error.csv
-
+  - collate_model_outputs:
+      id: latest
+      use:
+        unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
   - produce_baseline_error:
       id: latest
       use:
         linear_model_error.rds: linear_model_error.rds
         null_model_error.rds: null_model_error.rds        
         weekly_incidence.rds: weekly_incidence.rds
+        exclude.rds: exclude.rds

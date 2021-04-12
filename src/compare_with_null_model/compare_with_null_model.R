@@ -1,5 +1,9 @@
 ## orderly::orderly_develop_start(
 ## use_draft = "newer", parameters = list(use_si = "si_2"))
+dir.create("figures")
+dir.create("figures/null")
+dir.create("figures/linear")
+
 null_error <- readRDS("null_model_error.rds")
 linear_error <- readRDS("linear_model_error.rds")
 weekly_incidence <- readRDS("weekly_incidence.rds")
@@ -23,10 +27,23 @@ unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czech
 unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
 
+exclude <- readRDS("exclude.rds")
+unwtd_pred_error <- unwtd_pred_error[!unwtd_pred_error$country %in% exclude, ]
 null_error$country[null_error$country == "Czech Republic"] <- "Czechia"
 linear_error$country[linear_error$country == "Czech Republic"] <- "Czechia"
-
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech Republic"] <- "Czechia"
+
+######################################################################
+######################################################################
+######################################################################
+######### Make sure there are no spurious NAs
+######################################################################
+## null_error[!complete.cases(null_error), ] No NAs
+## linear_error[!complete.cases(linear_error), ] No NAs
+## unwtd_pred_error[!complete.cases(unwtd_pred_error), ] No NAs
+## range(as.Date(null_error$dates))
+## range(as.Date(linear_error$dates))
+## range(as.Date(unwtd_pred_error$date))
 ######################################################################
 ######################################################################
 ######################################################################
@@ -35,8 +52,24 @@ unwtd_pred_error$country[unwtd_pred_error$country == "Czech Republic"] <- "Czech
 ######################################################################
 ######################################################################
 out <- data_prep(unwtd_pred_error, null_error)
-null_compare <- out[["weekly_compare"]]
+##  out[["weekly_compare"]][!complete.cases(out[["weekly_compare"]]), ]
+
+null_compare <- na.omit(out[["weekly_compare"]])
 better_than_null <- out[["better_than_null"]]
+
+phase <- readRDS("unweighted_rt_qntls.rds")
+### We don't care about the quantiles of Rt for this analysis
+phase <- select(phase, forecast_date:phase)
+phase <- distinct(phase)
+null_compare <- left_join(null_compare, phase)
+null_compare$country <- as.factor(null_compare$country)
+
+y <- tabyl(null_compare, phase, err_level) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 1) %>%
+  adorn_ns()
+
+saveRDS(y, "better_than_null_by_phase.rds")
 
 saveRDS(better_than_null, "better_than_null.rds")
 
@@ -70,14 +103,34 @@ plots <- map(
     )
   }
 )
+
+byphase_plots <- map(
+  plots,
+  function(p) {
+    p + facet_wrap(~phase, ncol = 2)
+  }
+)
+
 plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 
 iwalk(
   plots, function(p, page) {
-    outfile <- glue("comparison_with_baseline_error_{page}.tiff")
+    outfile <- glue(
+      "figures/null/comparison_with_baseline_error_{page}.tiff"
+    )
     rincewind::save_multiple(filename = outfile, plot = p)
   }
 )
+
+iwalk(
+  byphase_plots, function(p, page) {
+    outfile <- glue(
+      "figures/null/comparison_with_baseline_error_{page}_facetted.tiff"
+    )
+    rincewind::save_multiple(filename = outfile, plot = p)
+  }
+)
+
 
 ######################################################################
 ######################################################################
@@ -104,7 +157,10 @@ p <- ggplot(df, aes(delta, ratio)) +
     labels = scales::trans_format("log10", scales::math_format(10^.x))
   )
 
-ggsave("log_ratio_vs_delta.tiff", p, width = 5, height = 5, unit = "in")
+ggsave(
+  "figures/null/log_ratio_vs_delta.tiff", p, width = 5,
+  height = 5, unit = "in"
+)
 ## x <- dplyr::count(null_compare, country)
 ## countries <- x$country
 
@@ -121,6 +177,15 @@ ggsave("log_ratio_vs_delta.tiff", p, width = 5, height = 5, unit = "in")
 out <- data_prep(unwtd_pred_error, linear_error)
 null_compare <- out[["weekly_compare"]]
 better_than_null <- out[["better_than_null"]]
+null_compare <- left_join(null_compare, phase)
+null_compare$country <- as.factor(null_compare$country)
+
+y <- tabyl(null_compare, phase, err_level) %>%
+  adorn_percentages("row") %>%
+  adorn_pct_formatting(digits = 1) %>%
+  adorn_ns()
+
+saveRDS(y, "better_than_linear_by_phase.rds")
 
 saveRDS(better_than_null, "better_than_linear.rds")
 
@@ -137,9 +202,31 @@ plots <- map(
   }
 )
 
+plots_byphase <- map(
+  plots,
+  function(p) {
+    p + facet_wrap(~phase, ncol = 2)
+  }
+)
+
+
 plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
 
 iwalk(plots, function(p, page) {
-  outfile <- glue("comparison_with_linear_error_{page}.tiff")
+  outfile <- glue(
+    "figures/linear/comparison_with_linear_error_{page}.tiff"
+  )
   rincewind::save_multiple(filename = outfile, plot = p)
 })
+
+iwalk(plots_byphase, function(p, page) {
+  outfile <- glue(
+    "figures/linear/comparison_with_linear_error_{page}_facetted.tiff"
+  )
+  rincewind::save_multiple(filename = outfile, plot = p)
+})
+
+
+
+
+## tabyl(by_phase, phase)

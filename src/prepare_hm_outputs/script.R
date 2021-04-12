@@ -39,3 +39,5 @@ write_csv(deaths_per_1e6, "deaths_per_1e6.csv")
 ## outputs
 model_outputs <- readRDS("ensemble_model_predictions.rds")
 write_csv(model_outputs, "latest_model_outputs.csv")
+
+file.create("deploy.txt")

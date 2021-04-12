@@ -38,6 +38,7 @@ quantile_as_df <- function(vec,
   signif(out, digits)
 }
 ```
+
 ```{r}
 countries_included <- readr::read_csv("countries_included_each_week.csv")
 countries_included <- group_by(countries_included, week_starting) %>%
@@ -82,8 +83,32 @@ quantile_as_df(unwtd_pred_error$rel_mae_mu) %>%
 ```
 
 
-```{r}
+## By phase
 
+```{r}
+by_phase <- readr::read_csv("unwtd_pred_summary_by_phase.csv")
+```
+### 50% CrI
+
+```{r}
+select(by_phase, phase, prop_in_50_mu, prop_in_50_sd) 
+```
+
+### 95% CrI
+
+```{r}
+select(by_phase, phase, prop_in_975_mu, prop_in_975_sd) 
+```
+
+### RME
+
+
+```{r}
+select(by_phase, phase, rel_mae_mu, rel_mae_sd) 
+```
+
+
+```{r}
 better_than_null <- readRDS("better_than_null.rds")
 better_than_linear <- readRDS("better_than_linear.rds")
 
@@ -99,6 +124,20 @@ produced.
 model would have made in `r scales::percent(y, 0.1)` of weeks for which forecasts were
 produced.
 
+### Comparison with null model
+
+```{r}
+readRDS("better_than_null_by_phase.rds") %>%
+  knitr::kable()
+```
+
+### Comparison with linear model
+
+```{r}
+readRDS("better_than_linear_by_phase.rds") %>%
+  knitr::kable()
+
+```
 
 ## Medium-term forecasts
 
