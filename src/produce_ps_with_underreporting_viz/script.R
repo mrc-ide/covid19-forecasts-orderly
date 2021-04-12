@@ -35,8 +35,8 @@ p <- ggplot(ps, aes(underreporting, country, fill = `50%`)) +
   ) +
   xlab("Underreporting")
 
-save_multiple(p, "proportion_susceptible_underreporting.tiff")
-
+##save_multiple(p, "proportion_susceptible_underreporting.tiff")
+ggsave("proportion_susceptible_underreporting.png", p)
 ######### Proportion susceptible at the last day of analysis
 #########
 observed_ps <- readRDS("ps_qntls.rds")
