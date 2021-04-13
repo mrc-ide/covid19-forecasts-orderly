@@ -453,6 +453,9 @@ raw_data$Deaths[raw_data$DateRep == "2021-03-27" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2021-03-28" & raw_data$`Countries.and.territories` == "France"] <- 190
 raw_data$Cases[raw_data$DateRep == "2021-03-28" & raw_data$`Countries.and.territories` == "France"] <- 42619
 
+## 12th April 2021 Uruguay. Source worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-04-11" & raw_data$`Countries.and.territories` == "Uruguay"] <- 52
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
