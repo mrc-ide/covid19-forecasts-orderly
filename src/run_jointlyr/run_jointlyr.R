@@ -14,10 +14,10 @@ fit <- purrr::map(
   si_distrs,
   function(si_distr) {
     jointlyr::jointly_estimate(10, 100, incid, si_distr = si_distr,
-                               seed = 42, iter = 20000, chains = 4)
+                               seed = 42, iter = 20000, chains = 2)
   }
 )
-    
+
 ## Extract values from stan fit
 samples <- purrr::map(
   fit,

@@ -3,13 +3,15 @@ library(purrr)
 library(glue)
 
 week <- "2021-04-11"
+
+orderly::orderly_new("download_jhu_data")
 a <- orderly_run(
   "prepare_jhu_data/",
   parameters = list(week_ending = as.character(week))
 )
 ## a <- "20210412-135535-3e5ac231"
 model_input <- readRDS(
-  glue("draft/prepare_jhu_data/{a}/latest_model_input.rds")
+  glue("archive/prepare_jhu_data/{a}/latest_model_input.rds")
 )
 locations <- model_input$State
 
