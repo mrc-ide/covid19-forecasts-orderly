@@ -49,17 +49,17 @@ for (page in seq_len(npages)) {
 #############################################################
 
 m1_forecasts <- readRDS("rti0_qntls.rds") %>%
-  filter(! state %in% exclude) %>% 
+  filter(! state %in% exclude) %>%
   pivot_longer(cols = as.character(dates_forecast), names_to = "date") %>%
   pivot_wider(names_from = "qntl", values_from = "value")
 
 m2_forecasts <- readRDS("apeestim_qntls.rds") %>%
-  filter(! state %in% exclude) %>% 
+  filter(! state %in% exclude) %>%
     pivot_longer(cols = as.character(dates_forecast), names_to = "date") %>%
   pivot_wider(names_from = "qntl", values_from = "value")
 
 m3_forecasts <- readRDS("deca_qntls.rds") %>%
-  filter(! state %in% exclude) %>% 
+  filter(! state %in% exclude) %>%
   pivot_longer(cols = as.character(dates_forecast), names_to = "date") %>%
   pivot_wider(names_from = "qntl", values_from = "value")
 
@@ -92,11 +92,9 @@ for (page in seq_len(npages)) {
 ######################## Rt Line graph
 #############################################################
 
-ensemble_rt <- readRDS("us_ensemble_rt_qntls.rds") %>% 
+ensemble_rt <- readRDS("us_ensemble_rt_qntls.rds") %>%
   filter(! state %in% exclude)
-ensemble_rt_wide <- spread(
-  ensemble_rt, quantile, out2
-)
+ensemble_rt_wide <- spread(ensemble_rt, quantile, out2)
 ensemble_rt_wide$proj <- "Ensemble"
 ensemble_rt_wide <- ensemble_rt_wide[ensemble_rt_wide$si == "si_2", ]
 
@@ -108,13 +106,16 @@ states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
 
 x <- ensemble_rt_wide[ensemble_rt_wide$state %in% states_to_draw, ]
 
-p1 <- rt_boxplot(x, rincewind::nice_country_name(unique(x$state)))
+p1 <- rt_boxplot(x, rincewind::nice_country_name(unique(x$state))) +
+  theme(legend.position = "none")
+
 pline1 <- rt_lineplot(x, rincewind::nice_country_name(unique(x$state)))
 
 last_drawn <- ceiling(nstates / 2)
 states_to_draw <- unique(ensemble_rt_wide$state)[seq(last_drawn + 1, nstates)]
 x <- ensemble_rt_wide[ensemble_rt_wide$state %in% states_to_draw, ]
-p2 <- rt_boxplot(x, rincewind::nice_country_name(unique(x$state)))
+p2 <- rt_boxplot(x, rincewind::nice_country_name(unique(x$state))) +
+    theme(legend.position = "none")
 pline2 <- rt_lineplot(x, rincewind::nice_country_name(unique(x$state)))
 
 p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2)
@@ -131,23 +132,23 @@ ggsave("figures/us_ensemble_rt_box.png", p)
 #############################################################
 
 m1_rt <- readRDS("rti0_rt_qntls.rds") %>%
-  filter(! state %in% exclude) %>% 
+  filter(! state %in% exclude) %>%
   spread(qntl, out2)
 
 m2_rt <- readRDS("apeestim_rt_qntls.rds") %>%
-  filter(! state %in% exclude) %>% 
+  filter(! state %in% exclude) %>%
   spread(qntl, out2)
 
 m3_rt <- readRDS("deca_rt_qntls.rds") %>%
-  filter(! state %in% exclude) %>% 
+  filter(! state %in% exclude) %>%
     spread(qntl, out2)
 
 m1_rt$proj <- "Model 1"
 m2_rt$proj <- "Model 2"
 m3_rt$proj <- "Model 3"
-ensemble_rt_wide <- ensemble_rt_wide[, colnames(m1_rt)]
+##ensemble_rt_wide <- ensemble_rt_wide[, colnames(m1_rt)]
 
-x <- rbind(m1_rt, m2_rt, m3_rt, ensemble_rt_wide)
+x <- rbind(m1_rt, m2_rt, m3_rt)
 states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
 x1 <- x[x$state %in% states_to_draw, ]
 p1 <- rt_lineplot(x1, rincewind::nice_country_name(unique(x1$state)))
@@ -155,8 +156,8 @@ p1 <- rt_lineplot(x1, rincewind::nice_country_name(unique(x1$state)))
 last_drawn <- ceiling(nstates / 2)
 states_to_draw <- unique(x$state)[seq(last_drawn + 1, nstates)]
 x1 <- x[x$state %in% states_to_draw, ]
-p2 <- rt_lineplot(x1, rincewind::nice_country_name(unique(x1$state)))
-
+p2 <- rt_lineplot(x1, rincewind::nice_country_name(unique(x1$state))) +
+  theme(legend.position = "none")
 
 p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2)
 
