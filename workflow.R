@@ -2,14 +2,16 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-03-28"
+week <- "2021-04-11"
+
+orderly::orderly_new("download_jhu_data")
 a <- orderly_run(
   "prepare_jhu_data/",
   parameters = list(week_ending = as.character(week))
 )
-## a <- "20210330-173949-f6ba30b8"
+## a <- "20210412-135535-3e5ac231"
 model_input <- readRDS(
-  glue("draft/prepare_jhu_data/{a}/latest_model_input.rds")
+  glue("archive/prepare_jhu_data/{a}/latest_model_input.rds")
 )
 locations <- model_input$State
 
@@ -19,54 +21,63 @@ locations <- model_input$State
 
 walk(
   locations, function(location) {
-    orderly_run(
+    a <- orderly_run(
       "src/run_jointlyr",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
     )
+    orderly_commit(a)
   }
 )
 
 walk(
   locations, function(location) {
-    orderly_run(
+    a <- orderly_run(
       "src/run_apeestim/",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
     )
+    orderly_commit(a)
   }
 )
 
 walk(
   locations, function(location) {
-    orderly_run(
+    a <- orderly_run(
       "src/run_deca/",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
     )
+    orderly_commit(a)
   }
 )
 
 walk(
   locations, function(location) {
-    orderly_run(
+    a <- orderly_run(
       "src/produce_ensemble_outputs",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
     )
+    orderly_commit(a)
   }
 )
 
 
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
 
-orderly_run("collate_weekly_outputs", use_draft = "newer")
+a <- orderly_run(
+  "collate_weekly_outputs", use_draft = "newer",
+  parameters = list(week_ending = week),
+  )
+orderly_commit(a)
 
-orderly_run(
+a <- orderly_run(
   "produce_weekly_figs", parameters = list(week_ending = week),
   use_draft = "newer"
 )
+orderly_commit(a)

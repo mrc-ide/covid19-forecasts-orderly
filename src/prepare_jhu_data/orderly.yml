@@ -20,3 +20,10 @@ packages:
 
 sources:
   - R/utils.R
+
+depends:
+  download_jhu_data:
+    id: latest
+    use:
+      covid19_confirmed_US.csv: covid19_confirmed_US.csv
+      covid19_deaths_US.csv: covid19_deaths_US.csv
