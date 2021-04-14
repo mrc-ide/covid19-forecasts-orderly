@@ -21,56 +21,63 @@ locations <- model_input$State
 
 walk(
   locations, function(location) {
-    orderly_run(
+    a <- orderly_run(
       "src/run_jointlyr",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
     )
+    orderly_commit(a)
   }
 )
 
 walk(
   locations, function(location) {
-    orderly_run(
+    a <- orderly_run(
       "src/run_apeestim/",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
     )
+    orderly_commit(a)
   }
 )
 
 walk(
   locations, function(location) {
-    orderly_run(
+    a <- orderly_run(
       "src/run_deca/",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
     )
+    orderly_commit(a)
   }
 )
 
 walk(
   locations, function(location) {
-    orderly_run(
+    a <- orderly_run(
       "src/produce_ensemble_outputs",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
     )
+    orderly_commit(a)
   }
 )
 
 
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
 
-orderly_run("collate_weekly_outputs",
-            parameters = list(week_ending = as.character(week)),
-            use_draft = "newer")
+a <- orderly_run(
+  "collate_weekly_outputs", use_draft = "newer",
+  parameters = list(week_ending = week),
+  )
+orderly_commit(a)
 
-orderly_run(
+a <- orderly_run(
   "produce_weekly_figs", parameters = list(week_ending = week),
   use_draft = "newer"
 )
+orderly_commit(a)
