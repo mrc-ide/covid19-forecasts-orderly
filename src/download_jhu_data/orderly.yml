@@ -1,0 +1,11 @@
+script: download_jhu_data.R
+
+packages:
+- readr
+
+artefacts:
+  - data:
+      description: Latest time series from JHU
+      filenames:
+        - covid19_confirmed_US.csv
+        - covid19_deaths_US.csv

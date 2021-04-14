@@ -5,15 +5,15 @@ params <- parameters(week_ending)
 
 ## Case data
 ## Convert to long format, aggregate by state and compute daily case numbers
-cases <- readr::read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv") %>% 
-  janitor::clean_names() %>% 
+cases <-  read_csv("covid19_confirmed_US.csv") %>%
+  janitor::clean_names() %>%
   dplyr::select(-c(
     uid, iso2, iso3, code3, fips, country_region,
     lat, long, combined_key
   )
   )
 
-cases <- cases %>% 
+cases <- cases %>%
   tidyr::pivot_longer(
     cols = starts_with("x"),
     names_to = "date_reported",
@@ -23,23 +23,23 @@ cases <- cases %>%
 
 cases$date_reported <- lubridate::mdy(cases$date_reported)
 
-cases <- cases %>% 
-  dplyr::group_by(province_state, date_reported) %>% 
-  dplyr::summarise(all_cases = sum(all_cases)) %>% 
+cases <- cases %>%
+  dplyr::group_by(province_state, date_reported) %>%
+  dplyr::summarise(all_cases = sum(all_cases)) %>%
   dplyr::mutate(new_cases = diff(c(0, all_cases)))
 
 ## Deaths data
 ## Convert to long format, aggregate by state and compute daily death numbers
 
-deaths <- readr::read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv") %>% 
-  janitor::clean_names() %>% 
+deaths <- read_csv("covid19_deaths_US.csv") %>%
+  janitor::clean_names() %>%
   dplyr::select(-c(
     uid, iso2, iso3, code3, fips, country_region,
     lat, long, population, combined_key
   )
   )
 
-deaths <- deaths %>% 
+deaths <- deaths %>%
   tidyr::pivot_longer(
     cols = starts_with("x"),
     names_to = "date_reported",
@@ -150,12 +150,12 @@ raw_data$Deaths[raw_data$DateRep == "2021-03-23" & raw_data$province_state == "N
 raw_data$Deaths[raw_data$DateRep == "2021-03-24" & raw_data$province_state == "New York"] <- 154
 
 ## Oklahoma
-## Batch upload of ~1700 deaths on 7 April 2021. As per COVID-19 Forecast Hub email from Jeremy Ratcliff (10/4/21)  
+## Batch upload of ~1700 deaths on 7 April 2021. As per COVID-19 Forecast Hub email from Jeremy Ratcliff (10/4/21)
 
 raw_data$Deaths[raw_data$DateRep == "2021-04-07" & raw_data$province_state == "Oklahoma"] <- 16
 
 ## West Virginia
-## 165 backlogged deaths published on 12 March 2021. As per COVID-19 Forecast Hub email from Jeremy Ratcliff (14/4/21)  
+## 165 backlogged deaths published on 12 March 2021. As per COVID-19 Forecast Hub email from Jeremy Ratcliff (14/4/21)
 
 raw_data$Deaths[raw_data$DateRep == "2021-03-12" & raw_data$province_state == "West Virginia"] <- 8
 
