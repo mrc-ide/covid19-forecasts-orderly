@@ -129,7 +129,10 @@ raw_data <- split(raw_data, raw_data$province_state) %>%
 
 
 ## Manual cleaning for days where reported deaths are much higher or lower (e.g due to batch reporting)
-## Corrections for 12 April 2021 report
+
+##########################################
+## Corrections for 12 April 2021 report ##
+##########################################
 
 ## California
 ## 25 March 2021 entry corrected with Worldometer value.
@@ -158,6 +161,45 @@ raw_data$Deaths[raw_data$DateRep == "2021-04-07" & raw_data$province_state == "O
 ## 165 backlogged deaths published on 12 March 2021. As per COVID-19 Forecast Hub email from Jeremy Ratcliff (14/4/21)
 
 raw_data$Deaths[raw_data$DateRep == "2021-03-12" & raw_data$province_state == "West Virginia"] <- 8
+
+
+##########################################
+## Corrections for 19 April 2021 report ##
+##########################################
+
+## Kentucky
+## Historical deaths added on March 18th (417 deaths) and 19th (166 deaths) 2021.
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff.
+raw_data$Deaths[raw_data$DateRep == "2021-03-18" & raw_data$province_state == "Kentucky"] <- 31
+raw_data$Deaths[raw_data$DateRep == "2021-03-19" & raw_data$province_state == "Kentucky"] <- 25
+
+## Michigan
+## Ongoing death certificate review taking place. Backlogged deaths have been added since 1 April 2021.
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff.
+
+raw_data$Deaths[raw_data$DateRep == "2021-04-01" & raw_data$province_state == "Michigan"] <- 55 - 33
+raw_data$Deaths[raw_data$DateRep == "2021-04-03" & raw_data$province_state == "Michigan"] <- 65 - 51
+raw_data$Deaths[raw_data$DateRep == "2021-04-06" & raw_data$province_state == "Michigan"] <- 61 - 16
+raw_data$Deaths[raw_data$DateRep == "2021-04-08" & raw_data$province_state == "Michigan"] <- 77 - 43
+raw_data$Deaths[raw_data$DateRep == "2021-04-10" & raw_data$province_state == "Michigan"] <- 84 - 57
+raw_data$Deaths[raw_data$DateRep == "2021-04-13" & raw_data$province_state == "Michigan"] <- 81 - 37
+raw_data$Deaths[raw_data$DateRep == "2021-04-15" & raw_data$province_state == "Michigan"] <- 123 - 81
+raw_data$Deaths[raw_data$DateRep == "2021-04-17" & raw_data$province_state == "Michigan"] <- 76 - 60
+
+## Montana
+## Backlogged deaths added on 9 April 2021..
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff.
+
+raw_data$Deaths[raw_data$DateRep == "2021-04-09" & raw_data$province_state == "Montana"] <- 27 - 26
+
+## Texas
+## Local dashboard failed to update on 31 March. Double upload occurred on 1 April.
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff.
+## Replace JHU data for 31 March & 1 April with data from Worldometer for those days.
+
+raw_data$Deaths[raw_data$DateRep == "2021-03-31" & raw_data$province_state == "Texas"] <- 97
+raw_data$Deaths[raw_data$DateRep == "2021-04-01" & raw_data$province_state == "Texas"] <- 136
+
 
 ## Save wide versions of death and case data
 
