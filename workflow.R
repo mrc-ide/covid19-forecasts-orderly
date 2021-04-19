@@ -2,14 +2,18 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-04-11"
+week <- "2021-04-18"
 
-orderly::orderly_new("download_jhu_data")
+a <- orderly_run("download_jhu_data")
+orderly_commit(a)
+
 a <- orderly_run(
   "prepare_jhu_data/",
   parameters = list(week_ending = as.character(week))
 )
-## a <- "20210412-135535-3e5ac231"
+## a <- "20210419-113500-1a96fbe1"
+orderly_commit(a)
+
 model_input <- readRDS(
   glue("archive/prepare_jhu_data/{a}/latest_model_input.rds")
 )
