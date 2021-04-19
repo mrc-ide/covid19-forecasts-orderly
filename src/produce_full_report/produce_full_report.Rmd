@@ -44,7 +44,7 @@ with more than 2,920,000 deaths [@whositrep].
 This weekly report presents forecasts of the
 *reported* number of deaths
 in the week ahead and analysis of case reporting trends (case
-ascertainment) for 67 countries with active transmission.
+ascertainment) for 68 countries with active transmission. 
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -66,16 +66,7 @@ transmission and death.
 
 For short-term forecasts in low-and-middle-income countries using 
 models explicitly accounting for interventions, see
-[here](https://mrc-ide.github.io/global-lmic-reports). For similar
-analyses published by the Imperial College COVID-19 response team  for
-European countries
-see [here](https://mrc-ide.github.io/covid19estimates/). 
-A detailed model for the United States of America published by 
-Imperial College COVID-19 response team is available
-[here](https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/covid-19/report-23-united-states/).
-The United States of America has therefore been excluded from the
-analysis presented in this report and is not included in the results
-presented in the section on North & Central America.
+[here](https://mrc-ide.github.io/global-lmic-reports). 
 
 
 
@@ -365,7 +356,6 @@ a * are based on an unweighted ensemble of Models 1, 2 and 3.
 Results from individual models are shown
 in the section Methods. 
 
-### USA (sub-national)
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
@@ -690,7 +680,6 @@ CrI of the projections.
 The reporting of deaths and cases in Brazil is currently changing;
 results should be interpreted with caution.
 
-#### USA (sub-national)
 
 ```{r}
 knitr::include_graphics("figs/us_indvdl_forecasts_1.png")
@@ -777,12 +766,6 @@ country in South America with
 active transmission (see Methods) for the week starting
 12^th^ April 2021. 
 
-#### USA (sub-national)
-
-```{r}
-knitr::include_graphics("figs/us_indvdl_rt_line_1.png")
-knitr::include_graphics("figs/us_indvdl_rt_line_2.png")
-```
 
 ## Code 
 

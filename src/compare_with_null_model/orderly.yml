@@ -4,9 +4,10 @@ artefacts:
   data:
     description: Comparison with null model
     filenames:
-      - log_ratio_vs_delta.tiff
+      - better_than_null_by_phase.rds
       - better_than_null.rds
       - better_than_linear.rds
+      - better_than_linear_by_phase.rds
       - country_groups.rds
       
   
@@ -45,3 +46,4 @@ depends:
         linear_model_error.rds: linear_model_error.rds
         null_model_error.rds: null_model_error.rds        
         weekly_incidence.rds: weekly_incidence.rds
+        exclude.rds: exclude.rds

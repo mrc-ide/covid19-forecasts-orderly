@@ -1,6 +1,11 @@
 ## orderly::orderly_develop_start(
 ## use_draft = "newer", parameters = list(use_si = "si_2"))
 ######### Performance metrics
+dir.create("figures")
+dir.create("figures/p50")
+dir.create("figures/p95")
+dir.create("figures/rme")
+dir.create("figures/other")
 
 labels <- c(
   "rel_mae" = "Relative mean error",
@@ -12,8 +17,11 @@ labels <- c(
   "empirical_p" = "Probability(obs|predictions)"
 )
 
-
-
+phase <- readRDS("unweighted_rt_qntls.rds")
+### We don't care about the quantiles of Rt for this analysis
+phase <- select(phase, forecast_date:phase)
+phase <- distinct(phase)
+exclude <- readRDS("exclude.rds")
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
 
@@ -31,11 +39,14 @@ unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czech
 ##unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
 
-unwtd_pred_error <- unwtd_pred_error[unwtd_pred_error$country != "Kyrgyzstan", ]
+unwtd_pred_error <- unwtd_pred_error[!unwtd_pred_error$country %in% exclude, ]
 
 n_forecast <- group_by(unwtd_pred_error, country) %>%
   summarise(n = length(unique(forecast_date))) %>%
   ungroup()
+
+phase$forecast_date <- as.Date(phase$forecast_date)
+unwtd_pred_error <- left_join(unwtd_pred_error, phase)
 
 
 weekly_summary <- function(df) {
@@ -66,21 +77,6 @@ weekly_summary <- function(df) {
   weekly <- left_join(weekly, by_country)
   weekly <- left_join(weekly, by_week)
 
-  weekly$top_label <- glue(
-    "{round_and_format(weekly$prop_in_50_d_mu)}",
-    " %+-% {round_and_format(weekly$prop_in_50_d_sd)}"
-  )
-
-  weekly$right_label <- glue(
-    "{round_and_format(weekly$prop_in_50_c_mu)}",
-    " %+-% {round_and_format(weekly$prop_in_50_c_sd)}"
-  )
-
-  weekly$cell_label <- glue(
-    "{round_and_format(weekly$prop_in_50_mu)}"
-    ##" %+-% {round_and_format(weekly$rel_mae_sd)}"
-  )
-
   weekly$country <- factor(
     weekly$country,
     levels = better_than_null$country, ordered = TRUE
@@ -98,8 +94,16 @@ weekly_summaries <- map(
 )
 
 overall <- weekly_summary(unwtd_pred_error)
-
 readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
+######################################################################
+################## Summary by phase######## ##########################
+######################################################################
+by_phase <- group_by(unwtd_pred_error, phase) %>%
+    summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
+    ungroup()
+
+readr::write_csv(by_phase, "unwtd_pred_summary_by_phase.csv")
+
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
@@ -114,7 +118,7 @@ plots <- imap(
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
     p <- prop_in_cri_heatmap(x, weeks)
-    outfile <- glue("proportion_in_50_CrI_{page}.tiff")
+    outfile <- glue("figures/p50/proportion_in_50_CrI_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile)
     p
   }
@@ -139,7 +143,7 @@ prow <- plot_grid(
 
 p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 
-outfile <- "proportion_in_50_CrI_si.tiff"
+outfile <- "figures/p50/proportion_in_50_CrI_si.tiff"
 rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
 #### Overall metrics
 ## > mean(unwtd_pred_error$prop_in_50)
@@ -159,7 +163,7 @@ plots <- imap(
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_975_mu")
     p <- prop_in_cri_heatmap(x, weeks, CrI = "95%")
-    outfile <- glue("proportion_in_95_CrI_{page}.tiff")
+    outfile <- glue("figures/p95/proportion_in_95_CrI_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
     p
   }
@@ -181,7 +185,7 @@ prow <- plot_grid(
 ## Finally put the legend back in
 
 p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
-outfile <- glue("proportion_in_95_CrI_si.tiff")
+outfile <- glue("figures/p95/proportion_in_95_CrI_si.tiff")
 rincewind::save_multiple(plot = p95, filename = outfile)
 
 #####################################################################
@@ -329,7 +333,7 @@ pdensity2 <- pdensity +
   ##coord_fixed()
 
 ggsave(
-  filename = "obs_predicted_2d_density.tiff",
+  filename = "figures/other/obs_predicted_2d_density.tiff",
   plot = pdensity2,
   width = 5.2,
   height = 5.2,
@@ -363,7 +367,7 @@ plots <- map(
 plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 iwalk(
   plots, function(p, page) {
-    outfile <- glue("relative_error_heatmap_{page}.tiff")
+    outfile <- glue("figures/rme/relative_error_heatmap_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile)
   }
 )
@@ -373,7 +377,7 @@ iwalk(
 plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
 iwalk(
   plots, function(p, page) {
-    outfile <- glue("relative_error_heatmap_{page}_2.tiff")
+    outfile <- glue("figures/rme/relative_error_heatmap_{page}_2.tiff")
     rincewind::save_multiple(plot = p, filename = outfile)
   }
 )
@@ -403,7 +407,7 @@ pall <- ggplot(
   ylab("(log) Relative mean error") +
   theme(legend.position = "top", legend.title = element_blank())
 
-ggsave("rmae_vs_weekly_incid_all_countries.png", pall)
+ggsave("figures/other/rmae_vs_weekly_incid_all_countries.png", pall)
 
 f <- scales::trans_breaks("log10", function(x) 10^x)
 g <- scales::trans_format("log10", scales::math_format(10^.x))
@@ -427,7 +431,7 @@ pcv_all <- ggplot(
     legend.title = element_blank()
   )
 
-ggsave("rmae_vs_weekly_cv_all_countries.png", pcv_all)
+ggsave("figures/other/rmae_vs_weekly_cv_all_countries.png", pcv_all)
 
 
 ######################################################################
@@ -454,7 +458,7 @@ p1 <- ggplot(overall) +
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0)
   )
 
-ggsave("relative_error_by_country.png", p1)
+ggsave("figures/rme/relative_error_by_country.png", p1)
 
 
 p2 <- ggplot(overall) +
@@ -477,7 +481,7 @@ p2 <- ggplot(overall) +
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0)
   )
 
-ggsave("relative_error_overall.png", p2)
+ggsave("figures/rme/relative_error_overall.png", p2)
 
 
 ## mean(overall$rel_mae_mu[is.finite(overall$rel_mae_mu)])

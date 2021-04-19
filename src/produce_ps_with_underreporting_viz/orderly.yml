@@ -18,7 +18,7 @@ artefacts:
   staticgraph:
     description: Ps with underreporting and final ps
     filenames:
-      - 2col_wider_proportion_susceptible.tiff
+      - 2col_wider_proportion_susceptible.png
 
 depends:
   - produce_longer_forecasts:

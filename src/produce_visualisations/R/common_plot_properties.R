@@ -1,6 +1,6 @@
 theme_project <- function(font_size = 22) {
 
-  ggpubr::theme_pubr() %+replace%
+  theme_minimal() %+replace%
     theme(
       axis.title.y = element_text(size = font_size, angle = 90),
       axis.title.x = element_text(size = font_size),

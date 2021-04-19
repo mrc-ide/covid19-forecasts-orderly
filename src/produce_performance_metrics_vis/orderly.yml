@@ -6,6 +6,7 @@ artefacts:
     filenames:
       - unwtd_pred_weekly_summary.csv
       - obs_predicted_2d_density.csv
+      - unwtd_pred_summary_by_phase.csv
 
 packages:
   - dplyr
