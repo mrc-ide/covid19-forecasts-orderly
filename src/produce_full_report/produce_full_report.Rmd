@@ -37,14 +37,15 @@ knitr::opts_chunk$set(echo = FALSE,  fig.width = 21, fig.height = 15,
 
 # Introduction 
 
-As of 12^th^ April 2021,  more than
-135,000,000 cases of COVID-19 have been reported across the world, 
-with more than 2,920,000 deaths [@whositrep]. 
+As of 19^th^ April 2021,  more than
+104,000,000 cases of COVID-19 have been reported across the world, 
+with more than 3,000,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
-*reported* number of deaths
-in the week ahead and analysis of case reporting trends (case
-ascertainment) for 68 countries with active transmission. 
+*reported* number of deaths in the week ahead 
+for 68 countries with active transmission. We also present similar results for
+states/territories of the United States of America with ongoing
+transmission. 
 
 The accuracy of these forecasts vary with the quality of surveillance
 and reporting in each country. We use the reported number of deaths due to
@@ -90,7 +91,7 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week starting 12^th^ April 2021, 
+two weeks. For the week starting 19^th^ April 2021, 
 the number of countries/regions included based on these thresholds is 67.
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -184,7 +185,7 @@ and 3, see Methods).
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_1.png")
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_2.png")
 knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_3.png")
-##knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_4.png")
+knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_4.png")
 
 ```
 *Figure 4.* Reported daily deaths and current forecasts based on the ensemble
@@ -374,7 +375,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-12^th^ April 2021, the observed number of deaths in the week before,
+19^th^ April 2021, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -596,7 +597,7 @@ knitr::include_graphics("figs/Europe_si_2_page_9.png")
 ```{r}
 knitr::include_graphics("figs/Europe_si_2_page_10.png")
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 12^th^ April 2021 from individual models
+*Figure 15.* Projections (7-day ahead) for the week starting 19^th^ April 2021 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -639,9 +640,9 @@ CrI of the projections.
 knitr::include_graphics("figs/Africa_si_2_page_1.png")
 knitr::include_graphics("figs/Africa_si_2_page_2.png")
 knitr::include_graphics("figs/Africa_si_2_page_3.png")
-##knitr::include_graphics("figs/Africa_si_2_page_4.png")
+knitr::include_graphics("figs/Africa_si_2_page_4.png")
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 12^th^ April 2021 from individual models (Models 1, 2
+*Figure 17.* Projections (7-day ahead) for the week starting 19^th^ April 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -657,7 +658,7 @@ knitr::include_graphics("figs/North America_si_2_page_1.png")
 knitr::include_graphics("figs/North America_si_2_page_2.png")
 knitr::include_graphics("figs/North America_si_2_page_3.png")
 ```
-*Figure 18.* Projections (7-day ahead) for the week starting 12^th^ April 2021 from individual models (Models 1, 2
+*Figure 18.* Projections (7-day ahead) for the week starting 19^th^ April 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -672,7 +673,7 @@ knitr::include_graphics("figs/South America_si_2_page_2.png")
 knitr::include_graphics("figs/South America_si_2_page_3.png")
 ```
 *Figure 19.* Projections (7-day ahead) for the week starting
-12^th^ April 2021 from individual models (Models 1, 2
+19^th^ April 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -700,7 +701,7 @@ knitr::include_graphics("figs/us_indvdl_forecasts_14.png")
 
 ```
 *Figure 20.* Projections (7-day ahead) for the week starting
-12^th^ April 2021 from individual models (Models 1, 2
+19^th^ April 2021 from individual models (Models 1, 2
 and 3) for each state/territory in the United States of America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -715,7 +716,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-12^th^ April 2021. 
+19^th^ April 2021. 
 
 
 #### Asia
@@ -727,7 +728,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 22.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-12^th^ April 2021. 
+19^th^ April 2021. 
 
 
 #### Africa
@@ -739,7 +740,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-12^th^ April 2021. 
+19^th^ April 2021. 
 
 
 #### North & Central America
@@ -751,7 +752,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 24.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-12^th^ April 2021. 
+19^th^ April 2021. 
 
 
 
@@ -764,7 +765,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 25.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-12^th^ April 2021. 
+19^th^ April 2021. 
 
 
 ## Code 
