@@ -112,7 +112,7 @@ ape_projections <- purrr::map2(
             projections::project(
               x = df,
               R = rt_si,
-              si = si,
+              si = si[-1],
               n_sim = n_sim,
               n_days = n_days,
               R_fix_within = TRUE,
