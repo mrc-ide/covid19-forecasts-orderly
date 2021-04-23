@@ -16,6 +16,7 @@ packages:
 - janitor
 - gridExtra
 - grid
+- tidylog
 
 depends:
 - collate_combined_rt:
