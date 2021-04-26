@@ -42,41 +42,63 @@ incid <- rincewind::ts_to_incid(x, "dates", "deaths")
 si <- readRDS("si_distrs.rds")[[2]]
 
 proj <- project(
-  incid, 2.3, si, model = "poisson", n_sim = 100, n_days = 21
+  incid, 1.5, si, model = "poisson", n_sim = 100, n_days = 35
 )
 proj <- data.frame(proj, check.names = FALSE)
-proj$dates <- seq(
-  from = now_minus_tau - 21 + 1,
-  length.out = 21, by = "1 day"
-)
-
 ## First 14 days, back-calculated incidence
-back <- filter(proj, dates < "2020-05-19")
+back <- filter(proj, dates < proj$dates[15]) %>%
+  tidyr::gather(sim, val, -dates)
 ## Next few days obs incidence
 obs <- proj[, c("dates", "sim_1")]
-
-proj <- tidyr::gather(proj, sim, val, -dates)
-obs <- project(
-  incid, 2, si, model = "poisson", n_sim = 1, n_days = 35
-) %>% data.frame(check.names = FALSE) %>%
+obs <- filter(
+  obs, dates >= proj$dates[15], dates < proj$dates[22]
+) %>%   tidyr::gather(sim, val, -dates)
+## future
+future <- filter(proj, dates >= proj$dates[22]) %>%
   tidyr::gather(sim, val, -dates)
 
-obs$dates <- seq(
-  from = now_minus_tau - 35 + 1,
-  length.out = 35, by = "1 day"
-)
+back$sim <- glue::glue("back_{back$sim}")
+future$sim <- glue::glue("future_{future$sim}")
+
+overall <- rbind(back, future)
+
+qlow <- function(x) quantile(x, 0.025)
+qhigh <- function(x) quantile(x, 0.975)
+qmed <- function(x) quantile(x, 0.5)
+
+back <- group_by(back, dates) %>%
+  summarise_if(
+    is.numeric, list(low = qlow, med = qmed, high = qhigh)
+  ) %>% ungroup()
+
+future <- group_by(future, dates) %>%
+  summarise_if(
+    is.numeric, list(low = qlow, med = qmed, high = qhigh)
+  ) %>% ungroup()
 
 
 ggplot() +
-  geom_line(
-    data = proj,
-    aes(dates, val, group = sim),
+  geom_ribbon(
+    data = back,
+    aes(dates, ymin = low, ymax = high),
     alpha = 0.3
-  )   +
+  ) +
   geom_line(
-    data = obs,
-    aes(dates, val)
-  )
+    data = back, aes(dates, med),
+    alpha = 0.3
+  ) +
+  geom_point(data = obs, aes(dates, val)) +
+  geom_ribbon(
+    data = future,
+    aes(dates, ymin = low, ymax = high),
+    alpha = 0.3
+  ) +
+  geom_line(
+    data = future, aes(dates, med),
+    alpha = 0.3
+  ) +
+  theme_schematic()
+
 
 dates <- seq(from = earliest,  to = now_minus_tau, by = "1 day")
 i0_est <-
