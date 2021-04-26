@@ -8,7 +8,11 @@ dates_forecast <- seq(
 )
 
 ## exclude some states due to one-off data anomalies or because they only report weekly
-exclude <- c("Montana", "Missouri", "Ohio", "Oklahoma")
+exclude <- c(# "Montana",
+             "Missouri", # numbers reported on 13/14th April inconsistent with trend
+             "Ohio",  
+             "Oklahoma" # report weekly
+             )
 
 
 ## ensemble projections
