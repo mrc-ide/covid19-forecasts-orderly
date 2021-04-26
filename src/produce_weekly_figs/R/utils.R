@@ -26,7 +26,8 @@ rt_boxplot <- function(rt, nice_names) {
     theme(
       legend.position = "top",
       legend.title = element_blank()
-    )
+    ) +
+    expand_limits(x = 0)
 
   p
 }
@@ -43,6 +44,9 @@ projection_plot <- function(obs, pred, date_min = "2021-01-01") {
   dates_to_mark <- dates_to_mark[weekdays(dates_to_mark) == "Monday"]
   idx <- seq(from = length(dates_to_mark), to = 1, by = -3)
   dates_to_mark <- dates_to_mark[rev(idx)]
+  
+  obs_to_plot <- obs[obs$dates >= date_min,]
+
   ## Get dates of adding vlines.
   window_eps <- group_by(pred, proj) %>%
     summarise(date = min(date)) %>%
@@ -61,7 +65,7 @@ projection_plot <- function(obs, pred, date_min = "2021-01-01") {
   }
 
   p <- ggplot() +
-    geom_point(data = obs, aes(dates, deaths)) +
+    geom_point(data = obs_to_plot, aes(dates, deaths)) +
     geom_line(
       data = pred,
       aes(date, `50%`, col = proj, group = proj),
@@ -99,7 +103,6 @@ projection_plot <- function(obs, pred, date_min = "2021-01-01") {
 
 rt_lineplot <- function(rt, nice_names) {
 
-  rt$state <- reorder(rt$state, -rt$`50%`)
   if (length(unique(rt$model)) == 1) width <- 0.1
   else width <- 0.7
 
@@ -127,7 +130,8 @@ rt_lineplot <- function(rt, nice_names) {
     theme_minimal() +
     theme(
       legend.position = "top", legend.title = element_blank()
-    )
+    )  +
+    expand_limits(y = 0)
 
     p
 }

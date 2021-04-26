@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2021-01-01"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2021-04-18"), use_draft = "newer")
 dir.create("figures")
 palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7")
 names(palette) <- c("Model 4", "Model 2", "Model 1", "Model 3", "Ensemble")
@@ -7,7 +7,8 @@ dates_forecast <- seq(
   as.Date(week_ending) + 1, length.out = 7, by = "1 day"
 )
 
-exclude <- c("Iowa", "Oklahoma")
+## exclude some states due to one-off data anomalies or because they only report weekly
+exclude <- c("Montana", "Missouri", "Ohio", "Oklahoma")
 
 
 ## ensemble projections
@@ -101,6 +102,8 @@ ensemble_rt_wide <- ensemble_rt_wide[ensemble_rt_wide$si == "si_2", ]
 ## Divide the list of states in roughly half
 ## so that plot is not cluttered
 
+ensemble_rt_wide$state <- reorder(ensemble_rt_wide$state, -ensemble_rt_wide$`50%`)
+ensemble_rt_wide <- ensemble_rt_wide[order(ensemble_rt_wide$state),]
 nstates <- length(unique(ensemble_rt_wide$state))
 states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
 
@@ -151,15 +154,17 @@ m3_rt$proj <- "Model 3"
 x <- rbind(m1_rt, m2_rt, m3_rt)
 states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
 x1 <- x[x$state %in% states_to_draw, ]
-p1 <- rt_lineplot(x1, rincewind::nice_country_name(unique(x1$state)))
+x1$state <- factor(x1$state, levels = states_to_draw, ordered = TRUE)
+p1 <- rt_lineplot(x1, rincewind::nice_country_name(levels(x1$state)))
 
 last_drawn <- ceiling(nstates / 2)
-states_to_draw <- unique(x$state)[seq(last_drawn + 1, nstates)]
+states_to_draw <- unique(ensemble_rt_wide$state)[seq(last_drawn + 1, nstates)]
 x1 <- x[x$state %in% states_to_draw, ]
-p2 <- rt_lineplot(x1, rincewind::nice_country_name(unique(x1$state))) +
+x1$state <- factor(x1$state, levels = states_to_draw, ordered = TRUE)
+p2 <- rt_lineplot(x1, rincewind::nice_country_name(levels(x1$state))) +
   theme(legend.position = "none")
 
-p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2)
+p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, align = "hv")
 
 ggsave("figures/us_indvdl_rt_line_1.png", p1)
 ggsave("figures/us_indvdl_rt_line_2.png", p2)
