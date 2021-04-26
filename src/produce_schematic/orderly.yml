@@ -10,6 +10,8 @@ packages:
 - gghalves
 - cowplot
 - ggrepel
+- projections
+- incidence
 
 artefacts:
   staticgraph:

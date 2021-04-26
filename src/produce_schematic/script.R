@@ -37,14 +37,46 @@ obs_deaths <- obs_deaths[obs_deaths$dates >= earliest, ]
 ######################################################################
 ###### Model 1 jointly estimates Rt and incidence prior to window
 ## Generate dummy data
-
-incid <- rincewind::ts_to_incid(obs_deaths, "dates", "deaths")
+x <- head(obs_deaths, 10)
+incid <- rincewind::ts_to_incid(x, "dates", "deaths")
 si <- readRDS("si_distrs.rds")[[2]]
 
-proj <- projections::project(incid, 2.3, si, model = "poisson", n_sim = 100, n_days = 21)
+proj <- project(
+  incid, 2.3, si, model = "poisson", n_sim = 100, n_days = 21
+)
 proj <- data.frame(proj, check.names = FALSE)
+proj$dates <- seq(
+  from = now_minus_tau - 21 + 1,
+  length.out = 21, by = "1 day"
+)
+
+## First 14 days, back-calculated incidence
+back <- filter(proj, dates < "2020-05-19")
+## Next few days obs incidence
+obs <- proj[, c("dates", "sim_1")]
+
 proj <- tidyr::gather(proj, sim, val, -dates)
-ggplot(proj, aes(dates, val, group = sim)) + geom_line(alpha = 0.3)
+obs <- project(
+  incid, 2, si, model = "poisson", n_sim = 1, n_days = 35
+) %>% data.frame(check.names = FALSE) %>%
+  tidyr::gather(sim, val, -dates)
+
+obs$dates <- seq(
+  from = now_minus_tau - 35 + 1,
+  length.out = 35, by = "1 day"
+)
+
+
+ggplot() +
+  geom_line(
+    data = proj,
+    aes(dates, val, group = sim),
+    alpha = 0.3
+  )   +
+  geom_line(
+    data = obs,
+    aes(dates, val)
+  )
 
 dates <- seq(from = earliest,  to = now_minus_tau, by = "1 day")
 i0_est <-
