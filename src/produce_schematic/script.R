@@ -37,21 +37,17 @@ obs_deaths <- obs_deaths[obs_deaths$dates >= earliest, ]
 ######################################################################
 ###### Model 1 jointly estimates Rt and incidence prior to window
 ## Generate dummy data
-dates <- seq(from = earliest,  to = now_minus_tau, by = "1 day")
-i0_est <- map_dfr(
-  1:1000,
-  function(index) {
-    lambda <- floor(
-      slider::slide_dbl(obs_deaths$deaths, mean, .before = 3, .after = 3)
-    )
-    deaths <- rpois(length(dates), lambda)
-    deaths <- floor(
-      slider::slide_dbl(deaths, mean, .before = 3, .after = 3)
-    )
-    data.frame(dates = dates, deaths = deaths)
-  }, .id = "sim"
-)
 
+incid <- rincewind::ts_to_incid(obs_deaths, "dates", "deaths")
+si <- readRDS("si_distrs.rds")[[2]]
+
+proj <- projections::project(incid, 2.3, si, model = "poisson", n_sim = 100, n_days = 21)
+proj <- data.frame(proj, check.names = FALSE)
+proj <- tidyr::gather(proj, sim, val, -dates)
+ggplot(proj, aes(dates, val, group = sim)) + geom_line(alpha = 0.3)
+
+dates <- seq(from = earliest,  to = now_minus_tau, by = "1 day")
+i0_est <-
 i0_est <- group_by(i0_est, dates) %>%
   summarise(
     val = quantile(deaths, probs = seq(0.1, 1, 0.05)),
@@ -60,7 +56,9 @@ i0_est <- group_by(i0_est, dates) %>%
 i0_est <- ungroup(i0_est)
 
 
-dates_future <- seq(from = now, length.out = 21, by = "1 day")
+dates_future <- seq(
+  from = now, length.out = length(dates), by = "1 day"
+)
 i0_future <- map_dfr(
   1:1000,
   function(index) {
