@@ -360,9 +360,9 @@ in the section Methods.
 ### USA (sub-national)
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/us_ensemble_rt_box_1.png")
 knitr::include_graphics("figs/us_ensemble_rt_box_2.png")
+knitr::include_graphics("figs/us_ensemble_rt_box_1.png")
+
 
 ```
 *Figure 14.*: Latest estimates of effective reproduction numbers 
@@ -768,8 +768,9 @@ active transmission (see Methods) for the week starting
 #### USA (sub-national)
 
 ```{r}
-knitr::include_graphics("figs/us_indvdl_rt_line_1.png")
 knitr::include_graphics("figs/us_indvdl_rt_line_2.png")
+knitr::include_graphics("figs/us_indvdl_rt_line_1.png")
+
 ```
 *Figure 26.* Estimates of $R_t$ from individual models for each
 country in South America with
