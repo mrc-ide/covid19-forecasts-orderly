@@ -169,22 +169,6 @@ wtd_cases <- data.frame(
   wtd_cases = wtd_cases[, 1]
 )
 
-x <- tail(obs_deaths[obs_deaths$dates <= latest, ], 7)
-incid <- rincewind::ts_to_incid(x, "dates", "Peru")
-si <- readRDS("si_distrs.rds")[[2]]
-
-proj <- project(
-  incid, 1.2, si[-1], model = "poisson", n_sim = 1000, n_days = 15
-)
-
-future <- data.frame(proj, check.names = FALSE) %>%
-  tidyr::gather(sim, val, -dates) %>%
-  group_by(dates) %>%
-  summarise_if(
-    is.numeric,
-    list(low = qlow, med = qmed, high = qhigh)
-  ) %>% ungroup()
-
 
 
 m3_left <- ggplot() +
@@ -255,6 +239,23 @@ cowplot::save_plot("m3_right.pdf", m3_right)
 ################# Model 2 ############################################
 ######################################################################
 ######################################################################
+x <- tail(obs_deaths[obs_deaths$dates <= latest, ], 7)
+incid <- rincewind::ts_to_incid(x, "dates", "Peru")
+si <- readRDS("si_distrs.rds")[[2]]
+
+proj <- project(
+  incid, 1.2, si[-1], model = "poisson", n_sim = 1000, n_days = 15
+)
+
+future <- data.frame(proj, check.names = FALSE) %>%
+  tidyr::gather(sim, val, -dates) %>%
+  group_by(dates) %>%
+  summarise_if(
+    is.numeric,
+    list(low = qlow, med = qmed, high = qhigh)
+  ) %>% ungroup()
+
+
 future <- mutate_if(future, is.numeric, ~ . + 30)
 
 m2_left <- ggplot() +
