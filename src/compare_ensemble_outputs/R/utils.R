@@ -122,22 +122,3 @@ all_forecasts <- function(obs, pred) {
 
 
 }
-
-
-all_forecasts_calendar <- function (obs, pred, date_breaks, date_labels, group_var, xmin = "2020-03-01") {
-  group_var <- enquo(group_var)
-  ggplot() +
-    geom_point(
-      data = obs, aes(dates, deaths, shape = 16),
-      alpha = 0.5) +
-    geom_line(data = pred, aes(x = date, `50%`,
-                               group = !!group_var, col = "#4a8c6f")) + geom_ribbon(data = pred,
-        aes(x = date, ymin = `2.5%`, ymax = `97.5%`, group = !!group_var,
-            fill = "#4a8c6f"), alpha = 0.4) + scale_date_manuscript(date_breaks,
-        date_labels, xmin) + scale_shape_identity(breaks = 16,
-        labels = "Observed deaths", guide = guide_legend(order = 1)) +
-        scale_color_identity(breaks = "#4a8c6f", labels = "Median forecasts",
-            guide = guide_legend(order = 2)) + scale_fill_identity(breaks = "#4a8c6f",
-        labels = "95% CrI of forecasts", guide = guide_legend(order = 3)) +
-        ggtitle(label = nice_country_name(obs$country[1]))
-}

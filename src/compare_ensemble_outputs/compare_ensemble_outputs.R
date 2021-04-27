@@ -72,7 +72,7 @@ proj_plots <- map(
     pred <- rincewind:::cap_predictions(pred)
     ##pred <- left_join(pred, obs, by = c("date" = "dates"))
     p1 <- all_forecasts_calendar(
-      obs, pred, date_breaks, date_labels, proj, xmin = "2020-11-01"
+      obs, pred, date_breaks, date_labels, proj
     ) +
       ylab("Daily Deaths") +
       theme_manuscript() +
@@ -108,9 +108,7 @@ rt_plots <- map(
           y
       }
     )
-    p2 <- restimates_linegraph(
-      out, forecast_date, xmin = "2020-11-01"
-    ) +
+    p2 <- restimates_linegraph(out, forecast_date) +
       ylab("Reproduction Number") +
       theme_manuscript() +
       theme(
@@ -260,5 +258,4 @@ pbottom <- cowplot::plot_grid(top, bottom, rel_heights = c(1, 0.6),
 
 final <- cowplot::plot_grid(ptop, pbottom, nrow = 2)
 
-##rincewind::save_multiple(final, "main_short_forecasts.tiff")
-ggsave("main_short_forecasts.tiff", final)
+rincewind::save_multiple(final, "main_short_forecasts.tiff")
