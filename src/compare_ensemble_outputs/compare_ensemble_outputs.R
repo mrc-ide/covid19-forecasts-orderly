@@ -99,32 +99,20 @@ stacked_vars <- map(
 )
 
 
-stacked_plots <- map(
-   countries,
+stacked_plots <- purrr::map(
+  main_text_countries,
   function(country) {
     obs <- model_input[model_input$country %in% country, ]
     obs <- select(obs, date = dates, y = deaths)
-
     obs$var <- "forecasts"
-
     obs$color <- "#000000"
 
     x <- stacked_vars[[country]]
-
-    x$fill <- case_when(
-      x$var == "forecasts" ~ "#009E73",
-      x$var == "rt" ~ "#56B4E9"
-    )
-
-    x$color <- case_when(
-      x$var == "forecasts" ~ "#009E73",
-      x$var == "rt" ~ "#56B4E9"
-    )
+    x$fill <- ifelse(x$var == 'forecasts', '#009E73', '#56B4E9')
+    x$color <- ifelse(x$var == 'forecasts', '#009E73', '#56B4E9')
 
     p <- ggplot(x) +
-      geom_line(
-        aes(date, y, group = forecast_date, col = color)
-      ) +
+      geom_line(aes(date, y, group = forecast_date, col = color)) +
       geom_ribbon(
         aes(
           date, ymin = ymin, ymax = ymax,
@@ -132,12 +120,9 @@ stacked_plots <- map(
         ), alpha = 0.3
       ) +
       geom_point(data = obs, aes(date, y, col = color)) +
-      scale_fill_identity(
-        breaks = c("#009E73", "#56B4E9"),
-        labels = c("95% CrI (forecasts)", "95% CrI (Rt)")
-      ) +
+      scale_fill_identity(breaks = c("#009E73", "#56B4E9")) +
       scale_color_identity(
-        breaks = c("#000000","#009E73", "#56B4E9"),
+        breaks = c('#000000', '#009E73', '#56B4E9'),
         labels = c("Observed deaths", "Forecasts (median and 95% CrI)",
                    "Rt (median and 95% CrI)"),
         guide = "legend"
@@ -166,7 +151,7 @@ stacked_plots <- map(
         strip.placement = "outside",
         axis.title = element_blank()
       )
-
+    p
  }
 )
 
@@ -177,134 +162,3 @@ stacked_plots <- map(
 
 
 
-## main_text_countries <- c(
-##  "Brazil", "India", "Italy", "South_Africa",
-##  "Turkey", "United_States_of_America"
-##)
-
-
-## For SI, png is fine.
-## infiles <- list.files(pattern = "*.tiff")
-## walk(
-##   infiles,
-##   function(infile) {
-##     img <- magick::image_read(infile)
-##     outfile <- stringr::str_replace(infile, "tiff", "png")
-##     magick::image_write(img, path = outfile, format = "png")
-##   }
-## )
-
-legend <- get_legend(
-  proj_plots[["Brazil"]] + theme(legend.box = "horizontal")
-)
-
-top <-
-
-
-p11 <- proj_plots[["Brazil"]] +
-  ggtitle("Brazil") +
-  theme(axis.text.x = element_blank())
-
-p21 <- rt_plots[["Brazil"]]
-
-pbrazil <- plot_grid(
-  p11 + p21, nrow = 2, align = "v", axis = "l"
-)
-
-
-p12 <- proj_plots[["India"]] + ggtitle("India") +
-    theme(axis.text.x = element_blank())
-p22 <- rt_plots[["India"]]
-
-pindia <- plot_grid(
-  p12 + p22, nrow = 2, align = "v", axis = "l"
-)
-
-
-p13 <- proj_plots[["Italy"]] + ggtitle("Italy") +
-    theme(axis.text.x = element_blank())
-p23 <- rt_plots[["Italy"]]
-
-pitaly <- plot_grid(
-  p13 + p23, nrow = 2, align = "v", axis = "l"
-)
-
-p14 <- proj_plots[["South_Africa"]] + ggtitle("South Africa") +
-    theme(axis.text.x = element_blank())
-
-p24 <- rt_plots[["South_Africa"]]
-
-p15 <- proj_plots[["Turkey"]] + ggtitle("Turkey") +
-    theme(axis.text.x = element_blank())
-p25 <- rt_plots[["Turkey"]]
-
-p16 <- proj_plots[["United_States_of_America"]] +
-  ggtitle("USA") +   theme(axis.text.x = element_blank())
-p26 <- rt_plots[["United_States_of_America"]]
-
-label1 <- textGrob("Daily deaths", rot = 90, gp = gpar(fontsize = 7))
-label2 <- textGrob(
-  "Reproduction Number", rot = 90, gp = gpar(fontsize = 7)
-)
-
-top <- p11 + p12 + p13 +
-  plot_layout(ncol = 3, nrow = 1) &
-  theme_minimal() &
-  theme(
-    text = element_text(size = 7), axis.text.x = element_blank(),
-    legend.position = "none", axis.title = element_blank(),
-    plot.margin = margin(0, 0, 0, 0, "pt")
-  )
-
-bottom <- (p21 + p22 + p23) +
-  plot_layout(ncol = 3, nrow = 1) &
-  theme_minimal() +
-  theme(
-    text = element_text(size = 7),
-    axis.title = element_blank(), legend.position = "none",
-    ##axis.text.x = element_text(angle = 90),
-    axis.text.x = element_blank(),
-    plot.margin = margin(0, 0, 0, 0, "pt")
-  )
-
-top <- wrap_elements(label1) + wrap_elements(top) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-bottom <- wrap_elements(label2) + wrap_elements(bottom) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-ptop <- cowplot::plot_grid(legend, top, bottom,
-                        rel_heights = c(0.1, 1, 0.6), nrow = 3)
-
-top <- p14 + p15 + p16 +
-  plot_layout(ncol = 3, nrow = 1) &
-  theme_minimal() &
-  theme(
-    text = element_text(size = 7),
-    axis.text.x = element_blank(), legend.position = "none",
-    axis.title = element_blank(),
-    plot.margin = margin(0, 0, 0, 0, "pt")
-  )
-
-bottom <- (p24 + p25 + p26) +
-  plot_layout(ncol = 3, nrow = 1) &
-  theme_minimal() +
-  theme(
-    text = element_text(size = 7),
-    axis.title = element_blank(), legend.position = "none",
-    axis.text.x = element_text(angle = 90),
-    plot.margin = margin(0, 0, 0, 0, "pt")
-  )
-
-top <- wrap_elements(label1) + wrap_elements(top) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-bottom <- wrap_elements(label2) + wrap_elements(bottom) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-pbottom <- cowplot::plot_grid(top, bottom, rel_heights = c(1, 0.6),
-                              nrow = 2)
-
-final <- cowplot::plot_grid(ptop, pbottom, nrow = 2)
-
-ggsave("main_short_forecasts.png", final)
