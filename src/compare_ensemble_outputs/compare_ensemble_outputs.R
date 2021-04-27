@@ -119,7 +119,9 @@ stacked_plots <- purrr::map(
           group = forecast_date, fill = fill
         ), alpha = 0.3
       ) +
-      geom_point(data = obs, aes(date, y, col = color)) +
+      geom_point(
+        data = obs, aes(date, y, col = color), alpha = 0.3
+      ) +
       scale_fill_identity(breaks = c("#009E73", "#56B4E9")) +
       scale_color_identity(
         breaks = c('#000000', '#009E73', '#56B4E9'),
@@ -142,22 +144,42 @@ stacked_plots <- purrr::map(
         date_breaks = date_breaks, date_labels = date_labels,
         limits = date_limits
       ) +
-      ggtitle(country) +
+        expand_limits(y = 0) +
+      ggtitle(nice_country_name(country)) +
       theme_manuscript() +
       theme(
         legend.position = "top",
         legend.title = element_blank(),
         strip.background = element_blank(),
         strip.placement = "outside",
-        axis.title = element_blank()
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()
       )
     p
  }
 )
 
+legend <- cowplot::get_legend(stacked_plots[[1]] + theme(legend.box = "horizontal"))
 
+nolegend_plots <- imap(
+  stacked_plots, function(p, index) {
+    p <- p + theme(legend.position = "none")
+    if (index %in% c(1, 2, 3)) {
+      p <- p + theme(axis.text.x = element_blank())
+    } else {
+      p <- p + theme(axis.text.x = element_text(angle = 90))
+    }
+    if (!index %in% c(1, 4)) {
+      message("Getting rid of axis title ", index)
+      p <- p + theme(axis.title.y = element_blank())
+    }
+    p
+  }
+)
 
-
+pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2)
+final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
+ggsave("1col_main_short_forecasts.png", final)
 
 
 
