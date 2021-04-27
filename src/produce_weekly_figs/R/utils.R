@@ -117,7 +117,7 @@ rt_lineplot <- function(rt, nice_names) {
       data = rt,
       aes(x = state, y = `50%`, col = proj),
       position = position_dodge(width = width),
-      size = 4
+      size = 2
     ) +
     xlab("") +
     ylab("Effective Reproduction Number") +

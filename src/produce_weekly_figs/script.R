@@ -8,7 +8,12 @@ dates_forecast <- seq(
 )
 
 ## exclude some states due to one-off data anomalies or because they only report weekly
-exclude <- c("Montana", "Missouri", "Ohio", "Oklahoma")
+exclude <- c(# "Montana",
+             "Missouri", # numbers reported on 13/14th April inconsistent with trend
+             "Ohio",  
+             "Oklahoma", # report weekly
+             "Oregon" # anomalously high reported deaths on 6 April
+             )
 
 
 ## ensemble projections
@@ -106,20 +111,25 @@ ensemble_rt_wide$state <- reorder(ensemble_rt_wide$state, -ensemble_rt_wide$`50%
 ensemble_rt_wide <- ensemble_rt_wide[order(ensemble_rt_wide$state),]
 nstates <- length(unique(ensemble_rt_wide$state))
 states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
+max_rt_to_draw <- max(ensemble_rt_wide$`97.5%`)
 
 x <- ensemble_rt_wide[ensemble_rt_wide$state %in% states_to_draw, ]
 
 p1 <- rt_boxplot(x, rincewind::nice_country_name(unique(x$state))) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  xlim(0, ceiling(max_rt_to_draw))
 
-pline1 <- rt_lineplot(x, rincewind::nice_country_name(unique(x$state)))
+pline1 <- rt_lineplot(x, rincewind::nice_country_name(unique(x$state))) +
+  ylim(0, ceiling(max_rt_to_draw))
 
 last_drawn <- ceiling(nstates / 2)
 states_to_draw <- unique(ensemble_rt_wide$state)[seq(last_drawn + 1, nstates)]
 x <- ensemble_rt_wide[ensemble_rt_wide$state %in% states_to_draw, ]
 p2 <- rt_boxplot(x, rincewind::nice_country_name(unique(x$state))) +
-    theme(legend.position = "none")
-pline2 <- rt_lineplot(x, rincewind::nice_country_name(unique(x$state)))
+  theme(legend.position = "none") +
+  xlim(0, ceiling(max_rt_to_draw))
+pline2 <- rt_lineplot(x, rincewind::nice_country_name(unique(x$state))) +
+  ylim(0, ceiling(max_rt_to_draw))
 
 p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2)
 
@@ -153,16 +163,19 @@ m3_rt$proj <- "Model 3"
 
 x <- rbind(m1_rt, m2_rt, m3_rt)
 states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
+max_rt_to_draw <- max(x$`97.5%`)
 x1 <- x[x$state %in% states_to_draw, ]
 x1$state <- factor(x1$state, levels = states_to_draw, ordered = TRUE)
-p1 <- rt_lineplot(x1, rincewind::nice_country_name(levels(x1$state)))
+p1 <- rt_lineplot(x1, rincewind::nice_country_name(levels(x1$state))) +
+  ylim(0, ceiling(max_rt_to_draw))
 
 last_drawn <- ceiling(nstates / 2)
 states_to_draw <- unique(ensemble_rt_wide$state)[seq(last_drawn + 1, nstates)]
 x1 <- x[x$state %in% states_to_draw, ]
 x1$state <- factor(x1$state, levels = states_to_draw, ordered = TRUE)
 p2 <- rt_lineplot(x1, rincewind::nice_country_name(levels(x1$state))) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  ylim(0, ceiling(max_rt_to_draw))
 
 p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, align = "hv")
 
