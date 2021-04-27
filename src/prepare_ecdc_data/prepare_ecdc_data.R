@@ -537,7 +537,9 @@ exclude <- c(
   "Sudan",
   "Slovenia",
   "Mauritania",
-  "Rwanda"
+  "Rwanda",
+  "Mexico",
+  "Nepal"
   ##"Sweden",
   ##"Switzerland", ## Numbers do not agree with those on worldometers
   ##"Spain" ## latest data not yet available.
