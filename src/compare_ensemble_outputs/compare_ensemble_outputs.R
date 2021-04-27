@@ -8,6 +8,7 @@
 ###all previous weeks
 date_labels <- "%d - %b"
 date_breaks <- "4 weeks"
+date_limits <- c(as.Date("2020-03-01"), NA)
 
 file_format <- ".tiff"
 
@@ -60,42 +61,15 @@ countries <- countries[!countries %in% exclude]
 unweighted_rt_qntls <- readRDS("unweighted_rt_qntls.rds") %>%
   dplyr::filter(si == use_si)
 
-proj_plots <- map(
+###### Put them together
+stacked_vars <- map(
   countries,
   function(country) {
-    obs <- model_input[model_input$country %in% country, ]
     pred <- unweighted_qntls[unweighted_qntls$country %in% country, ]
-    if (nrow(pred) == 0) {
-      message("No data for ", country)
-      continue
-    }
     pred <- rincewind:::cap_predictions(pred)
-    ##pred <- left_join(pred, obs, by = c("date" = "dates"))
-    p1 <- all_forecasts_calendar(
-      obs, pred, date_breaks, date_labels, proj
-    ) +
-      ylab("Daily Deaths") +
-      theme_manuscript() +
-      theme(
-        axis.text.y = element_text(size = 8),
-        axis.text.x = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 9, angle = 90),
-        plot.margin = unit(c(0.1, 0.1, 0, 0.1), "cm"),
-        panel.spacing = unit(c(0, 0, 0, 0), "cm")
-      )
-    p1
-  }
-)
-
-rt_plots <- map(
-  countries,
-  function(country) {
-    message(paste(country, collapse = " "))
-
-    x <- unweighted_rt_qntls[unweighted_rt_qntls$country %in% country, ]
-    x <- tidyr::spread(x, quantile, out2)
-    out <- split(x, list(x$forecast_date, x$country), drop = TRUE) %>%
+    rt <- unweighted_rt_qntls[unweighted_rt_qntls$country %in% country, ]
+    rt <- tidyr::spread(rt, quantile, out2)
+    out <- split(rt, list(rt$forecast_date, rt$country), drop = TRUE) %>%
       map_dfr(
         function(y) {
           ## repeat each row 7 times (projection horizon)
@@ -106,42 +80,100 @@ rt_plots <- map(
             by = "1 day"
           )
           y
-      }
+        }
+      )
+    ### Stack Rt and predictions together
+    pred_qntls <- select(
+      pred, date, ymin = `2.5%`, y = `50%`, ymax = `97.5%`,
+      forecast_date = proj
     )
-    p2 <- restimates_linegraph(out, forecast_date) +
-      ylab("Reproduction Number") +
+    rt_qntls <- select(
+      out, date = dates, ymin = `2.5%`, y = `50%`, ymax = `97.5%`,
+      forecast_date
+    )
+    pred_qntls$var <- "forecasts"
+    rt_qntls$var <- "rt"
+
+    rbind(pred_qntls, rt_qntls)
+  }
+)
+
+
+stacked_plots <- map(
+   countries,
+  function(country) {
+    obs <- model_input[model_input$country %in% country, ]
+    obs <- select(obs, date = dates, y = deaths)
+
+    obs$var <- "forecasts"
+
+    obs$color <- "#000000"
+
+    x <- stacked_vars[[country]]
+
+    x$fill <- case_when(
+      x$var == "forecasts" ~ "#009E73",
+      x$var == "rt" ~ "#56B4E9"
+    )
+
+    x$color <- case_when(
+      x$var == "forecasts" ~ "#009E73",
+      x$var == "rt" ~ "#56B4E9"
+    )
+
+    p <- ggplot(x) +
+      geom_line(
+        aes(date, y, group = forecast_date, col = color)
+      ) +
+      geom_ribbon(
+        aes(
+          date, ymin = ymin, ymax = ymax,
+          group = forecast_date, fill = fill
+        ), alpha = 0.3
+      ) +
+      geom_point(data = obs, aes(date, y, col = color)) +
+      scale_fill_identity(
+        breaks = c("#009E73", "#56B4E9"),
+        labels = c("95% CrI (forecasts)", "95% CrI (Rt)")
+      ) +
+      scale_color_identity(
+        breaks = c("#000000","#009E73", "#56B4E9"),
+        labels = c("Observed deaths", "Forecasts (median and 95% CrI)",
+                   "Rt (median and 95% CrI)"),
+        guide = "legend"
+      ) +
+      geom_hline(
+        data = data.frame(var = "rt", y = 1), aes(yintercept = y),
+        linetype = "dashed", col = "red"
+      ) +
+      facet_wrap(
+        ~var, nrow = 2, scales = "free_y",
+        strip.position = "left",
+        labeller = as_labeller(
+          c(forecasts = "Daily Deaths", rt = "Rt")
+        )
+      )  +
+      scale_x_date(
+        date_breaks = date_breaks, date_labels = date_labels,
+        limits = date_limits
+      ) +
+      ggtitle(country) +
       theme_manuscript() +
       theme(
-        strip.text = element_blank(),
-        axis.text.x = element_text(size = 8, angle = 90),
-        axis.text.y = element_text(size = 8),
-        axis.title.y = element_text(size = 8, angle = 90),
-        axis.title.x = element_blank(),
-        legend.position = "none",
-        plot.margin = unit(c(0, 0.1, 0.1, 0.1), "cm"),
-        panel.spacing = unit(c(0, 0, 0, 0), "cm")
-      ) + coord_cartesian(clip = "off")
+        legend.position = "top",
+        legend.title = element_blank(),
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        axis.title = element_blank()
+      )
 
-
-    p2
-  }
+ }
 )
 
-both <- map(
-  countries,
-  function(country) {
-    message(paste(country, collapse = " "))
-    p1 <- proj_plots[[country]] +
-      theme(legend.position = "none")
-    p2 <- rt_plots[[country]]
-    p <- plot_grid(
-      p1, p2, align  = "hv", rel_heights = c(1, 0.6), ncol = 1
-    )
-    ##outfile <- glue::glue("{country}_forecasts{file_format}")
-    ##save_multiple(plot = p, filename = outfile)
-    p
-  }
-)
+
+
+
+
 
 
 
@@ -166,19 +198,36 @@ legend <- get_legend(
   proj_plots[["Brazil"]] + theme(legend.box = "horizontal")
 )
 
+top <-
+
+
 p11 <- proj_plots[["Brazil"]] +
   ggtitle("Brazil") +
   theme(axis.text.x = element_blank())
 
 p21 <- rt_plots[["Brazil"]]
 
+pbrazil <- plot_grid(
+  p11 + p21, nrow = 2, align = "v", axis = "l"
+)
+
+
 p12 <- proj_plots[["India"]] + ggtitle("India") +
     theme(axis.text.x = element_blank())
 p22 <- rt_plots[["India"]]
 
+pindia <- plot_grid(
+  p12 + p22, nrow = 2, align = "v", axis = "l"
+)
+
+
 p13 <- proj_plots[["Italy"]] + ggtitle("Italy") +
     theme(axis.text.x = element_blank())
 p23 <- rt_plots[["Italy"]]
+
+pitaly <- plot_grid(
+  p13 + p23, nrow = 2, align = "v", axis = "l"
+)
 
 p14 <- proj_plots[["South_Africa"]] + ggtitle("South Africa") +
     theme(axis.text.x = element_blank())
@@ -258,4 +307,4 @@ pbottom <- cowplot::plot_grid(top, bottom, rel_heights = c(1, 0.6),
 
 final <- cowplot::plot_grid(ptop, pbottom, nrow = 2)
 
-rincewind::save_multiple(final, "main_short_forecasts.tiff")
+ggsave("main_short_forecasts.png", final)
