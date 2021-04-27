@@ -174,7 +174,6 @@ p11 <- proj_plots[["Brazil"]] +
 
 p21 <- rt_plots[["Brazil"]]
 
-
 p12 <- proj_plots[["India"]] + ggtitle("India") +
     theme(axis.text.x = element_blank())
 p22 <- rt_plots[["India"]]
@@ -201,8 +200,8 @@ label2 <- textGrob(
   "Reproduction Number", rot = 90, gp = gpar(fontsize = 7)
 )
 
-top <- p11 +
-  plot_layout(nrow = 1) &
+top <- p11 + p12 + p13 +
+  plot_layout(ncol = 3, nrow = 1) &
   theme_minimal() &
   theme(
     text = element_text(size = 7), axis.text.x = element_blank(),
@@ -210,14 +209,14 @@ top <- p11 +
     plot.margin = margin(0, 0, 0, 0, "pt")
   )
 
-bottom <- p21 +
-  plot_layout(nrow = 1) &
+bottom <- (p21 + p22 + p23) +
+  plot_layout(ncol = 3, nrow = 1) &
   theme_minimal() +
   theme(
     text = element_text(size = 7),
     axis.title = element_blank(), legend.position = "none",
     ##axis.text.x = element_text(angle = 90),
-    ##axis.text.x = element_blank(),
+    axis.text.x = element_blank(),
     plot.margin = margin(0, 0, 0, 0, "pt")
   )
 
@@ -230,9 +229,36 @@ bottom <- wrap_elements(label2) + wrap_elements(bottom) +
 ptop <- cowplot::plot_grid(legend, top, bottom,
                         rel_heights = c(0.1, 1, 0.6), nrow = 3)
 
+top <- p14 + p15 + p16 +
+  plot_layout(ncol = 3, nrow = 1) &
+  theme_minimal() &
+  theme(
+    text = element_text(size = 7),
+    axis.text.x = element_blank(), legend.position = "none",
+    axis.title = element_blank(),
+    plot.margin = margin(0, 0, 0, 0, "pt")
+  )
+
+bottom <- (p24 + p25 + p26) +
+  plot_layout(ncol = 3, nrow = 1) &
+  theme_minimal() +
+  theme(
+    text = element_text(size = 7),
+    axis.title = element_blank(), legend.position = "none",
+    axis.text.x = element_text(angle = 90),
+    plot.margin = margin(0, 0, 0, 0, "pt")
+  )
+
+top <- wrap_elements(label1) + wrap_elements(top) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
+
+bottom <- wrap_elements(label2) + wrap_elements(bottom) +
+  plot_layout(ncol = 2, widths = c(0.03, 1))
+
 pbottom <- cowplot::plot_grid(top, bottom, rel_heights = c(1, 0.6),
                               nrow = 2)
 
-final <- cowplot::plot_grid(ptop, nrow = 1)
+final <- cowplot::plot_grid(ptop, pbottom, nrow = 2)
 
-rincewind::save_multiple(final, "main_short_forecasts.tiff")
+##rincewind::save_multiple(final, "main_short_forecasts.tiff")
+ggsave("main_short_forecasts.tiff", final)
