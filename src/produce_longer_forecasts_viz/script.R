@@ -312,17 +312,9 @@ nolegend_plots <- imap(
 
 pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2)
 final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
-ggsave(
-  "1col_main_long_forecasts.png", final,
-  width = 7.45, height = 8.7,
-  units = "in"
-)
+rincewind::save_multiple(final, "figures/main_long_forecasts.png")
+rincewind::save_multiple(final, "figures/main_long_forecasts.pdf")
 
-ggsave(
-  "1col_main_long_forecasts.pdf", final,
-  width = 7.45, height = 8.7,
-  units = "in"
-)
 
 
 
