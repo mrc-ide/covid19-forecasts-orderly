@@ -16,7 +16,10 @@ main_text_countries <- c(
   "Brazil", "India", "Italy", "South_Africa",
   "Turkey", "United_States_of_America"
 )
-
+names(main_text_countries) <- c(
+  "Brazil", "India", "Italy", "South Africa",
+  "Turkey", "USA"
+)
 unweighted_qntls <- readRDS("unweighted_qntls.rds") %>%
   dplyr::filter(si == use_si) %>%
   na.omit()
@@ -99,17 +102,17 @@ stacked_vars <- map(
 )
 
 
-stacked_plots <- purrr::map(
+stacked_plots <- imap(
   main_text_countries,
-  function(country) {
+  function(country, name) {
     obs <- model_input[model_input$country %in% country, ]
     obs <- select(obs, date = dates, y = deaths)
     obs$var <- "forecasts"
-    obs$color <- "#000000"
+    obs$color <- "#666666"
 
     x <- stacked_vars[[country]]
     x$fill <- ifelse(x$var == 'forecasts', '#009E73', '#56B4E9')
-    x$color <- ifelse(x$var == 'forecasts', '#009E73', '#56B4E9')
+    x$color <- x$fill
 
     p <- ggplot(x) +
       geom_line(aes(date, y, group = forecast_date, col = color)) +
@@ -124,7 +127,7 @@ stacked_plots <- purrr::map(
       ) +
       scale_fill_identity(breaks = c("#009E73", "#56B4E9")) +
       scale_color_identity(
-        breaks = c('#000000', '#009E73', '#56B4E9'),
+        breaks = c('#666666', '#009E73', '#56B4E9'),
         labels = c("Observed deaths", "Forecasts (median and 95% CrI)",
                    "Rt (median and 95% CrI)"),
         guide = "legend"
@@ -145,7 +148,7 @@ stacked_plots <- purrr::map(
         limits = date_limits
       ) +
         expand_limits(y = 0) +
-      ggtitle(nice_country_name(country)) +
+      ggtitle(name) +
       theme_manuscript() +
       theme(
         legend.position = "top",
@@ -164,14 +167,14 @@ legend <- cowplot::get_legend(stacked_plots[[1]] + theme(legend.box = "horizonta
 nolegend_plots <- imap(
   stacked_plots, function(p, index) {
     p <- p + theme(legend.position = "none")
-    if (index %in% c(1, 2, 3)) {
+    if (index %in% c("Brazil", "India", "Italy")) {
       p <- p + theme(axis.text.x = element_blank())
     } else {
       p <- p + theme(axis.text.x = element_text(angle = 90))
     }
-    if (!index %in% c(1, 4)) {
+    if (!index %in% c("Brazil", "South Africa")) {
       message("Getting rid of axis title ", index)
-      p <- p + theme(axis.title.y = element_blank())
+      p <- p + theme(strip.text = element_blank())
     }
     p
   }
@@ -179,7 +182,17 @@ nolegend_plots <- imap(
 
 pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2)
 final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
-ggsave("1col_main_short_forecasts.png", final)
+ggsave(
+  "1col_main_short_forecasts.png", final,
+  width = 7.45, height = 8.7,
+  units = "in"
+)
+
+ggsave(
+  "1col_main_short_forecasts.pdf", final,
+  width = 7.45, height = 8.7,
+  units = "in"
+)
 
 
 
