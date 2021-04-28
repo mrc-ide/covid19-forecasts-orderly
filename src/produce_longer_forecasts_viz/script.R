@@ -168,22 +168,6 @@ augm_data <- map(
   }
 )
 
-pred_plots <- map_depth(
-  augm_data, 2, function(df_list) {
-    if (nrow(df_list[["pred"]]) == 0) return(NULL)
-    all_forecasts_calendar(
-      df_list[["obs_local"]], df_list[["pred"]], date_breaks,
-      date_labels, forecast_week, xmin
-    ) + theme(legend.title = element_blank())
-  }
-)
-
-reff_plots <- map_depth(
-  augm_data, 2, function(df_list) {
-    if (nrow(df_list[["reff"]]) == 0) return(NULL)
-    reff_weekly_plot(df_list[["reff"]], df_list[["weekly_rt"]])
-  }
-)
 
 main_text_countries <- c(
   "Brazil", "India", "Italy", "South_Africa",
@@ -268,14 +252,15 @@ stacked_plots <- imap(
       geom_point(
         data = obs, aes(date, y, col = color), alpha = 0.3
       ) +
-      scale_fill_identity(breaks = c("#009E73", "#000000")) +
+      scale_fill_identity(
+        breaks = c("#009E73", "#000000"),
+        labels = scales::parse_format()(c(deparse(bquote("Forecasts/"~R^S)), bquote(R^{curr}))),
+        guide = guide_legend(order = 2)
+      ) +
       scale_color_identity(
-        breaks = c('#666666', '#009E73', '#000000'),
-        labels = c(
-          "Observed deaths",
-          scales::parse_format()(c(deparse(bquote("Forecasts/"~R^S)), bquote(R^{curr})))
-        ),
-        guide = "legend"
+        breaks = '#666666',
+        labels = "Observed deaths",
+        guide = guide_legend(order = 1)
       ) +
       geom_hline(
         data = data.frame(var = "rt", y = 1), aes(yintercept = y),
