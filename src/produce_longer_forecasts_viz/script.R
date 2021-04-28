@@ -184,145 +184,155 @@ reff_plots <- map_depth(
   }
 )
 
+main_text_countries <- c(
+  "Brazil", "India", "Italy", "South_Africa",
+  "Turkey", "United_States_of_America"
+)
+names(main_text_countries) <- c(
+  "Brazil", "India", "Italy", "South Africa",
+  "Turkey", "USA"
+)
 
-with_dates <- map(
-  countries,
-  function(country) {
-    p1_list <- pred_plots[[country]]
-    p2_list <- reff_plots[[country]]
-    ##p3_list <- ps_plots[[country]]
-    map(
-      seq_along(p1_list),
-      function(index) {
-        message(country)
-        message(index)
-        p1 <- p1_list[[index]]
-        p2 <- p2_list[[index]]
-        if (is.null(p1) | is.null(p2)) return(NULL)
-        ##p3 <- p3_list[[index]]
-        p <- (p1 + p2 + plot_layout(ncol = 1))
-
-        p <- p &
-          theme_minimal() +
-          theme(
-            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-            axis.title.x = element_blank(),
-            axis.title.y = element_text(size = 6),
-            legend.position = "none",
-        axis.text.y = element_text(size = 6)
-        )
-        ## This is only to check that the dates are correctly aligned
-        outfile <- glue("figures/{country}_{index}_check.png")
-        ##ggsave(outfile, p)
-        p
-      }
+stacked_vars <- map(
+  main_text_countries, function(country) {
+    pred <- augm_data[[country]][[1]][["pred"]]
+    rsat <- augm_data[[country]][[1]][["reff"]]
+    rweekly <- augm_data[[country]][[1]][["weekly_rt"]]
+    rsat <- select(
+      rsat, forecast_date = forecast_week, date,
+      ymin = `2.5%`, y = `50%`, ymax = `97.5%`
     )
+
+    rweekly <- select(
+      rweekly, forecast_date,
+      date, ymin = `2.5%`, y = `50%`, ymax = `97.5%`
+    )
+
+    pred <- select(
+      pred, forecast_date = forecast_week, date,
+      ymin = `2.5%`, y = `50%`, ymax = `97.5%`
+    )
+
+
+    rsat$var <- "rt"
+    rweekly$var <- "rt"
+    pred$var <- "forecasts"
+
+    rsat$fill <- "#009E73"
+    rsat$color <- rsat$fill
+
+    pred$fill <- "#009E73"
+    pred$color <- pred$fill
+
+    rweekly$fill <- "#000000"
+    rweekly$color <- rsat$fill
+
+
+    list(x = rbind(rsat, pred), rweekly = rweekly)
   }
 )
 
 
-file_format <- ".tiff"
 
-main_text_countries <- c(
-  "Brazil", "India", "Italy", "South_Africa", "Turkey",
-  "United_States_of_America"
+stacked_plots <- imap(
+  main_text_countries,
+  function(country, name) {
+    obs <- augm_data[[country]][[1]][["obs_local"]]
+    obs <- select(obs, date = dates, y = deaths)
+    obs$var <- "forecasts"
+    obs$color <- "#666666"
+
+    x <- stacked_vars[[name]][["x"]]
+    rweekly <- stacked_vars[[name]][["rweekly"]]
+
+    p <- ggplot(x) +
+      geom_line(aes(date, y, group = forecast_date, col = color)) +
+      geom_ribbon(
+        aes(
+          date, ymin = ymin, ymax = ymax,
+          group = forecast_date, fill = fill
+        ), alpha = 0.3
+      ) +
+      geom_ribbon(
+        data = rweekly,
+        aes(
+          date, ymin = ymin, ymax = ymax,
+          group = forecast_date, fill = fill
+        ), alpha = 0.3
+      ) +
+      geom_point(
+        data = obs, aes(date, y, col = color), alpha = 0.3
+      ) +
+      scale_fill_identity(breaks = c("#009E73", "#000000")) +
+      scale_color_identity(
+        breaks = c('#666666', '#009E73', '#000000'),
+        labels = c("Observed deaths",
+                   "Forecasts (median and 95% CrI)",
+                   "Rt (median and 95% CrI)"),
+        guide = "legend"
+      ) +
+      geom_hline(
+        data = data.frame(var = "rt", y = 1), aes(yintercept = y),
+        linetype = "dashed", col = "red"
+      ) +
+      facet_wrap(
+        ~var, nrow = 2, scales = "free_y",
+        strip.position = "left",
+        labeller = as_labeller(
+          c(forecasts = "Daily Deaths", rt = "Rt")
+        )
+      )  +
+      scale_x_date(
+        date_breaks = date_breaks, date_labels = date_labels,
+        limits = date_limits
+      ) +
+        expand_limits(y = 0) +
+      ggtitle(name) +
+      theme_manuscript() +
+      theme(
+        legend.position = "top",
+        legend.title = element_blank(),
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()
+      )
+    p
+ }
 )
 
-### Intricate assempbly of main text plot
-### column 1
-legend <- get_legend(
-  pred_plots[["Brazil"]][[1]] + theme(legend.box = "horizontal")
+legend <- cowplot::get_legend(stacked_plots[[1]] + theme(legend.box = "horizontal"))
+
+nolegend_plots <- imap(
+  stacked_plots, function(p, index) {
+    p <- p + theme(legend.position = "none")
+    if (index %in% c("Brazil", "India", "Italy")) {
+      p <- p + theme(axis.text.x = element_blank())
+    } else {
+      p <- p + theme(axis.text.x = element_text(angle = 90))
+    }
+    if (!index %in% c("Brazil", "South Africa")) {
+      message("Getting rid of axis title ", index)
+      p <- p + theme(strip.text = element_blank())
+    }
+    p
+  }
 )
 
-p11 <- pred_plots[["Brazil"]][[1]] +
-  ggtitle("Brazil") +
-  theme(axis.text.x = element_blank())
-
-p21 <- reff_plots[["Brazil"]][[1]]
-
-p12 <- pred_plots[["India"]][[1]] + ggtitle("India") +
-    theme(axis.text.x = element_blank())
-p22 <- reff_plots[["India"]][[1]]
-
-p13 <- pred_plots[["Italy"]][[1]] + ggtitle("Italy") +
-    theme(axis.text.x = element_blank())
-p23 <- reff_plots[["Italy"]][[1]]
-
-p14 <- pred_plots[["South_Africa"]][[1]] + ggtitle("South Africa") +
-    theme(axis.text.x = element_blank())
-
-p24 <- reff_plots[["South_Africa"]][[1]]
-
-p15 <- pred_plots[["Turkey"]][[1]] + ggtitle("Turkey") +
-    theme(axis.text.x = element_blank())
-p25 <- reff_plots[["Turkey"]][[1]]
-
-p16 <- pred_plots[["United_States_of_America"]][[1]] +
-  ggtitle("USA") +   theme(axis.text.x = element_blank())
-p26 <- reff_plots[["United_States_of_America"]][[1]]
-
-label1 <- textGrob("Daily deaths", rot = 90, gp = gpar(fontsize = 7))
-label2 <- textGrob(
-  "Reproduction Number", rot = 90, gp = gpar(fontsize = 7)
+pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2)
+final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
+ggsave(
+  "1col_main_long_forecasts.png", final,
+  width = 7.45, height = 8.7,
+  units = "in"
 )
 
-top <- p11 + p12 + p13 +
-  plot_layout(ncol = 3, nrow = 1) &
-  theme_minimal() &
-  theme(
-    text = element_text(size = 6), axis.text.x = element_blank(),
-    legend.position = "none", axis.title = element_blank(),
-    plot.margin = margin(0, 0, 0, 0, "pt")
-  )
+ggsave(
+  "1col_main_long_forecasts.pdf", final,
+  width = 7.45, height = 8.7,
+  units = "in"
+)
 
-bottom <- (p21 + p22 + p23) +
-  plot_layout(ncol = 3, nrow = 1) &
-  theme_minimal() +
-  theme(
-    text = element_text(size = 6),
-    axis.title = element_blank(), legend.position = "none",
-    axis.text.x = element_blank(),
-    plot.margin = margin(0, 0, 0, 0, "pt")
-  )
 
-top <- wrap_elements(label1) + wrap_elements(top) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
 
-bottom <- wrap_elements(label2) + wrap_elements(bottom) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
 
-ptop <- cowplot::plot_grid(legend, top, bottom,
-                        rel_heights = c(0.1, 1, 0.6), nrow = 3)
-
-top <- p14 + p15 + p16 +
-  plot_layout(ncol = 3, nrow = 1) &
-  theme_minimal() &
-  theme(
-    text = element_text(size = 6),
-    axis.text.x = element_blank(), legend.position = "none",
-    axis.title = element_blank(),
-    plot.margin = margin(0, 0, 0, 0, "pt")
-  )
-
-bottom <- (p24 + p25 + p26) +
-  plot_layout(ncol = 3, nrow = 1) &
-  theme_minimal() +
-  theme(
-    text = element_text(size = 6),
-    axis.title = element_blank(), legend.position = "none",
-    axis.text.x = element_text(angle = 90),
-    plot.margin = margin(0, 0, 0, 0, "pt")
-  )
-
-top <- wrap_elements(label1) + wrap_elements(top) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-bottom <- wrap_elements(label2) + wrap_elements(bottom) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-pbottom <- cowplot::plot_grid(top, bottom, rel_heights = c(1, 0.6),
-                              nrow = 2)
-
-final <- cowplot::plot_grid(ptop, pbottom, nrow = 2)
-
-rincewind::save_multiple(final, "figures/main_long_forecasts.tiff")
