@@ -7,6 +7,7 @@ nweeks_projected <- 4
 ####
 date_labels <- "%d - %b"
 date_breaks <- "4 weeks"
+date_limits <- c(as.Date("2020-03-01"), NA)
 exclude <- readRDS("exclude.rds")
 
 all_deaths <- readRDS("latest_deaths_wide_no_filter.rds")
@@ -225,7 +226,7 @@ stacked_vars <- map(
     pred$color <- pred$fill
 
     rweekly$fill <- "#000000"
-    rweekly$color <- rsat$fill
+    rweekly$color <- rweekly$fill
 
 
     list(x = rbind(rsat, pred), rweekly = rweekly)
@@ -253,6 +254,10 @@ stacked_plots <- imap(
           group = forecast_date, fill = fill
         ), alpha = 0.3
       ) +
+      geom_line(
+        data = rweekly,
+        aes(date, y, group = forecast_date, col = color)
+      ) +
       geom_ribbon(
         data = rweekly,
         aes(
@@ -266,9 +271,10 @@ stacked_plots <- imap(
       scale_fill_identity(breaks = c("#009E73", "#000000")) +
       scale_color_identity(
         breaks = c('#666666', '#009E73', '#000000'),
-        labels = c("Observed deaths",
-                   "Forecasts (median and 95% CrI)",
-                   "Rt (median and 95% CrI)"),
+        labels = c(
+          "Observed deaths",
+          scales::parse_format()(c(deparse(bquote("Forecasts/"~R^S)), bquote(R^{curr})))
+        ),
         guide = "legend"
       ) +
       geom_hline(

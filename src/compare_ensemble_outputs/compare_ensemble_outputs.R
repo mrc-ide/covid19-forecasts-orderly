@@ -111,7 +111,7 @@ stacked_plots <- imap(
     obs$color <- "#666666"
 
     x <- stacked_vars[[country]]
-    x$fill <- ifelse(x$var == 'forecasts', '#009E73', '#56B4E9')
+    x$fill <- '#009E73'
     x$color <- x$fill
 
     p <- ggplot(x) +
@@ -125,12 +125,15 @@ stacked_plots <- imap(
       geom_point(
         data = obs, aes(date, y, col = color), alpha = 0.3
       ) +
-      scale_fill_identity(breaks = c("#009E73", "#56B4E9")) +
+      scale_fill_identity(
+        breaks = "#009E73",
+        labels = scales::parse_format()(c(bquote("Forecasts/"~R^{curr}))),
+        guide = guide_legend(order = 2)
+      ) +
       scale_color_identity(
-        breaks = c('#666666', '#009E73', '#56B4E9'),
-        labels = c("Observed deaths", "Forecasts (median and 95% CrI)",
-                   "Rt (median and 95% CrI)"),
-        guide = "legend"
+        breaks = '#666666',
+        labels = "Observed deaths",
+        guide = guide_legend(order = 1)
       ) +
       geom_hline(
         data = data.frame(var = "rt", y = 1), aes(yintercept = y),
@@ -181,7 +184,7 @@ nolegend_plots <- imap(
 )
 
 pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2)
-final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1), labels = "auto")
+final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
 ggsave(
   "1col_main_short_forecasts.png", final,
   width = 7.45, height = 8.7,
