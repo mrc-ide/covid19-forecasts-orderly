@@ -165,6 +165,13 @@ stacked_plots <- imap(
  }
 )
 
+iwalk(
+  stacked_plots,
+  function(p, i) {
+    rincewind::save_multiple(p, glue::glue("figures/{i}.png"))
+  }
+)
+
 legend <- cowplot::get_legend(stacked_plots[[1]] + theme(legend.box = "horizontal"))
 
 nolegend_plots <- imap(
