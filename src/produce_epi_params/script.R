@@ -232,33 +232,3 @@ pfinal <- wrap_elements(label) + wrap_elements(p) +
   plot_layout(ncol = 2, widths = c(0.03, 1))
 
 rincewind::save_multiple(pfinal, "ifr_per_country.tiff")
-#####################################################################
-#####################################################################
-############### CFR Parameters
-############### No population weighting
-#####################################################################
-#####################################################################
-
-CFR_esti <- c(1.38, 1.23, 1.53)/100
-# function to get parameters
-f1 <- function(shape){
-  res <- c(
-    shape[1]/(shape[1]+ shape[2]),
-    qbeta(.025, shape1 = shape[1], shape2 = shape[2]),
-    qbeta(.975, shape1 = shape[1], shape2 = shape[2])
-  )
-  res <- sum((res*100-CFR_esti*100)^2)
-  return(res)
-}
-
-n <- 5e2
-Shape1 <- rep(seq(300,350,length.out = n), each = n)
-Shape2 <- rep(seq(22500,23500,length.out = n), n)
-res <- rep(NA, n * n)
-for (i in 1:(n * n)){
-  res[i] <- f1(c(Shape1[i],Shape2[i]))
-}
-f <- which(res == min(res))
-shape <- c(Shape1[f], Shape2[f])
-
-saveRDS(shape, "cfr_shape_params.rds")
