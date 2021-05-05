@@ -1,15 +1,17 @@
 remote:
   real:
-    driver: orderly.sharepoint::orderly_remote_sharepoint
+    driver: orderlyweb::orderlyweb_remote
     args:
-      url: https://imperiallondon.sharepoint.com
-      site: covid19-short-term-forecasts-WP
-      path: Shared Documents/orderly-real-outputs
-  testing:
-    driver: orderly.sharepoint::orderly_remote_sharepoint
-    args:
-      url: https://imperiallondon.sharepoint.com
-      site: covid19-short-term-forecasts-WP
-      path: Shared Documents/orderly/orderly-testing-outputs
+      host: covid19-forecasts.dide.ic.ac.uk
+      port: 443
+      token: $VAULT_AUTH_GITHUB_TOKEN
+    primary: true
+    master_only: true
 
-minimum_orderly_version: 1.1.32
+fields:
+  requester:
+    required: false
+  author:
+    required: false
+
+minimum_orderly_version: 1.1.36
