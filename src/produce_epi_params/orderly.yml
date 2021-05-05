@@ -5,7 +5,6 @@ artefacts:
     description: Projections
     filenames:
       - si_distrs.rds
-      - cfr_shape_params.rds
       - population_weighted_ifr.rds
       - pop_wtd_ifr_qntls.rds
 
