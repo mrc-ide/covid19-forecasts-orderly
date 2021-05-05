@@ -21,6 +21,9 @@ weeks <- seq(
   by = "7 days"
 )
 
+facet_labels <- c("1" = "1-week ahead", "2" = "2-weeks ahead",
+                  "3" = "3-weeks ahead", "4" = "4-weeks ahead")
+
 by_strategy <- split(weekly_error, weekly_error$strategy)
 
 plots <-  map(
@@ -51,7 +54,10 @@ rel_mae_plots <- map(
         out <- augment_data(local, weeks, 2)
         long_relative_error_heatmap(
           out[[1]], high1 = 1, high2 = 3, out$x_labels, out$y_labels) +
-          facet_wrap(~week_of_projection, nrow = 2)
+          facet_wrap(
+            ~week_of_projection, nrow = 2,
+            labeller = as_labeller(facet_labels)
+          )
       }
     )
   }
@@ -62,7 +68,7 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/rel_mae_{strategy}_{page}.tiff")
+      outfile <- glue("figures/rel_mae_{strategy}_{page}.pdf")
       rincewind::save_multiple(p, outfile)
     }
     )
@@ -81,7 +87,10 @@ prop_50_plots <- map(
         df <- out$df
         df$fill <- df$prop_in_50
         prop_in_ci_heatmap(df, out$x_labels, out$y_labels) +
-          facet_wrap(~week_of_projection, nrow = 2)
+          facet_wrap(
+            ~week_of_projection, nrow = 2,
+            labeller = as_labeller(facet_labels)
+          )
       }
     )
   }
@@ -92,7 +101,7 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(1, 2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/prop_50_{strategy}_{page}.tiff")
+      outfile <- glue("figures/prop_50_{strategy}_{page}.pdf")
       rincewind::save_multiple(p, outfile, one_col = FALSE)
     }
     )
@@ -112,7 +121,10 @@ prop_95_plots <- map(
         df <- out$df
         df$fill <- df$prop_in_975
         prop_in_ci_heatmap(df, out$x_labels, out$y_labels, "95%") +
-          facet_wrap(~week_of_projection, nrow = 2)
+          facet_wrap(
+            ~week_of_projection, nrow = 2,
+            labeller = as_labeller(facet_labels)
+          )
       }
     )
   }
@@ -123,7 +135,7 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(1, 2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/prop_95_{strategy}_{page}.tiff")
+      outfile <- glue("figures/prop_95_{strategy}_{page}.pdf")
       rincewind::save_multiple(p, outfile, one_col = FALSE)
     }
     )
@@ -158,7 +170,7 @@ by_week_plots <- map(
 )
 
 iwalk(by_week_plots, function(p, strategy) {
-  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}.tiff")
+  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}.pdf")
   rincewind::save_multiple(p, outfile)
 })
 

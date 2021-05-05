@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2020-03-15"))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2020-07-19"))
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
 set.seed(1)
 dir.create("figures")
@@ -23,7 +23,8 @@ exclude <- readRDS("exclude.rds")
 countries <- purrr::set_names(model_input$Country, model_input$Country)
 countries <- countries[! countries %in% exclude]
 
-# week_ending <- d$week_ending
+## To make the schematic
+# countries <- list(Peru = "Peru")
 
 ## checked that this gives the same result as Pierre's function
 
@@ -478,7 +479,43 @@ purrr::iwalk(
 
     ggsave(glue::glue("figures/projections_{cntry}.png"), p)
   }
-)
+  )
+
+## cntry <- "Peru"
+## deaths <- ascertainr_deaths[, c("dates", cntry)]
+## obs <- ascertainr_cases[, c("dates", cntry)]
+## pred <- pred_qntls[[cntry]]
+## obs$Peru <- slider::slide_dbl(obs$Peru, mean, .before = 3, .after = 3)
+## deaths$Peru <- slider::slide_dbl(deaths$Peru, mean, .before = 3, .after = 3)
+## ## Just so we can see it properly in the schematic
+## pred$`.upper` <- pred$`.upper` + 500
+## pred$`val` <- pred$`val` + 250
+## deaths$Peru <- deaths$Peru + 250
+
+
+
+## wtd <- data.frame(
+##   dates = obs$dates + 10,
+##   y = weighted_cases[["Peru"]]
+## )
+
+## ggplot() +
+##   geom_line(data = obs, aes(dates, Peru)) +
+##   geom_line(data = deaths, aes(dates, Peru)) +
+##   geom_line(
+##     data = wtd, aes(dates, y),
+##     col = "blue", size = 1.1, linetype = "dashed"
+##   ) +
+##   geom_line(
+##     data = pred, aes(dates, val), col = "red"
+##   ) +
+##   geom_ribbon(
+##     data = pred[pred$`.width` == 0.95, ],
+##     aes(dates, ymin = .lower, ymax = .upper),
+##     fill = "red", alpha = 0.3
+##   ) +
+##   scale_x_date(limits = c(as.Date("2020-05-01") , NA)) +
+##   theme_classic()
 
 ######################################################################
 ######################################################################

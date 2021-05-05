@@ -37,90 +37,94 @@ obs_deaths <- obs_deaths[obs_deaths$dates >= earliest, ]
 ######################################################################
 ###### Model 1 jointly estimates Rt and incidence prior to window
 ## Generate dummy data
-dates <- seq(from = earliest,  to = now_minus_tau, by = "1 day")
-i0_est <- map_dfr(
-  1:1000,
-  function(index) {
-    lambda <- floor(
-      slider::slide_dbl(obs_deaths$deaths, mean, .before = 3, .after = 3)
-    )
-    deaths <- rpois(length(dates), lambda)
-    deaths <- floor(
-      slider::slide_dbl(deaths, mean, .before = 3, .after = 3)
-    )
-    data.frame(dates = dates, deaths = deaths)
-  }, .id = "sim"
+x <- head(obs_deaths, 10)
+incid <- rincewind::ts_to_incid(x, "dates", "deaths")
+si <- readRDS("si_distrs.rds")[[2]]
+
+proj <- project(
+  incid, 1.5, si, model = "poisson", n_sim = 100, n_days = 35
 )
+proj <- data.frame(proj, check.names = FALSE)
+## First 14 days, back-calculated incidence
+back <- filter(proj, dates < proj$dates[15]) %>%
+  tidyr::gather(sim, val, -dates)
+## Next few days obs incidence
+obs <- proj[, c("dates", "sim_1")]
+obs <- filter(
+  obs, dates >= proj$dates[15], dates < proj$dates[30]
+) %>%   tidyr::gather(sim, val, -dates)
+## future
+future <- filter(proj, dates >= proj$dates[30]) %>%
+  tidyr::gather(sim, val, -dates)
 
-i0_est <- group_by(i0_est, dates) %>%
-  summarise(
-    val = quantile(deaths, probs = seq(0.1, 1, 0.05)),
-    probs = seq(0.1, 1, 0.05)
-  )
-i0_est <- ungroup(i0_est)
+qlow <- function(x) quantile(x, 0.025)
+qhigh <- function(x) quantile(x, 0.975)
+qmed <- function(x) quantile(x, 0.5)
 
+back <- group_by(back, dates) %>%
+  summarise_if(
+    is.numeric, list(low = qlow, med = qmed, high = qhigh)
+  ) %>% ungroup()
 
-dates_future <- seq(from = now, length.out = 21, by = "1 day")
-i0_future <- map_dfr(
-  1:1000,
-  function(index) {
-    deaths <- rpois(
-      length(dates_future),
-      seq(185, length.out = length(dates_future), by = 1)
-    )
-    deaths <- floor(
-      slider::slide_dbl(deaths, mean, .before = 3, .after = 3)
-    )
-    data.frame(dates = dates_future, deaths = deaths)
-  }, .id = "sim"
-)
-
-i0_future <- group_by(i0_future, dates) %>%
-  summarise(
-    val = quantile(deaths, probs = seq(0.1, 1, 0.05)),
-    probs = seq(0.1, 1, 0.05)
+future <- group_by(future, dates) %>%
+  summarise_if(
+    is.numeric, list(low = qlow, med = qmed, high = qhigh)
   ) %>% ungroup()
 
 
-obs_deaths$seen <- ifelse(obs_deaths$dates < now_minus_tau, 0.3, 1)
-obs_deaths$label <- ""
-obs_deaths$label[obs_deaths$dates == now] <- "Now"
-
-obs <- ggplot(obs_deaths) +
-  geom_line(aes(dates, deaths, alpha = seen), size = linesize) +
-  scale_x_date(limits = c(earliest, latest)) +
-  scale_alpha_identity() +
+pobs <- ggplot() +
+  geom_ribbon(
+    data = back,
+    aes(dates, ymin = low, ymax = high),
+    alpha = 0.3, fill = "red"
+  ) +
+  geom_line(
+    data = back, aes(dates, med),
+    alpha = 0.3, fill = "red"
+  ) +
+  geom_point(data = obs, aes(dates, val)) +
+  geom_ribbon(
+    data = future,
+    aes(dates, ymin = low, ymax = high),
+    alpha = 0.3, fill = "red"
+  ) +
+  geom_line(
+    data = future, aes(dates, med),
+    alpha = 0.3, fill = "red"
+  ) +
   xlab("Time") +
   ylab("Daily Deaths") +
   theme_schematic()
-  ##theme(axis.title = element_text(size = fontsize))
 
-obs_m1 <- obs +
+
+
+
+
+obs_m1 <- pobs +
   geom_vline(
-    xintercept = c(as.numeric(now), as.numeric(now_minus_tau)),
+    xintercept = c(
+      as.numeric(min(obs$dates)) - 0.5,
+      as.numeric(max(obs$dates)) + 0.5
+    ),
     linetype = "dashed", size = linesize
   )
 
 
 m1_right <- obs_m1 +
-  geom_line(
-    data = i0_est, aes(dates, val, group = probs),
-    linetype = "dashed", alpha = 0.4, col = "red"
-  ) +
-  geom_line(
-    data = i0_future, aes(dates, val, group = probs),
-    linetype = "dashed", alpha = 0.4, col = "red"
-  ) +
   geom_segment(
     aes(
-      x = as.Date("2020-04-01"), xend = now_minus_tau, y = 144,
-      yend = 144
+      x = min(obs$dates) - 0.5,
+      xend = max(obs$dates) + 0.5,
+      y = 110,
+      yend = 110
     ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
   geom_segment(
     aes(
-      x = earliest, xend = now, y = 195, yend = 195
+      x = min(proj$dates),
+      xend = min(obs$dates) - 1,
+      y = 105, yend = 105
     ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) + coord_trans(clip = "off")
@@ -165,6 +169,8 @@ wtd_cases <- data.frame(
   wtd_cases = wtd_cases[, 1]
 )
 
+
+
 m3_left <- ggplot() +
   geom_line(
     data = obs_deaths, aes(dates, deaths), size = linesize
@@ -180,13 +186,17 @@ m3_left <- ggplot() +
   xlab("Time") + ylab("Daily Cases/Deaths") +
   theme_schematic()
 
+idx <- which.max(wtd_cases$wtd_cases)
+xmax <- wtd_cases$dates[idx]
+ymax <- wtd_cases$wtd_cases[idx]
+
 m3_right <- m3_left +
   geom_line(
     data = wtd_cases, aes(dates, wtd_cases), col = "#6666ff",
     linetype = "longdash", size = linesize
   ) +
   geom_line(
-    data = i0_future, aes(dates, val, group = probs),
+    data = future, aes(dates, med),
     linetype = "dashed", alpha = 0.4, col = "red"
   ) +
   geom_segment(
@@ -214,7 +224,7 @@ m3_right <- m3_left +
     size = linesize
   ) +
   geom_text(
-    aes(now - 5, 260, label = "rho"), parse = TRUE,
+    aes(xmax, ymax / 2 , label = "rho"), parse = TRUE,
     size = 6, fontface = "bold"
   ) +
   geom_text(
@@ -229,9 +239,30 @@ cowplot::save_plot("m3_right.pdf", m3_right)
 ################# Model 2 ############################################
 ######################################################################
 ######################################################################
+x <- tail(obs_deaths[obs_deaths$dates <= latest, ], 7)
+incid <- rincewind::ts_to_incid(x, "dates", "Peru")
+si <- readRDS("si_distrs.rds")[[2]]
+
+proj <- project(
+  incid, 1.2, si[-1], model = "poisson", n_sim = 1000, n_days = 15
+)
+
+future <- data.frame(proj, check.names = FALSE) %>%
+  tidyr::gather(sim, val, -dates) %>%
+  group_by(dates) %>%
+  summarise_if(
+    is.numeric,
+    list(low = qlow, med = qmed, high = qhigh)
+  ) %>% ungroup()
+
+
+future <- mutate_if(future, is.numeric, ~ . + 30)
 
 m2_left <- ggplot() +
-  geom_line(data = obs_deaths, aes(dates, deaths), size = linesize) +
+  geom_line(
+    data = obs_deaths, aes(dates, deaths),
+    size = linesize
+  ) +
   geom_vline(
     xintercept = as.numeric(now), linetype = "dashed", size = linesize
   ) +
@@ -247,28 +278,38 @@ m2_right <- m2_left +
   geom_segment(
     aes(
       x = now_minus_tau, xend = now, y = 209, yend = 209
-    ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    ),
+    arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
   geom_segment(
     aes(x = now - 15, xend = now, y = 90, yend = 90),
-    linetype = "dotted", size = linesize
+    arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
   ) +
   geom_segment(
     aes(x = now - 20, xend = now, y = 100, yend = 100),
-    linetype = "dotted", size = linesize
+    arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
   ) +
   geom_segment(
     aes(x = now - 25, xend = now, y = 110, yend = 110),
-    linetype = "dotted", size = linesize
+    arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
   ) +
   geom_segment(
     aes(x = now - 35, xend = now, y = 120, yend = 120),
-    linetype = "dotted", size = linesize
+    arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
+    size = linesize
+  ) +
+  geom_ribbon(
+    data = future,
+    aes(dates, ymin = low, ymax = high),
+    alpha = 0.3, fill = "red"
   ) +
   geom_line(
-    data = i0_future, aes(dates, val, group = probs),
-    linetype = "dashed", alpha = 0.4, col = "red"
+    data = future, aes(dates, med),
+    alpha = 0.3, col = "red", size = linesize
   ) +
   ## So that text is not chopped off
   coord_trans(clip = "off")

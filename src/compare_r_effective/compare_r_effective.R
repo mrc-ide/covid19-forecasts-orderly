@@ -21,6 +21,7 @@ compare_phase <- left_join(
   weekly_rt, reff_qntls, by = c("country", "date"),
   suffix = c("_weekly", "_eff")
 )
+compare_phase <- distinct(compare_phase)
 ## The only NAs should now be from the first three weeks
 ## for which we did not produce medium-term forecasts.
 ## x <- compare_phase[! complete.cases(compare_phase), ]
@@ -35,6 +36,14 @@ compare_phase$week_of_forecast <- case_when(
   14 < compare_phase$day & compare_phase$day <= 21 ~ "Week 3",
   21 < compare_phase$day  ~ "Week 4"
 )
+######################################################################
+########### Total number of country weeks
+########### That is, n_countries X n_weeks
+########### 78 * 2177 = 169806
+country_weeks <- group_by(weekly_rt, country) %>%
+  summarise(nweeks = length(unique(forecast_date))) %>%
+  ungroup() %>%
+  arrange(nweeks)
 
 ######################################################################
 ####### Option 1: Compare the phase assigned #########################
@@ -47,6 +56,27 @@ out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
   adorn_percentages(denominator = "row") %>%
   adorn_pct_formatting(digits = 2) %>%
   bind_rows(.id = "Week of forecast")
+
+## Summary across all weeks for which we have medium-term
+## forecasts
+y <- tabyl(x, phase_eff, phase_weekly) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns()
+
+
+misclassified <- filter(x, phase_weekly != phase_eff)
+
+misclassified <- tabyl(
+  misclassified, phase_eff, phase_weekly
+) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_ns()
+
+### stargazer::stargazer(misclassified, summary=FALSE, rownames = FALSE)
 
 out <- gather(out, phase_eff, label, decline:unclear)
 out$val <- readr::parse_number(out$label)

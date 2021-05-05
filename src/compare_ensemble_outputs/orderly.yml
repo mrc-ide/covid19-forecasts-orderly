@@ -3,7 +3,7 @@ artefacts:
   data:
     description: Forecasts collated
     filenames:
-    - 1col_main_short_forecasts.tiff
+    - 1col_main_short_forecasts.png
 
 parameters:
 - use_si

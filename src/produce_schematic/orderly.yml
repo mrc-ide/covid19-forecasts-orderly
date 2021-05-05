@@ -10,6 +10,8 @@ packages:
 - gghalves
 - cowplot
 - ggrepel
+- projections
+- incidence
 
 artefacts:
   staticgraph:
@@ -24,3 +26,7 @@ depends:
       id: latest(parameter:week_ending == "2020-07-19")
       use:
          DeCa_Std_results.rds: DeCa_latest.rds
+  - produce_epi_params:
+      id: latest
+      use:
+        si_distrs.rds: si_distrs.rds

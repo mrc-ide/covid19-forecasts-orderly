@@ -13,7 +13,54 @@ ps$country <- forcats::fct_reorder(ps$country, ps$`50%`, max)
 ##ps$underreporting <- as.numeric(ps$underreporting)
 ps <- ps[ps$underreporting < 51, ]
 
-p <- ggplot(ps, aes(underreporting, country, fill = `50%`)) +
+## What level of undereporting must one assume
+## for p_s to below a given value
+ps_levels <- c(0.50, 0.70, 0.80)
+x <- split(ps, ps$country) %>%
+  map_dfr(
+    function(df) {
+      df <- arrange(df, underreporting)
+      map_dfr(
+        ps_levels, function(l) {
+          idx <- which(df$`50%` < l)[1]
+          if (length(idx) == 0) return(NULL)
+          out <- df[idx, ]
+          out$ps_level <- glue::glue(" < ", l)
+          out
+        }
+      )
+    }
+  )
+x <- na.omit(x)
+x$country <- nice_country_name(x$country)
+x <- country_to_continent(x, "country")
+x <- arrange(x, ps_level, underreporting)
+x$country <- factor(
+  x$country, levels = unique(x$country),
+  ordered = TRUE
+)
+
+palt <- ggplot(x) +
+  geom_point(
+    aes(underreporting, country, col = factor(ps_level))
+  ) +
+  labs(color = "Median proportion susceptible") +
+  xlab("Underreporting of deaths") +
+  theme_minimal() +
+  theme(
+    axis.title.y = element_blank(),
+    legend.position = "top"
+  ) +
+  facet_wrap(~continent, nrow = 2, scales = "free_y")
+
+ggsave(
+  "ps_less80_underreporting.png", palt
+)
+
+
+p <- ggplot(
+  ps, aes(underreporting, country, fill = `50%`)
+) +
   geom_tile() +
   scale_fill_distiller(
     palette = "Greens",
@@ -33,7 +80,7 @@ p <- ggplot(ps, aes(underreporting, country, fill = `50%`)) +
     legend.key.width = unit(2, "lines"),
     axis.title.y = element_blank()
   ) +
-  xlab("Underreporting")
+  xlab("Underreporting of deaths")
 
 ##save_multiple(p, "proportion_susceptible_underreporting.tiff")
 ggsave("proportion_susceptible_underreporting.png", p)

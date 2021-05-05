@@ -1,7 +1,6 @@
-week_ending <- "2020-08-16"
-indir <- dirname(covid_19_path)
-raw_data <- readRDS(
-  glue::glue("{indir}/model_inputs/data_{week_ending}.rds")
+raw_data <- list(
+  si_mean = c(4.80, 6.48),
+  si_std = c(2.70, 3.83)
 )
 
 si_distrs <- map2(
