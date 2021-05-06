@@ -183,3 +183,13 @@ writeLines(
   sprintf("orderly run prepare_ecdc_data week_ending=%s", weeks),
   "runs-20210428.sh"
 )
+## baseline error only needs observed data
+writeLines(
+  sprintf("orderly run produce_baseline_error week_starting=2020-02-22 latest_week=%s", weeks),
+  "runs-20210428.sh"
+)
+
+writeLines(
+  sprintf("orderly run run_rti0 short_run=FALSE week_ending=%s", weeks),
+  "runs-20210428.sh"
+)
