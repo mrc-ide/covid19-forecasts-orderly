@@ -16,7 +16,6 @@ packages:
   - purrr
   - readxl
   - ggplot2
-  - ggtext
   - glue
   - forcats
   - janitor
