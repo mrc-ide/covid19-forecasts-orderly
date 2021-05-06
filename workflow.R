@@ -177,3 +177,9 @@ orderly_run(
   use_draft = "newer", parameters = list(use_si = "si_2")
 )
 
+
+## To run on server, one-off scripts
+writeLines(
+  sprintf("orderly run report parameter=%s", weeks),
+  "runs-20210428.sh"
+)
