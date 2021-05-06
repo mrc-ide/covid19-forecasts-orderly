@@ -180,6 +180,6 @@ orderly_run(
 
 ## To run on server, one-off scripts
 writeLines(
-  sprintf("orderly run report parameter=%s", weeks),
+  sprintf("orderly run prepare_ecdc_data parameter=%s", weeks),
   "runs-20210428.sh"
 )
