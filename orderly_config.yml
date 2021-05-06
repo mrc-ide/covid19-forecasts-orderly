@@ -14,4 +14,4 @@ fields:
   author:
     required: false
 
-minimum_orderly_version: 1.1.36
+minimum_orderly_version: 1.2.36
