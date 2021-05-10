@@ -214,6 +214,30 @@ raw_data$Deaths[raw_data$DateRep == "2021-04-22" & raw_data$province_state == "M
 raw_data$Deaths[raw_data$DateRep == "2021-04-24" & raw_data$province_state == "Michigan"] <- 126 - 91
 
 
+##########################################
+## Corrections for 10 May 2021 report ##
+##########################################
+
+## Michigan
+## Ongoing death certificate review taking place. Backlogged deaths have been added since 1 April 2021.
+## Source1: COVID-19 Forecast Hub email from Jeremy Ratcliff.
+## Source2: https://www.michigan.gov/coronavirus/0,9753,7-406-98163_98173---,00.html
+
+raw_data$Deaths[raw_data$DateRep == "2021-04-27" & raw_data$province_state == "Michigan"] <- 117 - 48
+raw_data$Deaths[raw_data$DateRep == "2021-04-29" & raw_data$province_state == "Michigan"] <- 116 - 78
+raw_data$Deaths[raw_data$DateRep == "2021-05-01" & raw_data$province_state == "Michigan"] <- 140 - 98
+raw_data$Deaths[raw_data$DateRep == "2021-05-04" & raw_data$province_state == "Michigan"] <- 133 - 51
+raw_data$Deaths[raw_data$DateRep == "2021-05-06" & raw_data$province_state == "Michigan"] <- 123 - 92
+raw_data$Deaths[raw_data$DateRep == "2021-05-08" & raw_data$province_state == "Michigan"] <- 124 - 83
+
+
+## Montana
+## All deaths reported on 7 May were backlogged.
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff (10/5/21).
+
+raw_data$Deaths[raw_data$DateRep == "2021-05-07" & raw_data$province_state == "Montana"] <- 0
+
+
 ## Save wide versions of death and case data
 
 by_state_deaths_all <- dplyr::select(
