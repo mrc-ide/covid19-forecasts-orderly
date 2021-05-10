@@ -7,6 +7,9 @@ remote:
       token: $VAULT_AUTH_GITHUB_TOKEN
     primary: true
     master_only: true
+    
+vault:
+  addr: https://vault.dide.ic.ac.uk:8200
 
 fields:
   requester:
