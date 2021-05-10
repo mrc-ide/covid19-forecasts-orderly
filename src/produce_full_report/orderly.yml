@@ -33,6 +33,10 @@ depends:
     id: latest(parameter:week_ending == week_ending)
     use:
       figs/epicurve_pline.png: epicurve_pline.png
+  produce_maps:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      figs/rt_phase_si_2.png: rt_phase_si_2.png
   DeCa_model:
     id: latest(parameter:week_ending == week_ending)
     use:
