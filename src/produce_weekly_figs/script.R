@@ -9,10 +9,10 @@ dates_forecast <- seq(
 
 ## exclude some states due to one-off data anomalies or because they only report weekly
 exclude <- c(# "Montana",
-             "Missouri", # numbers reported on 13/14th April inconsistent with trend
+             # "Missouri", # numbers reported on 13/14th April inconsistent with trend
              "Ohio",  
-             "Oklahoma", # report weekly
-             "Oregon" # anomalously high reported deaths on 6 April
+             "Oklahoma" #, # report weekly
+             # "Oregon" # anomalously high reported deaths on 6 April
              )
 
 
