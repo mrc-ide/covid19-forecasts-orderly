@@ -9,14 +9,16 @@ packages:
   - knitr
   - DT
   - dplyr
+  - ggplot2
+  - ggpubr
 
 resources:
   - produce_full_report.Rmd
   - bibliography.bib
   - annual-review-of-statistics-and-its-application.csl
   - case_ascertainment_methods.Rmd
-  - figs/
   - other_files/
+  - us-figs/
 
 parameters:
   - week_ending
@@ -44,4 +46,18 @@ depends:
   prepare_ecdc_data:
     id: latest
     use:
-      exclude.rds: exclude.rds         
+      exclude.rds: exclude.rds
+  produce_visualisations:
+    id: latest
+    use:
+      ensmbl_pred_Europe_si_2.Rmd: ensmbl_pred_Europe_si_2.Rmd
+      ensmbl_pred_Asia_si_2.Rmd: ensmbl_pred_Asia_si_2.Rmd
+      ensmbl_pred_Africa_si_2.Rmd: ensmbl_pred_Africa_si_2.Rmd
+      ensmbl_pred_North America_si_2.Rmd: ensmbl_pred_North America_si_2.Rmd
+      ensmbl_pred_South America_si_2.Rmd: ensmbl_pred_South America_si_2.Rmd
+      indvdl_pred_Europe_si_2.Rmd: indvdl_pred_Europe_si_2.Rmd
+      indvdl_pred_Asia_si_2.Rmd: indvdl_pred_Asia_si_2.Rmd
+      indvdl_pred_Africa_si_2.Rmd: indvdl_pred_Africa_si_2.Rmd
+      indvdl_pred_North America_si_2.Rmd: indvdl_pred_North America_si_2.Rmd
+      indvdl_pred_South America_si_2.Rmd: indvdl_pred_South America_si_2.Rmd
+      figures.zip: figures.zip

@@ -24,15 +24,11 @@ bibliography: bibliography.bib
 ---
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-library(ggplot2)
-library(ggpubr)
-library(dplyr)
-library(DT)
 ##source("params.R")
 knitr::opts_chunk$set(echo = FALSE,  fig.width = 21, fig.height = 15,
   warning = FALSE, messages = FALSE
  )
-
+utils::unzip('figures.zip', list = FALSE, overwrite = TRUE)
 ```
 
 # Introduction 
@@ -134,19 +130,7 @@ always hold.
 
 ### Europe
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_1.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_2.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_3.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_4.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_5.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_6.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_7.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_8.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_9.png")
-knitr::include_graphics("figs/ensmbl_pred_Europe_si_2_page_10.png")
-
+```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_Europe_si_2.Rmd')}
 ```
 *Figure 2.* Reported daily deaths and current forecasts based on the ensemble
 model. For each European country with active transmission (see Methods),
@@ -160,15 +144,7 @@ in the section Methods.
 
 ### Asia
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_1.png")
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_2.png")
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_3.png")
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_4.png")
-knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_5.png")
-##knitr::include_graphics("figs/ensmbl_pred_Asia_si_2_page_6.png")
-
+```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_Asia_si_2.Rmd')}
 ```
 *Figure 3.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Asia with active transmission (see Methods),
@@ -180,13 +156,7 @@ and 3, see Methods).
 
 ### Africa
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_1.png")
-knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_2.png")
-knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_3.png")
-knitr::include_graphics("figs/ensmbl_pred_Africa_si_2_page_4.png")
-
+```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_Africa_si_2.Rmd')}
 ```
 *Figure 4.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in Africa with active transmission (see Methods),
@@ -199,17 +169,7 @@ and 3, see Methods).
 ### North & Central America
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_1.png")
-
-```
-
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_2.png")
-knitr::include_graphics("figs/ensmbl_pred_North America_si_2_page_3.png")
-
+```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_North America_si_2.Rmd')}
 ```
 *Figure 5.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in North & Central America with active transmission (see Methods),
@@ -222,10 +182,7 @@ and 3, see Methods).
 ### South America
 
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/ensmbl_pred_South America_si_2_page_1.png")
-knitr::include_graphics("figs/ensmbl_pred_South America_si_2_page_2.png")
-knitr::include_graphics("figs/ensmbl_pred_South America_si_2_page_3.png")
+```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_South America_si_2.Rmd')}
 ```
 *Figure 6.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in South America with active transmission (see Methods),
@@ -240,20 +197,20 @@ and 3, see Methods).
 ### USA (sub-national)
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/us_ensemble_forecasts_1.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_2.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_3.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_4.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_5.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_6.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_7.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_8.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_9.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_10.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_11.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_12.png")
-knitr::include_graphics("figs/us_ensemble_forecasts_13.png")
-##knitr::include_graphics("figs/us_ensemble_forecasts_14.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_1.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_2.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_3.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_4.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_5.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_6.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_7.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_8.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_9.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_10.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_11.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_12.png")
+knitr::include_graphics("us-figs/us_ensemble_forecasts_13.png")
+##knitr::include_graphics("us-figs/us_ensemble_forecasts_14.png")
 
 
 ```
@@ -359,8 +316,8 @@ in the section Methods.
 ### USA (sub-national)
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-knitr::include_graphics("figs/us_ensemble_rt_box_2.png")
-knitr::include_graphics("figs/us_ensemble_rt_box_1.png")
+knitr::include_graphics("us-figs/us_ensemble_rt_box_2.png")
+knitr::include_graphics("us-figs/us_ensemble_rt_box_1.png")
 
 
 ```
@@ -560,43 +517,7 @@ built from Models 1, 2 and 3.
 
 #### Europe
 
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_1.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_2.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_3.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_4.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_5.png")
-```
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_6.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_7.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_8.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_9.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Europe_si_2_page_10.png")
+```{r, code = readLines('indvdl_pred_Europe_si_2.Rmd')}
 ```
 *Figure 15.* Projections (7-day ahead) for the week starting 10^th^ May 2021 from individual models
 for each country in Europe with active transmission (see Methods). 
@@ -607,24 +528,7 @@ CrI of the projections.
 #### Asia
 
 
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_1.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_2.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_3.png")
-```
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_4.png")
-```
-
-```{r}
-knitr::include_graphics("figs/Asia_si_2_page_5.png")
-##knitr::include_graphics("figs/Asia_si_2_page_6.png")
+```{r, code = readLines('indvdl_pred_Asia_si_2.Rmd')}
 ```
 *Figure 16.* Projections (7-day ahead) for the week starting 31^st^
 January 2021 from individual models (Models 1, 2
@@ -633,15 +537,11 @@ Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
 
+
 #### Africa
 
 
-```{r}
-
-knitr::include_graphics("figs/Africa_si_2_page_1.png")
-knitr::include_graphics("figs/Africa_si_2_page_2.png")
-knitr::include_graphics("figs/Africa_si_2_page_3.png")
-knitr::include_graphics("figs/Africa_si_2_page_4.png")
+```{r, code = readLines('indvdl_pred_Africa_si_2.Rmd')}
 ```
 *Figure 17.* Projections (7-day ahead) for the week starting 10^th^ May 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
@@ -652,12 +552,7 @@ CrI of the projections.
 
 #### North & Central America
 
-```{r}
-knitr::include_graphics("figs/North America_si_2_page_1.png")
-```
-```{r}
-knitr::include_graphics("figs/North America_si_2_page_2.png")
-knitr::include_graphics("figs/North America_si_2_page_3.png")
+```{r, code = readLines('indvdl_pred_North America_si_2.Rmd')}
 ```
 *Figure 18.* Projections (7-day ahead) for the week starting 10^th^ May 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
@@ -668,10 +563,7 @@ CrI of the projections.
 
 #### South America
 
-```{r}
-knitr::include_graphics("figs/South America_si_2_page_1.png")
-knitr::include_graphics("figs/South America_si_2_page_2.png")
-knitr::include_graphics("figs/South America_si_2_page_3.png")
+```{r, code = readLines('indvdl_pred_South America_si_2.Rmd')}
 ```
 *Figure 19.* Projections (7-day ahead) for the week starting
 10^th^ May 2021 from individual models (Models 1, 2
@@ -684,20 +576,20 @@ CrI of the projections.
 #### USA (sub-national)
 
 ```{r}
-knitr::include_graphics("figs/us_indvdl_forecasts_1.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_2.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_3.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_4.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_5.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_6.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_7.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_8.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_9.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_10.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_11.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_12.png")
-knitr::include_graphics("figs/us_indvdl_forecasts_13.png")
-##knitr::include_graphics("figs/us_indvdl_forecasts_14.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_1.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_2.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_3.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_4.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_5.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_6.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_7.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_8.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_9.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_10.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_11.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_12.png")
+knitr::include_graphics("us-figs/us_indvdl_forecasts_13.png")
+##knitr::include_graphics("us-figs/us_indvdl_forecasts_14.png")
 
 
 ```
@@ -766,8 +658,8 @@ active transmission (see Methods) for the week starting
 #### USA (sub-national)
 
 ```{r}
-knitr::include_graphics("figs/us_indvdl_rt_line_2.png")
-knitr::include_graphics("figs/us_indvdl_rt_line_1.png")
+knitr::include_graphics("us-figs/us_indvdl_rt_line_2.png")
+knitr::include_graphics("us-figs/us_indvdl_rt_line_1.png")
 
 ```
 *Figure 26.* Estimates of $R_t$ from individual models for each
