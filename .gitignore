@@ -16,6 +16,7 @@ orderly_envir.yml
 *.png
 *gadm36*
 *.R#
+.orderly/*
 
 src/produce_full_report/jquery.easyPaginate-master/
 
