@@ -119,7 +119,7 @@ iwalk(
 
         ## Also write in file for this continent
         rmdfile <- glue("ensmbl_pred_{continent_si}.Rmd")
-        if (! file.exists(rmdfile)) file.create(outfile)
+        if (! file.exists(rmdfile)) file.create(rmdfile)
         line <- glue("include_graphics(\"{outfile}\")")
         write(line, file = rmdfile, append = TRUE)
       }
@@ -206,7 +206,7 @@ iwalk(
           unit = fig_size$units
         )
         rmdfile <- glue("indvdl_pred_{model_si}.Rmd")
-        if (! file.exists(rmdfile)) file.create(outfile)
+        if (! file.exists(rmdfile)) file.create(rmdfile)
         line <- glue("include_graphics(\"{outfile}\")")
         write(line, file = rmdfile, append = TRUE)
 
