@@ -4,20 +4,17 @@ artefacts:
   - staticgraph:
       description: Various graphs
       filenames:
-        - ensmbl_pred_Europe_si_2_page_1.png
-        - ensmbl_pred_Europe_si_2_page_2.png
-        - ensmbl_pred_Europe_si_2_page_3.png
-        - ensmbl_pred_Europe_si_2_page_4.png
-        - ensmbl_pred_Asia_si_2_page_1.png
-        - ensmbl_pred_Asia_si_2_page_2.png
-        - ensmbl_pred_Africa_si_2_page_1.png
-        - ensmbl_pred_North America_si_2_page_1.png
-        - ensmbl_pred_South America_si_2_page_1.png
-        - ensemble_rt_Europe_si_2_boxplot.png
-        - ensemble_rt_Asia_si_2_boxplot.png
-        - ensemble_rt_Africa_si_2_boxplot.png
-        - ensemble_rt_North America_si_2_boxplot.png
-        - ensemble_rt_South America_si_2_boxplot.png
+        - ensmbl_pred_Europe_si_2.Rmd
+        - ensmbl_pred_Asia_si_2.Rmd
+        - ensmbl_pred_Africa_si_2.Rmd
+        - ensmbl_pred_North America_si_2.Rmd
+        - ensmbl_pred_South America_si_2.Rmd
+        - indvdl_pred_Europe_si_2.Rmd
+        - indvdl_pred_Asia_si_2.Rmd
+        - indvdl_pred_Africa_si_2.Rmd
+        - indvdl_pred_North America_si_2.Rmd
+        - indvdl_pred_South America_si_2.Rmd        
+        - figures.zip
 
 packages:
   - ggplot2
@@ -27,6 +24,7 @@ packages:
   - purrr
   - gridExtra
   - purrr
+  - glue
 
 sources:
   - R/utils.R

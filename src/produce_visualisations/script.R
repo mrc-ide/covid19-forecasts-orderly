@@ -1,11 +1,12 @@
 ## List of continents-coutnry mapping
+dir.create("figs")
 continents <- readr::read_csv("country_continent.csv")
 continents <- janitor::clean_names(continents)
 
 
 ## Observations in tall format
 model_input <- readRDS("model_input.rds")
-obs_deaths <- model_input [["D_active_transmission"]]
+obs_deaths <- model_input[["D_active_transmission"]]
 obs_deaths <- tidyr::gather(obs_deaths, country, deaths, -dates)
 
 obs_deaths <- add_continents(obs_deaths, continents)
@@ -106,7 +107,7 @@ iwalk(
     iwalk(
       ps,
       function(p, page_num) {
-        outfile <- glue::glue("ensmbl_pred_{continent_si}_page_{page_num}.png")
+        outfile <- glue("figs/ensmbl_pred_{continent_si}_page_{page_num}.png")
         message("Saving ", outfile)
         ggsave(
           filename = outfile,
@@ -115,6 +116,12 @@ iwalk(
           height = fig_size$fig.height,
           unit = fig_size$units
         )
+
+        ## Also write in file for this continent
+        rmdfile <- glue("ensmbl_pred_{continent_si}.Rmd")
+        if (! file.exists(rmdfile)) file.create(outfile)
+        line <- glue("include_graphics(\"{outfile}\")")
+        write(line, file = rmdfile, append = TRUE)
       }
     )
   }
@@ -189,7 +196,7 @@ iwalk(
       ps,
       function(p, page_num) {
         if (page_num > 1) p <- p + theme(legend.position = "none")
-        outfile <- glue::glue("{model_si}_page_{page_num}.png")
+        outfile <- glue::glue("figs/{model_si}_page_{page_num}.png")
         message("Saving ", outfile)
         ggsave(
           filename = outfile,
@@ -198,6 +205,11 @@ iwalk(
           height = fig_size$fig.height,
           unit = fig_size$units
         )
+        rmdfile <- glue("indvdl_pred_{model_si}.Rmd")
+        if (! file.exists(rmdfile)) file.create(outfile)
+        line <- glue("include_graphics(\"{outfile}\")")
+        write(line, file = rmdfile, append = TRUE)
+
       }
     )
   }
@@ -228,7 +240,7 @@ plots <- split(
 iwalk(
   plots,
   function(p, date_si) {
-    outfile <- glue::glue("ensemble_rt_{date_si}_boxplot.png")
+    outfile <- glue::glue("figs/ensemble_rt_{date_si}_boxplot.png")
     message(outfile)
     ggsave(
       filename = outfile,
@@ -281,7 +293,7 @@ plots <- split(
 iwalk(
   plots,
   function(p, model_si) {
-    outfile <- glue::glue("rt_{model_si}.png")
+    outfile <- glue("figs/rt_{model_si}.png")
     ggsave(
       filename = outfile,
       plot = p,
@@ -291,3 +303,6 @@ iwalk(
     )
   }
 )
+
+files2zip <- dir('figs', full.names = TRUE)
+utils::zip(zipfile = 'figures.zip', files = files2zip)
