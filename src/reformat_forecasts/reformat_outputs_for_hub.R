@@ -48,11 +48,13 @@ by_model <- split(forecasts, forecasts$model) %>%
     )
   })
 
-
+## Copy directly into target folder
+outdir <- "/Users/sbhatia/GitWorkArea/covid19-forecast-hub-europe/data-processed/Imperial"
 iwalk(
   by_model, function(x, model) {
     model <- stringr::str_remove(model, "_Std_results")
     readr::write_csv(x, glue::glue("{prefix}-{model}.csv"))
+    readr::write_csv(x, glue::glue("{outdir}-{model}/{prefix}-{model}.csv"))
   }
 )
 
@@ -63,3 +65,4 @@ iwalk(
     readr::write_csv(x, glue::glue("{model}.csv"))
   }
 )
+

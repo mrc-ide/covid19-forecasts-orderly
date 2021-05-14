@@ -23,8 +23,6 @@ packages:
   - ggplot2
   - ggpubr
   - ggforce
-  - plotly
-  - htmlwidgets
   - dplyr
   - purrr
   - gridExtra
