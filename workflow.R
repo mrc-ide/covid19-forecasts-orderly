@@ -15,7 +15,7 @@ a <- orderly_run(
 orderly_commit(a)
 
 model_input <- readRDS(
-  glue("archive/prepare_jhu_data/{a}/latest_model_input.rds")
+  glue("draft/prepare_jhu_data/{a}/latest_model_input.rds")
 )
 locations <- model_input$State
 
@@ -26,7 +26,7 @@ locations <- model_input$State
 walk(
   locations, function(location) {
     a <- orderly_run(
-      "src/run_jointlyr",
+      "src/us_run_jointlyr",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
@@ -38,7 +38,7 @@ walk(
 walk(
   locations, function(location) {
     a <- orderly_run(
-      "src/run_apeestim/",
+      "src/us_run_apeestim/",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
@@ -50,7 +50,7 @@ walk(
 walk(
   locations, function(location) {
     a <- orderly_run(
-      "src/run_deca/",
+      "src/us_run_deca/",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
@@ -62,7 +62,7 @@ walk(
 walk(
   locations, function(location) {
     a <- orderly_run(
-      "src/produce_ensemble_outputs",
+      "src/us_produce_ensemble_outputs",
       parameters = list(
         location = location, week_ending = as.character(week)
       ), use_draft = "newer"
@@ -75,13 +75,13 @@ walk(
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
 
 a <- orderly_run(
-  "collate_weekly_outputs", use_draft = "newer",
+  "src/us_collate_weekly_outputs", use_draft = "newer",
   parameters = list(week_ending = week),
   )
 orderly_commit(a)
 
 a <- orderly_run(
-  "produce_weekly_figs", parameters = list(week_ending = week),
+  "src/us_produce_weekly_figs", parameters = list(week_ending = week),
   use_draft = "newer"
 )
 orderly_commit(a)

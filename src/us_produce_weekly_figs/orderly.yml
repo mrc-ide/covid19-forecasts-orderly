@@ -18,7 +18,7 @@ artefacts:
       - figures/us_ensemble_forecasts_1.png
 
 depends:
-  collate_weekly_outputs:
+  us_collate_weekly_outputs:
     id: latest(parameter:week_ending == week_ending)
     use:
       us_ensemble_rt_qntls.rds: us_ensemble_rt_qntls.rds

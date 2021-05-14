@@ -28,7 +28,7 @@ queries <- glue(
 d1 <- map2(
   locations, queries, function(location, query) {
     y <- list(
-      run_jointlyr = list(
+      us_run_jointlyr = list(
         id = query,
         use =  list(
           "rti0_model_outputs.rds"
@@ -36,10 +36,10 @@ d1 <- map2(
       )
     )
     infiles <- map(
-       y$run_jointlyr$use,
+       y$us_run_jointlyr$use,
        function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
     )
-    names(y$run_jointlyr$use) <- glue("{infiles}_{location}.rds")
+    names(y$us_run_jointlyr$use) <- glue("{infiles}_{location}.rds")
   y
  }
 )
@@ -47,16 +47,16 @@ d1 <- map2(
 d2 <- map2(
   locations, queries, function(location, query) {
     y <- list(
-      run_deca = list(
+      us_run_deca = list(
         id = query,
         use =  list("DeCa_latest.rds")
       )
     )
     infiles <- map(
-       y$run_deca$use,
+       y$us_run_deca$use,
        function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
     )
-    names(y$run_deca$use) <- glue("{infiles}_{location}.rds")
+    names(y$us_run_deca$use) <- glue("{infiles}_{location}.rds")
   y
  }
 )
@@ -65,16 +65,16 @@ d2 <- map2(
 d3 <- map2(
   locations, queries, function(location, query) {
     y <- list(
-      run_apeestim = list(
+      us_run_apeestim = list(
         id = query,
         use =  list("apeestim_model_outputs.rds")
       )
     )
     infiles <- map(
-       y$run_apeestim$use,
+       y$us_run_apeestim$use,
        function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
     )
-    names(y$run_apeestim$use) <- glue("{infiles}_{location}.rds")
+    names(y$us_run_apeestim$use) <- glue("{infiles}_{location}.rds")
   y
  }
 )
@@ -82,7 +82,7 @@ d3 <- map2(
 d4 <- map2(
   locations, queries, function(location, query) {
     y <- list(
-      produce_ensemble_outputs = list(
+      us_produce_ensemble_outputs = list(
         id = query,
         use =  list(
           "ensemble_model_rt.rds",
@@ -91,10 +91,10 @@ d4 <- map2(
       )
     )
     infiles <- map(
-       y$produce_ensemble_outputs$use,
+       y$us_produce_ensemble_outputs$use,
        function(x) strsplit(x, split = ".", fixed = TRUE)[[1]][1]
     )
-    names(y$produce_ensemble_outputs$use) <- glue("{infiles}_{location}.rds")
+    names(y$us_produce_ensemble_outputs$use) <- glue("{infiles}_{location}.rds")
   y
  }
 )
@@ -102,7 +102,7 @@ d4 <- map2(
 x$depends <- c(d1, d2, d3, d4)
 
 con <- file(
-  here::here("src/collate_weekly_outputs/orderly.yml"), "w"
+  here::here("src/us_collate_weekly_outputs/orderly.yml"), "w"
 )
 yaml::write_yaml(x, con)
 close(con)
