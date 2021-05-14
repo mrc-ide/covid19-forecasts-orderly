@@ -1,0 +1,67 @@
+script: produce_figures.R
+
+packages:
+- purrr
+- ggplot2
+- rincewind
+- slider
+- cowplot
+- glue
+
+parameters: location
+
+artefacts:
+  staticgraph:
+    description: Collated forecasts
+    filenames: si_2.pdf
+
+depends:
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-01-03" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-01-03.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-01-10" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-01-10.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-01-17" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-01-17.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-01-24" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-01-24.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-01-31" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-01-31.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-02-07" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-02-07.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-02-14" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-02-14.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-02-21" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-02-21.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-02-28" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-02-28.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-03-07" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-03-07.rds: ensemble_daily_qntls.rds
+  - us_produce_ensemble_outputs:
+      id: latest(parameter:week_ending == "2021-03-14" && parameter:location == location)
+      use:
+        ensemble_daily_qntls_2021-03-14.rds: ensemble_daily_qntls.rds
+  - prepare_jhu_data:
+      id: latest(parameter:week_ending == "2021-03-14")
+      use:
+        model_input.rds: latest_deaths_wide_no_filter.rds
+        

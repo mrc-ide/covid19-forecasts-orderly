@@ -24,5 +24,3 @@ src/produce_full_report/produce_full_report_files/
 backup/db/
 
 *.tiff
-
-*.pdf
