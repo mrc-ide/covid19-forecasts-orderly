@@ -25,15 +25,15 @@ sources:
   - R/utils.R
 
 depends:
-  - run_jointlyr:
+  - us_run_jointlyr:
       id: latest(parameter:week_ending == week_ending && parameter:location == location)
       use:
          RtI0_Std_results.rds: rti0_model_outputs.rds
-  - run_apeestim:
+  - us_run_apeestim:
       id: latest(parameter:week_ending == week_ending && parameter:location == location)
       use:
          sbkp_Std_results.rds: apeestim_model_outputs.rds
-  - run_deca:
+  - us_run_deca:
       id: latest(parameter:week_ending == week_ending && parameter:location == location)
       use:
          DeCa_Std_results.rds: DeCa_latest.rds
