@@ -3,6 +3,7 @@ script: run_jointlyr.R
 parameters:
   - week_ending
   - location
+  - short_run  
   
 packages:
   - purrr

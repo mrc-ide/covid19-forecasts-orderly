@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona"))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona", short_run = TRUE))
 set.seed(1)
 
 model_input <- readRDS("model_input.rds")
@@ -8,26 +8,28 @@ incid <- tail(deaths_to_use[[location]], 10)
 
 si_distrs <- readRDS("si_distrs.rds")
 
+if (short_run) {
+  iter <- 100
+  chains <- 1
+} else {
+  iter <- 20000
+  chains <- 2
+}
 
 ## Generate stan fit
 fit <- purrr::map(
   si_distrs,
   function(si_distr) {
     jointlyr::jointly_estimate(10, 100, incid, si_distr = si_distr,
-                               seed = 42, iter = 20000, chains = 2)
+                               seed = 42, iter = iter, chains = chains)
   }
 )
 
 ## Extract values from stan fit
-samples <- purrr::map(
-  fit,
-  function(fit) {
-    rstan::extract(fit)
-  }
-)
+samples <- map(fit, rstan::extract(fit))
 
 ## Take 1000 samples of foi and draw 10 samples from Poisson distribution
-projections <- purrr::map(
+projections <- map(
   samples,
   function(samples) {
     foi <- samples[["incid_est"]][, 111:117]
