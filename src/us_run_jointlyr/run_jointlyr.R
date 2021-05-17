@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona", short_run = TRUE))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-05-16", location = "Alabama", short_run = TRUE))
 set.seed(1)
 
 model_input <- readRDS("model_input.rds")
@@ -26,11 +26,11 @@ fit <- purrr::map(
 )
 
 ## Extract values from stan fit
-samples <- map(fit, rstan::extract(fit))
+all_samples <- map(fit, rstan::extract)
 
 ## Take 1000 samples of foi and draw 10 samples from Poisson distribution
 projections <- map(
-  samples,
+  all_samples,
   function(samples) {
     foi <- samples[["incid_est"]][, 111:117]
     index <- sample(nrow(foi), 1000, replace = FALSE)
@@ -45,8 +45,8 @@ projections <- map(
 
 
 ## Take 10000 samples from r_est estimates to be consistent with other model outputs
-r_est <- purrr::map(
-  samples,
+r_est <- map(
+  all_samples,
   function(samples) {
     r_est <- samples[['rt_est']]
     sample(r_est, 10000, replace = FALSE)
