@@ -79,7 +79,7 @@ source("orderly-helper-scripts/dependancies_collate_weekly.R")
 a <- orderly_run(
   "src/us_collate_weekly_outputs", use_draft = "newer",
   parameters = list(week_ending = week),
-  )
+)
 orderly_commit(a)
 
 a <- orderly_run(

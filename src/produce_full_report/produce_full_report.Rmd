@@ -33,13 +33,13 @@ utils::unzip('figures.zip', list = FALSE, overwrite = TRUE)
 
 # Introduction 
 
-As of 10^th^ May 2021,  more than
-157,000,000 cases of COVID-19 have been reported across the world, 
-with more than 3,280,000 deaths [@whositrep]. 
+As of 17^th^ May 2021,  more than
+162,000,000 cases of COVID-19 have been reported across the world, 
+with more than 3,360,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 
-for 73 countries with active transmission. We also present similar results for
+for 72 countries with active transmission. We also present similar results for
 states/territories of the United States of America with ongoing
 transmission. 
 
@@ -87,8 +87,8 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week starting 10^th^ May 2021, 
-the number of countries/regions included based on these thresholds is 73.
+two weeks. For the week starting 17^th^ May 2021, 
+the number of countries/regions included based on these thresholds is 72.
 
 * We forecast the number of potential deaths as the reporting of deaths
 is likely to be more reliable and stable over time than the reporting 
@@ -333,7 +333,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-10^th^ May 2021, the observed number of deaths in the week before,
+17^th^ May 2021, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -519,7 +519,7 @@ built from Models 1, 2 and 3.
 
 ```{r, code = readLines('indvdl_pred_Europe_si_2.Rmd')}
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 10^th^ May 2021 from individual models
+*Figure 15.* Projections (7-day ahead) for the week starting 17^th^ May 2021 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -543,7 +543,7 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_Africa_si_2.Rmd')}
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 10^th^ May 2021 from individual models (Models 1, 2
+*Figure 17.* Projections (7-day ahead) for the week starting 17^th^ May 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -554,7 +554,7 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_North America_si_2.Rmd')}
 ```
-*Figure 18.* Projections (7-day ahead) for the week starting 10^th^ May 2021 from individual models (Models 1, 2
+*Figure 18.* Projections (7-day ahead) for the week starting 17^th^ May 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -566,7 +566,7 @@ CrI of the projections.
 ```{r, code = readLines('indvdl_pred_South America_si_2.Rmd')}
 ```
 *Figure 19.* Projections (7-day ahead) for the week starting
-10^th^ May 2021 from individual models (Models 1, 2
+17^th^ May 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -594,7 +594,7 @@ knitr::include_graphics("us-figs/us_indvdl_forecasts_13.png")
 
 ```
 *Figure 20.* Projections (7-day ahead) for the week starting
-10^th^ May 2021 from individual models (Models 1, 2
+17^th^ May 2021 from individual models (Models 1, 2
 and 3) for each state/territory in the United States of America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -609,7 +609,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-10^th^ May 2021. 
+17^th^ May 2021. 
 
 
 #### Asia
@@ -621,7 +621,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 22.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-10^th^ May 2021. 
+17^th^ May 2021. 
 
 
 #### Africa
@@ -632,7 +632,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-10^th^ May 2021. 
+17^th^ May 2021. 
 
 
 #### North & Central America
@@ -643,7 +643,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 24.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-10^th^ May 2021. 
+17^th^ May 2021. 
 
 #### South America
 
@@ -653,7 +653,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 25.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-10^th^ May 2021. 
+17^th^ May 2021. 
 
 #### USA (sub-national)
 
@@ -665,7 +665,7 @@ knitr::include_graphics("us-figs/us_indvdl_rt_line_1.png")
 *Figure 26.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-10^th^ May 2021. 
+17^th^ May 2021. 
 
 ## Code 
 
