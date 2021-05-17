@@ -238,6 +238,19 @@ raw_data$Deaths[raw_data$DateRep == "2021-05-08" & raw_data$province_state == "M
 raw_data$Deaths[raw_data$DateRep == "2021-05-07" & raw_data$province_state == "Montana"] <- 0
 
 
+##########################################
+## Corrections for 17 May 2021 report ##
+##########################################
+
+## Michigan
+## Ongoing death certificate review taking place. Backlogged deaths have been added since 1 April 2021.
+## Source1: COVID-19 Forecast Hub email from Jeremy Ratcliff.
+## Source2: https://www.michigan.gov/coronavirus/0,9753,7-406-98163_98173---,00.html
+
+raw_data$Deaths[raw_data$DateRep == "2021-05-11" & raw_data$province_state == "Michigan"] <- 102 - 32
+raw_data$Deaths[raw_data$DateRep == "2021-05-13" & raw_data$province_state == "Michigan"] <- 118 - 73
+raw_data$Deaths[raw_data$DateRep == "2021-05-15" & raw_data$province_state == "Michigan"] <- 112 - 91
+
 ## Save wide versions of death and case data
 
 by_state_deaths_all <- dplyr::select(
