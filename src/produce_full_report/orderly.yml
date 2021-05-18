@@ -48,7 +48,7 @@ depends:
     use:
       exclude.rds: exclude.rds
   produce_visualisations:
-    id: latest
+    id: latest(parameter:week_ending == week_ending)
     use:
       ensmbl_pred_Europe_si_2.Rmd: ensmbl_pred_Europe_si_2.Rmd
       ensmbl_pred_Asia_si_2.Rmd: ensmbl_pred_Asia_si_2.Rmd

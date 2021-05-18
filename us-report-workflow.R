@@ -2,7 +2,7 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-05-09"
+week <- "2021-05-16"
 
 a <- orderly_run("download_jhu_data")
 orderly_commit(a)
@@ -15,7 +15,7 @@ a <- orderly_run(
 orderly_commit(a)
 
 model_input <- readRDS(
-  glue("draft/prepare_jhu_data/{a}/latest_model_input.rds")
+  glue("archive/prepare_jhu_data/{a}/latest_model_input.rds")
 )
 locations <- model_input$State
 
@@ -28,7 +28,9 @@ walk(
     a <- orderly_run(
       "src/us_run_jointlyr",
       parameters = list(
-        location = location, week_ending = as.character(week)
+        location = location,
+        week_ending = as.character(week),
+        short_run = FALSE
       ), use_draft = "newer"
     )
     orderly_commit(a)
@@ -77,7 +79,7 @@ source("orderly-helper-scripts/dependancies_collate_weekly.R")
 a <- orderly_run(
   "src/us_collate_weekly_outputs", use_draft = "newer",
   parameters = list(week_ending = week),
-  )
+)
 orderly_commit(a)
 
 a <- orderly_run(
