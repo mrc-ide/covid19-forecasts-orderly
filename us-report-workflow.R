@@ -87,3 +87,20 @@ a <- orderly_run(
   use_draft = "newer"
 )
 orderly_commit(a)
+
+
+### On the server
+writeLines(
+  sprintf("orderly run us_run_jointlyr short_run=FALSE week_ending=2021-05-23 location=%s", locations),
+  "us-runs-20210428.sh"
+)
+
+writeLines(
+  sprintf("orderly run us_run_apeestim week_ending=2021-05-23 location=%s", locations),
+  "us-runs-20210428.sh"
+)
+
+writeLines(
+  sprintf("orderly run us_run_deca week_ending=2021-05-23 location=%s", locations),
+  "us-runs-20210428.sh"
+)
