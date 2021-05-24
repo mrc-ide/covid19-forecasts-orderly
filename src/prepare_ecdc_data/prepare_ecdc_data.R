@@ -460,6 +460,23 @@ raw_data$Deaths[raw_data$DateRep == "2021-04-11" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2021-04-12" & raw_data$`Countries.and.territories` == "Armenia"] <- 18
 raw_data$Deaths[raw_data$DateRep == "2021-04-13" & raw_data$`Countries.and.territories` == "Armenia"] <- 22
 
+## 24th May, source worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-05-20" & raw_data$`Countries.and.territories` == "France"] <- 146
+raw_data$Deaths[raw_data$DateRep == "2021-05-21" & raw_data$`Countries.and.territories` == "France"] <- 138
+raw_data$Deaths[raw_data$DateRep == "2021-05-22" & raw_data$`Countries.and.territories` == "France"] <- 113
+raw_data$Deaths[raw_data$DateRep == "2021-05-23" & raw_data$`Countries.and.territories` == "France"] <- 70
+
+raw_data$Cases[raw_data$DateRep == "2021-05-20" & raw_data$`Countries.and.territories` == "France"] <- 17877
+raw_data$Cases[raw_data$DateRep == "2021-05-21" & raw_data$`Countries.and.territories` == "France"] <- 15415
+raw_data$Cases[raw_data$DateRep == "2021-05-22" & raw_data$`Countries.and.territories` == "France"] <- 12800
+raw_data$Cases[raw_data$DateRep == "2021-05-23" & raw_data$`Countries.and.territories` == "France"] <- 9704
+
+raw_data$Deaths[raw_data$DateRep == "2021-05-22" & raw_data$`Countries.and.territories` == "Sri_Lanka"] <- 43
+raw_data$Deaths[raw_data$DateRep == "2021-05-23" & raw_data$`Countries.and.territories` == "Sri_Lanka"] <- 46
+
+
+
+
 
 
 by_country_deaths_all <- dplyr::select(

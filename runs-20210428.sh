@@ -1,52 +1,7 @@
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-03-08
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-03-15
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-03-22
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-03-29
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-04-05
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-04-12
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-04-19
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-04-26
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-05-03
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-05-10
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-05-17
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-05-24
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-05-31
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-06-07
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-06-14
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-06-21
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-06-28
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-07-05
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-07-12
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-07-19
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-07-26
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-08-02
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-08-09
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-08-16
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-08-23
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-08-30
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-09-06
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-09-13
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-09-20
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-09-27
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-10-04
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-10-11
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-10-18
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-10-25
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-11-01
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-11-08
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-11-15
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-11-22
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-11-29
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-12-06
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-12-13
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-12-20
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2020-12-27
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-01-03
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-01-10
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-01-17
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-01-24
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-01-31
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-02-07
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-02-14
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-02-21
-orderly run produce_baseline_error week_starting=2020-02-22 latest_week=2021-02-28
+orderly run run_rti0 week_ending=2020-02-23 short_run=FALSE
+orderly run run_apeestim week_ending=2020-02-23
+orderly run DeCa_model week_ending=2020-02-23
+orderly run process_individual_models week_ending=2020-02-23
+orderly run produce_ensemble_outputs week_ending=2020-02-23
+orderly run format_model_outputs week_ending=2020-02-23
+orderly run produce_visualisations week_ending=2020-02-23
