@@ -536,6 +536,7 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
+  "Botswana",
   "Philippines", ## Erratic data
   "Kazakhstan",
   "Kyrgyzstan",
