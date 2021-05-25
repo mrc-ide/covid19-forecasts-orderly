@@ -2,7 +2,7 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-05-16"
+week <- "2021-05-23"
 
 a <- orderly_run("download_jhu_data")
 orderly_commit(a)
@@ -15,7 +15,7 @@ a <- orderly_run(
 orderly_commit(a)
 
 model_input <- readRDS(
-  glue("archive/prepare_jhu_data/{a}/latest_model_input.rds")
+  glue("archive/prepare_jhu_data/20210524-104823-7ee65c62/latest_model_input.rds")
 )
 locations <- model_input$State
 
@@ -87,3 +87,26 @@ a <- orderly_run(
   use_draft = "newer"
 )
 orderly_commit(a)
+
+
+### On the server
+cat(
+  sprintf("\n orderly run us_run_jointlyr short_run=FALSE week_ending=2021-05-23 location=\"%s\"", locations),
+  file = "us-runs.sh"
+)
+
+cat(
+  sprintf("\n orderly run us_run_apeestim week_ending=2021-05-23 location=\"%s\"", locations),
+  file = "us-runs.sh", append = TRUE
+)
+
+cat(
+  sprintf("\n orderly run us_run_deca week_ending=2021-05-23 location=\"%s\"", locations),
+  file = "us-runs.sh", append = TRUE
+)
+
+
+cat(
+  sprintf("\n orderly run us_produce_ensemble_outputs week_ending=2021-05-23 location=\"%s\"", locations),
+  file = "us-runs.sh", append = TRUE
+)
