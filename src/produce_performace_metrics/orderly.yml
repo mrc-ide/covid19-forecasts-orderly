@@ -21,7 +21,7 @@ depends:
 - run_rti0:
     id: latest(parameter:week_ending == week_ending)
     use:
-      RtI0_latest_output.rds.r: RtI0_latest_output.rds
+      RtI0_latest_output.rds: RtI0_latest_output.rds
 - DeCa_model:
     id: latest(parameter:week_ending == week_ending)
     use:
