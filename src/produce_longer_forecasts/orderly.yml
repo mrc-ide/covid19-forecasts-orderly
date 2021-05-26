@@ -1,6 +1,3 @@
-environment:
-  covid_19_path: COVID19_INPUT_PATH
-
 script: produce_longer_forecasts.R
 
 parameters:
