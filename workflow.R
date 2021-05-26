@@ -61,6 +61,11 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
     parameters = parameter, use_draft = use_draft
   )
   if (commit) orderly_commit(m1)
+
+  m2 <- orderly_run(
+    "produce_performace_metrics",
+    parameters = parameter, use_draft = use_draft
+  )
 }
 
 ## These functions have not been configured to pull in week-specific
