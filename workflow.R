@@ -57,7 +57,7 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   parameter <- list(week_ending = week, window = 1)
   m1 <- orderly_run(
-    "produce_performance_metrics_ensemble/",
+    "produce_performance_metrics_ensemble",
     parameters = parameter, use_draft = use_draft
   )
   if (commit) orderly_commit(m1)
