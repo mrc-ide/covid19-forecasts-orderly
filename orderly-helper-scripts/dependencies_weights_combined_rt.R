@@ -14,8 +14,12 @@ x <- list(
  )
 )
 
-
-week_starting <- as.Date("2020-03-08")
+args <- commandArgs(TRUE)
+week_ending <- as.Date(args)
+## We will combine at most 8 weeks of data
+week_starting <- max(
+  as.Date("2020-03-08"), as.Date(week_ending) - 8 * 7
+)
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"

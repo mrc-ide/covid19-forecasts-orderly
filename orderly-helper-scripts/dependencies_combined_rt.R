@@ -19,11 +19,18 @@ x <- list(
  sources =  "R/utils.R"
 )
 
-week_starting <- as.Date("2020-03-08")
+args <- commandArgs(TRUE)
+week_ending <- as.Date(args)
+## We will combine at most 8 weeks of data
+week_starting <- max(
+  as.Date("2020-03-08"), as.Date(week_ending) - 8 * 7
+)
 
 weeks_needed <- seq(
   from = week_starting, to = week_ending, by = "7 days"
 )
+
+
 ## Generate orderly.yml for collate_model_outputs
 ## In principle we could look all the way back to March when combining
 ## Rt estimates. However that doesn't make a lot of sense.

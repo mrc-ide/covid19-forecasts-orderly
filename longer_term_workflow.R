@@ -15,7 +15,7 @@ use_draft <- "newer"
 
 
 weeks <- seq(
-  from  = as.Date("2020-03-29"), to = as.Date("2020-11-29"),
+  from  = as.Date("2020-03-29"), to = as.Date("2021-03-01"),
   by = "7 days"
 )
 
@@ -41,10 +41,38 @@ for (week in weeks) {
   source("orderly-helper-scripts/dependencies_combined_rt.R")
   m1 <- orderly::orderly_run(
     "produce_combined_rt", parameters = parameter, use_draft = use_draft
-    )
+  )
 }
-  ##orderly::orderly_commit(m1)
-  ##orderly::orderly_push_archive(name = "produce_combined_rt", id = m1)
+
+## For the server create an R script.
+outfile <- "medium-term-forecasts.sh"
+for (week in weeks){
+  cat(
+    sprintf("\n Rscript orderly-helper-scripts/dependencies_weights_combined_rt.R %s", week),
+    file = outfile, append = TRUE
+  )
+  cat(
+    sprintf("\n orderly run produce_weights_combined_rt use_si = si_2 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+
+  cat(
+    sprintf("\n Rscript orderly-helper-scripts/dependencies_combined_rt.R %s", week),
+    file = outfile, append = TRUE
+  )
+  cat(
+    sprintf("\n orderly run produce_combined_rt use_si = si_2 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+
+  cat(
+    sprintf("\n orderly run produce_longer_forecasts use_si = si_2 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+
+}
+
+
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
