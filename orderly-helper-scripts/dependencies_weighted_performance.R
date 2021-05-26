@@ -3,7 +3,6 @@ dependencies_weighted_performance <- function(week) {
 
   x <- list(
     script = "produce_performace_metrics_ensb.R",
-    environment = list(covid_19_path = "COVID19_INPUT_PATH"),
     sources = c("R/utils.R"),
     parameters = c("window", "week_ending"),
     artefacts = list(

@@ -1,7 +1,6 @@
 ## Generate orderly.yml for collate_model_outputs
 x <- list(
   script = "produce_performace_metrics.R",
-  environment = list(covid_19_path = "COVID19_INPUT_PATH"),
   sources = c("R/utils.R"),
   parameters = "window",
   artefacts = list(
