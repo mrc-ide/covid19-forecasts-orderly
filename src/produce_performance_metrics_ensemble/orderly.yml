@@ -1,5 +1,4 @@
 script: produce_performace_metrics_ensb.R
-sources: R/utils.R
 parameters:
 - window
 - week_ending
@@ -9,17 +8,18 @@ artefacts:
     filenames:
     - unwtd_pred_error.csv
 packages:
-- dplyr
-- tidyr
 - assessr
-- slider
+- dplyr
 - purrr
+- rincewind
+- slider
+- tidyr
 depends:
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-03-22")
+    id: latest(parameter:week_ending == week_ending)
     use:
       unwtd_ensemble_model_predictions.rds: ensemble_model_predictions.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-03-29")
+    id: latest(parameter:week_ending == "2020-03-15")
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
