@@ -6,7 +6,8 @@ parameters:
 artefacts:
   data:
     description: Model performance metrics
-    filenames: model_predictions_error.csv
+    filenames:
+    - model_predictions_error.csv
 packages:
 - dplyr
 - tidyr
@@ -15,19 +16,18 @@ packages:
 - purrr
 depends:
 - run_apeestim:
-    id: latest(parameter:week_ending == week_ending)
+    id: latest(parameter:week_ending == "2020-03-08")
     use:
-      apeestim_model_outputs.rds: apeestim_model_outputs.rds
+      apeestim_latest_output.rds: apeestim_model_outputs.rds
 - run_rti0:
-    id: latest(parameter:week_ending == week_ending)
+    id: latest(parameter:week_ending == "2020-03-08")
     use:
       RtI0_latest_output.rds: RtI0_latest_output.rds
 - DeCa_model:
-    id: latest(parameter:week_ending == week_ending)
+    id: latest(parameter:week_ending == "2020-03-08")
     use:
-      DeCa_Std_results_week_end.rds: DeCa_latest.rds
+      DeCa_latest_output.rds: DeCa_latest.rds
 - prepare_ecdc_data:
-    id: latest
+    id: latest(parameter:week_ending == "2020-03-15")
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
-      
