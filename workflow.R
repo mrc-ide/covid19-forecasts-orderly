@@ -155,6 +155,7 @@ post_collation_workflow <- function(latest_week, use_draft = "newer", commit = F
   if (commit) orderly_commit(a)
 }
 
+library(purrr)
 library(glue)
 library(orderly)
 source("orderly-helper-scripts/dependencies_weighted_performance.R")

@@ -3,7 +3,7 @@ output_files <- run_info$depends$as
 output_files <- output_files[output_files != "model_input.rds"]
 
 
-##output_files <- list.files(covid_19_path)
+
 ## Exclude the latest outputs as we don't have observed data for these
 ## output_files <- grep(
 ##   exclude, output_files, value = TRUE, invert = TRUE
@@ -28,7 +28,7 @@ model_input$Czech_Republic <- model_input$Czechia
 
 
 
-model_predictions_error <- imap_dfr(
+model_predictions_error <- imap(
   model_outputs,
   function(x, model) {
     message("model")
@@ -51,6 +51,7 @@ model_predictions_error <- imap_dfr(
             if (length(x) > 0) {
               metrics <- all_metrics(obs, y_si)
               metrics$date <- dates2
+              metrics$obs <- obs
             } else {
               metrics <- NULL
             }
@@ -61,8 +62,13 @@ model_predictions_error <- imap_dfr(
       },
       .id = "country"
     )
-  },
-  .id = "model"
+  }
+)
+
+model_predictions_error <- do.call('rbind', model_predictions_error)
+model_predictions_error$model <- as.Date(week_ending)
+model_predictions_error <- select(
+  model_predictions_error, model, everything()
 )
 
 

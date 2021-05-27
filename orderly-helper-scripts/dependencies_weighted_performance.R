@@ -3,7 +3,6 @@ dependencies_ensb_performance <- function(week) {
 
   x <- list(
     script = "produce_performace_metrics_ensb.R",
-    sources = c("R/utils.R"),
     parameters = c("window", "week_ending"),
     artefacts = list(
       data = list(
@@ -11,14 +10,14 @@ dependencies_ensb_performance <- function(week) {
         filenames = list("unwtd_pred_error.csv")
       )
     ),
-    packages = c("dplyr", "tidyr", "assessr", "slider", "purrr")
+    packages = c("assessr", "dplyr", "purrr", "rincewind","slider", "tidyr")
   )
 
 
   dependancies2 <- list(
     list(
       produce_ensemble_outputs = list(
-        id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
+        id = "latest(parameter:week_ending == week_ending)",
         use = list(
           unwtd_ensemble_model_predictions.rds =
             "ensemble_model_predictions.rds"
@@ -51,7 +50,6 @@ dependencies_indvdl_performance <- function(week) {
 
   x <- list(
     script = "produce_performace_metrics.R",
-    sources = c("R/utils.R"),
     parameters = c("window", "week_ending"),
     artefacts = list(
       data = list(
@@ -59,14 +57,14 @@ dependencies_indvdl_performance <- function(week) {
         filenames = list("model_predictions_error.csv")
       )
     ),
-    packages = c("dplyr", "tidyr", "assessr", "slider", "purrr")
+    packages = c("assessr", "dplyr", "purrr", "rincewind","slider", "tidyr")
   )
 
 
   dependancies2 <- list(
     list(
       run_apeestim = list(
-        id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
+        id = "latest(parameter:week_ending == week_ending)",
         use = list(
           apeestim_latest_output.rds =
             "apeestim_model_outputs.rds"
@@ -78,7 +76,7 @@ dependencies_indvdl_performance <- function(week) {
   dependancies3 <- list(
     list(
       run_rti0 = list(
-        id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
+        id = "latest(parameter:week_ending == week_ending)",
         use = list(
           RtI0_latest_output.rds =
             "RtI0_latest_output.rds"
@@ -90,7 +88,7 @@ dependencies_indvdl_performance <- function(week) {
   dependancies4 <- list(
     list(
       DeCa_model = list(
-        id = glue::glue("latest(parameter:week_ending == \"{week}\")"),
+        id = "latest(parameter:week_ending == week_ending)",
         use = list(
           DeCa_latest_output.rds = "DeCa_latest.rds"
         )

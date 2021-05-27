@@ -1,5 +1,4 @@
 script: produce_performace_metrics.R
-sources: R/utils.R
 parameters:
 - window
 - week_ending
@@ -9,25 +8,26 @@ artefacts:
     filenames:
     - model_predictions_error.csv
 packages:
-- dplyr
-- tidyr
 - assessr
-- slider
+- dplyr
 - purrr
+- rincewind
+- slider
+- tidyr
 depends:
 - run_apeestim:
-    id: latest(parameter:week_ending == "2020-03-22")
+    id: latest(parameter:week_ending == week_ending)
     use:
       apeestim_latest_output.rds: apeestim_model_outputs.rds
 - run_rti0:
-    id: latest(parameter:week_ending == "2020-03-22")
+    id: latest(parameter:week_ending == week_ending)
     use:
       RtI0_latest_output.rds: RtI0_latest_output.rds
 - DeCa_model:
-    id: latest(parameter:week_ending == "2020-03-22")
+    id: latest(parameter:week_ending == week_ending)
     use:
       DeCa_latest_output.rds: DeCa_latest.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-03-29")
+    id: latest(parameter:week_ending == "2020-03-15")
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
