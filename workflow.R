@@ -47,7 +47,7 @@ basic_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 ## weekly workflow
 performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   message("Performance metrics for ensemble model; week = ", week)
-  x <- dependencies_weighted_performance(week)
+  x <- dependencies_ensb_performance(week)
   con <- file(
     here::here("src/produce_performance_metrics_ensemble/orderly.yml"),
     "w"
@@ -61,6 +61,19 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
     parameters = parameter, use_draft = use_draft
   )
   if (commit) orderly_commit(m1)
+
+  x <- dependencies_indvdl_performance(week)
+  con <- file(
+    here::here("src/produce_performace_metrics/orderly.yml"),
+    "w"
+  )
+  yaml::write_yaml(x, con)
+  close(con)
+
+  m2 <- orderly_run(
+    "produce_performace_metrics",
+    parameters = parameter, use_draft = use_draft
+  )
 }
 
 ## These functions have not been configured to pull in week-specific
@@ -193,3 +206,19 @@ writeLines(
   sprintf("orderly run run_rti0 short_run=FALSE week_ending=%s", weeks),
   "runs-20210428.sh"
 )
+
+outfile <- "performance-metrics.sh"
+for (week in weeks) {
+  cat(
+    sprintf("\n Rscript orderly-helper-scripts/dependencies_weighted_performance.R %s", week),
+    file = outfile, append = TRUE
+  )
+  cat(
+    sprintf("\n orderly run produce_performance_metrics_ensemble window=1 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+  cat(
+    sprintf("\n orderly run produce_performace_metrics window=1 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+}

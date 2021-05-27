@@ -28,21 +28,24 @@ model_input$Czech_Republic <- model_input$Czechia
 
 
 
-model_predictions_error <- purrr::imap_dfr(
+model_predictions_error <- imap_dfr(
   model_outputs,
   function(x, model) {
+    message("model")
     message(model)
     pred <- x[["Predictions"]]
-    purrr::imap_dfr(
+    imap_dfr(
       pred,
       function(y, cntry) {
+        message("cntry")
         names(y) <- c("si_1", "si_2")
-        out <- purrr::map_dfr(
+        out <- map_dfr(
           y,
           function(y_si) {
             y_si <- as.matrix(y_si)
             dates2 <- as.Date(colnames(y_si))
             obs <- model_input[model_input$dates %in% dates2, cntry]
+            if (! is.numeric(obs)) obs <- as.numeric(obs[[cntry]])
             ## This is the week previous to the week for which
             ## forcasts were made
             if (length(x) > 0) {
@@ -62,14 +65,6 @@ model_predictions_error <- purrr::imap_dfr(
   .id = "model"
 )
 
-
-model_predictions_error <- tidyr::separate(
-  model_predictions_error,
-  col = "model",
-  into = c("model", NA, NA, NA, NA, "forecast_date"),
-  sep = "_",
-  convert = TRUE
-)
 
 readr::write_csv(
   x = model_predictions_error, path = "model_predictions_error.csv"

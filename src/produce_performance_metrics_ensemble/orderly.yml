@@ -1,6 +1,4 @@
 script: produce_performace_metrics_ensb.R
-environment:
-  covid_19_path: COVID19_INPUT_PATH
 sources: R/utils.R
 parameters:
 - window
@@ -18,10 +16,10 @@ packages:
 - purrr
 depends:
 - produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2020-05-03")
+    id: latest(parameter:week_ending == "2020-03-22")
     use:
       unwtd_ensemble_model_predictions.rds: ensemble_model_predictions.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-05-10")
+    id: latest(parameter:week_ending == "2020-03-29")
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
