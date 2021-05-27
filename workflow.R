@@ -206,3 +206,19 @@ writeLines(
   sprintf("orderly run run_rti0 short_run=FALSE week_ending=%s", weeks),
   "runs-20210428.sh"
 )
+
+outfile <- "performance-metrics.sh"
+for (week in weeks) {
+  cat(
+    sprintf("\n Rscript orderly-helper-scripts/dependencies_weighted_performance.R %s", week),
+    file = outfile, append = TRUE
+  )
+  cat(
+    sprintf("\n orderly run produce_performance_metrics_ensemble window=1 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+  cat(
+    sprintf("\n orderly run produce_performace_metrics window=1 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+}

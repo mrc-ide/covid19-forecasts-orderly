@@ -16,18 +16,18 @@ packages:
 - purrr
 depends:
 - run_apeestim:
-    id: latest(parameter:week_ending == "2020-03-08")
+    id: latest(parameter:week_ending == "2020-03-22")
     use:
       apeestim_latest_output.rds: apeestim_model_outputs.rds
 - run_rti0:
-    id: latest(parameter:week_ending == "2020-03-08")
+    id: latest(parameter:week_ending == "2020-03-22")
     use:
       RtI0_latest_output.rds: RtI0_latest_output.rds
 - DeCa_model:
-    id: latest(parameter:week_ending == "2020-03-08")
+    id: latest(parameter:week_ending == "2020-03-22")
     use:
       DeCa_latest_output.rds: DeCa_latest.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-03-15")
+    id: latest(parameter:week_ending == "2020-03-29")
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds

@@ -119,3 +119,21 @@ dependencies_indvdl_performance <- function(week) {
 
   x
 }
+
+## To run on the servr
+week <- commandArgs(TRUE)
+x <- dependencies_ensb_performance(week)
+con <- file(
+  here::here("src/produce_performance_metrics_ensemble/orderly.yml"),
+  "w"
+)
+yaml::write_yaml(x, con)
+close(con)
+
+x <- dependencies_indvdl_performance(week)
+con <- file(
+  here::here("src/produce_performace_metrics/orderly.yml"),
+  "w"
+)
+yaml::write_yaml(x, con)
+close(con)
