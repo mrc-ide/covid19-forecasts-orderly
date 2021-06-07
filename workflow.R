@@ -215,10 +215,6 @@ for (week in weeks) {
     file = outfile, append = TRUE
   )
   cat(
-    sprintf("\n orderly run produce_performance_metrics_ensemble window=1 week_ending=%s", week),
-    file = outfile, append = TRUE
-  )
-  cat(
     sprintf("\n orderly run produce_performace_metrics window=1 week_ending=%s", week),
     file = outfile, append = TRUE
   )
