@@ -213,10 +213,6 @@ depends:
     id: latest(parameter:week_ending == "2021-02-21")
     use:
       unwtd_pred_error_2021-02-21.csv: unwtd_pred_error.csv
-- produce_performance_metrics_ensemble:
-    id: latest(parameter:week_ending == "2021-02-28")
-    use:
-      unwtd_pred_error_2021-02-28.csv: unwtd_pred_error.csv
 - produce_performace_metrics:
     id: latest(parameter:week_ending == "2020-03-08")
     use:
@@ -421,7 +417,3 @@ depends:
     id: latest(parameter:week_ending == "2021-02-21")
     use:
       model_predictions_error_2021-02-21.csv: model_predictions_error.csv
-- produce_performace_metrics:
-    id: latest(parameter:week_ending == "2021-02-28")
-    use:
-      model_predictions_error_2021-02-28.csv: model_predictions_error.csv
