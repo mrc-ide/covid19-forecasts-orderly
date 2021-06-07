@@ -81,19 +81,19 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
-    "format_model_outputs/",
+    "format_model_outputs",
     use_draft = use_draft, parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
 
   a <- orderly_run(
-    "produce_maps/",
+    "produce_maps",
     use_draft = use_draft, parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
 
   a <- orderly_run(
-    "produce_retrospective_vis/",
+    "produce_retrospective_vis",
     use_draft = use_draft, parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
