@@ -29,12 +29,20 @@ better_than_null <- readRDS("better_than_null.rds")
 country_groups <- readRDS("country_groups.rds")
 ######################################################################
 ######################################################################
+#### Compare ensemble with indivdiual model ##########################
+model_error <- readr::read_csv("unwtd_pred_error.csv") %>%
+  dplyr::filter(si == use_si)
+
+ggplot(model_error, aes(model_name, log(rel_mae))) + geom_boxplot()
+######################################################################
+######################################################################
 ################## Unweighted Ensemble ###############################
 ######################################################################
 ######################################################################
 
 unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
-  dplyr::filter(si == use_si)
+  dplyr::filter(si == use_si, model_name == "ensemble")
+
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
 ##unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")

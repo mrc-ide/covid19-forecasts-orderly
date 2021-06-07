@@ -55,7 +55,7 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   yaml::write_yaml(x, con)
   close(con)
 
-  parameter <- list(week_ending = week, window = 1)
+  parameter <- list(week_ending = as.character(week), window = 1)
   m1 <- orderly_run(
     "produce_performance_metrics_ensemble",
     parameters = parameter, use_draft = use_draft
