@@ -28,6 +28,6 @@ depends:
     use:
       DeCa_latest_output.rds: DeCa_latest.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-03-29")
+    id: []
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
