@@ -22,7 +22,8 @@ weekly_delta <- split(
 
 
 unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
-  dplyr::filter(si == use_si)
+  dplyr::filter(si == use_si, model_name == "ensemble")
+
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
 unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
@@ -116,7 +117,7 @@ plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 iwalk(
   plots, function(p, page) {
     outfile <- glue(
-      "figures/null/comparison_with_baseline_error_{page}.tiff"
+      "figures/null/comparison_with_baseline_error_{page}.png"
     )
     rincewind::save_multiple(filename = outfile, plot = p)
   }
@@ -125,7 +126,7 @@ iwalk(
 iwalk(
   byphase_plots, function(p, page) {
     outfile <- glue(
-      "figures/null/comparison_with_baseline_error_{page}_facetted.tiff"
+      "figures/null/comparison_with_baseline_error_{page}_facetted.png"
     )
     rincewind::save_multiple(filename = outfile, plot = p)
   }
@@ -158,7 +159,7 @@ p <- ggplot(df, aes(delta, ratio)) +
   )
 
 ggsave(
-  "figures/null/log_ratio_vs_delta.tiff", p, width = 5,
+  "figures/null/log_ratio_vs_delta.png", p, width = 5,
   height = 5, unit = "in"
 )
 ## x <- dplyr::count(null_compare, country)
@@ -214,14 +215,14 @@ plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
 
 iwalk(plots, function(p, page) {
   outfile <- glue(
-    "figures/linear/comparison_with_linear_error_{page}.tiff"
+    "figures/linear/comparison_with_linear_error_{page}.png"
   )
   rincewind::save_multiple(filename = outfile, plot = p)
 })
 
 iwalk(plots_byphase, function(p, page) {
   outfile <- glue(
-    "figures/linear/comparison_with_linear_error_{page}_facetted.tiff"
+    "figures/linear/comparison_with_linear_error_{page}_facetted.png"
   )
   rincewind::save_multiple(filename = outfile, plot = p)
 })
