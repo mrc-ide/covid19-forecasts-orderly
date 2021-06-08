@@ -476,7 +476,8 @@ raw_data$Deaths[raw_data$DateRep == "2021-05-23" & raw_data$`Countries.and.terri
 
 
 
-
+## 3rd June, more than 4000 deaths in WHO data. Correction source worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-06-03" & raw_data$`Countries.and.territories` == "Mexico"] <- 33
 
 
 by_country_deaths_all <- dplyr::select(
