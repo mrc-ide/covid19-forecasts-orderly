@@ -90,8 +90,8 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
     palette = "Spectral", na.value = "white", direction = -1,
     guide = guide_colourbar(
       title = "Relative Error",
-      title.position = "top",
-      title.vjust = 0.5,
+      title.position = "left",
+      title.vjust = 0.8,
       order = 1
     )
   ) +
@@ -103,9 +103,11 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   scale_fill_identity(
     guide = guide_legend(
       order = 2,
-      title = " >= 2",
-      title.position = "top",
-      title.vjust = 0.5, label = FALSE
+      title = NULL,
+      label.position = "bottom",
+      label = TRUE
+      ##title.position = "top",
+      ##title.vjust = 0.5, label = FALSE
     ),
     breaks = "#4c0000", labels = " >= 2"
   ) +
@@ -126,10 +128,10 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
     axis.title = element_blank(),
     legend.position = "top",
     legend.title = element_text(size = 10),
-    legend.key.width = unit(2, "lines"),
-    legend.key.height = unit(1, "lines"),
+    legend.key.width = unit(1, "lines"),
+    legend.key.height = unit(0.8, "lines"),
     legend.margin = margin(0, 0, 2, 0),
-    legend.box.margin=margin(0, -10, -10, -10),
+    legend.box.margin = margin(0, -10, -10, -10),
     axis.line = element_blank()
     ) +
   coord_cartesian(clip = "off")

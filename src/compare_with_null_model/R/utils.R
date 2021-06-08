@@ -99,15 +99,15 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     scale_fill_distiller(
       palette = "Greens", na.value = "white", direction = -1,
       guide = guide_colourbar(
-        title = "Model Error/Baseline Error < 1",
-        title.position = "top",
-        title.hjust = 0.5,
+        title = "Model Error/Baseline Error",
+        title.position = "left",
+        title.vjust = 0.8,
         order = 1
       )
     ) +
     ggnewscale::new_scale_fill() +
     geom_tile(
-      data = df[df$ratio > 1 & df$ratio <= 5, ],
+      data = df[df$ratio > 1 & df$ratio <= 2, ],
       aes(x, y, fill = ratio), alpha = 0.7,
       width = 1.4,
       height = 1.2
@@ -115,16 +115,25 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     scale_fill_distiller(
       palette = "YlOrRd", na.value = "white", direction = 1,
       guide = guide_colourbar(
-        title = "Model Error/Baseline Error > 1",
-        title.position = "top",
-        title.hjust = 0.5,
+        title = NULL,
+        ##title.position = "top",
+        ##title.hjust = 0.5,
         order = 2
-      )
+      ),
+      breaks = c(1.2, 1.4, 1.6, 1.8)
     ) +
     ggnewscale::new_scale_fill() +
     geom_tile(
-      data = df[df$ratio > 5, ], aes(x, y), fill = "#4c0000",
+      data = df[df$ratio > 2, ], aes(x, y, fill = "#000000"),
       alpha = 0.7, width = 1.4, height = 1.2
+    ) +
+    scale_fill_identity(
+      breaks = "#000000",
+      labels = " > 2",
+      guide = guide_legend(
+        order = 3, label = TRUE, title = NULL,
+        label.position = "bottom"
+      )
     ) +
     ## geom_richtext(
     ##   data = df, aes(x = x, y = y, label = error_values), size = 1.7,
@@ -149,13 +158,15 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 90, hjust = 0.5),
+      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 10),
+      axis.text.y = element_text(size = 10),
       axis.title = element_blank(),
       legend.position = "top",
-      legend.title = element_text(size = 8),
-      legend.key.width = unit(2, "lines"),
-      legend.key.height = unit(1, "lines"),
-      ##plot.margin = margin(t = 8, r = 15, b = 0, l = 0, unit = "pt"),
+      legend.justification = "right",
+      legend.title = element_text(size = 10),
+      legend.key.width = unit(1, "lines"),
+      legend.key.height = unit(0.8, "lines"),
+      legend.margin = margin(0, 0, 0, -0.4, unit = "cm"),
       axis.line = element_blank()
     ) +
     coord_cartesian(clip = "off")
