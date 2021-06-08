@@ -27,13 +27,7 @@ weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
 
 better_than_null <- readRDS("better_than_null.rds")
 country_groups <- readRDS("country_groups.rds")
-######################################################################
-######################################################################
-#### Compare ensemble with indivdiual model ##########################
-model_error <- readr::read_csv("unwtd_pred_error.csv") %>%
-  dplyr::filter(si == use_si)
 
-ggplot(model_error, aes(model_name, log(rel_mae))) + geom_boxplot()
 ######################################################################
 ######################################################################
 ################## Unweighted Ensemble ###############################
@@ -117,7 +111,7 @@ readr::write_csv(by_phase, "unwtd_pred_summary_by_phase.csv")
 ######################################################################
 weeks <- seq(
   from = as.Date("2020-03-08"),
-  to = as.Date("2020-11-30"),
+  to = as.Date("2021-02-21"),
   by = "7 days"
 )
 
@@ -126,7 +120,7 @@ plots <- imap(
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
     p <- prop_in_cri_heatmap(x, weeks)
-    outfile <- glue("figures/p50/proportion_in_50_CrI_{page}.tiff")
+    outfile <- glue("figures/p50/proportion_in_50_CrI_{page}.png")
     rincewind::save_multiple(plot = p, filename = outfile)
     p
   }
@@ -151,7 +145,7 @@ prow <- plot_grid(
 
 p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 
-outfile <- "figures/p50/proportion_in_50_CrI_si.tiff"
+outfile <- "figures/p50/proportion_in_50_CrI_si.png"
 rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
 #### Overall metrics
 ## > mean(unwtd_pred_error$prop_in_50)
@@ -171,7 +165,7 @@ plots <- imap(
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_975_mu")
     p <- prop_in_cri_heatmap(x, weeks, CrI = "95%")
-    outfile <- glue("figures/p95/proportion_in_95_CrI_{page}.tiff")
+    outfile <- glue("figures/p95/proportion_in_95_CrI_{page}.png")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
     p
   }
@@ -193,7 +187,7 @@ prow <- plot_grid(
 ## Finally put the legend back in
 
 p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
-outfile <- glue("figures/p95/proportion_in_95_CrI_si.tiff")
+outfile <- glue("figures/p95/proportion_in_95_CrI_si.png")
 rincewind::save_multiple(plot = p95, filename = outfile)
 
 #####################################################################
@@ -341,25 +335,23 @@ pdensity2 <- pdensity +
   ##coord_fixed()
 
 ggsave(
-  filename = "figures/other/obs_predicted_2d_density.tiff",
+  filename = "figures/other/obs_predicted_2d_density.png",
   plot = pdensity2,
   width = 5.2,
   height = 5.2,
-  unit = "in",
-  compression = "lzw"
+  unit = "in"
 )
 
 normalised <- spread(normalised, pred_category, proportion, fill = 0)
 
 readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 
-######################################################################
+
 ######################################################################
 ######################################################################
 ############## SI Text Figure
 ############## Model Relative Error
 ##############
-######################################################################
 ######################################################################
 ######################################################################
 plots <- map(
@@ -375,7 +367,7 @@ plots <- map(
 plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 iwalk(
   plots, function(p, page) {
-    outfile <- glue("figures/rme/relative_error_heatmap_{page}.tiff")
+    outfile <- glue("figures/rme/relative_error_heatmap_{page}.png")
     rincewind::save_multiple(plot = p, filename = outfile)
   }
 )
@@ -385,7 +377,7 @@ iwalk(
 plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
 iwalk(
   plots, function(p, page) {
-    outfile <- glue("figures/rme/relative_error_heatmap_{page}_2.tiff")
+    outfile <- glue("figures/rme/relative_error_heatmap_{page}_2.png")
     rincewind::save_multiple(plot = p, filename = outfile)
   }
 )
