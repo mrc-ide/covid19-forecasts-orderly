@@ -1,0 +1,25 @@
+script: collate_baseline_error.R
+
+packages:
+  - purrr
+
+artefacts:
+  data:
+    description: Null Model performance metrics
+    filenames:
+      - null_model_error.rds
+      - linear_model_error.rds
+
+depends:
+  - produce_baseline_error:
+      id: latest(parameter:latest_week == "2020-11-29")
+      use:
+        null_model_error1.rds: null_model_error.rds
+        linear_model_error1.rds: linear_model_error.rds
+  - produce_baseline_error:
+      id: latest(parameter:latest_week == "2020-12-06")
+      use:
+        null_model_error2.rds: null_model_error.rds
+        linear_model_error2.rds: linear_model_error.rds
+        
+    
