@@ -47,6 +47,8 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
   p
 }
 
+
+
 augment_data <- function(df, weeks, width = 1.5) {
 
   x <- data.frame(forecast_date = weeks)
@@ -96,8 +98,16 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   ggnewscale::new_scale_fill() +
   geom_tile(
     data = df[df$rel_mae_mu >= 2, ],
-    aes(x, y),
-    fill = "#4c0000", width = 1.8, height = 1.8
+    aes(x, y, fill = "#4c0000"), width = 1.8, height = 1.8
+  ) +
+  scale_fill_identity(
+    guide = guide_legend(
+      order = 2,
+      title = " >= 2",
+      title.position = "top",
+      title.vjust = 0.5, label = FALSE
+    ),
+    breaks = "#4c0000", labels = " >= 2"
   ) +
   scale_y_continuous(
     breaks = sort(unique(df$y)),
