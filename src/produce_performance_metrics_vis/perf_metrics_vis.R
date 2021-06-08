@@ -120,6 +120,10 @@ plots <- imap(
     p <- prop_in_cri_heatmap(x, weeks)
     outfile <- glue("figures/p50/proportion_in_50_CrI_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile)
+
+    outfile <- glue("figures/p50/proportion_in_50_CrI_{page}.pdf")
+    rincewind::save_multiple(plot = p, filename = outfile)
+
     p
   }
 )
@@ -145,16 +149,9 @@ p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 
 outfile <- "figures/p50/proportion_in_50_CrI_si.tiff"
 rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
-#### Overall metrics
-## > mean(unwtd_pred_error$prop_in_50)
-## [1] 0.580651
-## > sd(unwtd_pred_error$prop_in_50)
-## [1] 0.3271525
-## > mean(unwtd_pred_error$prop_in_975)
-## [1] 0.885443
-## > sd(unwtd_pred_error$prop_in_975)
-## [1] 0.2259728
-####
+
+outfile <- "figures/p50/proportion_in_50_CrI_si.pdf"
+rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
 ######################################################################
 ################## Proportion in 95% CrI by country ##################
 ######################################################################
@@ -165,6 +162,10 @@ plots <- imap(
     p <- prop_in_cri_heatmap(x, weeks, CrI = "95%")
     outfile <- glue("figures/p95/proportion_in_95_CrI_{page}.tiff")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
+
+    outfile <- glue("figures/p95/proportion_in_95_CrI_{page}.pdf")
+    rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
+
     p
   }
 )
@@ -186,6 +187,9 @@ prow <- plot_grid(
 
 p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 outfile <- glue("figures/p95/proportion_in_95_CrI_si.tiff")
+rincewind::save_multiple(plot = p95, filename = outfile)
+
+outfile <- glue("figures/p95/proportion_in_95_CrI_si.pdf")
 rincewind::save_multiple(plot = p95, filename = outfile)
 
 #####################################################################
