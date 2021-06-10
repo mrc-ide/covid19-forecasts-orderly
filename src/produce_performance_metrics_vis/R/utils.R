@@ -99,7 +99,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   ggnewscale::new_scale_fill() +
   geom_tile(
     data = df[df$rel_mae_mu >= 2, ],
-    aes(x, y, fill = "#4c0000"), width = 1.8, height = 1.8
+    aes(x, y, fill = "#0000ff"), width = 1.8, height = 1.8
   ) +
   scale_fill_identity(
     guide = guide_legend(
@@ -110,7 +110,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
       ##title.position = "top",
       ##title.vjust = 0.5, label = FALSE
     ),
-    breaks = "#4c0000", labels = " >= 2"
+    breaks = "#0000ff", labels = " >= 2"
   ) +
   scale_y_continuous(
     breaks = sort(unique(df$y)),

@@ -185,14 +185,14 @@ orderly_run(
                     latest_week = tail(weeks, 1))
 )
 
-post_collation_workflow(tail(weeks, 1))
+
 
 orderly_run(
   "compare_with_null_model",
   use_draft = "newer", parameters = list(use_si = "si_2")
 )
 
-
+post_collation_workflow(tail(weeks, 1))
 ## To run on server, one-off scripts
 writeLines(
   sprintf("orderly run prepare_ecdc_data week_ending=%s", weeks),

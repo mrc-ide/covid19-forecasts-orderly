@@ -108,7 +108,7 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     ggnewscale::new_scale_fill() +
     geom_tile(
-      data = df[df$ratio > 1 & df$ratio <= 2, ],
+      data = df[df$ratio > 1 & df$ratio < 2, ],
       aes(x, y, fill = ratio), alpha = 0.7,
       width = 1.4,
       height = 1.2
@@ -125,12 +125,12 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     ggnewscale::new_scale_fill() +
     geom_tile(
-      data = df[df$ratio > 2, ], aes(x, y, fill = "#000000"),
+      data = df[df$ratio >= 2, ], aes(x, y, fill = "#0000ff"),
       alpha = 0.7, width = 1.4, height = 1.2
     ) +
     scale_fill_identity(
-      breaks = "#000000",
-      labels = " > 2",
+      breaks = "#0000ff",
+      labels = " >= 2",
       guide = guide_legend(
         order = 3, label = TRUE, title = NULL,
         label.position = "bottom"
