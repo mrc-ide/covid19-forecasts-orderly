@@ -265,6 +265,31 @@ raw_data$Deaths[raw_data$DateRep == "2021-05-18" & raw_data$province_state == "M
 raw_data$Deaths[raw_data$DateRep == "2021-05-20" & raw_data$province_state == "Michigan"] <- 82 - 61
 
 
+##########################################
+## Corrections for 7 June 2021 report ##
+##########################################
+
+## Kentucky
+## Some deaths reported on 1 June were backlogged.
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff (6/6/21).
+
+raw_data$Deaths[raw_data$DateRep == "2021-06-01" & raw_data$province_state == "Kentucky"] <- 285 - 260
+
+## Maryland
+## Backlogged deaths reported on 27 May
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff (1/6/21).
+
+raw_data$Deaths[raw_data$DateRep == "2021-05-27" & raw_data$province_state == "Maryland"] <- 544 - 538
+
+## Wisconsin
+## Backlogged deaths reported on 27 May
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff (1/6/21).
+
+raw_data$Deaths[raw_data$DateRep == "2021-05-27" & raw_data$province_state == "Wisconsin"] <- 49 - 41
+raw_data$Deaths[raw_data$DateRep == "2021-05-31" & raw_data$province_state == "Wisconsin"] <- 26 - 15
+
+
+
 ## Save wide versions of death and case data
 
 by_state_deaths_all <- dplyr::select(

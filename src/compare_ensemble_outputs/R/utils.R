@@ -6,7 +6,7 @@ all_restimates_violin <- function(out) {
   geom_half_violin(scale = "width", width = 1.5) +
   geom_hline(yintercept = 1, linetype = "dashed", col = "red") +
   facet_wrap(~country, ncol = 1, scales = "free_y") +
-  theme_minimal() +
+  theme_classic() +
   xlab("") +
   ylab("Effective Reproduction Number") +
   facet_wrap(
