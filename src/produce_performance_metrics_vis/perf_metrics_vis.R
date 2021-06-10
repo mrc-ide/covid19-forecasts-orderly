@@ -79,11 +79,11 @@ weekly_summary <- function(df) {
   weekly <- left_join(weekly, by_country)
   weekly <- left_join(weekly, by_week)
 
-  weekly$country <- factor(
-    weekly$country, ordered = TRUE
-    ##levels = better_than_null$country,
-  )
-  weekly$country <- droplevels(weekly$country)
+  ## weekly$country <- factor(
+  ##   weekly$country, ordered = TRUE
+  ##   ##levels = better_than_null$country,
+  ## )
+  ## weekly$country <- droplevels(weekly$country)
   weekly
 }
 
@@ -91,6 +91,7 @@ weekly_summaries <- map(
   country_groups,
   function(countries) {
     df <- unwtd_pred_error[unwtd_pred_error$country %in% countries, ]
+    df$country <- factor(df$country, levels = countries, ordered = TRUE)
     weekly_summary(df)
   }
 )

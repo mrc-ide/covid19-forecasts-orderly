@@ -70,7 +70,7 @@ augment_data <- function(df, width = 1.5) {
   idx <- seq(1, length(x$x), by = 3)
   x_labels <- setNames(x_labels[idx], x$x[idx])
 
-  y <- data.frame(country = levels(df$country))
+  y <- data.frame(country = rev(levels(df$country)))
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
   y_labels <- rincewind::nice_country_name(y$country)

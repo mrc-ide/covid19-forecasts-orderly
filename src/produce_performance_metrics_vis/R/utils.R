@@ -61,7 +61,7 @@ augment_data <- function(df, weeks, width = 1.5) {
   x_labels <- setNames(x_labels[idx], x$x[idx])
 
 
-  y <- data.frame(country = levels(df$country))
+  y <- data.frame(country = rev(levels(df$country)))
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
   y_labels <- nice_country_name(y$country)
