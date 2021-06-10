@@ -3,26 +3,27 @@ artefacts:
   data:
     description: Forecasts collated
     filenames:
-    - 1col_main_short_forecasts.png
+    - figures/1col_main_short_forecasts.png
 
 parameters:
 - use_si
 - latest_week
+
 packages:
+- cowplot
 - dplyr
 - purrr
-- tidyr
 - ggplot2
 - ggpubr
 - ggforce
-- snakecase
-- glue
-- cowplot
-- rincewind
 - ggtext
+- glue
 - grid
 - gridExtra
 - patchwork
+- rincewind
+- snakecase
+- tidyr
 
 depends:
 - collate_model_outputs:

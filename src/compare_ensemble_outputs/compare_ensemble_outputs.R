@@ -10,8 +10,6 @@ date_labels <- "%d - %b"
 date_breaks <- "4 weeks"
 date_limits <- c(as.Date("2020-03-01"), NA)
 
-file_format <- ".tiff"
-
 main_text_countries <- c(
   "Brazil", "India", "Italy", "South_Africa",
   "Turkey", "United_States_of_America"
@@ -65,7 +63,7 @@ unweighted_rt_qntls <- readRDS("unweighted_rt_qntls.rds") %>%
   dplyr::filter(si == use_si)
 
 ###### Put them together
-stacked_vars <- map(
+stacked_vars <- map_dfr(
   countries,
   function(country) {
     pred <- unweighted_qntls[unweighted_qntls$country %in% country, ]
@@ -98,77 +96,83 @@ stacked_vars <- map(
     rt_qntls$var <- "rt"
 
     rbind(pred_qntls, rt_qntls)
-  }
+  }, .id = "country"
 )
 
+f <- function(obs, pred) {
+  p <- ggplot(pred) +
+    geom_line(aes(date, y, group = forecast_date, col = color)) +
+    geom_ribbon(
+      aes(
+        date, ymin = ymin, ymax = ymax,
+        group = forecast_date, fill = fill
+      ), alpha = 0.3
+    ) +
+    geom_point(
+      data = obs, aes(date, y, col = color), alpha = 0.3
+    ) +
+    scale_fill_identity(
+      breaks = "#009E73",
+      labels = scales::parse_format()(c(bquote("Forecasts/"~R^{curr}))),
+      guide = guide_legend(order = 2)
+    ) +
+    scale_color_identity(
+      breaks = '#666666',
+      labels = "Observed deaths",
+      guide = guide_legend(order = 1)
+    ) +
+    geom_hline(
+      data = data.frame(var = "rt", y = 1), aes(yintercept = y),
+      linetype = "dashed", col = "red"
+    ) +
+    facet_grid(
+      var~country, scales = "free_y",
+      labeller = labeller(
+        .rows = c(forecasts = "Daily Deaths", rt = "Rt"),
+        .cols = nice_country_name
+      ),
+      switch = "y"
+    )  +
+    scale_x_date(
+      date_breaks = date_breaks, date_labels = date_labels,
+      limits = date_limits
+    ) +
+    expand_limits(y = 0) +
+    theme_manuscript() +
+    theme(
+      legend.position = "top",
+      legend.title = element_blank(),
+      strip.background = element_blank(),
+      strip.placement = "outside",
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank()
+    )
+  p
+}
 
-stacked_plots <- imap(
-  main_text_countries,
-  function(country, name) {
-    obs <- model_input[model_input$country %in% country, ]
-    obs <- select(obs, date = dates, y = deaths)
-    obs$var <- "forecasts"
-    obs$color <- "#666666"
+obs <- model_input[model_input$country %in% main_text_countries, ]
+obs <- select(obs, date = dates, y = deaths, country = country)
+obs$var <- "forecasts"
+obs$color <- "#666666"
 
-    x <- stacked_vars[[country]]
-    x$fill <- '#009E73'
-    x$color <- x$fill
+stacked_vars$fill <- '#009E73'
+stacked_vars$color <- stacked_vars$fill
 
-    p <- ggplot(x) +
-      geom_line(aes(date, y, group = forecast_date, col = color)) +
-      geom_ribbon(
-        aes(
-          date, ymin = ymin, ymax = ymax,
-          group = forecast_date, fill = fill
-        ), alpha = 0.3
-      ) +
-      geom_point(
-        data = obs, aes(date, y, col = color), alpha = 0.3
-      ) +
-      scale_fill_identity(
-        breaks = "#009E73",
-        labels = scales::parse_format()(c(bquote("Forecasts/"~R^{curr}))),
-        guide = guide_legend(order = 2)
-      ) +
-      scale_color_identity(
-        breaks = '#666666',
-        labels = "Observed deaths",
-        guide = guide_legend(order = 1)
-      ) +
-      geom_hline(
-        data = data.frame(var = "rt", y = 1), aes(yintercept = y),
-        linetype = "dashed", col = "red"
-      ) +
-      facet_wrap(
-        ~var, nrow = 2, scales = "free_y",
-        strip.position = "left",
-        labeller = as_labeller(
-          c(forecasts = "Daily Deaths", rt = "Rt")
-        )
-      )  +
-      scale_x_date(
-        date_breaks = date_breaks, date_labels = date_labels,
-        limits = date_limits
-      ) +
-        expand_limits(y = 0) +
-      ggtitle(name) +
-      theme_manuscript() +
-      theme(
-        legend.position = "top",
-        legend.title = element_blank(),
-        strip.background = element_blank(),
-        strip.placement = "outside",
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank()
-      )
-    p
- }
+final <- grid.arrange(
+  f(obs[obs$country %in% main_text_countries[1:3], ],
+    stacked_vars[stacked_vars$country %in% main_text_countries[1:3], ]) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()),
+  f(obs[obs$country %in% main_text_countries[4:6], ],
+    stacked_vars[stacked_vars$country %in% main_text_countries[4:6], ]) +
+ theme(axis.text.x = element_text(angle = 90), legend.position = "none"),
+ nrow = 2
 )
+
 
 iwalk(
   stacked_plots,
   function(p, i) {
-    rincewind::save_multiple(p, glue::glue("figures/{i}.png"))
+    rincewind::save_multiple(p, glue::glue("figures/{i}"))
   }
 )
 
@@ -178,7 +182,8 @@ nolegend_plots <- imap(
   stacked_plots, function(p, index) {
     p <- p + theme(legend.position = "none")
     if (index %in% c("Brazil", "India", "Italy")) {
-      p <- p + theme(axis.text.x = element_blank())
+      p <- p +
+        theme(axis.text.x = element_blank(), axis.)
     } else {
       p <- p + theme(axis.text.x = element_text(angle = 90))
     }
@@ -192,8 +197,8 @@ nolegend_plots <- imap(
 
 pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2)
 final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
-rincewind::save_multiple(final, "figures/main_short_forecasts.png")
-rincewind::save_multiple(final, "figures/main_short_forecasts.pdf")
+rincewind::save_multiple(final, "figures/main_short_forecasts")
+
 
 
 
