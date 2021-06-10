@@ -159,7 +159,7 @@ stacked_plots <- imap(
         legend.title = element_blank(),
         strip.background = element_blank(),
         strip.placement = "outside",
-        strip.text =
+        strip.text = element_text(size = 14),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
       )
