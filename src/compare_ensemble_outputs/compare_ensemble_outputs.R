@@ -123,7 +123,8 @@ stacked_plots <- imap(
         ), alpha = 0.3
       ) +
       geom_point(
-        data = obs, aes(date, y, col = color), alpha = 0.3
+        data = obs, aes(date, y, col = color),
+        alpha = 0.1, size = 0.8
       ) +
       scale_fill_identity(
         breaks = "#009E73",
@@ -158,6 +159,7 @@ stacked_plots <- imap(
         legend.title = element_blank(),
         strip.background = element_blank(),
         strip.placement = "outside",
+        strip.text =
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
       )
