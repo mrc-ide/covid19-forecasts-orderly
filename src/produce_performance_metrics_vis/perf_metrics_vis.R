@@ -80,8 +80,8 @@ weekly_summary <- function(df) {
   weekly <- left_join(weekly, by_week)
 
   weekly$country <- factor(
-    weekly$country,
-    levels = better_than_null$country, ordered = TRUE
+    weekly$country, ordered = TRUE
+    ##levels = better_than_null$country,
   )
   weekly$country <- droplevels(weekly$country)
   weekly
@@ -111,7 +111,7 @@ readr::write_csv(by_phase, "unwtd_pred_summary_by_phase.csv")
 ######################################################################
 weeks <- seq(
   from = as.Date("2020-03-08"),
-  to = as.Date("2021-02-21"),
+  to = as.Date("2021-11-29"),
   by = "7 days"
 )
 

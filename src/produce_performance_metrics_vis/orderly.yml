@@ -37,7 +37,7 @@ depends:
         unwtd_pred_error.csv: unwtd_pred_error.csv
 
   - produce_baseline_error:
-      id: latest
+      id: 20210608-160701-244f6b41
       use:
         null_model_error.rds: null_model_error.rds
         weekly_incidence.rds: weekly_incidence.rds
