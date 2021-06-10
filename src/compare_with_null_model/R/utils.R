@@ -159,12 +159,12 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 12),
-      axis.text.y = element_text(size = 12),
+      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 16),
+      axis.text.y = element_text(size = 16),
       axis.title = element_blank(),
       legend.position = "top",
-      legend.justification = "right",
-      legend.title = element_text(size = 12),
+      legend.justification = "left",
+      legend.title = element_text(size = 16),
       legend.key.width = unit(1, "lines"),
       legend.key.height = unit(0.8, "lines"),
       legend.margin = margin(0, 0, 0, -0.4, unit = "cm"),
