@@ -1,4 +1,4 @@
-augment_data <- function(df, weeks, width = 1.5) {
+augment_data <- function(df, weeks, width = 2) {
 
   x <- data.frame(forecast_week = weeks)
   x$x <- seq(from = 1, by = width, length.out = nrow(x))
@@ -40,7 +40,7 @@ long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
     geom_tile(
       data = df[df$rel_mae <= high2, ],
       aes(x, y, fill = rel_mae),
-      width = 1.8, height = 1.8, alpha = 0.8
+      width = 2, height = 2
     ) +
   scale_fill_distiller(
     palette = "Spectral", na.value = "white", direction = -1,
@@ -54,7 +54,7 @@ long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
   ggnewscale::new_scale_fill() +
   geom_tile(
     data = df[df$rel_mae > high2, ],
-    aes(x, y, fill = "#0000ff"), width = 1.8, height = 1.8
+    aes(x, y, fill = "#0000ff"), width = 2, height = 2
   ) +
   scale_fill_identity(
     guide = guide_legend(
@@ -76,12 +76,12 @@ long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5, size = 12),
-    axis.text.y = element_text(size = 12),
-    strip.text = element_text(size = 12),
+    axis.text.x = element_text(angle = 90, hjust = 0.5, size = 11),
+    axis.text.y = element_text(size = 11),
+    strip.text = element_text(size = 11),
     axis.title = element_blank(),
     legend.position = "top",
-    legend.title = element_text(size = 12),
+    legend.title = element_text(size = 11),
     legend.key.width = unit(1, "lines"),
     legend.key.height = unit(0.8, "lines"),
     legend.margin = margin(0, 0, 2, 0),
@@ -154,7 +154,7 @@ prop_in_ci_heatmap <- function(df, x_labels, y_labels, CrI = "50%") {
  p <- ggplot(df) +
     geom_tile(
       aes(x, y, fill = fill),
-      width = 1.8, height = 1.8, alpha = 0.8
+      width = 2, height = 2, alpha = 0.8
     ) +
   scale_fill_distiller(
     palette = "Greens", na.value = "white", direction = 1,

@@ -51,7 +51,7 @@ rel_mae_plots <- map(
         local <- droplevels(local)
         ##local <- weekly_summary(local)
         ##local$country <- rincewind::nice_country_name(local$country)
-        out <- augment_data(local, weeks, 2)
+        out <- augment_data(local, weeks, 2.2)
         long_relative_error_heatmap(
           out[[1]], high1 = 1, high2 = 2, out$x_labels, out$y_labels) +
           facet_wrap(
@@ -83,7 +83,7 @@ prop_50_plots <- map(
       function(countries) {
         local <- df[df$country %in% countries, ]
         local <- droplevels(local)
-        out <- augment_data(local, weeks, 2)
+        out <- augment_data(local, weeks, 2.2)
         df <- out$df
         df$fill <- df$prop_in_50
         prop_in_ci_heatmap(df, out$x_labels, out$y_labels) +
@@ -117,7 +117,7 @@ prop_95_plots <- map(
       function(countries) {
         local <- df[df$country %in% countries, ]
         local <- droplevels(local)
-        out <- augment_data(local, weeks, 2)
+        out <- augment_data(local, weeks, 2.2)
         df <- out$df
         df$fill <- df$prop_in_975
         prop_in_ci_heatmap(df, out$x_labels, out$y_labels, "95%") +
