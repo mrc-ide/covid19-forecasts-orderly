@@ -197,6 +197,7 @@ plots <- map(
   function(countries, page) {
     df <- null_compare[null_compare$country %in% countries, ]
     df$country <- droplevels(df$country)
+    df$country <- factor(df$country, levels = countries, ordered = TRUE)
     out <- augment_data(df)
     compare_with_baseline(
       out[["df"]], out[["x_labels"]], out[["y_labels"]]
