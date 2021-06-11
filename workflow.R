@@ -55,7 +55,7 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   yaml::write_yaml(x, con)
   close(con)
 
-  parameter <- list(week_ending = week, window = 1)
+  parameter <- list(week_ending = as.character(week), window = 1)
   m1 <- orderly_run(
     "produce_performance_metrics_ensemble",
     parameters = parameter, use_draft = use_draft
@@ -185,14 +185,14 @@ orderly_run(
                     latest_week = tail(weeks, 1))
 )
 
-post_collation_workflow(tail(weeks, 1))
+
 
 orderly_run(
   "compare_with_null_model",
   use_draft = "newer", parameters = list(use_si = "si_2")
 )
 
-
+post_collation_workflow(tail(weeks, 1))
 ## To run on server, one-off scripts
 writeLines(
   sprintf("orderly run prepare_ecdc_data week_ending=%s", weeks),
@@ -213,10 +213,6 @@ outfile <- "performance-metrics.sh"
 for (week in weeks) {
   cat(
     sprintf("\n Rscript orderly-helper-scripts/dependencies_weighted_performance.R %s", week),
-    file = outfile, append = TRUE
-  )
-  cat(
-    sprintf("\n orderly run produce_performance_metrics_ensemble window=1 week_ending=%s", week),
     file = outfile, append = TRUE
   )
   cat(

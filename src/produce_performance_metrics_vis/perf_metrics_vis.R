@@ -35,7 +35,8 @@ country_groups <- readRDS("country_groups.rds")
 ######################################################################
 
 unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
-  dplyr::filter(si == use_si)
+  dplyr::filter(si == use_si, model_name == "ensemble")
+
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
 ##unwtd_pred_error$strategy <- "Unweighted"
 unwtd_pred_error <- rename(unwtd_pred_error, "forecast_date" = "model")
@@ -78,11 +79,11 @@ weekly_summary <- function(df) {
   weekly <- left_join(weekly, by_country)
   weekly <- left_join(weekly, by_week)
 
-  weekly$country <- factor(
-    weekly$country,
-    levels = better_than_null$country, ordered = TRUE
-  )
-  weekly$country <- droplevels(weekly$country)
+  ## weekly$country <- factor(
+  ##   weekly$country, ordered = TRUE
+  ##   ##levels = better_than_null$country,
+  ## )
+  ## weekly$country <- droplevels(weekly$country)
   weekly
 }
 
@@ -90,6 +91,7 @@ weekly_summaries <- map(
   country_groups,
   function(countries) {
     df <- unwtd_pred_error[unwtd_pred_error$country %in% countries, ]
+    df$country <- factor(df$country, levels = countries, ordered = TRUE)
     weekly_summary(df)
   }
 )
@@ -108,21 +110,14 @@ readr::write_csv(by_phase, "unwtd_pred_summary_by_phase.csv")
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
 ######################################################################
-weeks <- seq(
-  from = as.Date("2020-03-08"),
-  to = as.Date("2021-02-21"),
-  by = "7 days"
-)
+
 
 plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
-    p <- prop_in_cri_heatmap(x, weeks)
-    outfile <- glue("figures/p50/proportion_in_50_CrI_{page}.png")
-    rincewind::save_multiple(plot = p, filename = outfile)
-
-    outfile <- glue("figures/p50/proportion_in_50_CrI_{page}.pdf")
+    p <- prop_in_cri_heatmap(x, unique(df$forecast_date))
+    outfile <- glue("figures/p50/proportion_in_50_CrI_{page}")
     rincewind::save_multiple(plot = p, filename = outfile)
 
     p
@@ -148,11 +143,10 @@ prow <- plot_grid(
 
 p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 
-outfile <- "figures/p50/proportion_in_50_CrI_si.png"
+outfile <- "figures/p50/proportion_in_50_CrI_si"
 rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
 
-outfile <- "figures/p50/proportion_in_50_CrI_si.pdf"
-rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
+
 ######################################################################
 ################## Proportion in 95% CrI by country ##################
 ######################################################################
@@ -160,13 +154,9 @@ plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_975_mu")
-    p <- prop_in_cri_heatmap(x, weeks, CrI = "95%")
-    outfile <- glue("figures/p95/proportion_in_95_CrI_{page}.png")
+    p <- prop_in_cri_heatmap(x, unique(df$forecast_date), CrI = "95%")
+    outfile <- glue("figures/p95/proportion_in_95_CrI_{page}")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
-
-    outfile <- glue("figures/p95/proportion_in_95_CrI_{page}.pdf")
-    rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
-
     p
   }
 )
@@ -187,11 +177,10 @@ prow <- plot_grid(
 ## Finally put the legend back in
 
 p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
-outfile <- glue("figures/p95/proportion_in_95_CrI_si.png")
+outfile <- glue("figures/p95/proportion_in_95_CrI_si")
 rincewind::save_multiple(plot = p95, filename = outfile)
 
-outfile <- glue("figures/p95/proportion_in_95_CrI_si.pdf")
-rincewind::save_multiple(plot = p95, filename = outfile)
+
 
 #####################################################################
 #####################################################################
@@ -360,7 +349,7 @@ readr::write_csv(normalised, "obs_predicted_2d_density.csv")
 plots <- map(
   weekly_summaries,
   function(df) {
-    out <- augment_data(df, weeks, width = 2)
+    out <- augment_data(df, unique(df$forecast_date), width = 2)
     relative_error_heatmap(
       out[["df"]], out[["x_labels"]], out[["y_labels"]]
     )
@@ -370,7 +359,7 @@ plots <- map(
 plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 iwalk(
   plots, function(p, page) {
-    outfile <- glue("figures/rme/relative_error_heatmap_{page}.png")
+    outfile <- glue("figures/rme/relative_error_heatmap_{page}")
     rincewind::save_multiple(plot = p, filename = outfile)
   }
 )
@@ -380,7 +369,7 @@ iwalk(
 plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
 iwalk(
   plots, function(p, page) {
-    outfile <- glue("figures/rme/relative_error_heatmap_{page}_2.png")
+    outfile <- glue("figures/rme/relative_error_heatmap_{page}_2")
     rincewind::save_multiple(plot = p, filename = outfile)
   }
 )

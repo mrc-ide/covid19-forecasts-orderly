@@ -92,6 +92,14 @@ for (week in weeks) {
   )
 }
 
+outfile <- "medium-term-forecasts-perf.sh"
+for (week in weeks) {
+  cat(
+    sprintf("\n orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+}
+
 week_starting <- as.Date(head(weeks, 1)[[1]])
 week_ending <- as.Date(tail(weeks, 1)[[1]])
 source(

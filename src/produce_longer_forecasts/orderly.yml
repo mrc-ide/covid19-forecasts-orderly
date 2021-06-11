@@ -25,16 +25,14 @@ artefacts:
       - weighted_per_country_reff_with_underreporting.rds
       
 packages:
-  - purrr
-  - stringr
-  - projections
-  - tidyr
-  - incidence
-  - rincewind
   - ggplot2
-  - patchwork
   - glue
+  - patchwork
+  - purrr
+  - rincewind
+  - stringr
   - snakecase
+  - tidyr
 
 resources:
   - ecdc_pop2018.csv

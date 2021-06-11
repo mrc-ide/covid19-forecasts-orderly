@@ -28,7 +28,7 @@ model_input$Czech_Republic <- model_input$Czechia
 
 
 
-model_predictions_error <- imap(
+model_predictions_error <- imap_dfr(
   model_outputs,
   function(x, model) {
     message("model")
@@ -62,10 +62,10 @@ model_predictions_error <- imap(
       },
       .id = "country"
     )
-  }
+  }, .id = "model_name"
 )
 
-model_predictions_error <- do.call('rbind', model_predictions_error)
+##model_predictions_error <- do.call('rbind', model_predictions_error)
 model_predictions_error$model <- as.Date(week_ending)
 model_predictions_error <- select(
   model_predictions_error, model, everything()

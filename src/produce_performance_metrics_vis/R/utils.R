@@ -32,11 +32,11 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
       name = glue("Proportion in {CrI} CrI")
     ) +
     theme(
-      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 10),
-      axis.text.y = element_text(size = 10),
+      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
+      axis.text.y = element_text(size = 14),
       axis.title = element_blank(),
       legend.position = "top",
-      legend.title = element_text(size = 10),
+      legend.title = element_text(size = 14),
       legend.key.width = unit(2, "lines"),
       legend.key.height = unit(1, "lines"),
       ##legend.margin = margin(0, 0, 2, 0),
@@ -65,6 +65,7 @@ augment_data <- function(df, weeks, width = 1.5) {
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
   y_labels <- nice_country_name(y$country)
+  y_labels[y_labels == "United States of America"] <- "USA"
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
@@ -98,7 +99,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   ggnewscale::new_scale_fill() +
   geom_tile(
     data = df[df$rel_mae_mu >= 2, ],
-    aes(x, y, fill = "#4c0000"), width = 1.8, height = 1.8
+    aes(x, y, fill = "#0000ff"), width = 1.8, height = 1.8
   ) +
   scale_fill_identity(
     guide = guide_legend(
@@ -109,7 +110,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
       ##title.position = "top",
       ##title.vjust = 0.5, label = FALSE
     ),
-    breaks = "#4c0000", labels = " >= 2"
+    breaks = "#0000ff", labels = " >= 2"
   ) +
   scale_y_continuous(
     breaks = sort(unique(df$y)),
@@ -123,17 +124,17 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5, size = 10),
-    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
+    axis.text.y = element_text(size = 14),
     axis.title = element_blank(),
     legend.position = "top",
-    legend.title = element_text(size = 10),
+    legend.title = element_text(size = 14),
     legend.key.width = unit(1, "lines"),
     legend.key.height = unit(0.8, "lines"),
     legend.margin = margin(0, 0, 2, 0),
     legend.box.margin = margin(0, -10, -10, -10),
     axis.line = element_blank()
-    ) +
+  ) +
   coord_cartesian(clip = "off")
 
   p

@@ -98,6 +98,7 @@ plots <- map(
   function(countries, page) {
     df <- null_compare[null_compare$country %in% countries, ]
     df$country <- droplevels(df$country)
+    df$country <- factor(df$country, levels = countries, ordered = TRUE)
     out <- augment_data(df)
     compare_with_baseline(
       out[["df"]], out[["x_labels"]], out[["y_labels"]]
@@ -117,7 +118,7 @@ plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 iwalk(
   plots, function(p, page) {
     outfile <- glue(
-      "figures/null/comparison_with_baseline_error_{page}.png"
+      "figures/null/comparison_with_baseline_error_{page}"
     )
     rincewind::save_multiple(filename = outfile, plot = p)
   }
@@ -126,7 +127,7 @@ iwalk(
 iwalk(
   byphase_plots, function(p, page) {
     outfile <- glue(
-      "figures/null/comparison_with_baseline_error_{page}_facetted.png"
+      "figures/null/comparison_with_baseline_error_{page}_facetted"
     )
     rincewind::save_multiple(filename = outfile, plot = p)
   }
@@ -215,14 +216,14 @@ plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
 
 iwalk(plots, function(p, page) {
   outfile <- glue(
-    "figures/linear/comparison_with_linear_error_{page}.png"
+    "figures/linear/comparison_with_linear_error_{page}"
   )
   rincewind::save_multiple(filename = outfile, plot = p)
 })
 
 iwalk(plots_byphase, function(p, page) {
   outfile <- glue(
-    "figures/linear/comparison_with_linear_error_{page}_facetted.png"
+    "figures/linear/comparison_with_linear_error_{page}_facetted"
   )
   rincewind::save_multiple(filename = outfile, plot = p)
 })

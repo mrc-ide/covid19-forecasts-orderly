@@ -74,6 +74,7 @@ augment_data <- function(df, width = 1.5) {
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
   y_labels <- rincewind::nice_country_name(y$country)
+  y_labels[y_labels == "United States of America"] <- "USA"
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
@@ -107,7 +108,7 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     ggnewscale::new_scale_fill() +
     geom_tile(
-      data = df[df$ratio > 1 & df$ratio <= 2, ],
+      data = df[df$ratio > 1 & df$ratio < 2, ],
       aes(x, y, fill = ratio), alpha = 0.7,
       width = 1.4,
       height = 1.2
@@ -124,12 +125,12 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     ggnewscale::new_scale_fill() +
     geom_tile(
-      data = df[df$ratio > 2, ], aes(x, y, fill = "#000000"),
+      data = df[df$ratio >= 2, ], aes(x, y, fill = "#0000ff"),
       alpha = 0.7, width = 1.4, height = 1.2
     ) +
     scale_fill_identity(
-      breaks = "#000000",
-      labels = " > 2",
+      breaks = "#0000ff",
+      labels = " >= 2",
       guide = guide_legend(
         order = 3, label = TRUE, title = NULL,
         label.position = "bottom"
@@ -158,12 +159,12 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 10),
-      axis.text.y = element_text(size = 10),
+      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 16),
+      axis.text.y = element_text(size = 16),
       axis.title = element_blank(),
       legend.position = "top",
-      legend.justification = "right",
-      legend.title = element_text(size = 10),
+      legend.justification = "left",
+      legend.title = element_text(size = 16),
       legend.key.width = unit(1, "lines"),
       legend.key.height = unit(0.8, "lines"),
       legend.margin = margin(0, 0, 0, -0.4, unit = "cm"),

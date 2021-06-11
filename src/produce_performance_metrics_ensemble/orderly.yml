@@ -20,6 +20,6 @@ depends:
     use:
       unwtd_ensemble_model_predictions.rds: ensemble_model_predictions.rds
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-03-15")
+    id: []
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
