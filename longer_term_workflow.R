@@ -44,35 +44,6 @@ for (week in weeks) {
   )
 }
 
-## For the server create an R script.
-outfile <- "medium-term-forecasts.sh"
-for (week in weeks){
-  cat(
-    sprintf("\n Rscript orderly-helper-scripts/dependencies_weights_combined_rt.R %s", week),
-    file = outfile, append = TRUE
-  )
-  cat(
-    sprintf("\n orderly run produce_weights_combined_rt use_si = si_2 week_ending=%s", week),
-    file = outfile, append = TRUE
-  )
-
-  cat(
-    sprintf("\n Rscript orderly-helper-scripts/dependencies_combined_rt.R %s", week),
-    file = outfile, append = TRUE
-  )
-  cat(
-    sprintf("\n orderly run produce_combined_rt use_si = si_2 week_ending=%s", week),
-    file = outfile, append = TRUE
-  )
-
-  cat(
-    sprintf("\n orderly run produce_longer_forecasts use_si = si_2 week_ending=%s", week),
-    file = outfile, append = TRUE
-  )
-
-}
-
-
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
@@ -92,27 +63,13 @@ for (week in weeks) {
   )
 }
 
-outfile <- "medium-term-forecasts-perf.sh"
-for (week in weeks) {
-  cat(
-    sprintf("\n orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=%s", week),
-    file = outfile, append = TRUE
-  )
-}
-
+## Collation
 week_starting <- as.Date(head(weeks, 1)[[1]])
 week_ending <- as.Date(tail(weeks, 1)[[1]])
 source(
   "orderly-helper-scripts/dependencies_collate_combined_rt.R"
 )
 orderly::orderly_run("collate_combined_rt", use_draft = "newer")
-
-for (week in weeks) {
-  parameters <- list(week_ending = week)
-  orderly::orderly_run(
-    "compare_r_effective", use_draft = "newer", parameters = parameters
-  )
-}
 
 source(
   "orderly-helper-scripts/dependencies_collate_longer_forecasts.R"

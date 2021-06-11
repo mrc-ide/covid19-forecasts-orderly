@@ -10,15 +10,16 @@ artefacts:
     - per_country.rds
     - country_weeks.rds
 packages:
+- assessr
 - dplyr
-- tidyr
 - ggplot2
+- tidyr
 - purrr
-- rincewind
 - projections
 - incidence
+- rincewind
 - glue
-- assessr
+
 depends:
 - produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2020-03-08")

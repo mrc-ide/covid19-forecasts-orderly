@@ -2,7 +2,7 @@
 dir.create("figures")
 
 ndays_projected <- 28
-nweeks_projected <- 4
+nweeks_projected <- ndays_projected / 7
 ### common plot propoerties
 ####
 date_labels <- "%d - %b"
@@ -250,7 +250,8 @@ stacked_plots <- imap(
         ), alpha = 0.3
       ) +
       geom_point(
-        data = obs, aes(date, y, col = color), alpha = 0.3
+        data = obs, aes(date, y, col = color),
+        alpha = 0.1, size = 0.8
       ) +
       scale_fill_identity(
         breaks = c("#009E73", "#000000"),
@@ -285,9 +286,11 @@ stacked_plots <- imap(
         legend.title = element_blank(),
         strip.background = element_blank(),
         strip.placement = "outside",
+        strip.text = element_text(size = 14),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
       )
+    rincewind::save_multiple(p, glue::glue("figures/{name}"))
     p
  }
 )
@@ -298,22 +301,35 @@ nolegend_plots <- imap(
   stacked_plots, function(p, index) {
     p <- p + theme(legend.position = "none")
     if (index %in% c("Brazil", "India", "Italy")) {
-      p <- p + theme(axis.text.x = element_blank())
+      p <- p +
+        theme(
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          plot.margin = margin(
+            t = 0, r = 10, b = -10, l = 0, unit = "pt"
+          )
+        )
     } else {
       p <- p + theme(axis.text.x = element_text(angle = 90))
     }
     if (!index %in% c("Brazil", "South Africa")) {
       message("Getting rid of axis title ", index)
-      p <- p + theme(strip.text = element_blank())
+      p <- p +
+        theme(
+          strip.text = element_blank(),
+          plot.margin = margin(
+            t = -10, r = 10, b = 0, l = 0, unit = "pt"
+          )
+        )
     }
     p
   }
 )
 
-pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2)
+pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2, align = "hv", axis = "l")
 final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
-rincewind::save_multiple(final, "figures/main_long_forecasts.png")
-rincewind::save_multiple(final, "figures/main_long_forecasts.pdf")
+rincewind::save_multiple(final, "figures/main_long_forecasts")
+
 
 
 

@@ -10,7 +10,7 @@ deaths_to_use <- model_input$D_active_transmission
 ## Convert to incidence object
 tall_deaths <- gather(
   deaths_to_use[,c("dates", location)], key = province_state, value = deaths, -dates
-) %>% 
+) %>%
   ts_to_incid(date_col = "dates", case_col = "deaths")
 
 si_distrs <- readRDS("si_distrs.rds")
@@ -89,7 +89,7 @@ ape_projections <- purrr::map2(
         projections::project(
           x = df,
           R = rt_si,
-          si = si,
+          si = si[-1],
           n_sim = n_sim,
           n_days = n_days,
           R_fix_within = TRUE,
@@ -109,11 +109,11 @@ ape_projections <- purrr::map(ape_projections,
     }
 )
 
-pred_qntls <- data.frame(ape_projections[[2]], check.names = FALSE) %>% 
+pred_qntls <- data.frame(ape_projections[[2]], check.names = FALSE) %>%
   tidyr::pivot_longer(cols = everything(),
                       names_to = "dates",
-                      values_to = "val") %>% 
-  dplyr::group_by(dates) %>% 
+                      values_to = "val") %>%
+  dplyr::group_by(dates) %>%
   ggdist::median_qi(.width = c(0.75, 0.95))
 
 pred_qntls$dates <- as.Date(pred_qntls$dates)
