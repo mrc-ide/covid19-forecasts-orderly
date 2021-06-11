@@ -53,7 +53,7 @@ rel_mae_plots <- map(
         ##local$country <- rincewind::nice_country_name(local$country)
         out <- augment_data(local, weeks, 2)
         long_relative_error_heatmap(
-          out[[1]], high1 = 1, high2 = 3, out$x_labels, out$y_labels) +
+          out[[1]], high1 = 1, high2 = 2, out$x_labels, out$y_labels) +
           facet_wrap(
             ~week_of_projection, nrow = 2,
             labeller = as_labeller(facet_labels)
@@ -68,7 +68,7 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/rel_mae_{strategy}_{page}.pdf")
+      outfile <- glue("figures/rel_mae_{strategy}_{page}")
       rincewind::save_multiple(p, outfile)
     }
     )
@@ -101,7 +101,7 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(1, 2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/prop_50_{strategy}_{page}.pdf")
+      outfile <- glue("figures/prop_50_{strategy}_{page}")
       rincewind::save_multiple(p, outfile, one_col = FALSE)
     }
     )
@@ -135,7 +135,7 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(1, 2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/prop_95_{strategy}_{page}.pdf")
+      outfile <- glue("figures/prop_95_{strategy}_{page}")
       rincewind::save_multiple(p, outfile, one_col = FALSE)
     }
     )
@@ -170,7 +170,7 @@ by_week_plots <- map(
 )
 
 iwalk(by_week_plots, function(p, strategy) {
-  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}.pdf")
+  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}")
   rincewind::save_multiple(p, outfile)
 })
 
