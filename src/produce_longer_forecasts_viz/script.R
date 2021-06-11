@@ -2,7 +2,7 @@
 dir.create("figures")
 
 ndays_projected <- 28
-nweeks_projected <- 4
+nweeks_projected <- ndays_projected / 7
 ### common plot propoerties
 ####
 date_labels <- "%d - %b"
@@ -290,6 +290,7 @@ stacked_plots <- imap(
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
       )
+    rincewind::save_multiple(p, glue::glue("figures/{name}"))
     p
  }
 )
