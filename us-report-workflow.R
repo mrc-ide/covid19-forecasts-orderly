@@ -15,7 +15,7 @@ a <- orderly_run(
 orderly_commit(a)
 
 model_input <- readRDS(
-  glue("archive/prepare_jhu_data/20210524-104823-7ee65c62/latest_model_input.rds")
+  glue("draft/prepare_jhu_data/20210614-112752-b05768fc/latest_model_input.rds")
 )
 locations <- model_input$State
 
