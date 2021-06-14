@@ -91,22 +91,22 @@ orderly_commit(a)
 
 ### On the server
 cat(
-  sprintf("\n orderly run us_run_jointlyr short_run=FALSE week_ending=2021-05-23 location=\"%s\"", locations),
+  sprintf("\n orderly run us_run_jointlyr short_run=FALSE week_ending=2021-06-13 location=\"%s\"", locations),
   file = "us-runs.sh"
 )
 
 cat(
-  sprintf("\n orderly run us_run_apeestim week_ending=2021-05-23 location=\"%s\"", locations),
+  sprintf("\n orderly run us_run_apeestim week_ending=2021-06-13 location=\"%s\"", locations),
   file = "us-runs.sh", append = TRUE
 )
 
 cat(
-  sprintf("\n orderly run us_run_deca week_ending=2021-05-23 location=\"%s\"", locations),
+  sprintf("\n orderly run us_run_deca week_ending=2021-06-13 location=\"%s\"", locations),
   file = "us-runs.sh", append = TRUE
 )
 
 
 cat(
-  sprintf("\n orderly run us_produce_ensemble_outputs week_ending=2021-05-23 location=\"%s\"", locations),
+  sprintf("\n orderly run us_produce_ensemble_outputs week_ending=2021-06-13 location=\"%s\"", locations),
   file = "us-runs.sh", append = TRUE
 )
