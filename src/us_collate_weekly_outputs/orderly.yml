@@ -99,10 +99,6 @@ depends:
     use:
       rti0_model_outputs_Missouri.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Montana")
-    use:
-      rti0_model_outputs_Montana.rds: rti0_model_outputs.rds
-- us_run_jointlyr:
     id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Nevada")
     use:
       rti0_model_outputs_Nevada.rds: rti0_model_outputs.rds
@@ -258,10 +254,6 @@ depends:
     use:
       DeCa_latest_Missouri.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Montana")
-    use:
-      DeCa_latest_Montana.rds: DeCa_latest.rds
-- us_run_deca:
     id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Nevada")
     use:
       DeCa_latest_Nevada.rds: DeCa_latest.rds
@@ -416,10 +408,6 @@ depends:
     id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Missouri")
     use:
       apeestim_model_outputs_Missouri.rds: apeestim_model_outputs.rds
-- us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Montana")
-    use:
-      apeestim_model_outputs_Montana.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
     id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Nevada")
     use:
@@ -595,11 +583,6 @@ depends:
     use:
       ensemble_model_rt_Missouri.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Missouri.rds: ensemble_daily_qntls.rds
-- us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Montana")
-    use:
-      ensemble_model_rt_Montana.rds: ensemble_model_rt.rds
-      ensemble_daily_qntls_Montana.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2021-06-13" && parameter:location == "Nevada")
     use:
