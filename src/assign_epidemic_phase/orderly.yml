@@ -1,0 +1,15 @@
+script: script.R
+parameters:
+- week_ending
+- use_si
+
+packages:
+- purrr
+- rincewind
+
+depends:
+  produce_ensemble_outputs:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      unwtd_ensemble_model_rt.rds: ensemble_model_rt_samples.rds
+      
