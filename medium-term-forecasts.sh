@@ -1,72 +1,73 @@
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-03-29
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-03-29
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-04-05
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-04-05
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-04-12
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-04-12
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-04-19
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-04-19
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-04-26
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-04-26
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-05-03
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-05-03
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-05-10
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-05-10
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-05-17
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-05-17
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-05-24
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-05-24
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-05-31
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-05-31
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-06-07
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-06-07
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-06-14
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-06-14
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-06-21
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-06-21
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-06-28
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-06-28
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-07-05
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-07-05
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-07-12
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-07-12
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-07-19
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-07-19
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-07-26
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-07-26
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-08-02
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-08-02
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-08-09
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-08-09
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-08-16
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-08-16
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-08-23
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-08-23
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-08-30
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-08-30
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-09-06
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-09-06
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-09-13
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-09-13
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-09-20
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-09-20
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-09-27
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-09-27
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-10-04
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-10-04
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-10-11
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-10-11
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-10-18
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-10-18
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-10-25
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-10-25
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-11-01
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-11-01
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-11-08
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-11-08
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-11-15
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-11-15
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-11-22
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-11-22
- orderly run produce_longer_forecasts use_si = si_2 week_ending=2020-11-29
- orderly run assign_epidemic_phase use_si = si_2 week_ending=2020-11-29
+
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-03-29
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-03-29
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-04-05
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-04-05
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-04-12
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-04-12
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-04-19
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-04-19
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-04-26
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-04-26
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-05-03
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-05-03
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-05-10
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-05-10
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-05-17
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-05-17
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-05-24
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-05-24
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-05-31
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-05-31
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-06-07
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-06-07
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-06-14
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-06-14
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-06-21
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-06-21
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-06-28
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-06-28
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-07-05
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-07-05
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-07-12
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-07-12
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-07-19
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-07-19
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-07-26
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-07-26
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-08-02
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-08-02
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-08-09
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-08-09
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-08-16
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-08-16
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-08-23
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-08-23
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-08-30
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-08-30
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-09-06
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-09-06
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-09-13
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-09-13
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-09-20
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-09-20
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-09-27
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-09-27
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-10-04
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-10-04
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-10-11
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-10-11
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-10-18
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-10-18
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-10-25
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-10-25
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-11-01
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-11-01
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-11-08
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-11-08
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-11-15
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-11-15
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-11-22
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-11-22
+ orderly run produce_longer_forecasts use_si=si_2 week_ending=2020-11-29
+ orderly run assign_epidemic_phase use_si=si_2 week_ending=2020-11-29
