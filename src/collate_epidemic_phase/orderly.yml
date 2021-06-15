@@ -15,197 +15,182 @@ packages:
 - tidyr
 depends:
 - assign_epidemic_phase:
-    id: latest(parameter:week_ending == "2020-03-08")
-    use:
-      short_term_phase_2020-03-08.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-03-08.rds: ensemble_model_rt.rds
-- assign_epidemic_phase:
-    id: latest(parameter:week_ending == "2020-03-15")
-    use:
-      short_term_phase_2020-03-15.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-03-15.rds: ensemble_model_rt.rds
-- assign_epidemic_phase:
-    id: latest(parameter:week_ending == "2020-03-22")
-    use:
-      short_term_phase_2020-03-22.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-03-22.rds: ensemble_model_rt.rds
-- assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-03-29")
     use:
-      short_term_phase_2020-03-29.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-03-29.rds: ensemble_model_rt.rds
+      short_term_phase_2020-03-29.rds: short_term_phase.rds
+      medium_term_phase_2020-03-29.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-04-05")
     use:
-      short_term_phase_2020-04-05.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-04-05.rds: ensemble_model_rt.rds
+      short_term_phase_2020-04-05.rds: short_term_phase.rds
+      medium_term_phase_2020-04-05.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-04-12")
     use:
-      short_term_phase_2020-04-12.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-04-12.rds: ensemble_model_rt.rds
+      short_term_phase_2020-04-12.rds: short_term_phase.rds
+      medium_term_phase_2020-04-12.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-04-19")
     use:
-      short_term_phase_2020-04-19.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-04-19.rds: ensemble_model_rt.rds
+      short_term_phase_2020-04-19.rds: short_term_phase.rds
+      medium_term_phase_2020-04-19.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-04-26")
     use:
-      short_term_phase_2020-04-26.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-04-26.rds: ensemble_model_rt.rds
+      short_term_phase_2020-04-26.rds: short_term_phase.rds
+      medium_term_phase_2020-04-26.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-05-03")
     use:
-      short_term_phase_2020-05-03.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-05-03.rds: ensemble_model_rt.rds
+      short_term_phase_2020-05-03.rds: short_term_phase.rds
+      medium_term_phase_2020-05-03.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-05-10")
     use:
-      short_term_phase_2020-05-10.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-05-10.rds: ensemble_model_rt.rds
+      short_term_phase_2020-05-10.rds: short_term_phase.rds
+      medium_term_phase_2020-05-10.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-05-17")
     use:
-      short_term_phase_2020-05-17.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-05-17.rds: ensemble_model_rt.rds
+      short_term_phase_2020-05-17.rds: short_term_phase.rds
+      medium_term_phase_2020-05-17.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-05-24")
     use:
-      short_term_phase_2020-05-24.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-05-24.rds: ensemble_model_rt.rds
+      short_term_phase_2020-05-24.rds: short_term_phase.rds
+      medium_term_phase_2020-05-24.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-05-31")
     use:
-      short_term_phase_2020-05-31.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-05-31.rds: ensemble_model_rt.rds
+      short_term_phase_2020-05-31.rds: short_term_phase.rds
+      medium_term_phase_2020-05-31.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-06-07")
     use:
-      short_term_phase_2020-06-07.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-06-07.rds: ensemble_model_rt.rds
+      short_term_phase_2020-06-07.rds: short_term_phase.rds
+      medium_term_phase_2020-06-07.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-06-14")
     use:
-      short_term_phase_2020-06-14.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-06-14.rds: ensemble_model_rt.rds
+      short_term_phase_2020-06-14.rds: short_term_phase.rds
+      medium_term_phase_2020-06-14.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-06-21")
     use:
-      short_term_phase_2020-06-21.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-06-21.rds: ensemble_model_rt.rds
+      short_term_phase_2020-06-21.rds: short_term_phase.rds
+      medium_term_phase_2020-06-21.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-06-28")
     use:
-      short_term_phase_2020-06-28.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-06-28.rds: ensemble_model_rt.rds
+      short_term_phase_2020-06-28.rds: short_term_phase.rds
+      medium_term_phase_2020-06-28.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-07-05")
     use:
-      short_term_phase_2020-07-05.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-07-05.rds: ensemble_model_rt.rds
+      short_term_phase_2020-07-05.rds: short_term_phase.rds
+      medium_term_phase_2020-07-05.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-07-12")
     use:
-      short_term_phase_2020-07-12.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-07-12.rds: ensemble_model_rt.rds
+      short_term_phase_2020-07-12.rds: short_term_phase.rds
+      medium_term_phase_2020-07-12.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-07-19")
     use:
-      short_term_phase_2020-07-19.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-07-19.rds: ensemble_model_rt.rds
+      short_term_phase_2020-07-19.rds: short_term_phase.rds
+      medium_term_phase_2020-07-19.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-07-26")
     use:
-      short_term_phase_2020-07-26.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-07-26.rds: ensemble_model_rt.rds
+      short_term_phase_2020-07-26.rds: short_term_phase.rds
+      medium_term_phase_2020-07-26.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-08-02")
     use:
-      short_term_phase_2020-08-02.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-08-02.rds: ensemble_model_rt.rds
+      short_term_phase_2020-08-02.rds: short_term_phase.rds
+      medium_term_phase_2020-08-02.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-08-09")
     use:
-      short_term_phase_2020-08-09.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-08-09.rds: ensemble_model_rt.rds
+      short_term_phase_2020-08-09.rds: short_term_phase.rds
+      medium_term_phase_2020-08-09.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-08-16")
     use:
-      short_term_phase_2020-08-16.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-08-16.rds: ensemble_model_rt.rds
+      short_term_phase_2020-08-16.rds: short_term_phase.rds
+      medium_term_phase_2020-08-16.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-08-23")
     use:
-      short_term_phase_2020-08-23.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-08-23.rds: ensemble_model_rt.rds
+      short_term_phase_2020-08-23.rds: short_term_phase.rds
+      medium_term_phase_2020-08-23.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-08-30")
     use:
-      short_term_phase_2020-08-30.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-08-30.rds: ensemble_model_rt.rds
+      short_term_phase_2020-08-30.rds: short_term_phase.rds
+      medium_term_phase_2020-08-30.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-09-06")
     use:
-      short_term_phase_2020-09-06.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-09-06.rds: ensemble_model_rt.rds
+      short_term_phase_2020-09-06.rds: short_term_phase.rds
+      medium_term_phase_2020-09-06.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-09-13")
     use:
-      short_term_phase_2020-09-13.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-09-13.rds: ensemble_model_rt.rds
+      short_term_phase_2020-09-13.rds: short_term_phase.rds
+      medium_term_phase_2020-09-13.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-09-20")
     use:
-      short_term_phase_2020-09-20.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-09-20.rds: ensemble_model_rt.rds
+      short_term_phase_2020-09-20.rds: short_term_phase.rds
+      medium_term_phase_2020-09-20.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-09-27")
     use:
-      short_term_phase_2020-09-27.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-09-27.rds: ensemble_model_rt.rds
+      short_term_phase_2020-09-27.rds: short_term_phase.rds
+      medium_term_phase_2020-09-27.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-10-04")
     use:
-      short_term_phase_2020-10-04.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-10-04.rds: ensemble_model_rt.rds
+      short_term_phase_2020-10-04.rds: short_term_phase.rds
+      medium_term_phase_2020-10-04.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-10-11")
     use:
-      short_term_phase_2020-10-11.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-10-11.rds: ensemble_model_rt.rds
+      short_term_phase_2020-10-11.rds: short_term_phase.rds
+      medium_term_phase_2020-10-11.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-10-18")
     use:
-      short_term_phase_2020-10-18.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-10-18.rds: ensemble_model_rt.rds
+      short_term_phase_2020-10-18.rds: short_term_phase.rds
+      medium_term_phase_2020-10-18.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-10-25")
     use:
-      short_term_phase_2020-10-25.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-10-25.rds: ensemble_model_rt.rds
+      short_term_phase_2020-10-25.rds: short_term_phase.rds
+      medium_term_phase_2020-10-25.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-11-01")
     use:
-      short_term_phase_2020-11-01.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-11-01.rds: ensemble_model_rt.rds
+      short_term_phase_2020-11-01.rds: short_term_phase.rds
+      medium_term_phase_2020-11-01.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-11-08")
     use:
-      short_term_phase_2020-11-08.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-11-08.rds: ensemble_model_rt.rds
+      short_term_phase_2020-11-08.rds: short_term_phase.rds
+      medium_term_phase_2020-11-08.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-11-15")
     use:
-      short_term_phase_2020-11-15.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-11-15.rds: ensemble_model_rt.rds
+      short_term_phase_2020-11-15.rds: short_term_phase.rds
+      medium_term_phase_2020-11-15.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-11-22")
     use:
-      short_term_phase_2020-11-22.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-11-22.rds: ensemble_model_rt.rds
+      short_term_phase_2020-11-22.rds: short_term_phase.rds
+      medium_term_phase_2020-11-22.rds: medium_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-11-29")
     use:
-      short_term_phase_2020-11-29.rds: ensemble_daily_qntls.rds
-      medium_term_phase_2020-11-29.rds: ensemble_model_rt.rds
+      short_term_phase_2020-11-29.rds: short_term_phase.rds
+      medium_term_phase_2020-11-29.rds: medium_term_phase.rds
