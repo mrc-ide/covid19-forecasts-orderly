@@ -2,25 +2,11 @@
 outfile <- "medium-term-forecasts.sh"
 for (week in weeks){
   cat(
-    sprintf("\n Rscript orderly-helper-scripts/dependencies_weights_combined_rt.R %s", week),
-    file = outfile, append = TRUE
-  )
-  cat(
-    sprintf("\n orderly run produce_weights_combined_rt use_si = si_2 week_ending=%s", week),
-    file = outfile, append = TRUE
-  )
-
-  cat(
-    sprintf("\n Rscript orderly-helper-scripts/dependencies_combined_rt.R %s", week),
-    file = outfile, append = TRUE
-  )
-  cat(
-    sprintf("\n orderly run produce_combined_rt use_si = si_2 week_ending=%s", week),
-    file = outfile, append = TRUE
-  )
-
-  cat(
     sprintf("\n orderly run produce_longer_forecasts use_si = si_2 week_ending=%s", week),
+    file = outfile, append = TRUE
+  )
+  cat(
+    sprintf("\n orderly run assign_epidemic_phase use_si = si_2 week_ending=%s", week),
     file = outfile, append = TRUE
   )
 
