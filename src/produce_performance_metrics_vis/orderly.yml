@@ -43,10 +43,10 @@ depends:
         weekly_incidence.rds: weekly_incidence.rds
         exclude.rds: exclude.rds
         
-  - collate_model_outputs:
+  - collate_epidemic_phase:
       id: latest
       use:
-        unweighted_rt_qntls.rds: unweighted_rt_qntls.rds
+        short_term_phase.rds: collated_short_term_phase.rds
 
   - compare_with_null_model:
       id: latest
