@@ -7,32 +7,20 @@ artefacts:
 
 packages:
 - dplyr
-- tidyr
-- ggdist
-- purrr
 - ggplot2
+- ggdist
 - glue
-- rincewind
-- janitor
-- gridExtra
 - grid
+- gridExtra
+- janitor
+- purrr
+- rincewind
 - tidylog
+- tidyr
 
 depends:
-- collate_combined_rt:
+- collate_epidemic_phase:
     id: latest
     use:
-      weekly_iqr.rds: weekly_iqr.rds
-- produce_longer_forecasts_viz:
-    id: latest
-    use:
-      weekly_rt.rds: weekly_rt_augmented.rds
-      reff_qntls.rds: reff_qntls_filtered.rds
-- compare_with_null_model:
-    id: latest
-    use:
-      country_groups.rds: country_groups.rds      
-- produce_weights_combined_rt:
-    id: latest(parameter:week_ending == "2020-09-20")
-    use:
-      country_weeks.rds: country_weeks.rds      
+      collated_short_term_phase.rds: collated_short_term_phase.rds
+      collated_medium_term_phase.rds: collated_medium_term_phase.rds
