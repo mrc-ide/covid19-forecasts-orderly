@@ -95,6 +95,7 @@ readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ################## Summary by phase######## ##########################
 ######################################################################
 phase <- readRDS("short_term_phase.rds")
+phase <- filter(phase, model_name == 'ensemble')
 phase <- rename(phase, c('forecast_date' = 'model'))
 phase$forecast_date <- as.Date(phase$forecast_date)
 

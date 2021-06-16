@@ -58,14 +58,16 @@ out <- data_prep(unwtd_pred_error, null_error)
 null_compare <- na.omit(out[["weekly_compare"]])
 better_than_null <- out[["better_than_null"]]
 
-phase <- readRDS("unweighted_rt_qntls.rds")
-### We don't care about the quantiles of Rt for this analysis
-phase <- select(phase, forecast_date:phase)
-phase <- distinct(phase)
-null_compare <- left_join(null_compare, phase)
-null_compare$country <- as.factor(null_compare$country)
+phase <- readRDS("short_term_phase.rds") %>%
+  filter(model_name == 'ensemble')
 
-y <- tabyl(null_compare, phase, err_level) %>%
+phase <- rename(phase, c('forecast_date' = 'model'))
+
+phase <- distinct(phase)
+
+y <- left_join(null_compare, phase) %>%
+  na.omit() %>%
+  tabyl(phase, err_level) %>%
   adorn_percentages("row") %>%
   adorn_pct_formatting(digits = 1) %>%
   adorn_ns()
@@ -106,28 +108,12 @@ plots <- map(
   }
 )
 
-byphase_plots <- map(
-  plots,
-  function(p) {
-    p + facet_wrap(~phase, ncol = 2)
-  }
-)
-
 plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
 
 iwalk(
   plots, function(p, page) {
     outfile <- glue(
       "figures/null/comparison_with_baseline_error_{page}"
-    )
-    rincewind::save_multiple(filename = outfile, plot = p)
-  }
-)
-
-iwalk(
-  byphase_plots, function(p, page) {
-    outfile <- glue(
-      "figures/null/comparison_with_baseline_error_{page}_facetted"
     )
     rincewind::save_multiple(filename = outfile, plot = p)
   }
@@ -179,10 +165,11 @@ ggsave(
 out <- data_prep(unwtd_pred_error, linear_error)
 null_compare <- out[["weekly_compare"]]
 better_than_null <- out[["better_than_null"]]
-null_compare <- left_join(null_compare, phase)
-null_compare$country <- as.factor(null_compare$country)
 
-y <- tabyl(null_compare, phase, err_level) %>%
+
+y <- left_join(null_compare, phase) %>%
+  na.omit() %>%
+  tabyl(phase, err_level) %>%
   adorn_percentages("row") %>%
   adorn_pct_formatting(digits = 1) %>%
   adorn_ns()
@@ -205,12 +192,6 @@ plots <- map(
   }
 )
 
-plots_byphase <- map(
-  plots,
-  function(p) {
-    p + facet_wrap(~phase, ncol = 2)
-  }
-)
 
 
 plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
@@ -221,15 +202,3 @@ iwalk(plots, function(p, page) {
   )
   rincewind::save_multiple(filename = outfile, plot = p)
 })
-
-iwalk(plots_byphase, function(p, page) {
-  outfile <- glue(
-    "figures/linear/comparison_with_linear_error_{page}_facetted"
-  )
-  rincewind::save_multiple(filename = outfile, plot = p)
-})
-
-
-
-
-## tabyl(by_phase, phase)
