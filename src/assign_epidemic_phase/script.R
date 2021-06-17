@@ -39,17 +39,17 @@ ensb_phase <- split(ensb_rt, ensb_rt$country) %>%
 
 shortterm_phase <- rbind(indvdl_phase, ensb_phase)
 
-longer_rs <- readRDS("weighted_per_country_rsaturation.rds")
-longer_phase <- map_dfr(longer_rs, function(country_rs) {
-  imap_dfr(country_rs, function(day_rs, day) {
-    data.frame(
-      phase = assign_epidemic_phase2(day_rs)
-    )
-  }, .id = "day")
-}, .id = "country")
+## longer_rs <- readRDS("weighted_per_country_rsaturation.rds")
+## longer_phase <- map_dfr(longer_rs, function(country_rs) {
+##   imap_dfr(country_rs, function(day_rs, day) {
+##     data.frame(
+##       phase = assign_epidemic_phase2(day_rs)
+##     )
+##   }, .id = "day")
+## }, .id = "country")
 
-longer_phase$model <- week_ending
+## longer_phase$model <- week_ending
 
 
 saveRDS(shortterm_phase, "short_term_phase.rds")
-saveRDS(longer_phase, "medium_term_phase.rds")
+##saveRDS(longer_phase, "medium_term_phase.rds")
