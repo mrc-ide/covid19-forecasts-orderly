@@ -59,7 +59,6 @@ latest_obs <- max(model_input$dates)
 
 infiles <- list(
   unwieghted = "unweighted_projections.rds",
-  weighted_across_countries = "weighted_across_countries_projections.rds",
   weighted_per_country = "weighted_per_country_projections.rds"
 )
 
