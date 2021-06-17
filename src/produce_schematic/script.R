@@ -272,7 +272,7 @@ incid <- rincewind::ts_to_incid(x, "dates", "Peru")
 si <- readRDS("si_distrs.rds")[[2]]
 
 proj <- project(
-  incid, 1.2, si[-1], model = "poisson", n_sim = 1000, n_days = 15
+  incid, 1.2, si[-1], model = "poisson", n_sim = 10000, n_days = 15
 )
 
 future <- data.frame(proj, check.names = FALSE) %>%
