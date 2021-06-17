@@ -1,12 +1,10 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
-fontsize <- 6
-linesize <- 1.2
 forecast_text <- deparse(bquote("Forecasts with \n constant"~R[t]))
 
 theme_schematic <- function() {
   theme_classic() %+replace%
     theme(
-      text = element_text(size = 10),
+      text = element_text(size = 16),
       line = element_line(size = 1.2),
       axis.text = element_blank(), axis.ticks = element_blank()
     )
@@ -413,32 +411,30 @@ rt_plot <- ggplot(rt) +
     labels = c("Week of (T - 21)", "Week of (T - 14)",
                "Week of (T - 7)", "Week of T", expression({R^{"w"}}(T)))
   ) +
-  theme_minimal() +
+  theme_schematic() +
   theme(legend.position = "none") +
   ylab("Reproduction number") +
   theme(
     axis.line = element_blank(), axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 90, size = 16),
-    axis.text.y = element_text(size = 16),
-    axis.title.y = element_text(size = 16)
+    axis.text.x = element_text(angle = 90)
   ) +
   ## Arrows to show sampling
   annotate(
-    "curve", x = "Week 2", xend = "Week 5", y = 2, yend = 2.8,
+    "curve", x = "Week 2", xend = 4.8, y = 2, yend = 2.8,
     curvature = -0.3, alpha = 0.3, linetype = "dashed",
-    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    arrow = arrow(length = unit(0.5, "cm"), ends = "last"),
     size = linesize
   ) +
   annotate(
-    "curve", x = "Week 3", xend = "Week 5", y = 2, yend = 2.6,
+    "curve", x = "Week 3", xend = 4.8, y = 2, yend = 2.6,
     curvature = -0.3, alpha = 0.5, linetype = "dashed",
-    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    arrow = arrow(length = unit(0.5, "cm"), ends = "last"),
     size = linesize
   ) +
   annotate(
-    "curve", x = "Week 4", xend = "Week 5", y = 2.2, yend = 2.4,
+    "curve", x = "Week 4", xend = 4.8, y = 2.2, yend = 2.4,
     curvature = -0.2, alpha = 1, linetype = "dashed",
-    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    arrow = arrow(length = unit(0.5, "cm"), ends = "last"),
     size = linesize
   )
 
