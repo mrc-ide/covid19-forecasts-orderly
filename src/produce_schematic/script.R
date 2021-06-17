@@ -1,5 +1,4 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
-## Random
 fontsize <- 6
 linesize <- 1.2
 forecast_text <- deparse(bquote("Forecasts with \n constant"~R[t]))
@@ -37,12 +36,13 @@ obs_deaths <- obs_deaths[obs_deaths$dates >= earliest, ]
 ######################################################################
 ###### Model 1 jointly estimates Rt and incidence prior to window
 ## Generate dummy data
-x <- head(obs_deaths, 10)
+x <- obs_deaths[21:30, ]
+x$deaths <- ceiling(x$deaths)
 incid <- rincewind::ts_to_incid(x, "dates", "deaths")
 si <- readRDS("si_distrs.rds")[[2]]
 
 proj <- project(
-  incid, 1.5, si, model = "poisson", n_sim = 100, n_days = 35
+  incid, 1.5, si, model = "poisson", n_sim = 10000, n_days = 35
 )
 proj <- data.frame(proj, check.names = FALSE)
 ## First 14 days, back-calculated incidence
@@ -110,13 +110,14 @@ obs_m1 <- pobs +
   )
 
 
+
 m1_right <- obs_m1 +
   geom_segment(
     aes(
       x = min(obs$dates) - 0.5,
       xend = max(obs$dates) + 0.5,
-      y = 110,
-      yend = 110
+      y = max(future$high) * 0.8,
+      yend = max(future$high) * 0.8
     ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
@@ -124,7 +125,7 @@ m1_right <- obs_m1 +
     aes(
       x = min(proj$dates),
       xend = min(obs$dates) - 1,
-      y = 105, yend = 105
+      y = max(future$high) * 0.7, yend = max(future$high) * 0.7
     ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) + coord_trans(clip = "off")
@@ -169,7 +170,27 @@ wtd_cases <- data.frame(
   wtd_cases = wtd_cases[, 1]
 )
 
+rho <- tail(obs_deaths$deaths, 1) / tail(wtd_cases$wtd_cases, 1)
+## Simulate from binomial but keep increasing the
+## weighted cases
+wtd_mu <- mean(tail(wtd_cases$wtd_cases, 7))
+wtd_sd <- sd(tail(wtd_cases$wtd_cases, 7))
+params <- epitrix::gamma_mucv2shapescale(wtd_mu, wtd_sd / wtd_mu)
+future_wtd <- rgamma(21, shape = params$shape, scale = params$scale)
+future <- map_dfr(
+  future_wtd, function(wtd) {
+    deaths <- rbinom(1e4, size = ceiling(wtd), prob = rho)
+    data.frame(
+      low = qlow(deaths), med = qmed(deaths),
+      high = qhigh(deaths)
+    )
+  }
+)
 
+future$dates <- seq(
+  from = as.Date(max(obs_deaths$dates)),
+  length.out = 21, by = "1 day"
+)
 
 m3_left <- ggplot() +
   geom_line(
@@ -197,17 +218,24 @@ m3_right <- m3_left +
   ) +
   geom_line(
     data = future, aes(dates, med),
-    linetype = "dashed", alpha = 0.4, col = "red"
+    linetype = "dashed", col = "red"
   ) +
+  geom_ribbon(
+    data = future, aes(dates, ymin = low, ymax = high),
+    alpha = 0.3, fill = "red"
+  ) +
+  ## segment above rho
   geom_segment(
     aes(
-      x = now - 5, y = 183, yend = 230, xend = now - 5
+      x = xmax, y = obs_deaths$deaths[idx] + 30,
+      yend = (ymax / 2) - 10, xend = xmax
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
     size = linesize
   ) +
+  ## segment below rho
   geom_segment(
     aes(
-      x = now - 5, y = 285, yend = 335, xend = now - 5
+      x = xmax, y = (ymax / 2) + 10, yend = ymax - 5, xend = xmax
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
     size = linesize
   ) +
