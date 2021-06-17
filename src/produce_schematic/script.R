@@ -348,65 +348,95 @@ cowplot::save_plot("m2_right.pdf", m2_right)
 
 ########### Medium-term forecasts schematic
 ###########
-
-## Rt distributions
-rt <- data.frame(
-  week = rep(paste("Week", 1:5), each = 1e3),
-  rt = c(
-    rnorm(1e3, 12, 2), rnorm(1e3, 6, 4), rnorm(1e3, 4, 4),
-    rnorm(1e3, 2, 4), rnorm(1e3, 0, 2)
-  ),
-  ## The one not combined in gray, the ones comnined in blue
-  ## and the weighted in red
-  fill = rep(c("gray", rep("blue", 3), "red"), each = 1e3),
-  stringsAsFactors = FALSE
+mu_weeks <- c(3, 1.4, 1.6, 1.8)
+cv_weeks <- 0.1
+params <- epitrix::gamma_mucv2shapescale(mu_weeks, cv_weeks)
+weeks <- seq_along(mu_weeks)
+rt <- pmap_dfr(
+  list(x = params$shape, y = params$scale, week = weeks),
+  function(x, y, week) {
+    data.frame(
+      rt = rgamma(1e4, shape = x, scale = y),
+      week = week,
+      stringsAsFactors = FALSE
+    )
+  }
 )
 
+## weighted version : take actual weighted version of
+## the above with beta 1.
+weights <- rev(
+  ceiling(1e4 * exp(-seq_along(mu_weeks)))
+)
+wtd_rt <- split(rt, rt$week)
+wtd_rt <- map2(wtd_rt, weights, function(x, wt) sample(x$rt, wt))
+
+wtd_rt <- data.frame(
+  rt = unlist(wtd_rt), week = 5, stringsAsFactors = FALSE
+)
+
+rt <- rbind(rt, wtd_rt)
+rt$fill <- case_when(
+  rt$week == 1 ~ "gray",
+  rt$week %in% c(2, 3, 4) ~ "blue",
+  rt$week == 5 ~ "red"
+)
+
+rt$alpha <- 0.3
+rt$alpha[rt$week == 4] <- 0.6
 ## Horizontal Lines
-week4_qntls <- rt[rt$week == "Week 4", ]
+week4_qntls <- rt[rt$week == 4, ]
 ci_high <- quantile(week4_qntls$rt, probs = 0.975)
 ci_low <- quantile(week4_qntls$rt, probs = 0.025)
+rt$week <- glue::glue("Week {rt$week}")
+
+
+## Starting point for each arrow
+## Manual placement!
+y <- data.frame(
+  x = c("Week 2", "Week 3", "Week 4"), xend = "Week 5",
+  y = c(1.5, 2, 2.2), yend = c(3, 2.8, 2.5)
+)
 
 rt_plot <- ggplot(rt) +
   geom_half_violin(
-    aes(week, rt, fill = fill, alpha = week),
+    aes(week, rt, fill = fill, alpha = alpha),
     draw_quantiles = c(0.025, 0.975)
   ) +
   ## Horizontal lines to show 95% CrI of the most recent estimate
   geom_hline(yintercept = c(ci_low, ci_high), linetype = "dashed") +
   scale_fill_identity() +
-  scale_alpha_manual(
-    values = c("Week 1" = 0.3, "Week 2" = 0.3, "Week 3" = 0.3,
-               "Week 4" = 0.7, "Week 5" = 0.3)
-  ) +
+  scale_alpha_identity() +
   scale_x_discrete(
     position = "top",
     breaks = c("Week 1", "Week 2", "Week 3", "Week 4", "Week 5"),
     labels = c("Week of (T - 21)", "Week of (T - 14)",
                "Week of (T - 7)", "Week of T", expression({R^{"w"}}(T)))
   ) +
-  theme_schematic() +
+  theme_minimal() +
   theme(legend.position = "none") +
   ylab("Reproduction number") +
   theme(
     axis.line = element_blank(), axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 90)
+    axis.text.x = element_text(angle = 90, size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title.y = element_text(size = 16)
   ) +
   ## Arrows to show sampling
   annotate(
-    "curve", x = "Week 2", xend = "Week 5", y = 14, yend = 8,
-    curvature = -0.3, alpha = 0.4, linetype = "dashed",
+    "curve", x = "Week 2", xend = "Week 5", y = 2, yend = 2.8,
+    curvature = -0.3, alpha = 0.3, linetype = "dashed",
     arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
     size = linesize
   ) +
   annotate(
-    "curve", x = "Week 3", xend = "Week 5", y = 11, yend = 7,
+    "curve", x = "Week 3", xend = "Week 5", y = 2, yend = 2.6,
     curvature = -0.3, alpha = 0.5, linetype = "dashed",
     arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
     size = linesize
   ) +
   annotate(
-    "curve", x = "Week 4", xend = "Week 5", y = 9, yend = 6,
+    "curve", x = "Week 4", xend = "Week 5", y = 2.2, yend = 2.4,
     curvature = -0.2, alpha = 1, linetype = "dashed",
     arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
     size = linesize
