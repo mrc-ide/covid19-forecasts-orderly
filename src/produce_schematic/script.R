@@ -1,10 +1,10 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
 forecast_text <- deparse(bquote("Forecasts with \n constant"~R[t]))
-
+linesize <- 1.2
 theme_schematic <- function() {
   theme_classic() %+replace%
     theme(
-      text = element_text(size = 16),
+      text = element_text(size = 14),
       line = element_line(size = 1.2),
       axis.text = element_blank(), axis.ticks = element_blank()
     )
@@ -226,26 +226,27 @@ m3_right <- m3_left +
   geom_segment(
     aes(
       x = xmax, y = obs_deaths$deaths[idx] + 30,
-      yend = (ymax / 2) - 10, xend = xmax
+      yend = (ymax / 2) - 15, xend = xmax
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
     size = linesize
   ) +
   ## segment below rho
   geom_segment(
     aes(
-      x = xmax, y = (ymax / 2) + 10, yend = ymax - 5, xend = xmax
+      x = xmax, y = (ymax / 2) + 25, yend = ymax - 5, xend = xmax
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
     size = linesize
   ) +
+  ## segment left and right of mu
   geom_segment(
     aes(
-      x = earliest + 28, y = 200, yend = 200, xend = earliest + 33
+      x = earliest + 28, y = 200, yend = 200, xend = earliest + 32
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
     size = linesize
   ) +
   geom_segment(
     aes(
-      x = earliest + 37, y = 200, yend = 200, xend = earliest + 46
+      x = earliest + 39, y = 200, yend = 200, xend = earliest + 46
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
     size = linesize
   ) +
@@ -292,7 +293,7 @@ m2_left <- ggplot() +
   geom_vline(
     xintercept = as.numeric(now), linetype = "dashed", size = linesize
   ) +
-  scale_x_date(limits = c(earliest, latest)) +
+  ##scale_x_date(limits = c(earliest, latest)) +
   xlab("Time") + ylab("Daily Deaths") +
   theme_schematic()
 
@@ -439,3 +440,4 @@ rt_plot <- ggplot(rt) +
   )
 
 cowplot::save_plot("rt_plot.pdf", rt_plot)
+dev.off()
