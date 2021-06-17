@@ -15,15 +15,15 @@ depends:
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-03-08")
     use:
-      short_term_phase_2020-03-29.rds: short_term_phase.rds
+      short_term_phase_2020-03-08.rds: short_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-03-15")
     use:
-      short_term_phase_2020-03-29.rds: short_term_phase.rds
+      short_term_phase_2020-03-15.rds: short_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-03-22")
     use:
-      short_term_phase_2020-03-29.rds: short_term_phase.rds
+      short_term_phase_2020-03-22.rds: short_term_phase.rds
 - assign_epidemic_phase:
     id: latest(parameter:week_ending == "2020-03-29")
     use:
