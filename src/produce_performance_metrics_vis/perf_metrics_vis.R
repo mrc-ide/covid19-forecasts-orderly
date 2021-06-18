@@ -170,7 +170,7 @@ prow <- plot_grid(
   theme(legend.position = "none", axis.text.x = element_blank()),
   plots[[3]] + theme(legend.position = "none"),
   plots[[4]] + theme(legend.position = "none"),
-  ncol = 2
+  align = "hv", axis = "l", ncol = 2
 )
 
 ## Finally put the legend back in
