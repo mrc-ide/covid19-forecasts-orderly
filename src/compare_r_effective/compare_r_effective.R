@@ -55,6 +55,7 @@ out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
   adorn_pct_formatting(digits = 2) %>%
   bind_rows(.id = "Week of forecast")
 
+saveRDS(out, 'phase_eff_weekly_week_of_forecast.rds')
 ## Summary across all weeks for which we have medium-term
 ## forecasts
 y <- tabyl(x, phase_eff, phase_weekly) %>%
@@ -63,7 +64,7 @@ y <- tabyl(x, phase_eff, phase_weekly) %>%
   adorn_pct_formatting(digits = 2) %>%
   adorn_ns()
 
-
+saveRDS(y, 'phase_eff_weekly_overall.rds')
 misclassified <- filter(x, phase_weekly != phase_eff)
 
 misclassified <- tabyl(
@@ -73,7 +74,7 @@ misclassified <- tabyl(
   adorn_percentages(denominator = "all") %>%
   adorn_pct_formatting(digits = 2) %>%
   adorn_ns()
-
+saveRDS(misclassified, 'phase_misclassified.rds')
 ### stargazer::stargazer(misclassified, summary=FALSE, rownames = FALSE)
 
 out <- gather(out, phase_eff, label, `definitely decreasing`:`likely growing`)
