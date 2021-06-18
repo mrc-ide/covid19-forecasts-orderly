@@ -4,7 +4,7 @@ linesize <- 1.2
 theme_schematic <- function() {
   theme_classic() %+replace%
     theme(
-      text = element_text(size = 14),
+      text = element_text(size = 15),
       line = element_line(size = 1.2),
       axis.text = element_blank(), axis.ticks = element_blank()
     )
@@ -309,23 +309,19 @@ m2_right <- m2_left +
     arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
+  ## Various window segments
   geom_segment(
-    aes(x = now - 15, xend = now, y = 90, yend = 90),
+    aes(x = now - 15, xend = now, y = 70, yend = 70),
     arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
   geom_segment(
-    aes(x = now - 20, xend = now, y = 100, yend = 100),
+    aes(x = now - 20, xend = now, y = 85, yend = 85),
     arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
   geom_segment(
-    aes(x = now - 25, xend = now, y = 110, yend = 110),
-    arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
-    size = linesize
-  ) +
-  geom_segment(
-    aes(x = now - 35, xend = now, y = 120, yend = 120),
+    aes(x = now - 25, xend = now, y = 100, yend = 100),
     arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
