@@ -15,7 +15,7 @@ packages:
 - janitor
 - purrr
 - rincewind
-- tidylog
+- patchwork
 - tidyr
 
 depends:
