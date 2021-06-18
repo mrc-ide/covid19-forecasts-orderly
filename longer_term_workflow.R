@@ -15,7 +15,7 @@ use_draft <- "newer"
 
 
 weeks <- seq(
-  from  = as.Date("2020-03-29"), to = as.Date("2021-03-01"),
+  from  = as.Date("2020-03-29"), to = as.Date("2020-11-29"),
   by = "7 days"
 )
 
@@ -77,7 +77,7 @@ source(
 orderly::orderly_run("src/collate_longer_forecasts/", use_draft = "newer")
 
 orderly::orderly_run(
-  "src/produce_longer_forecasts_viz/", use_draft = "newer"
+  "produce_longer_forecasts_viz", use_draft = "newer"
 )
 
 source("orderly-helper-scripts/dependencies_collate_longer_forecasts_perf.R")
@@ -87,5 +87,5 @@ orderly::orderly_run(
 )
 
 orderly::orderly_run(
-  "src/produce_longer_forecasts_perf_viz/", use_draft = "newer"
+  "produce_longer_forecasts_perf_viz", use_draft = "newer"
 )

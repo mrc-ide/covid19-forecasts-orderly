@@ -26,6 +26,11 @@ facet_labels <- c("1" = "1-week ahead", "2" = "2-weeks ahead",
 
 by_strategy <- split(weekly_error, weekly_error$strategy)
 
+date_labeller <- function(x) {
+  strftime(as.Date(x), format = "%d-%b")
+}
+## First make the plot to show relative error grows over
+## weeks. Then drop everything greater than 4 weeks.
 plots <-  map(
   by_strategy,
   function(x) {
@@ -33,13 +38,48 @@ plots <-  map(
     p <- ggplot(x, aes(week_of_projection, log(rel_mae))) +
       geom_boxplot() +
       xlab("Week of projection") +
-      ylab("(log) Relative mean error") +
+      ylab("(log) Mean relative error") +
       theme_minimal()
     p
   }
 )
 
 iwalk(plots, function(p, y) ggsave(glue("figures/rel_mae_{y}.png"), p))
+
+by_strategy <- map(
+  by_strategy,
+  function(x) x[x$week_of_projection %in% 1:4, ]
+)
+
+
+by_week_plots <- map(
+  by_strategy,
+  function(df) {
+    df$week_of_projection <- factor(df$week_of_projection)
+
+    ggplot(df) +
+      geom_boxplot(
+        aes(forecast_week, log(rel_mae), fill = week_of_projection),
+        position = "dodge", alpha = 0.5
+      ) +
+      scale_x_discrete(labels = date_labeller) +
+      ylab("(log) Mean relative error") +
+      guides(fill = guide_legend(title = "Week of forecast")) +
+      theme_minimal() +
+      theme(
+        axis.text.x = element_text(angle = 90),
+        legend.position = "top",
+        axis.title.x = element_blank()
+      )
+  }
+)
+
+iwalk(by_week_plots, function(p, strategy) {
+  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}")
+  rincewind::save_multiple(p, outfile)
+})
+
+
 
 rel_mae_plots <- map(
   by_strategy,
@@ -142,35 +182,4 @@ iwalk(
   }
 )
 
-
-date_labeller <- function(x) {
-  strftime(as.Date(x), format = "%d-%b")
-}
-
-by_week_plots <- map(
-  by_strategy,
-  function(df) {
-    df$week_of_projection <- factor(df$week_of_projection)
-
-    ggplot(df) +
-      geom_boxplot(
-        aes(forecast_week, log(rel_mae), fill = week_of_projection),
-        position = "dodge", alpha = 0.5
-      ) +
-      scale_x_discrete(labels = date_labeller) +
-      ylab("(log) Relative mean error") +
-      guides(fill = guide_legend(title = "Week of forecast")) +
-      theme_minimal() +
-      theme(
-        axis.text.x = element_text(angle = 90),
-        legend.position = "top",
-        axis.title.x = element_blank()
-      )
-  }
-)
-
-iwalk(by_week_plots, function(p, strategy) {
-  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}")
-  rincewind::save_multiple(p, outfile)
-})
 
