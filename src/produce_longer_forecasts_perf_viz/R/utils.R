@@ -16,6 +16,7 @@ augment_data <- function(df, weeks, width = 2) {
 
   y_labels <- nice_country_name(y$country)
   y_labels[y_labels == "United States of America"] <- "USA"
+  y_labels[y_labels == "United Kingdom"] <- "UK"
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
@@ -77,7 +78,7 @@ long_relative_error_heatmap <- function(df, high1, high2, x_labels, y_labels) {
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 0.5, size = 11),
-    axis.text.y = element_text(size = 11),
+    axis.text.y = element_text(size = 10.5),
     strip.text = element_text(size = 11),
     axis.title = element_blank(),
     legend.position = "top",
