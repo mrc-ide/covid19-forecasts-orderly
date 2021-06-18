@@ -15,8 +15,6 @@ augment_data <- function(df, weeks, width = 2) {
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
   y_labels <- nice_country_name(y$country)
-  y_labels[y_labels == "United States of America"] <- "USA"
-  y_labels[y_labels == "United Kingdom"] <- "UK"
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
@@ -173,16 +171,17 @@ prop_in_ci_heatmap <- function(df, x_labels, y_labels, CrI = "50%") {
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5),
+    axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
+    axis.text.y = element_text(size = 10.5),
     axis.title = element_blank(),
     legend.position = "top",
-    legend.title = element_text(size = 8),
+    legend.title = element_text(size = 14),
     legend.key.width = unit(2, "lines"),
     legend.key.height = unit(1, "lines"),
     legend.margin = margin(0, 0, 2, 0),
     legend.box.margin=margin(0, -10, -10, -10),
     axis.line = element_blank()
-    ) +
+  ) +
   coord_cartesian(clip = "off")
 
   p

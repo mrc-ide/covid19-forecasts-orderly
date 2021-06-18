@@ -31,7 +31,7 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
     ) +
     theme(
       axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
-      axis.text.y = element_text(size = 12),
+      axis.text.y = element_text(size = 10.5),
       axis.title = element_blank(),
       legend.position = "top",
       legend.title = element_text(size = 14),

@@ -8,7 +8,7 @@ dir.create("figures/rme")
 dir.create("figures/other")
 
 labels <- c(
-  "rel_mae" = "Relative mean error",
+  "rel_mae" = "Mean relative error",
   "rel_mse" = "Relative mean squared error",
   "rel_sharpness" = "Relative sharpness",
   "bias" = "Bias",
