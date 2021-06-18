@@ -11,17 +11,14 @@ artefacts:
       - unweighted_pred_qntls.rds
       - unweighted_reff_qntls.rds
       - unweighted_ps_qntls.rds
-      - weighted_across_countries_pred_qntls.rds
-      - weighted_across_countries_ps_qntls.rds
-      - weighted_across_countries_reff_qntls.rds
+      - unweighted_projections.rds
+      - unweighted_rsaturation.rds
+      - unweighted_reff_with_underreporting.rds      
       - weighted_per_country_pred_qntls.rds
       - weighted_per_country_ps_qntls.rds
       - weighted_per_country_reff_qntls.rds
-      - unweighted_projections.rds
-      - weighted_across_countries_projections.rds
       - weighted_per_country_projections.rds
-      - unweighted_reff_with_underreporting.rds
-      - weighted_across_countries_reff_with_underreporting.rds      
+      - weighted_per_country_rsaturation.rds
       - weighted_per_country_reff_with_underreporting.rds
       
 packages:

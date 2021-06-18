@@ -8,7 +8,7 @@ dir.create("figures/rme")
 dir.create("figures/other")
 
 labels <- c(
-  "rel_mae" = "Relative mean error",
+  "rel_mae" = "Mean relative error",
   "rel_mse" = "Relative mean squared error",
   "rel_sharpness" = "Relative sharpness",
   "bias" = "Bias",
@@ -17,10 +17,6 @@ labels <- c(
   "empirical_p" = "Probability(obs|predictions)"
 )
 
-phase <- readRDS("unweighted_rt_qntls.rds")
-### We don't care about the quantiles of Rt for this analysis
-phase <- select(phase, forecast_date:phase)
-phase <- distinct(phase)
 exclude <- readRDS("exclude.rds")
 weekly_incidence <- readRDS("weekly_incidence.rds")
 weekly_incidence$forecast_date <- as.Date(weekly_incidence$week_starting)
@@ -46,10 +42,6 @@ unwtd_pred_error <- unwtd_pred_error[!unwtd_pred_error$country %in% exclude, ]
 n_forecast <- group_by(unwtd_pred_error, country) %>%
   summarise(n = length(unique(forecast_date))) %>%
   ungroup()
-
-phase$forecast_date <- as.Date(phase$forecast_date)
-unwtd_pred_error <- left_join(unwtd_pred_error, phase)
-
 
 weekly_summary <- function(df) {
 ######################################################################
@@ -91,6 +83,7 @@ weekly_summaries <- map(
   country_groups,
   function(countries) {
     df <- unwtd_pred_error[unwtd_pred_error$country %in% countries, ]
+    df <- unwtd_pred_error[unwtd_pred_error$model_name == "ensemble", ]
     df$country <- factor(df$country, levels = countries, ordered = TRUE)
     weekly_summary(df)
   }
@@ -101,7 +94,13 @@ readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Summary by phase######## ##########################
 ######################################################################
-by_phase <- group_by(unwtd_pred_error, phase) %>%
+phase <- readRDS("short_term_phase.rds")
+phase <- filter(phase, model_name == 'ensemble')
+phase <- rename(phase, c('forecast_date' = 'model'))
+phase$forecast_date <- as.Date(phase$forecast_date)
+
+by_phase <- left_join(unwtd_pred_error, phase) %>%
+  group_by(phase) %>%
     summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
     ungroup()
 
@@ -171,7 +170,7 @@ prow <- plot_grid(
   theme(legend.position = "none", axis.text.x = element_blank()),
   plots[[3]] + theme(legend.position = "none"),
   plots[[4]] + theme(legend.position = "none"),
-  ncol = 2
+  align = "hv", axis = "l", ncol = 2
 )
 
 ## Finally put the legend back in

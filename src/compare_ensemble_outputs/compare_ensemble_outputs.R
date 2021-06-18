@@ -6,11 +6,10 @@
 ### last week
 ### all forecasts from weighted ensemble with weights coming from
 ###all previous weeks
+dir.create("figures")
 date_labels <- "%d - %b"
 date_breaks <- "4 weeks"
 date_limits <- c(as.Date("2020-03-01"), NA)
-
-file_format <- ".tiff"
 
 main_text_countries <- c(
   "Brazil", "India", "Italy", "South_Africa",

@@ -1,13 +1,10 @@
 ## orderly::orderly_develop_start(use_draft = "newer")
-## Random
-fontsize <- 6
-linesize <- 1.2
 forecast_text <- deparse(bquote("Forecasts with \n constant"~R[t]))
-
+linesize <- 1.2
 theme_schematic <- function() {
   theme_classic() %+replace%
     theme(
-      text = element_text(size = 10),
+      text = element_text(size = 15),
       line = element_line(size = 1.2),
       axis.text = element_blank(), axis.ticks = element_blank()
     )
@@ -37,12 +34,13 @@ obs_deaths <- obs_deaths[obs_deaths$dates >= earliest, ]
 ######################################################################
 ###### Model 1 jointly estimates Rt and incidence prior to window
 ## Generate dummy data
-x <- head(obs_deaths, 10)
+x <- obs_deaths[21:30, ]
+x$deaths <- ceiling(x$deaths)
 incid <- rincewind::ts_to_incid(x, "dates", "deaths")
 si <- readRDS("si_distrs.rds")[[2]]
 
 proj <- project(
-  incid, 1.5, si, model = "poisson", n_sim = 100, n_days = 35
+  incid, 1.5, si, model = "poisson", n_sim = 10000, n_days = 35
 )
 proj <- data.frame(proj, check.names = FALSE)
 ## First 14 days, back-calculated incidence
@@ -110,13 +108,14 @@ obs_m1 <- pobs +
   )
 
 
+
 m1_right <- obs_m1 +
   geom_segment(
     aes(
       x = min(obs$dates) - 0.5,
       xend = max(obs$dates) + 0.5,
-      y = 110,
-      yend = 110
+      y = max(future$high) * 0.8,
+      yend = max(future$high) * 0.8
     ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
@@ -124,7 +123,7 @@ m1_right <- obs_m1 +
     aes(
       x = min(proj$dates),
       xend = min(obs$dates) - 1,
-      y = 105, yend = 105
+      y = max(future$high) * 0.7, yend = max(future$high) * 0.7
     ), arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) + coord_trans(clip = "off")
@@ -169,7 +168,27 @@ wtd_cases <- data.frame(
   wtd_cases = wtd_cases[, 1]
 )
 
+rho <- tail(obs_deaths$deaths, 1) / tail(wtd_cases$wtd_cases, 1)
+## Simulate from binomial but keep increasing the
+## weighted cases
+wtd_mu <- mean(tail(wtd_cases$wtd_cases, 7))
+wtd_sd <- sd(tail(wtd_cases$wtd_cases, 7))
+params <- epitrix::gamma_mucv2shapescale(wtd_mu, wtd_sd / wtd_mu)
+future_wtd <- rgamma(21, shape = params$shape, scale = params$scale)
+future <- map_dfr(
+  future_wtd, function(wtd) {
+    deaths <- rbinom(1e4, size = ceiling(wtd), prob = rho)
+    data.frame(
+      low = qlow(deaths), med = qmed(deaths),
+      high = qhigh(deaths)
+    )
+  }
+)
 
+future$dates <- seq(
+  from = as.Date(max(obs_deaths$dates)),
+  length.out = 21, by = "1 day"
+)
 
 m3_left <- ggplot() +
   geom_line(
@@ -197,29 +216,37 @@ m3_right <- m3_left +
   ) +
   geom_line(
     data = future, aes(dates, med),
-    linetype = "dashed", alpha = 0.4, col = "red"
+    linetype = "dashed", col = "red"
   ) +
+  geom_ribbon(
+    data = future, aes(dates, ymin = low, ymax = high),
+    alpha = 0.3, fill = "red"
+  ) +
+  ## segment above rho
   geom_segment(
     aes(
-      x = now - 5, y = 183, yend = 230, xend = now - 5
+      x = xmax, y = obs_deaths$deaths[idx] + 30,
+      yend = (ymax / 2) - 15, xend = xmax
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
     size = linesize
   ) +
+  ## segment below rho
   geom_segment(
     aes(
-      x = now - 5, y = 285, yend = 335, xend = now - 5
+      x = xmax, y = (ymax / 2) + 25, yend = ymax - 5, xend = xmax
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
     size = linesize
   ) +
+  ## segment left and right of mu
   geom_segment(
     aes(
-      x = earliest + 28, y = 200, yend = 200, xend = earliest + 33
+      x = earliest + 28, y = 200, yend = 200, xend = earliest + 32
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "last"),
     size = linesize
   ) +
   geom_segment(
     aes(
-      x = earliest + 37, y = 200, yend = 200, xend = earliest + 46
+      x = earliest + 39, y = 200, yend = 200, xend = earliest + 46
     ), arrow = arrow(length = unit(0.2, "cm"), ends = "first"),
     size = linesize
   ) +
@@ -244,7 +271,7 @@ incid <- rincewind::ts_to_incid(x, "dates", "Peru")
 si <- readRDS("si_distrs.rds")[[2]]
 
 proj <- project(
-  incid, 1.2, si[-1], model = "poisson", n_sim = 1000, n_days = 15
+  incid, 1.2, si[-1], model = "poisson", n_sim = 10000, n_days = 15
 )
 
 future <- data.frame(proj, check.names = FALSE) %>%
@@ -266,7 +293,7 @@ m2_left <- ggplot() +
   geom_vline(
     xintercept = as.numeric(now), linetype = "dashed", size = linesize
   ) +
-  scale_x_date(limits = c(earliest, latest)) +
+  ##scale_x_date(limits = c(earliest, latest)) +
   xlab("Time") + ylab("Daily Deaths") +
   theme_schematic()
 
@@ -282,23 +309,19 @@ m2_right <- m2_left +
     arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
+  ## Various window segments
   geom_segment(
-    aes(x = now - 15, xend = now, y = 90, yend = 90),
+    aes(x = now - 15, xend = now, y = 70, yend = 70),
     arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
   geom_segment(
-    aes(x = now - 20, xend = now, y = 100, yend = 100),
+    aes(x = now - 20, xend = now, y = 85, yend = 85),
     arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
   geom_segment(
-    aes(x = now - 25, xend = now, y = 110, yend = 110),
-    arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
-    size = linesize
-  ) +
-  geom_segment(
-    aes(x = now - 35, xend = now, y = 120, yend = 120),
+    aes(x = now - 25, xend = now, y = 100, yend = 100),
     arrow = arrow(length = unit(0.25, "cm"), ends = "both"),
     size = linesize
   ) +
@@ -320,37 +343,65 @@ cowplot::save_plot("m2_right.pdf", m2_right)
 
 ########### Medium-term forecasts schematic
 ###########
-
-## Rt distributions
-rt <- data.frame(
-  week = rep(paste("Week", 1:5), each = 1e3),
-  rt = c(
-    rnorm(1e3, 12, 2), rnorm(1e3, 6, 4), rnorm(1e3, 4, 4),
-    rnorm(1e3, 2, 4), rnorm(1e3, 0, 2)
-  ),
-  ## The one not combined in gray, the ones comnined in blue
-  ## and the weighted in red
-  fill = rep(c("gray", rep("blue", 3), "red"), each = 1e3),
-  stringsAsFactors = FALSE
+mu_weeks <- c(3, 1.4, 1.6, 1.8)
+cv_weeks <- 0.1
+params <- epitrix::gamma_mucv2shapescale(mu_weeks, cv_weeks)
+weeks <- seq_along(mu_weeks)
+rt <- pmap_dfr(
+  list(x = params$shape, y = params$scale, week = weeks),
+  function(x, y, week) {
+    data.frame(
+      rt = rgamma(1e4, shape = x, scale = y),
+      week = week,
+      stringsAsFactors = FALSE
+    )
+  }
 )
 
+## weighted version : take actual weighted version of
+## the above with beta 1.
+weights <- rev(
+  ceiling(1e4 * exp(-seq_along(mu_weeks)))
+)
+wtd_rt <- split(rt, rt$week)
+wtd_rt <- map2(wtd_rt, weights, function(x, wt) sample(x$rt, wt))
+
+wtd_rt <- data.frame(
+  rt = unlist(wtd_rt), week = 5, stringsAsFactors = FALSE
+)
+
+rt <- rbind(rt, wtd_rt)
+rt$fill <- case_when(
+  rt$week == 1 ~ "gray",
+  rt$week %in% c(2, 3, 4) ~ "blue",
+  rt$week == 5 ~ "red"
+)
+
+rt$alpha <- 0.3
+rt$alpha[rt$week == 4] <- 0.6
 ## Horizontal Lines
-week4_qntls <- rt[rt$week == "Week 4", ]
+week4_qntls <- rt[rt$week == 4, ]
 ci_high <- quantile(week4_qntls$rt, probs = 0.975)
 ci_low <- quantile(week4_qntls$rt, probs = 0.025)
+rt$week <- glue::glue("Week {rt$week}")
+
+
+## Starting point for each arrow
+## Manual placement!
+y <- data.frame(
+  x = c("Week 2", "Week 3", "Week 4"), xend = "Week 5",
+  y = c(1.5, 2, 2.2), yend = c(3, 2.8, 2.5)
+)
 
 rt_plot <- ggplot(rt) +
   geom_half_violin(
-    aes(week, rt, fill = fill, alpha = week),
+    aes(week, rt, fill = fill, alpha = alpha),
     draw_quantiles = c(0.025, 0.975)
   ) +
   ## Horizontal lines to show 95% CrI of the most recent estimate
   geom_hline(yintercept = c(ci_low, ci_high), linetype = "dashed") +
   scale_fill_identity() +
-  scale_alpha_manual(
-    values = c("Week 1" = 0.3, "Week 2" = 0.3, "Week 3" = 0.3,
-               "Week 4" = 0.7, "Week 5" = 0.3)
-  ) +
+  scale_alpha_identity() +
   scale_x_discrete(
     position = "top",
     breaks = c("Week 1", "Week 2", "Week 3", "Week 4", "Week 5"),
@@ -366,22 +417,23 @@ rt_plot <- ggplot(rt) +
   ) +
   ## Arrows to show sampling
   annotate(
-    "curve", x = "Week 2", xend = "Week 5", y = 14, yend = 8,
-    curvature = -0.3, alpha = 0.4, linetype = "dashed",
-    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    "curve", x = "Week 2", xend = 4.8, y = 2, yend = 2.8,
+    curvature = -0.3, alpha = 0.3, linetype = "dashed",
+    arrow = arrow(length = unit(0.5, "cm"), ends = "last"),
     size = linesize
   ) +
   annotate(
-    "curve", x = "Week 3", xend = "Week 5", y = 11, yend = 7,
+    "curve", x = "Week 3", xend = 4.8, y = 2, yend = 2.6,
     curvature = -0.3, alpha = 0.5, linetype = "dashed",
-    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    arrow = arrow(length = unit(0.5, "cm"), ends = "last"),
     size = linesize
   ) +
   annotate(
-    "curve", x = "Week 4", xend = "Week 5", y = 9, yend = 6,
+    "curve", x = "Week 4", xend = 4.8, y = 2.2, yend = 2.4,
     curvature = -0.2, alpha = 1, linetype = "dashed",
-    arrow = arrow(length = unit(0.25, "cm"), ends = "last"),
+    arrow = arrow(length = unit(0.5, "cm"), ends = "last"),
     size = linesize
   )
 
 cowplot::save_plot("rt_plot.pdf", rt_plot)
+dev.off()

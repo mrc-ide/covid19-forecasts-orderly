@@ -6,7 +6,6 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
   idx <- seq(1, length(weeks), 3)
   xmax <- max(as.numeric(weeks)) + 2.5
   ymax <- max(as.numeric(factor(df$country))) + 1
-
   p <- ggplot(df) +
   geom_tile(
     aes(factor(forecast_date), country, fill = prop_in_CrI),
@@ -21,8 +20,7 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
   ##   parse = TRUE, angle = 90, hjust = 0, vjust = 0, size = 6 / .pt
   ## ) +
     scale_y_discrete(
-      limits = rev(levels(df$country)),
-      labels = nice_country_name
+      limits = rev(levels(df$country)), labels = nice_country_name
     ) +
     scale_x_discrete(breaks = weeks[idx], labels = x_labels[idx]) +
     theme_minimal() +
@@ -33,7 +31,7 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
     ) +
     theme(
       axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
-      axis.text.y = element_text(size = 14),
+      axis.text.y = element_text(size = 10.5),
       axis.title = element_blank(),
       legend.position = "top",
       legend.title = element_text(size = 14),
@@ -65,7 +63,6 @@ augment_data <- function(df, weeks, width = 1.5) {
   y$y <- seq(from = 1, by = width, length.out = nrow(y))
 
   y_labels <- nice_country_name(y$country)
-  y_labels[y_labels == "United States of America"] <- "USA"
   y_labels <- setNames(y_labels, y$y)
 
   df <- left_join(df, x) %>% left_join(y)
@@ -125,7 +122,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
-    axis.text.y = element_text(size = 14),
+    axis.text.y = element_text(size = 12),
     axis.title = element_blank(),
     legend.position = "top",
     legend.title = element_text(size = 14),

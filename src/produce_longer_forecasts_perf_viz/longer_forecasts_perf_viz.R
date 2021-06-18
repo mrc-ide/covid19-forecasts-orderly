@@ -26,6 +26,11 @@ facet_labels <- c("1" = "1-week ahead", "2" = "2-weeks ahead",
 
 by_strategy <- split(weekly_error, weekly_error$strategy)
 
+date_labeller <- function(x) {
+  strftime(as.Date(x), format = "%d-%b")
+}
+## First make the plot to show relative error grows over
+## weeks. Then drop everything greater than 4 weeks.
 plots <-  map(
   by_strategy,
   function(x) {
@@ -33,13 +38,48 @@ plots <-  map(
     p <- ggplot(x, aes(week_of_projection, log(rel_mae))) +
       geom_boxplot() +
       xlab("Week of projection") +
-      ylab("(log) Relative mean error") +
+      ylab("(log) Mean relative error") +
       theme_minimal()
     p
   }
 )
 
 iwalk(plots, function(p, y) ggsave(glue("figures/rel_mae_{y}.png"), p))
+
+by_strategy <- map(
+  by_strategy,
+  function(x) x[x$week_of_projection %in% 1:4, ]
+)
+
+
+by_week_plots <- map(
+  by_strategy,
+  function(df) {
+    df$week_of_projection <- factor(df$week_of_projection)
+
+    ggplot(df) +
+      geom_boxplot(
+        aes(forecast_week, log(rel_mae), fill = week_of_projection),
+        position = "dodge", alpha = 0.5
+      ) +
+      scale_x_discrete(labels = date_labeller) +
+      ylab("(log) Mean relative error") +
+      guides(fill = guide_legend(title = "Week of forecast")) +
+      theme_minimal() +
+      theme(
+        axis.text.x = element_text(angle = 90),
+        legend.position = "top",
+        axis.title.x = element_blank()
+      )
+  }
+)
+
+iwalk(by_week_plots, function(p, strategy) {
+  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}")
+  rincewind::save_multiple(p, outfile)
+})
+
+
 
 rel_mae_plots <- map(
   by_strategy,
@@ -51,9 +91,9 @@ rel_mae_plots <- map(
         local <- droplevels(local)
         ##local <- weekly_summary(local)
         ##local$country <- rincewind::nice_country_name(local$country)
-        out <- augment_data(local, weeks, 2)
+        out <- augment_data(local, weeks, 2.2)
         long_relative_error_heatmap(
-          out[[1]], high1 = 1, high2 = 3, out$x_labels, out$y_labels) +
+          out[[1]], high1 = 1, high2 = 2, out$x_labels, out$y_labels) +
           facet_wrap(
             ~week_of_projection, nrow = 2,
             labeller = as_labeller(facet_labels)
@@ -68,7 +108,7 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/rel_mae_{strategy}_{page}.pdf")
+      outfile <- glue("figures/rel_mae_{strategy}_{page}")
       rincewind::save_multiple(p, outfile)
     }
     )
@@ -83,7 +123,7 @@ prop_50_plots <- map(
       function(countries) {
         local <- df[df$country %in% countries, ]
         local <- droplevels(local)
-        out <- augment_data(local, weeks, 2)
+        out <- augment_data(local, weeks, 2.2)
         df <- out$df
         df$fill <- df$prop_in_50
         prop_in_ci_heatmap(df, out$x_labels, out$y_labels) +
@@ -101,7 +141,7 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(1, 2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/prop_50_{strategy}_{page}.pdf")
+      outfile <- glue("figures/prop_50_{strategy}_{page}")
       rincewind::save_multiple(p, outfile, one_col = FALSE)
     }
     )
@@ -117,7 +157,7 @@ prop_95_plots <- map(
       function(countries) {
         local <- df[df$country %in% countries, ]
         local <- droplevels(local)
-        out <- augment_data(local, weeks, 2)
+        out <- augment_data(local, weeks, 2.2)
         df <- out$df
         df$fill <- df$prop_in_975
         prop_in_ci_heatmap(df, out$x_labels, out$y_labels, "95%") +
@@ -135,42 +175,11 @@ iwalk(
   function(plots, strategy) {
     plots <- customise_for_rows(plots, c(1, 2, 3, 4))
     iwalk(plots, function(p, page) {
-      outfile <- glue("figures/prop_95_{strategy}_{page}.pdf")
+      outfile <- glue("figures/prop_95_{strategy}_{page}")
       rincewind::save_multiple(p, outfile, one_col = FALSE)
     }
     )
   }
 )
 
-
-date_labeller <- function(x) {
-  strftime(as.Date(x), format = "%d-%b")
-}
-
-by_week_plots <- map(
-  by_strategy,
-  function(df) {
-    df$week_of_projection <- factor(df$week_of_projection)
-
-    ggplot(df) +
-      geom_boxplot(
-        aes(forecast_week, log(rel_mae), fill = week_of_projection),
-        position = "dodge", alpha = 0.5
-      ) +
-      scale_x_discrete(labels = date_labeller) +
-      ylab("(log) Relative mean error") +
-      guides(fill = guide_legend(title = "Week of forecast")) +
-      theme_minimal() +
-      theme(
-        axis.text.x = element_text(angle = 90),
-        legend.position = "top",
-        axis.title.x = element_blank()
-      )
-  }
-)
-
-iwalk(by_week_plots, function(p, strategy) {
-  outfile <- glue("figures/rel_mae_by_forecast_week_{strategy}.pdf")
-  rincewind::save_multiple(p, outfile)
-})
 

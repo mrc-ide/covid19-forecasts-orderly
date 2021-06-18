@@ -35,16 +35,3 @@
  orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2020-11-15
  orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2020-11-22
  orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2020-11-29
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2020-12-06
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2020-12-13
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2020-12-20
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2020-12-27
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-01-03
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-01-10
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-01-17
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-01-24
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-01-31
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-02-07
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-02-14
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-02-21
- orderly run produce_longer_forecasts_metrics window=1 latest_week=2021-01-03 week_ending=2021-02-28

@@ -4,16 +4,16 @@ dir.create("figures")
 prob <- c(0.025, 0.25, 0.50, 0.75, 0.975)
 population <- readr::read_csv("ecdc_pop2018.csv")
 unwtd_rt_estimates <- readRDS("combined_rt_estimates.rds")
-wtd_rt_estimates_across_countries <- readRDS(
-  "combined_weighted_estimates_across_countries.rds"
-)
+## wtd_rt_estimates_across_countries <- readRDS(
+##   "combined_weighted_estimates_across_countries.rds"
+## )
 wtd_rt_estimates_per_country <- readRDS(
   "combined_weighted_estimates_per_country.rds"
 )
 
 #######
 names(unwtd_rt_estimates)[names(unwtd_rt_estimates) == "Czech_Republic"] <- "Czechia"
-names(wtd_rt_estimates_across_countries)[names(wtd_rt_estimates_across_countries) == "Czech_Republic"] <- "Czechia"
+##names(wtd_rt_estimates_across_countries)[names(wtd_rt_estimates_across_countries) == "Czech_Republic"] <- "Czechia"
 names(wtd_rt_estimates_per_country)[names(wtd_rt_estimates_per_country) == "Czech_Republic"] <- "Czechia"
 
 ######
@@ -54,7 +54,7 @@ message(paste(countries, collapse = "\n"))
 
 all_restimates <- list(
   unweighted = unwtd_rt_estimates,
-  weighted_across_countries = wtd_rt_estimates_across_countries,
+  ##weighted_across_countries = wtd_rt_estimates_across_countries,
   weighted_per_country = wtd_rt_estimates_per_country
 )
 
@@ -169,6 +169,7 @@ projections <- map_depth(all_projections, 2, ~ .[["pred"]])
 
 r_effective <- map_depth(all_projections, 2, ~ .[["r_effective"]])
 
+
 p_s <- map_depth(all_projections, 2, ~ .[["p_s"]])
 
 
@@ -222,7 +223,7 @@ ps_qntls <- map_depth(
 
 
 walk(
-  1:3,
+  1:2,
   function(idx) {
     walk(
       countries,
@@ -271,6 +272,12 @@ iwalk(
   projections,
   function(x, y) saveRDS(x, glue::glue("{y}_projections.rds"))
 )
+
+iwalk(
+  r_effective,
+  function(x, y) saveRDS(x, glue::glue("{y}_rsaturation.rds"))
+)
+
 
 iwalk(
   all_reff_underreporting,

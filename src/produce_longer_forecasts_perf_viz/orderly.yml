@@ -13,7 +13,7 @@ packages:
 artefacts:
   staticgraph:
     description: One of many files
-    filenames: figures/2col_prop_95_weighted_per_country_1.tiff
+    filenames: figures/2col_prop_95_weighted_per_country_1.pdf
 
 sources: R/utils.R
 

@@ -6,16 +6,12 @@ x <- list(
     description = "Collated model outputs (quantiles)",
     filenames = list(
       "unwtd_projections_qntls.rds",
-      "wtd_across_all_projections_qntls.rds",
       "wtd_per_country_projections_qntls.rds",
       "unwtd_ps_qntls.rds",
-      "wtd_across_all_ps_qntls.rds",
       "wtd_per_country_ps_qntls.rds",
       "unwtd_reff_qntls.rds",
-      "wtd_across_all_reff_qntls.rds",
       "wtd_per_country_reff_qntls.rds",
       "unwtd_reff_qntls_with_underreporting.rds",
-      "wtd_across_all_reff_qntls_with_underreporting.rds",
       "wtd_per_country_reff_qntls_with_underreporting.rds"
     )
   )
@@ -40,16 +36,12 @@ dependancies <- purrr::map(
         id = query,
         use =  list(
           "unweighted_pred_qntls.rds",
-          "weighted_across_countries_pred_qntls.rds",
           "weighted_per_country_pred_qntls.rds",
           "unweighted_reff_qntls.rds",
           "unweighted_ps_qntls.rds",
-          "weighted_across_countries_ps_qntls.rds",
-          "weighted_across_countries_reff_qntls.rds",
           "weighted_per_country_ps_qntls.rds",
           "weighted_per_country_reff_qntls.rds",
           "unweighted_reff_with_underreporting.rds",
-          "weighted_across_countries_reff_with_underreporting.rds",
           "weighted_per_country_reff_with_underreporting.rds"
         )
       )

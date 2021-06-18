@@ -5,12 +5,12 @@ parameters:
 script: run_rti0.R
 
 packages:
+  - dplyr
   - EpiEstim
+  - ggdist  
   - Hmisc
   - rincewind
-  - dplyr
-  - ggdist
-  
+
 sources:
   - R/MCMC/Like1.R
   - R/MCMC/MCMC_full.R
