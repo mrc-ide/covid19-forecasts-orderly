@@ -35,10 +35,18 @@ compare_phase$week_of_forecast <- case_when(
   35 < compare_phase$day & compare_phase$day <= 42  ~ "Week 6"
 )
 ######################################################################
-########### Total number of country weeks
+########### Total number of country weeks for short term
 ########### That is, n_countries X n_weeks
-########### 78 * 2177 = 169806
+########### 82 * 2222 = 182204
 country_weeks <- group_by(short_term, country) %>%
+  summarise(nweeks = length(unique(model))) %>%
+  ungroup() %>%
+  arrange(nweeks)
+
+########### Total number of country weeks for medium term
+########### That is, n_countries X n_weeks
+########### 82 * 2210 = 181220
+country_weeks <- group_by(medium_term, country) %>%
   summarise(nweeks = length(unique(model))) %>%
   ungroup() %>%
   arrange(nweeks)
@@ -51,8 +59,10 @@ x <- select(
 )
 
 out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
-  adorn_percentages(denominator = "row") %>%
+  adorn_totals(where = c("row", "col")) %>%
+  adorn_percentages(denominator = "all") %>%
   adorn_pct_formatting(digits = 2) %>%
+  adorn_ns() %>%
   bind_rows(.id = "Week of forecast")
 
 saveRDS(out, 'phase_eff_weekly_week_of_forecast.rds')
@@ -65,8 +75,8 @@ y <- tabyl(x, phase_eff, phase_weekly) %>%
   adorn_ns()
 
 saveRDS(y, 'phase_eff_weekly_overall.rds')
-misclassified <- filter(x, phase_weekly != phase_eff)
 
+misclassified <- filter(x, phase_weekly != phase_eff)
 misclassified <- tabyl(
   misclassified, phase_eff, phase_weekly
 ) %>%
@@ -75,7 +85,30 @@ misclassified <- tabyl(
   adorn_pct_formatting(digits = 2) %>%
   adorn_ns()
 saveRDS(misclassified, 'phase_misclassified.rds')
+
+wellclassified <- filter(x, phase_weekly == phase_eff)
+nforecasts <- count(x, week_of_forecast, name = "n_forecasts")
+ncorrect <- count(wellclassified, week_of_forecast, name = "n_correct")
+wellclassified <- left_join(nforecasts, ncorrect)
+wellclassified$prop <- wellclassified$n_correct / wellclassified$n_forecasts
+saveRDS(wellclassified, 'phase_wellclassified.rds')
 ### stargazer::stargazer(misclassified, summary=FALSE, rownames = FALSE)
+
+## Not counting indeterminate
+wellclassified <- filter(x, phase_eff != "indeterminate")
+wellclassified$overall_eff <- case_when(
+  wellclassified$phase_eff %in% c("definitely growing", "likely growing") ~ "growing",
+  wellclassified$phase_eff %in% c("definitely decreasing", "likely decreasing") ~ "not growing",
+  )
+
+wellclassified$overall_weekly <- case_when(
+  wellclassified$phase_weekly %in% c("definitely growing", "likely growing") ~ "growing",
+  wellclassified$phase_weekly %in% c("definitely decreasing", "likely decreasing") ~ "not growing",
+  )
+
+ncorrect <- filter(wellclassified, phase_eff != "indeterminate") %>%
+  filter(overall_eff == overall_weekly) %>%
+  count(week_of_forecast, name = "n_correct")
 
 out <- gather(out, phase_eff, label, `definitely decreasing`:`likely growing`)
 out$val <- readr::parse_number(out$label)
