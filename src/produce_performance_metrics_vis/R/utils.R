@@ -121,11 +121,11 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
-    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(angle = 90, hjust = 0.5, size = 16),
+    axis.text.y = element_text(size = 16),
     axis.title = element_blank(),
     legend.position = "top",
-    legend.title = element_text(size = 14),
+    legend.title = element_text(size = 16),
     legend.key.width = unit(1, "lines"),
     legend.key.height = unit(0.8, "lines"),
     legend.margin = margin(0, 0, 2, 0),
