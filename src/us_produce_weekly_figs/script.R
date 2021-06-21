@@ -24,7 +24,14 @@ exclude <- c("Alabama", # 3 report/week
              "Tennessee", # 5 report / week
              "Washington", # 5 report / week
              "West Virginia", # 5 report / week
-             "Wisconsin" # 5 report / week
+             "Wisconsin", # 5 report / week
+             
+             # Excluded this week (21 June) due to no report for Juneteenth Federal Holiday 
+             "Illinois",
+             "Kentucky",
+             "Maryland",
+             "Missouri",
+             "Pennsylvania"
              )
 
 
