@@ -289,6 +289,24 @@ raw_data$Deaths[raw_data$DateRep == "2021-05-27" & raw_data$province_state == "W
 raw_data$Deaths[raw_data$DateRep == "2021-05-31" & raw_data$province_state == "Wisconsin"] <- 26 - 15
 
 
+##########################################
+## Corrections for 21 June 2021 report ##
+##########################################
+
+## West Virginia
+## Some deaths reported on 9 June were from death certificate review
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff (15/6/21).
+
+raw_data$Deaths[raw_data$DateRep == "2021-06-09" & raw_data$province_state == "West Virginia"] <- 24 - 18
+
+## Alaska
+## Some deaths reported on 11 June were from death certificate review
+## Source: COVID-19 Forecast Hub email from Jeremy Ratcliff (15/6/21).
+
+raw_data$Deaths[raw_data$DateRep == "2021-06-09" & raw_data$province_state == "Alaska"] <- 4 - 4
+
+
+
 
 ## Save wide versions of death and case data
 
