@@ -483,6 +483,17 @@ raw_data$Deaths[raw_data$DateRep == "2021-06-03" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2021-06-10" & raw_data$`Countries.and.territories` == "India"] <- 6148 - 3951
 
 
+## 2021-06-17,NA,Namibia,AFRO,0,67021,0,1040
+## 2021-06-18,NA,Namibia,AFRO,3091,70112,67,1107
+## 2021-06-19,NA,Namibia,AFRO,0,70112,0,1107
+## 2021-06-20,NA,Namibia,AFRO,1649,71761,27,1134
+
+raw_data$Deaths[raw_data$DateRep == "2021-06-17" & raw_data$`Countries.and.territories` == "Namibia"] <- 34
+raw_data$Deaths[raw_data$DateRep == "2021-06-18" & raw_data$`Countries.and.territories` == "Namibia"] <- 27
+raw_data$Deaths[raw_data$DateRep == "2021-06-19" & raw_data$`Countries.and.territories` == "Namibia"] <- 27
+raw_data$Deaths[raw_data$DateRep == "2021-06-20" & raw_data$`Countries.and.territories` == "Namibia"] <- 3
+
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
