@@ -40,6 +40,7 @@ forecasts <- rbind(forecasts, percentile50)
 forecasts <- arrange(forecasts, location)
 
 ## Only keep the columns needed for submission
+forecasts$value <- round(forecasts$value)
 by_model <- split(forecasts, forecasts$model) %>%
   map(function(x) {
     select(
