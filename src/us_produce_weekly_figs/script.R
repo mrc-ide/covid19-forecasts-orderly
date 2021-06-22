@@ -8,12 +8,30 @@ dates_forecast <- seq(
 )
 
 ## exclude some states due to one-off data anomalies or because they only report weekly
-exclude <- c(# "Montana",
-             # "Missouri", # numbers reported on 13/14th April inconsistent with trend
-              "Florida", # report weekly
-             "Ohio",  
-             "Oklahoma" #, # report weekly
-             # "Oregon" # anomalously high reported deaths on 6 April
+exclude <- c("Alabama", # 3 report/week
+             "Arizona", # 6 report/week
+             "Florida", # 1 report/week
+             "Georgia", # 5 report/week
+             "Indiana", # 6 report/week
+             "Kansas", # 3 report/week
+             "Louisiana", # 5 report/week
+             "Michigan", # 6 report/week
+             "Mississippi", # 5 report/week
+             "Nevada", # 5 report/week
+             "New Mexico", # 3 report/week
+             "North Carolina", # 5 report / week
+             "South Carolina", # 5 report / week
+             "Tennessee", # 5 report / week
+             "Washington", # 5 report / week
+             "West Virginia", # 5 report / week
+             "Wisconsin", # 5 report / week
+             
+             # Excluded this week (21 June) due to no report for Juneteenth Federal Holiday 
+             "Illinois",
+             "Kentucky",
+             "Maryland",
+             "Missouri",
+             "Pennsylvania"
              )
 
 
