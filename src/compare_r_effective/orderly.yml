@@ -3,7 +3,9 @@ artefacts:
   data:
     description: Collated combined rt estimates (quantiles)
     filenames:
-    - overlap.rds
+    - phase_eff_weekly_week_of_forecast.rds
+    - phase_eff_weekly_overall.rds
+    - phase_misclassified.rds
 
 packages:
 - dplyr
@@ -15,7 +17,7 @@ packages:
 - janitor
 - purrr
 - rincewind
-- tidylog
+- patchwork
 - tidyr
 
 depends:

@@ -56,9 +56,9 @@ x <- dplyr::select(
 
 # Introduction 
 
-As of 14^th^ June 2021,  more than
-175,000,000 cases of COVID-19 have been reported across the world, 
-with more than 3,790,000 deaths [@whositrep]. 
+As of 21^st^ June 2021,  more than
+178,000,000 cases of COVID-19 have been reported across the world, 
+with more than 3,860,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 
@@ -110,7 +110,7 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week starting 14^th^ June 2021, 
+two weeks. For the week starting 21^st^ June 2021, 
 the number of countries/regions included based on these thresholds is `r nrow(x)`.
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -224,16 +224,6 @@ knitr::include_graphics("us-figs/us_ensemble_forecasts_1.png")
 knitr::include_graphics("us-figs/us_ensemble_forecasts_2.png")
 knitr::include_graphics("us-figs/us_ensemble_forecasts_3.png")
 knitr::include_graphics("us-figs/us_ensemble_forecasts_4.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_5.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_6.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_7.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_8.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_9.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_10.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_11.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_12.png")
-##knitr::include_graphics("us-figs/us_ensemble_forecasts_14.png")
-
 
 ```
 *Figure 7.* Reported daily deaths and current forecasts based on the ensemble
@@ -355,7 +345,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-14^th^ June 2021, the observed number of deaths in the week before,
+21^st^ June 2021, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -518,7 +508,7 @@ built from Models 1, 2 and 3.
 
 ```{r, code = readLines('indvdl_pred_Europe_si_2.Rmd')}
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 14^th^ June 2021 from individual models
+*Figure 15.* Projections (7-day ahead) for the week starting 21^st^ June 2021 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -542,7 +532,7 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_Africa_si_2.Rmd')}
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 14^th^ June 2021 from individual models (Models 1, 2
+*Figure 17.* Projections (7-day ahead) for the week starting 21^st^ June 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -553,7 +543,7 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_North America_si_2.Rmd')}
 ```
-*Figure 18.* Projections (7-day ahead) for the week starting 14^th^ June 2021 from individual models (Models 1, 2
+*Figure 18.* Projections (7-day ahead) for the week starting 21^st^ June 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -565,7 +555,7 @@ CrI of the projections.
 ```{r, code = readLines('indvdl_pred_South America_si_2.Rmd')}
 ```
 *Figure 19.* Projections (7-day ahead) for the week starting
-14^th^ June 2021 from individual models (Models 1, 2
+21^st^ June 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -579,21 +569,10 @@ knitr::include_graphics("us-figs/us_indvdl_forecasts_1.png")
 knitr::include_graphics("us-figs/us_indvdl_forecasts_2.png")
 knitr::include_graphics("us-figs/us_indvdl_forecasts_3.png")
 knitr::include_graphics("us-figs/us_indvdl_forecasts_4.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_5.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_6.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_7.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_8.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_9.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_10.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_11.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_12.png")
-##knitr::include_graphics("us-figs/us_indvdl_forecasts_13.png")
-##knitr::include_graphics("us-figs/us_indvdl_forecasts_14.png")
-
 
 ```
 *Figure 20.* Projections (7-day ahead) for the week starting
-14^th^ June 2021 from individual models (Models 1, 2
+21^st^ June 2021 from individual models (Models 1, 2
 and 3) for each state/territory in the United States of America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -608,7 +587,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-14^th^ June 2021. 
+21^st^ June 2021. 
 
 
 #### Asia
@@ -620,7 +599,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 22.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-14^th^ June 2021. 
+21^st^ June 2021. 
 
 
 #### Africa
@@ -631,7 +610,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-14^th^ June 2021. 
+21^st^ June 2021. 
 
 
 #### North & Central America
@@ -642,7 +621,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 24.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-14^th^ June 2021. 
+21^st^ June 2021. 
 
 #### South America
 
@@ -652,7 +631,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 25.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-14^th^ June 2021. 
+21^st^ June 2021. 
 
 #### USA (sub-national)
 
@@ -664,7 +643,7 @@ knitr::include_graphics("us-figs/us_indvdl_rt_line_1.png")
 *Figure 26.* Estimates of $R_t$ from individual models for each
 state in the United States of America with
 active transmission (see Methods) for the week starting
-14^th^ June 2021. 
+21^st^ June 2021. 
 
 ## Code 
 
@@ -701,12 +680,15 @@ The forecasts produced use the reported daily counts of deaths per
 country available on the WHO website: https://covid19.who.int
 
 *Notes* 
-Some countries have been excluded from the analysis despite meeting
+
+- Some countries have been excluded from the analysis despite meeting
 the threshold because the number of deaths per day did not allow
 reliable inference.
 
+- Some US states have been excluded from the analysis despite meeting
+the threshold because they are not reporting data on a daily basis.
 
-The projections for the USA at the national level are made
+- The projections for the USA at the national level are made
 independently of the projections made at the state level (sub-national
 analysis for the USA). Therefore, the sum of projected deaths for the
 states from the sub-national analysis may not correspond to the
