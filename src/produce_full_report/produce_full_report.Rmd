@@ -680,12 +680,15 @@ The forecasts produced use the reported daily counts of deaths per
 country available on the WHO website: https://covid19.who.int
 
 *Notes* 
-Some countries have been excluded from the analysis despite meeting
+
+- Some countries have been excluded from the analysis despite meeting
 the threshold because the number of deaths per day did not allow
 reliable inference.
 
+- Some US states have been excluded from the analysis despite meeting
+the threshold because they are not reporting data on a daily basis.
 
-The projections for the USA at the national level are made
+- The projections for the USA at the national level are made
 independently of the projections made at the state level (sub-national
 analysis for the USA). Therefore, the sum of projected deaths for the
 states from the sub-national analysis may not correspond to the
