@@ -148,15 +148,19 @@ produced.
 ### Comparison with null model
 
 ```{r}
-readRDS("better_than_null_by_phase.rds") %>%
-  knitr::kable()
+x <- readRDS("better_than_null_by_phase.rds") 
+x$phase <- snakecase::to_sentence_case(x$phase)
 ```
 
+```{r}
+knitr::kable(x)
+```
 ### Comparison with linear model
 
 ```{r}
-readRDS("better_than_linear_by_phase.rds") %>%
-  knitr::kable()
+x <- readRDS("better_than_linear_by_phase.rds")
+x$phase <- snakecase::to_sentence_case(x$phase)
+knitr::kable(x)
 
 ```
 

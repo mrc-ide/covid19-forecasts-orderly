@@ -379,6 +379,10 @@ iwalk(
 #######################  Weekly Figures ##############################
 ######################################################################
 ######################################################################
+
+## Made a mistake in the upstream tasks so that forecast_date is the
+## date of the Satieday rather than Sunday, fixing here.
+weekly_incidence$forecast_date <- as.Date(weekly_incidence$forecast_date) + 1
 weekly <- left_join(overall, weekly_incidence)
 ## All countries, Relative mean error on log scale and weekly incidence
 pall <- ggplot(
