@@ -551,6 +551,8 @@ deaths_to_use <- dplyr::rename(by_country_deaths, dates = "DateRep")
 Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
+  ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
+  "Austria",
   "Botswana",
   "Philippines", ## Erratic data
   "Kazakhstan",
