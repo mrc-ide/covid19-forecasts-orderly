@@ -186,7 +186,7 @@ m3_rt$proj <- "Model 3"
 ##ensemble_rt_wide <- ensemble_rt_wide[, colnames(m1_rt)]
 
 x <- rbind(m1_rt, m2_rt, m3_rt)
-states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
+##states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
 max_rt_to_draw <- max(x$`97.5%`)
 x1 <- x[x$state %in% states_to_draw, ]
 x1$state <- factor(x1$state, levels = states_to_draw, ordered = TRUE)
@@ -201,7 +201,7 @@ p2 <- rt_lineplot(x1, rincewind::nice_country_name(levels(x1$state))) +
   theme(legend.position = "none") +
   ylim(0, ceiling(max_rt_to_draw))
 
-p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, align = "hv")
+p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, align = "hv", axis = "l")
 
 ggsave("figures/us_indvdl_rt_line_1.png", p1)
 ggsave("figures/us_indvdl_rt_line_2.png", p2)
