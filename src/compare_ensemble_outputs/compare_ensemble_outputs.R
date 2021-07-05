@@ -7,7 +7,7 @@
 ### all forecasts from weighted ensemble with weights coming from
 ###all previous weeks
 dir.create("figures")
-date_labels <- "%d - %b"
+date_labels <- "%d-%b"
 date_breaks <- "4 weeks"
 date_limits <- c(as.Date("2020-03-01"), NA)
 
@@ -127,7 +127,8 @@ stacked_plots <- imap(
       ) +
       scale_fill_identity(
         breaks = "#009E73",
-        labels = scales::parse_format()(c(bquote("Forecasts/"~R^{curr}))),
+        ## labels = scales::parse_format()(c(bquote("Forecasts/"~R^{curr}))),
+        labels = "Forecasts/R\\textsuperscript{curr}",
         guide = guide_legend(order = 2)
       ) +
       scale_color_identity(
@@ -143,14 +144,14 @@ stacked_plots <- imap(
         ~var, nrow = 2, scales = "free_y",
         strip.position = "left",
         labeller = as_labeller(
-          c(forecasts = "Daily Deaths", rt = "Rt")
+          c(forecasts = "Daily Deaths", rt = "R\\textsuperscript{curr}")
         )
       )  +
       scale_x_date(
         date_breaks = date_breaks, date_labels = date_labels,
         limits = date_limits
       ) +
-        expand_limits(y = 0) +
+      expand_limits(y = 0) +
       ggtitle(name) +
       theme_manuscript() +
       theme(
@@ -158,7 +159,8 @@ stacked_plots <- imap(
         legend.title = element_blank(),
         strip.background = element_blank(),
         strip.placement = "outside",
-        strip.text = element_text(size = 14),
+        strip.text = element_text(size = 12),
+        axis.text.x = element_text(size = 8, hjust = 0.5, vjust = 0.5),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
       )
@@ -207,7 +209,7 @@ nolegend_plots <- imap(
 pbottom <- cowplot::plot_grid(plotlist = nolegend_plots, nrow = 2, align = "hv", axis = "l")
 final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
 rincewind::save_multiple(final, "figures/main_short_forecasts")
-
-
-
+tikz(file = "figure2.tex", width = 5.2, height = 6.1)
+print(final)
+dev.off()
 

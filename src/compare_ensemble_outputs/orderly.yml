@@ -24,6 +24,7 @@ packages:
 - rincewind
 - snakecase
 - tidyr
+- tikzDevice
 
 depends:
 - collate_model_outputs:
