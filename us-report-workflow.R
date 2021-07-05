@@ -21,7 +21,7 @@ orderly_pull_archive(
 )
 
 model_input <- readRDS(
-  glue("draft/prepare_jhu_data/20210705-130250-04909353/latest_model_input.rds")
+  glue("archive/prepare_jhu_data/20210705-120631-633c1e00/latest_model_input.rds")
 )
 locations <- model_input$State
 
