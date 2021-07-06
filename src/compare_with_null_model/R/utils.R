@@ -87,7 +87,7 @@ augment_data <- function(df, width = 1.5) {
 
 compare_with_baseline <- function(df, x_labels, y_labels) {
 
-
+  fontsize <- 16
   xmax <- max(as.numeric(df$x)) + 2
   ##idx <- seq(1, length.out = length(x_labels), by = 3)
   p1 <- ggplot() +
@@ -100,7 +100,7 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     scale_fill_distiller(
       palette = "Greens", na.value = "white", direction = -1,
       guide = guide_colourbar(
-        title = "Model Error/Baseline Error",
+        title = "Model Error/No-growth Model Error",
         title.position = "left",
         title.vjust = 0.8,
         order = 1
@@ -159,12 +159,13 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     ) +
     theme_minimal() +
     theme(
-      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 16),
-      axis.text.y = element_text(size = 16),
+      text = element_text(family = "CMU Sans Serif"),
+      axis.text.x = element_text(angle = 90, hjust = 0.5, size = fontsize),
+      axis.text.y = element_text(size = fontsize),
       axis.title = element_blank(),
       legend.position = "top",
       legend.justification = "left",
-      legend.title = element_text(size = 16),
+      legend.title = element_text(size = fontsize),
       legend.key.width = unit(1, "lines"),
       legend.key.height = unit(0.8, "lines"),
       legend.margin = margin(0, 0, 0, -0.4, unit = "cm"),

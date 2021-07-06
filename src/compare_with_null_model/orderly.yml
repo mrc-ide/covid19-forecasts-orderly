@@ -13,6 +13,7 @@ artefacts:
   
 packages:
   - dplyr
+  - extrafont  
   - tidyr
   - ggplot2
   - ggforce
