@@ -9,6 +9,7 @@ artefacts:
 
 packages:
 - dplyr
+- extrafont
 - ggplot2
 - ggdist
 - glue

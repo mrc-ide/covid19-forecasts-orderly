@@ -3,6 +3,7 @@
 ## whereas our values are already in (0, 100). We just want anice
 ## % sign
 mypercent <- function(vec) scales::percent(vec/100, accuracy = 0.01)
+##mypercent <- function(vec) glue("{round(vec, 2)}\\%")
 
 dir.create("figures")
 ######################################################################
@@ -164,16 +165,19 @@ out$phase_eff <- factor(
 )
 out$perc_label <- mypercent(as.numeric(out$label))
 
-p <- ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
+p <- ggplot(
+  out, aes(phase_weekly, phase_eff, fill = val),
+  alpha = 0.7
+) +
   geom_tile(width = 0.9, height = 0.9) +
   geom_text(
     aes(phase_weekly, phase_eff, label = perc_label),
     size = 8 /.pt
   ) +
   facet_wrap(~ `Week of forecast`, nrow = 2) +
-  scale_fill_distiller(
-    palette = "Greens", direction = 1,
-    labels = c("0.00%", "50.00%", "100.00%"),
+  scale_fill_gradient(
+    low = "#e5f2e5", high = "#66b266",
+    labels = c("0.00%", "50.00%", "100%"),
     breaks = c(0, 50, 100),
     limits = c(0, 100),
     name = "% agreement",
@@ -193,10 +197,11 @@ p <- ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
     labels = function(x) nice_country_name(x),
     drop = FALSE
   ) +
-  xlab(expression(paste("Epidemic phase using ", R[t]))) +
+  xlab(expression(paste("Epidemic phase using ", R^{curr}))) +
   ylab(expression(paste("Epidemic phase using ", R^S))) +
   theme_minimal() +
   theme(
+    text = element_text(family = "CMU Sans Serif"),
     legend.position = "top", legend.title = element_text(size = 14),
     axis.text.x = element_text(
       angle = 90, size = 14, hjust = 0.95,vjust = 0.2
@@ -206,7 +211,6 @@ p <- ggplot(out, aes(phase_weekly, phase_eff, fill = val)) +
   )
 
 save_multiple(p, "figures/percentage_phase_agree")
-
 
 ## phase_eff is estimated on a daily scale. Before aggregating it to
 ## a weekly metric, check if there are instances where it different
