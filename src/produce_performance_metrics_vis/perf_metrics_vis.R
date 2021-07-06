@@ -115,6 +115,7 @@ plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
+    x <- complete(x, forecast_date, country)
     p <- prop_in_cri_heatmap(x, unique(df$forecast_date))
     outfile <- glue("figures/p50/proportion_in_50_CrI_{page}")
     rincewind::save_multiple(plot = p, filename = outfile)
@@ -153,6 +154,7 @@ plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_975_mu")
+    x <- complete(x, forecast_date, country)
     p <- prop_in_cri_heatmap(x, unique(df$forecast_date), CrI = "95%")
     outfile <- glue("figures/p95/proportion_in_95_CrI_{page}")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)

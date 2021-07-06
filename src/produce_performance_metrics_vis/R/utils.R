@@ -24,11 +24,6 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
     ) +
     scale_x_discrete(breaks = weeks[idx], labels = x_labels[idx]) +
     theme_minimal() +
-    scale_fill_distiller(
-      palette = "Greens", direction = 1, breaks = c(0, 0.5, 1),
-      labels = c(0, 0.5, 1), limits = c(0, 1),
-      name = glue("Proportion in {CrI} CrI")
-    ) +
     theme(
       axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
       axis.text.y = element_text(size = 10.5),
@@ -42,6 +37,28 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
       axis.line = element_blank()
     ) +
     coord_cartesian(clip = "off")
+  if (CrI == "50%") {
+    p <- p +
+      scale_fill_gradient2(
+        low = muted("red"), mid = "white",
+        high = muted("blue"), midpoint = 0.5,
+        space = "Lab", na.value = "#cccccc",
+        guide = "colourbar",
+        aesthetics = "fill",
+        breaks = c(0, 0.5, 1),
+        labels = c(0, 0.5, 1), limits = c(0, 1),
+        name = glue("Proportion in {CrI} CrI")
+      )
+  } else {
+    p <- p +
+      scale_fill_distiller(
+        palette = "Greens", direction = 1,
+        na.value = "#cccccc",
+        breaks = c(0, 0.5, 1),
+        labels = c(0, 0.5, 1), limits = c(0, 1),
+        name = glue("Proportion in {CrI} CrI")
+      )
+  }
   p
 }
 
@@ -87,7 +104,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   scale_fill_distiller(
     palette = "Spectral", na.value = "white", direction = -1,
     guide = guide_colourbar(
-      title = "Relative Error",
+      title = "Mean Relative Error",
       title.position = "left",
       title.vjust = 0.8,
       order = 1
