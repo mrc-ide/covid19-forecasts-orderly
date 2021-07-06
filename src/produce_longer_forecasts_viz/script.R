@@ -5,7 +5,7 @@ ndays_projected <- 28
 nweeks_projected <- ndays_projected / 7
 ### common plot propoerties
 ####
-date_labels <- "%d - %b"
+date_labels <- "%d-%b"
 date_breaks <- "4 weeks"
 date_limits <- c(as.Date("2020-03-01"), NA)
 exclude <- readRDS("exclude.rds")
@@ -290,7 +290,8 @@ stacked_plots <- imap(
         strip.background = element_blank(),
         strip.placement = "outside",
         axis.title.x = element_blank(),
-        axis.title.y = element_blank()
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 8, hjust = 0.5, vjust = 0.5)
       )
     ##rincewind::save_multiple(p, glue::glue("figures/{name}"))
     p

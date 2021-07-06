@@ -39,7 +39,12 @@ plots <-  map(
       geom_boxplot() +
       xlab("Week of projection") +
       ylab("(log) Mean relative error") +
-      theme_minimal()
+      theme_minimal() +
+      theme(
+        text = element_text(family = "CMU Sans Serif", size = 16),
+        legend.position = "top", legend.title = element_blank()
+      )
+
     p
   }
 )
@@ -67,10 +72,12 @@ by_week_plots <- map(
       guides(fill = guide_legend(title = "Week of forecast")) +
       theme_minimal() +
       theme(
+        text = element_text(family = "CMU Sans Serif", size = 16),
         axis.text.x = element_text(angle = 90),
-        legend.position = "top",
-        axis.title.x = element_blank()
+        axis.title.x = element_blank(),
+        legend.position = "top", legend.title = element_blank()
       )
+
   }
 )
 
