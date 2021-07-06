@@ -132,8 +132,7 @@ stacked_plots <- imap(
         guide = guide_legend(order = 2)
       ) +
       scale_color_identity(
-        breaks = '#666666',
-        labels = "Observed deaths",
+        breaks = '#666666', labels = "Observed deaths",
         guide = guide_legend(order = 1)
       ) +
       geom_hline(
@@ -159,7 +158,7 @@ stacked_plots <- imap(
         legend.title = element_blank(),
         strip.background = element_blank(),
         strip.placement = "outside",
-        strip.text = element_text(size = 12),
+        strip.text = element_text(size = 10),
         axis.text.x = element_text(size = 8, hjust = 0.5, vjust = 0.5),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()
