@@ -406,7 +406,10 @@ pall <- ggplot(
   coord_cartesian(clip = "off") +
   xlab("(log) Weekly Incidence") +
   ylab("(log) Relative mean error") +
-  theme(legend.position = "top", legend.title = element_blank())
+  theme(
+    text = element_text(family = "CMU Sans Serif", size = 16),
+    legend.position = "top", legend.title = element_blank()
+  )
 
 ggsave("figures/other/rmae_vs_weekly_incid_all_countries.png", pall)
 
@@ -428,6 +431,7 @@ pcv_all <- ggplot(
   xlab("(log) Coefficient of variation of incidence") +
   ylab("(log) Relative mean error") +
   theme(
+    text = element_text(family = "CMU Sans Serif", size = 16),
     legend.position = "top",
     legend.title = element_blank()
   )
