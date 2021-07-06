@@ -9,20 +9,23 @@ artefacts:
       - unwtd_pred_summary_by_phase.csv
 
 packages:
+  - cowplot
   - dplyr
-  - tidyr
-  - ggplot2
-  - ggpubr
+  - extrafont
   - ggforce
-  - scales
-  - snakecase
+  - ggnewscale  
+  - ggpubr
+  - ggplot2
+  - ggtext
   - glue
   - patchwork
-  - ggnewscale
   - purrr
   - rincewind
-  - cowplot
-  - ggtext
+  - scales
+  - snakecase  
+  - tidyr
+  - tikzDevice  
+
 
 ## use_si should be one of si_1 or si_2
 parameters:
