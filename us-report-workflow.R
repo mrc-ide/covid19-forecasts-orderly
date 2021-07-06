@@ -2,14 +2,15 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-06-27"
+week <- "2021-07-04"
 
 a <- orderly_run("download_jhu_data")
 orderly_commit(a)
 
 a <- orderly_run(
-  "prepare_jhu_data/",
-  parameters = list(week_ending = as.character(week))
+  "prepare_jhu_data",
+  parameters = list(week_ending = as.character(week)),
+  use_draft = "newer"
 )
 ## a <- "20210419-113500-1a96fbe1"
 orderly_commit(a)
@@ -20,7 +21,7 @@ orderly_pull_archive(
 )
 
 model_input <- readRDS(
-  glue("archive/prepare_jhu_data/20210628-120125-33eb0e46/latest_model_input.rds")
+  glue("archive/prepare_jhu_data/20210705-120631-633c1e00/latest_model_input.rds")
 )
 locations <- model_input$State
 
@@ -96,22 +97,22 @@ orderly_commit(a)
 
 ### On the server
 cat(
-  sprintf("\n orderly run us_run_jointlyr short_run=FALSE week_ending=2021-06-27 location=\"%s\"", locations),
+  sprintf("\n orderly run us_run_jointlyr short_run=FALSE week_ending=2021-07-04 location=\"%s\"", locations),
   file = "us-runs.sh"
 )
 
 cat(
-  sprintf("\n orderly run us_run_apeestim week_ending=2021-06-27 location=\"%s\"", locations),
+  sprintf("\n orderly run us_run_apeestim week_ending=2021-07-04 location=\"%s\"", locations),
   file = "us-runs.sh", append = TRUE
 )
 
 cat(
-  sprintf("\n orderly run us_run_deca week_ending=2021-06-27 location=\"%s\"", locations),
+  sprintf("\n orderly run us_run_deca week_ending=2021-07-04 location=\"%s\"", locations),
   file = "us-runs.sh", append = TRUE
 )
 
 
 cat(
-  sprintf("\n orderly run us_produce_ensemble_outputs week_ending=2021-06-27 location=\"%s\"", locations),
+  sprintf("\n orderly run us_produce_ensemble_outputs week_ending=2021-07-04 location=\"%s\"", locations),
   file = "us-runs.sh", append = TRUE
 )

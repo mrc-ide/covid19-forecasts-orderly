@@ -29,7 +29,7 @@ exclude <- c("Alabama", # 3 report/week
              "Washington", # 5 report / week
              "West Virginia", # 5 report / week
              "Wisconsin", # 5 report / week
-             
+
              # Excluded this week (28 June) due to no report
              # for Juneteenth Federal Holiday (w/end of 19/20 July)
              "Maryland",
@@ -132,7 +132,9 @@ ensemble_rt_wide <- ensemble_rt_wide[ensemble_rt_wide$si == "si_2", ]
 ensemble_rt_wide$state <- reorder(ensemble_rt_wide$state, -ensemble_rt_wide$`50%`)
 ensemble_rt_wide <- ensemble_rt_wide[order(ensemble_rt_wide$state),]
 nstates <- length(unique(ensemble_rt_wide$state))
-states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
+##states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
+## Can put all on the same graph.
+states_to_draw <- unique(ensemble_rt_wide$state)
 max_rt_to_draw <- max(ensemble_rt_wide$`97.5%`)
 
 x <- ensemble_rt_wide[ensemble_rt_wide$state %in% states_to_draw, ]
@@ -153,7 +155,7 @@ p2 <- rt_boxplot(x, rincewind::nice_country_name(unique(x$state))) +
 pline2 <- rt_lineplot(x, rincewind::nice_country_name(unique(x$state))) +
   ylim(0, ceiling(max_rt_to_draw))
 
-p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2)
+p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, align = "v", axis = "l")
 
 ggsave("figures/us_ensemble_rt_line_1.png", pline1)
 ggsave("figures/us_ensemble_rt_line_2.png", pline2)
@@ -184,8 +186,9 @@ m3_rt$proj <- "Model 3"
 ##ensemble_rt_wide <- ensemble_rt_wide[, colnames(m1_rt)]
 
 x <- rbind(m1_rt, m2_rt, m3_rt)
-states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
+##states_to_draw <- unique(ensemble_rt_wide$state)[seq_len(ceiling(nstates / 2))]
 max_rt_to_draw <- max(x$`97.5%`)
+states_to_draw <- unique(ensemble_rt_wide$state)
 x1 <- x[x$state %in% states_to_draw, ]
 x1$state <- factor(x1$state, levels = states_to_draw, ordered = TRUE)
 p1 <- rt_lineplot(x1, rincewind::nice_country_name(levels(x1$state))) +
@@ -199,7 +202,7 @@ p2 <- rt_lineplot(x1, rincewind::nice_country_name(levels(x1$state))) +
   theme(legend.position = "none") +
   ylim(0, ceiling(max_rt_to_draw))
 
-p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, align = "hv")
+p <- cowplot::plot_grid(p1, p2, nrow = 1, ncol = 2, align = "hv", axis = "l")
 
 ggsave("figures/us_indvdl_rt_line_1.png", p1)
 ggsave("figures/us_indvdl_rt_line_2.png", p2)

@@ -493,6 +493,13 @@ raw_data$Deaths[raw_data$DateRep == "2021-06-18" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2021-06-19" & raw_data$`Countries.and.territories` == "Namibia"] <- 27
 raw_data$Deaths[raw_data$DateRep == "2021-06-20" & raw_data$`Countries.and.territories` == "Namibia"] <- 3
 
+## Worldometers
+raw_data$Deaths[raw_data$DateRep == "2021-07-02" & raw_data$`Countries.and.territories` == "Peru"] <- 122
+raw_data$Deaths[raw_data$DateRep == "2021-07-03" & raw_data$`Countries.and.territories` == "Peru"] <- 234
+raw_data$Cases[raw_data$DateRep == "2021-07-02" & raw_data$`Countries.and.territories` == "Peru"] <- 3079
+raw_data$Cases[raw_data$DateRep == "2021-07-03" & raw_data$`Countries.and.territories` == "Peru"] <- 2410
+
+
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
