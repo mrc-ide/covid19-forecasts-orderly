@@ -187,7 +187,8 @@ plots <- map(
     df$country <- factor(df$country, levels = countries, ordered = TRUE)
     out <- augment_data(df)
     compare_with_baseline(
-      out[["df"]], out[["x_labels"]], out[["y_labels"]]
+      out[["df"]], out[["x_labels"]], out[["y_labels"]],
+      title = "Model Error/Linear Model Error"
     )
   }
 )

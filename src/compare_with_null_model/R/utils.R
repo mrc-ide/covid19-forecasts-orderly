@@ -85,7 +85,7 @@ augment_data <- function(df, width = 1.5) {
 
 }
 
-compare_with_baseline <- function(df, x_labels, y_labels) {
+compare_with_baseline <- function(df, x_labels, y_labels, title = "Model Error/No-growth Model Error") {
 
   fontsize <- 16
   xmax <- max(as.numeric(df$x)) + 2
@@ -100,7 +100,7 @@ compare_with_baseline <- function(df, x_labels, y_labels) {
     scale_fill_distiller(
       palette = "Greens", na.value = "white", direction = -1,
       guide = guide_colourbar(
-        title = "Model Error/No-growth Model Error",
+        title = title,
         title.position = "left",
         title.vjust = 0.8,
         order = 1
