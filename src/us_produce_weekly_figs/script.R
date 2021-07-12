@@ -10,6 +10,8 @@ dates_forecast <- seq(
 ## exclude some states due to one-off data anomalies or because they only report weekly
 exclude <- c("Alabama", # 3 report/week
              "Arizona", # 6 report/week
+             "Arkansas", # 5 report/week
+             "California", # 5 report/week
              "Florida", # 1 report/week
              "Georgia", # 5 report/week
              "Illinois", # 5 report/week
@@ -25,16 +27,52 @@ exclude <- c("Alabama", # 3 report/week
              "North Carolina", # 5 report / week
              "Oklahoma", # 1 report / week
              "South Carolina", # 5 report / week
+             "South Dakota", # 1 report/week
              "Tennessee", # 5 report / week
+             "Utah", # 5 report/week
              "Washington", # 5 report / week
              "West Virginia", # 5 report / week
              "Wisconsin", # 5 report / week
 
-             # Excluded this week (28 June) due to no report
-             # for Juneteenth Federal Holiday (w/end of 19/20 July)
-             "Maryland",
-             "Missouri",
-             "Pennsylvania"
+             # Excluded this week (12 July) due to no report
+             # for US independence day (no report on 4 or 5 July)
+             # According to JHU update: https://github.com/CSSEGISandData/COVID-19/issues/4326
+             # Note some repeats of states listed above
+             "Alabama",
+             "Alaska",
+             "Connecticut",
+             "District of Columbia",
+             "Florida",
+             "Georgia",
+             "Idaho",
+             "Illinois",
+             "Indiana",
+             "Kansas",
+             "Kentucky",
+             "Louisiana",
+             "Maine",
+             "Massachusetts",
+             "Michigan",
+             "Minnesota",
+             "Mississippi",
+             "Missouri", # not in JHU list but has zero cases
+             "Montana",
+             "Nebraska",
+             "Nevada",
+             "New Hampshire",
+             "New Mexico",
+             "North Carolina",
+             "Oklahoma",
+             "Oregon",
+             "Puerto Rico",
+             "Rhode Island",
+             "South Dakota",
+             "Tennessee",
+             "Utah",
+             "Vermont",
+             "Washington",
+             "West Virginia",
+             "Wyoming"
              )
 
 
