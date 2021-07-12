@@ -223,7 +223,6 @@ and 3, see Methods).
 knitr::include_graphics("us-figs/us_ensemble_forecasts_1.png")
 knitr::include_graphics("us-figs/us_ensemble_forecasts_2.png")
 knitr::include_graphics("us-figs/us_ensemble_forecasts_3.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_4.png")
 
 ```
 *Figure 7.* Reported daily deaths and current forecasts based on the ensemble
@@ -565,7 +564,7 @@ CrI of the projections.
 knitr::include_graphics("us-figs/us_indvdl_forecasts_1.png")
 knitr::include_graphics("us-figs/us_indvdl_forecasts_2.png")
 knitr::include_graphics("us-figs/us_indvdl_forecasts_3.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_4.png")
+
 
 ```
 *Figure 20.* Projections (7-day ahead) for the week starting
