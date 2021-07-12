@@ -304,7 +304,6 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2020-11-11"] <- 857
 
 
-
 raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   map_dfr(
     function(df) {
@@ -498,6 +497,12 @@ raw_data$Deaths[raw_data$DateRep == "2021-07-02" & raw_data$`Countries.and.terri
 raw_data$Deaths[raw_data$DateRep == "2021-07-03" & raw_data$`Countries.and.territories` == "Peru"] <- 234
 raw_data$Cases[raw_data$DateRep == "2021-07-02" & raw_data$`Countries.and.territories` == "Peru"] <- 3079
 raw_data$Cases[raw_data$DateRep == "2021-07-03" & raw_data$`Countries.and.territories` == "Peru"] <- 2410
+
+
+raw_data$Deaths[raw_data$DateRep == "2021-07-11" & raw_data$`Countries.and.territories` == "Peru"] <- 175
+raw_data$Deaths[raw_data$DateRep == "2021-07-12" & raw_data$`Countries.and.territories` == "Peru"] <- 165
+raw_data$Cases[raw_data$DateRep == "2021-07-11" & raw_data$`Countries.and.territories` == "Peru"] <- 2344
+raw_data$Cases[raw_data$DateRep == "2021-07-12" & raw_data$`Countries.and.territories` == "Peru"] <- 2285
 
 
 
