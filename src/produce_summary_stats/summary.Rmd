@@ -158,9 +158,16 @@ knitr::kable(x)
 ### Comparison with linear model
 
 ```{r}
-x <- readRDS("better_than_linear_by_phase.rds")
-x$phase <- snakecase::to_sentence_case(x$phase)
-knitr::kable(x)
+x2 <- readRDS("better_than_linear_by_phase.rds")
+x2$phase <- snakecase::to_sentence_case(x2$phase)
+knitr::kable(x2)
+
+```
+```{r}
+
+left_join(x, x2, by = "phase", suffix = c("_null", "_linear")) %>%
+  select(phase, less_than_1_null, less_than_1_linear) %>%
+  stargazer::stargazer(rownames = FALSE, summary = FALSE)
 
 ```
 
