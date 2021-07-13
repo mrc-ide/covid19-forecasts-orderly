@@ -1,14 +1,17 @@
 script: longer_forecasts_perf_viz.R
 
 packages:
-- ggplot2
 - cowplot
 - dplyr
+- extrafont
+- ggplot2
+- ggtext
+- glue
+- patchwork
 - purrr
 - rincewind
-- glue
-- ggtext
-- patchwork
+- tidyr
+
 
 artefacts:
   staticgraph:

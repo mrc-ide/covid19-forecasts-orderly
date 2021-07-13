@@ -5,7 +5,7 @@ ndays_projected <- 28
 nweeks_projected <- ndays_projected / 7
 ### common plot propoerties
 ####
-date_labels <- "%d - %b"
+date_labels <- "%d-%b"
 date_breaks <- "4 weeks"
 date_limits <- c(as.Date("2020-03-01"), NA)
 exclude <- readRDS("exclude.rds")
@@ -255,13 +255,14 @@ stacked_plots <- imap(
       ) +
       scale_fill_identity(
         breaks = c("#009E73", "#000000"),
-        labels = scales::parse_format()(c(deparse(bquote("Forecasts/"~R^S)), bquote(R^{curr}))),
-        guide = guide_legend(order = 2)
+        ##labels = scales::parse_format()(c(deparse(bquote("Forecasts/"~R^S)), bquote(R^{curr}))),
+        labels = c("Forecasts/R\\textsuperscript{S}", "R\\textsuperscript{curr}"),
+        guide = guide_legend(order = 1, nrow = 2)
       ) +
       scale_color_identity(
         breaks = '#666666',
         labels = "Observed deaths",
-        guide = guide_legend(order = 1)
+        guide = guide_legend(order = 2)
       ) +
       geom_hline(
         data = data.frame(var = "rt", y = 1), aes(yintercept = y),
@@ -271,26 +272,28 @@ stacked_plots <- imap(
         ~var, nrow = 2, scales = "free_y",
         strip.position = "left",
         labeller = as_labeller(
-          c(forecasts = "Daily Deaths", rt = "Rt")
+          c(forecasts = "Daily Deaths", rt = "R\\textsuperscript{S}/R\\textsuperscript{curr}")
         )
       )  +
       scale_x_date(
         date_breaks = date_breaks, date_labels = date_labels,
         limits = date_limits
       ) +
-        expand_limits(y = 0) +
+      expand_limits(y = 0) +
       ggtitle(name) +
       theme_manuscript() +
       theme(
+        text = element_text(size = 10),
         legend.position = "top",
+        legend.spacing.x = unit(0.02, 'cm'),
         legend.title = element_blank(),
         strip.background = element_blank(),
         strip.placement = "outside",
-        strip.text = element_text(size = 14),
         axis.title.x = element_blank(),
-        axis.title.y = element_blank()
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 8, hjust = 0.5, vjust = 0.5)
       )
-    rincewind::save_multiple(p, glue::glue("figures/{name}"))
+    ##rincewind::save_multiple(p, glue::glue("figures/{name}"))
     p
  }
 )
@@ -331,7 +334,9 @@ final <- cowplot::plot_grid(legend, pbottom, nrow = 2, rel_heights = c(0.1, 1))
 rincewind::save_multiple(final, "figures/main_long_forecasts")
 
 
-
+tikz(file = "figure4.tex", width = 5.2, height = 6.1)
+print(final)
+dev.off()
 
 
 

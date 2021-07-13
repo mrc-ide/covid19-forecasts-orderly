@@ -108,6 +108,26 @@ select(by_phase, phase, prop_in_975_mu, prop_in_975_sd)
 select(by_phase, phase, rel_mae_mu, rel_mae_sd) 
 ```
 
+### Table for SI
+
+```{r}
+x <- select(
+  by_phase, phase, prop_in_50_mu, prop_in_50_sd,
+  prop_in_975_mu, prop_in_975_sd,
+  rel_mae_mu, rel_mae_sd
+)
+
+x <- mutate_at(x, vars(starts_with("prop")), scales::percent, accuracy = 0.1)
+x <- mutate_if(x, is.numeric, round, digits = 1)
+x$p50 <- glue("{x$prop_in_50_mu} ({x$prop_in_50_sd})")
+x$p95 <- glue("{x$prop_in_975_mu} ({x$prop_in_975_sd})")
+x$mre <- glue("{x$rel_mae_mu} ({x$rel_mae_sd})")
+
+x <- select(x, phase, p50, p95, mre)
+x$phase <- snakecase::to_sentence_case(x$phase)
+stargazer::stargazer(x, summary = FALSE)
+
+```
 
 ```{r}
 better_than_null <- readRDS("better_than_null.rds")
@@ -128,15 +148,26 @@ produced.
 ### Comparison with null model
 
 ```{r}
-readRDS("better_than_null_by_phase.rds") %>%
-  knitr::kable()
+x <- readRDS("better_than_null_by_phase.rds") 
+x$phase <- snakecase::to_sentence_case(x$phase)
 ```
 
+```{r}
+knitr::kable(x)
+```
 ### Comparison with linear model
 
 ```{r}
-readRDS("better_than_linear_by_phase.rds") %>%
-  knitr::kable()
+x2 <- readRDS("better_than_linear_by_phase.rds")
+x2$phase <- snakecase::to_sentence_case(x2$phase)
+knitr::kable(x2)
+
+```
+```{r}
+
+left_join(x, x2, by = "phase", suffix = c("_null", "_linear")) %>%
+  select(phase, less_than_1_null, less_than_1_linear) %>%
+  stargazer::stargazer(rownames = FALSE, summary = FALSE)
 
 ```
 

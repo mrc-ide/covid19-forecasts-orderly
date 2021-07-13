@@ -13,16 +13,18 @@ artefacts:
   
 packages:
   - dplyr
-  - tidyr
-  - ggplot2
+  - extrafont
   - ggforce
-  - snakecase
-  - glue
+  - ggplot2
   - ggnewscale
+  - ggtext  
+  - glue
+  - janitor  
   - purrr
-  - ggtext
   - rincewind
-  - janitor
+  - snakecase
+  - tidyr  
+
 
 ## use_si should be one of si_1 or si_2
 parameters:

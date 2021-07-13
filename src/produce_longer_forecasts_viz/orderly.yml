@@ -10,20 +10,22 @@ artefacts:
       - weekly_rt_augmented.rds
 
 packages:
+  - cowplot
+  - dplyr
+  - ggforce  
+  - ggplot2
+  - glue  
+  - incidence
+  - projections  
   - purrr
   - stringr
-  - projections
-  - tidyr
-  - incidence
-  - ggplot2
+
   - rincewind
-  - cowplot
-  - glue
-  - orderly
-  - ggforce
-  - patchwork
+
   - grid
-  - dplyr
+  - patchwork
+  - tidyr
+  - tikzDevice  
 
 sources: R/utils.R
 

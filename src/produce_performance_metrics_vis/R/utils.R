@@ -24,12 +24,8 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
     ) +
     scale_x_discrete(breaks = weeks[idx], labels = x_labels[idx]) +
     theme_minimal() +
-    scale_fill_distiller(
-      palette = "Greens", direction = 1, breaks = c(0, 0.5, 1),
-      labels = c(0, 0.5, 1), limits = c(0, 1),
-      name = glue("Proportion in {CrI} CrI")
-    ) +
     theme(
+      text = element_text(family = "CMU Sans Serif"),
       axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
       axis.text.y = element_text(size = 10.5),
       axis.title = element_blank(),
@@ -42,6 +38,28 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
       axis.line = element_blank()
     ) +
     coord_cartesian(clip = "off")
+  if (CrI == "50%") {
+    p <- p +
+      scale_fill_gradient2(
+        low = muted("red"), mid = "white",
+        high = muted("blue"), midpoint = 0.5,
+        space = "Lab", na.value = "#cccccc",
+        guide = "colourbar",
+        aesthetics = "fill",
+        breaks = c(0, 0.5, 1),
+        labels = c(0, 0.5, 1), limits = c(0, 1),
+        name = glue("Proportion in {CrI} CrI")
+      )
+  } else {
+    p <- p +
+      scale_fill_distiller(
+        palette = "Greens", direction = 1,
+        na.value = "#cccccc",
+        breaks = c(0, 0.5, 1),
+        labels = c(0, 0.5, 1), limits = c(0, 1),
+        name = glue("Proportion in {CrI} CrI")
+      )
+  }
   p
 }
 
@@ -77,7 +95,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
 
   ymax <- max(as.integer(df$y)) + 2
   xmax <- max(as.integer(df$x)) + 3.5
-
+  fontsize <- 16
   p <- ggplot() +
     geom_tile(
       data = df[df$rel_mae_mu < 2, ],
@@ -87,7 +105,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   scale_fill_distiller(
     palette = "Spectral", na.value = "white", direction = -1,
     guide = guide_colourbar(
-      title = "Relative Error",
+      title = "Mean Relative Error",
       title.position = "left",
       title.vjust = 0.8,
       order = 1
@@ -107,7 +125,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
       ##title.position = "top",
       ##title.vjust = 0.5, label = FALSE
     ),
-    breaks = "#0000ff", labels = " >= 2"
+    breaks = "#0000ff", labels = ">= 2"
   ) +
   scale_y_continuous(
     breaks = sort(unique(df$y)),
@@ -121,11 +139,15 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
   ) +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, hjust = 0.5, size = 16),
-    axis.text.y = element_text(size = 16),
+    ## CMU is LaTeX's font. Using this will ensure
+    ## files saved from R and rendered through Tikz
+    ## have same fonts
+    text = element_text(family = "CMU Sans Serif"),
+    axis.text.x = element_text(angle = 90, hjust = 0.5, size = fontsize),
+    axis.text.y = element_text(size = fontsize),
     axis.title = element_blank(),
     legend.position = "top",
-    legend.title = element_text(size = 16),
+    legend.title = element_text(size = fontsize),
     legend.key.width = unit(1, "lines"),
     legend.key.height = unit(0.8, "lines"),
     legend.margin = margin(0, 0, 2, 0),

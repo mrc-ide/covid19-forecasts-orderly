@@ -115,6 +115,7 @@ plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_50_mu")
+    x <- complete(x, forecast_date, country)
     p <- prop_in_cri_heatmap(x, unique(df$forecast_date))
     outfile <- glue("figures/p50/proportion_in_50_CrI_{page}")
     rincewind::save_multiple(plot = p, filename = outfile)
@@ -153,6 +154,7 @@ plots <- imap(
   weekly_summaries,
   function(df, page) {
     x <- rename(df, "prop_in_CrI" = "prop_in_975_mu")
+    x <- complete(x, forecast_date, country)
     p <- prop_in_cri_heatmap(x, unique(df$forecast_date), CrI = "95%")
     outfile <- glue("figures/p95/proportion_in_95_CrI_{page}")
     rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
@@ -363,6 +365,10 @@ iwalk(
   }
 )
 
+
+
+
+
 ## Comparison with linear error is all in SI.
 
 plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
@@ -379,6 +385,10 @@ iwalk(
 #######################  Weekly Figures ##############################
 ######################################################################
 ######################################################################
+
+## Made a mistake in the upstream tasks so that forecast_date is the
+## date of the Satieday rather than Sunday, fixing here.
+weekly_incidence$forecast_date <- as.Date(weekly_incidence$forecast_date) + 1
 weekly <- left_join(overall, weekly_incidence)
 ## All countries, Relative mean error on log scale and weekly incidence
 pall <- ggplot(
@@ -396,7 +406,10 @@ pall <- ggplot(
   coord_cartesian(clip = "off") +
   xlab("(log) Weekly Incidence") +
   ylab("(log) Relative mean error") +
-  theme(legend.position = "top", legend.title = element_blank())
+  theme(
+    text = element_text(family = "CMU Sans Serif", size = 16),
+    legend.position = "top", legend.title = element_blank()
+  )
 
 ggsave("figures/other/rmae_vs_weekly_incid_all_countries.png", pall)
 
@@ -418,6 +431,7 @@ pcv_all <- ggplot(
   xlab("(log) Coefficient of variation of incidence") +
   ylab("(log) Relative mean error") +
   theme(
+    text = element_text(family = "CMU Sans Serif", size = 16),
     legend.position = "top",
     legend.title = element_blank()
   )
