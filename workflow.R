@@ -79,7 +79,9 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 ## These functions have not been configured to pull in week-specific
 ## outputs, they will always pull in the latest runs of dependancies.
 report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
-
+  orderly_pull_dependencies(
+    "format_model_outputs", parameter = list(week_ending = week)
+  )
   a <- orderly_run(
     "format_model_outputs",
     use_draft = use_draft, parameter = list(week_ending = week)

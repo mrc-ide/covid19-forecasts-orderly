@@ -222,7 +222,6 @@ and 3, see Methods).
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("us-figs/us_ensemble_forecasts_1.png")
 knitr::include_graphics("us-figs/us_ensemble_forecasts_2.png")
-knitr::include_graphics("us-figs/us_ensemble_forecasts_3.png")
 
 ```
 *Figure 7.* Reported daily deaths and current forecasts based on the ensemble
@@ -563,7 +562,6 @@ CrI of the projections.
 ```{r}
 knitr::include_graphics("us-figs/us_indvdl_forecasts_1.png")
 knitr::include_graphics("us-figs/us_indvdl_forecasts_2.png")
-knitr::include_graphics("us-figs/us_indvdl_forecasts_3.png")
 
 
 ```
