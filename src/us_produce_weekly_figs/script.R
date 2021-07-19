@@ -16,65 +16,31 @@ exclude <- c("Alabama", # 3 report/week
              "Georgia", # 5 report/week
              "Illinois", # 5 report/week
              "Indiana", # 6 report/week
+             "Iowa", # 1 report / week
              "Kansas", # 3 report/week
              "Kentucky", # 5 report/week
              "Louisiana", # 5 report/week
-             "Michigan", # 6 report/week
-             "Mississippi", # 5 report/week
+             "Maine", # 5 report / week
+             "Massachusetts", # 5 report / week
+             "Michigan", # 2 report/week
+             "Minnesota", # 5 report / week
+             "Mississippi", # 5 report / week
+             "Missouri", # 6 report / week
              "Nevada", # 5 report/week
              "New Hampshire", # 5 report / week (tbc)
              "New Mexico", # 3 report/week
              "North Carolina", # 5 report / week
              "Oklahoma", # 1 report / week
+             "Oregon", # 5 report / week
              "South Carolina", # 5 report / week
              "South Dakota", # 1 report/week
              "Tennessee", # 5 report / week
              "Utah", # 5 report/week
+             "Virginia", # 5 report / week
              "Washington", # 5 report / week
              "West Virginia", # 5 report / week
-             "Wisconsin", # 5 report / week
-
-             # Excluded this week (12 July) due to no report
-             # for US independence day (no report on 4 or 5 July)
-             # According to JHU update: https://github.com/CSSEGISandData/COVID-19/issues/4326
-             # Note some repeats of states listed above
-             "Alabama",
-             "Alaska",
-             "Connecticut",
-             "District of Columbia",
-             "Florida",
-             "Georgia",
-             "Idaho",
-             "Illinois",
-             "Indiana",
-             "Kansas",
-             "Kentucky",
-             "Louisiana",
-             "Maine",
-             "Massachusetts",
-             "Michigan",
-             "Minnesota",
-             "Mississippi",
-             "Missouri", # not in JHU list but has zero cases
-             "Montana",
-             "Nebraska",
-             "Nevada",
-             "New Hampshire",
-             "New Mexico",
-             "North Carolina",
-             "Oklahoma",
-             "Oregon",
-             "Puerto Rico",
-             "Rhode Island",
-             "South Dakota",
-             "Tennessee",
-             "Utah",
-             "Vermont",
-             "Washington",
-             "West Virginia",
-             "Wyoming"
-             )
-
+             "Wisconsin" # 5 report / week
+)
 
 ## ensemble projections
 ensemble_forecasts_qntls <- readRDS("us_ensemble_forecasts_qntls.rds")
