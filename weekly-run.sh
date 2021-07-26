@@ -1,4 +1,4 @@
-orderly run prepare_ecdc_data week_ending=2021-07-18
+orderly run prepare_ecdc_data week_ending=2021-07-25
 orderly run run_rti0 short_run=FALSE week_ending=2021-07-25
 orderly run run_apeestim week_ending=2021-07-25
 orderly run DeCa_model week_ending=2021-07-25
