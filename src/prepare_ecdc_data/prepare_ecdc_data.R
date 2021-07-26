@@ -511,7 +511,7 @@ raw_data$Cases[raw_data$DateRep == "2021-06-15" & raw_data$`Countries.and.territ
 raw_data$Cases[raw_data$DateRep == "2021-06-16" & raw_data$`Countries.and.territories` == "Afghanistan"] <- 1722
 
 ## https://www.worldometers.info/coronavirus/country/india/
-raw_data$Cases[raw_data$DateRep == "2021-07-21" & raw_data$`Countries.and.territories` == "India"] <- 3998 - 3509
+raw_data$Deaths[raw_data$DateRep == "2021-07-21" & raw_data$`Countries.and.territories` == "India"] <- 3998 - 3509
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
@@ -594,7 +594,8 @@ exclude <- c(
   "Rwanda",
   "Mexico",
   "Nepal",
-  "Namibia"
+  "Namibia",
+  "Ecuador" ## Massive backlog reported & some negative deaths
   ##"Sweden",
   ##"Switzerland", ## Numbers do not agree with those on worldometers
   ##"Spain" ## latest data not yet available.

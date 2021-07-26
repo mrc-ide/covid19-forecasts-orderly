@@ -91,10 +91,6 @@ depends:
     use:
       rti0_model_outputs_Missouri.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Nebraska")
-    use:
-      rti0_model_outputs_Nebraska.rds: rti0_model_outputs.rds
-- us_run_jointlyr:
     id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Nevada")
     use:
       rti0_model_outputs_Nevada.rds: rti0_model_outputs.rds
@@ -237,10 +233,6 @@ depends:
     use:
       DeCa_latest_Missouri.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Nebraska")
-    use:
-      DeCa_latest_Nebraska.rds: DeCa_latest.rds
-- us_run_deca:
     id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Nevada")
     use:
       DeCa_latest_Nevada.rds: DeCa_latest.rds
@@ -382,10 +374,6 @@ depends:
     id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Missouri")
     use:
       apeestim_model_outputs_Missouri.rds: apeestim_model_outputs.rds
-- us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Nebraska")
-    use:
-      apeestim_model_outputs_Nebraska.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
     id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Nevada")
     use:
