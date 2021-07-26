@@ -535,11 +535,6 @@ depends:
       ensemble_model_rt_Missouri.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Missouri.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Nebraska")
-    use:
-      ensemble_model_rt_Nebraska.rds: ensemble_model_rt.rds
-      ensemble_daily_qntls_Nebraska.rds: ensemble_daily_qntls.rds
-- us_produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2021-07-25" && parameter:location == "Nevada")
     use:
       ensemble_model_rt_Nevada.rds: ensemble_model_rt.rds
