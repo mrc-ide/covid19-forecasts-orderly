@@ -11,7 +11,8 @@ dates_forecast <- seq(
 exclude <- c("Alabama", # 3 report/week
              "Arizona", # 6 report/week
              "Arkansas", # 5 report/week
-             "California", # 5 report/week
+             # "California", # 5 report/week according to JHU email,
+                             # but still seems to have daily reports
              "Florida", # 1 report/week
              "Georgia", # 5 report/week
              "Illinois", # 5 report/week

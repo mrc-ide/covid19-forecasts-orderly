@@ -20,6 +20,8 @@ ascertainr_deaths <- model_input$D_active_transmission
 ascertainr_cases <- model_input$I_active_transmission
 
 exclude <- readRDS("exclude.rds")
+## Massive backlog reported + -ve deaths
+exclude <- c(exclude, "Ecuador")
 countries <- purrr::set_names(model_input$Country, model_input$Country)
 countries <- countries[! countries %in% exclude]
 
