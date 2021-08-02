@@ -544,6 +544,50 @@ pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
 
 ## Still have some negative cases. Replace the negative case count
 ## with an average of previous and later 3 days.
+raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
+  map_dfr(
+    function(df) {
+      if (all(df$Cases > 0)) return(df)
+      idx <- which(df$Cases < 0)
+      for (i in idx) {
+        date_neg <- df$DateRep[i]
+        dates_to_avg <- seq(
+          from = as.Date(date_neg) - 3,
+          to = as.Date(date_neg) + 3,
+          by = "1 day"
+        )
+        dates_to_avg <- dates_to_avg[dates_to_avg != as.Date(date_neg)]
+        dates_to_avg <- dates_to_avg[dates_to_avg <= max(as.Date(df$DateRep))]
+        df$Cases[i] <- round(
+          mean(df$Cases[df$DateRep %in% dates_to_avg])
+        )
+      }
+      df
+    }
+  )
+
+raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
+  map_dfr(
+    function(df) {
+      if (all(df$Deaths > 0)) return(df)
+      idx <- which(df$Deaths < 0)
+      for (i in idx) {
+        date_neg <- df$DateRep[i]
+        dates_to_avg <- seq(
+          from = as.Date(date_neg) - 3,
+          to = as.Date(date_neg) + 3,
+          by = "1 day"
+        )
+        dates_to_avg <- dates_to_avg[dates_to_avg != as.Date(date_neg)]
+        dates_to_avg <- dates_to_avg[dates_to_avg <= max(as.Date(df$DateRep))]
+        df$Deaths[i] <- round(
+          mean(df$Deaths[df$DateRep %in% dates_to_avg])
+        )
+      }
+      df
+    }
+  )
+
 
 by_country_deaths <- dplyr::select(
   pass, DateRep, Deaths, Countries.and.territories
