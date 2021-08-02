@@ -194,6 +194,14 @@ and 3, see Methods).
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_North America_si_2.Rmd')}
 ```
+
+### Oceania
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_Oceania_si_2.Rmd')}
+```
+
+
 *Figure 5.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in North & Central America with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
@@ -201,6 +209,8 @@ for the week ahead are shown in red (median and 95% CrI). Vertical
 dashed line shows the start of the week (Monday). Projections for countries marked with
 a * are based on an unweighted ensemble of three models (Models 1, 2
 and 3, see Methods).
+
+
 
 ### South America
 
@@ -314,6 +324,14 @@ in the section Methods.
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
 knitr::include_graphics("figs/ensemble_rt_South America_si_2_boxplot.png")
+
+```
+
+### Oceania
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensemble_rt_Oceania_si_2_boxplot.png")
 
 ```
 *Figure 13.*: Latest estimates of effective reproduction numbers by country
@@ -549,6 +567,11 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_South America_si_2.Rmd')}
 ```
+
+#### Oceania
+
+```{r, code = readLines('indvdl_pred_Oceania_si_2.Rmd')}
+```
 *Figure 19.* Projections (7-day ahead) for the week starting
 26^th^ July 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
@@ -621,6 +644,12 @@ active transmission (see Methods) for the week starting
 
 ```{r}
 knitr::include_graphics("figs/rt_si_2_South America.png")
+```
+
+#### Oceania
+
+```{r}
+knitr::include_graphics("figs/rt_si_2_Oceania.png")
 ```
 *Figure 25.* Estimates of $R_t$ from individual models for each
 country in South America with
