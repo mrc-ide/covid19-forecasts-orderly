@@ -35,7 +35,7 @@ fmtd_ensemble_weekly_qntls <- readRDS("fmtd_ensemble_weekly_qntls.rds")
 x <- fmtd_ensemble_weekly_qntls[[2]]
 x <- x[x$`Week Ending` == max(as.Date(x$`Week Ending`)),  ]
 x$`Week Ending` <- format(as.Date(x$`Week Ending`), "%d-%m-%Y")
-
+included <- readRDS("continents_included.rds")
 ##x <- dplyr::rename(x, `Week Starting` = "Week Ending")
 ## knitr::kable(
 ##     x,
