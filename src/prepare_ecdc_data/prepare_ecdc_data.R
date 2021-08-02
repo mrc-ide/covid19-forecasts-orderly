@@ -639,7 +639,8 @@ exclude <- c(
   "Mexico",
   "Nepal",
   "Namibia",
-  "Ecuador" ## Massive backlog reported & some negative deaths
+  "Ecuador", ## Massive backlog reported & some negative deaths,
+  "Vietnam"
   ##"Sweden",
   ##"Switzerland", ## Numbers do not agree with those on worldometers
   ##"Spain" ## latest data not yet available.
