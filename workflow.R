@@ -113,6 +113,17 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   )
 
   if (commit) orderly_commit(a)
+
+  orderly_run(
+    "reformat_forecasts", use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+
+  orderly_run(
+    "prepare_hm_outputs", use_draft = use_draft,
+    parameter = list(week_ending = week)
+  )
+
 }
 
 

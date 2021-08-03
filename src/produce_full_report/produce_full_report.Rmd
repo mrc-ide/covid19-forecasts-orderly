@@ -319,6 +319,14 @@ a * are based on an unweighted ensemble of Models 1, 2 and 3.
 Results from individual models are shown
 in the section Methods.
 
+### Oceania
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+knitr::include_graphics("figs/ensemble_rt_Oceania_si_2_boxplot.png")
+
+```
+
 ### South America
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
@@ -327,13 +335,7 @@ knitr::include_graphics("figs/ensemble_rt_South America_si_2_boxplot.png")
 
 ```
 
-### Oceania
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
-
-knitr::include_graphics("figs/ensemble_rt_Oceania_si_2_boxplot.png")
-
-```
 *Figure 13.*: Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in South America
 with sustained transmission. Estimates of $R_t$ for countries marked with
@@ -562,16 +564,17 @@ active transmission (see Methods). Model 4 did not include these countries. For 
 the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
 
+#### Oceania
+
+```{r, code = readLines('indvdl_pred_Oceania_si_2.Rmd')}
+```
 
 #### South America
 
 ```{r, code = readLines('indvdl_pred_South America_si_2.Rmd')}
 ```
 
-#### Oceania
 
-```{r, code = readLines('indvdl_pred_Oceania_si_2.Rmd')}
-```
 *Figure 19.* Projections (7-day ahead) for the week starting
 2^nd^ August 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
@@ -640,16 +643,16 @@ North & Central America with
 active transmission (see Methods) for the week starting
 2^nd^ August 2021. 
 
-#### South America
-
-```{r}
-knitr::include_graphics("figs/rt_si_2_South America.png")
-```
-
 #### Oceania
 
 ```{r}
 knitr::include_graphics("figs/rt_si_2_Oceania.png")
+```
+
+#### South America
+
+```{r}
+knitr::include_graphics("figs/rt_si_2_South America.png")
 ```
 *Figure 25.* Estimates of $R_t$ from individual models for each
 country in South America with
