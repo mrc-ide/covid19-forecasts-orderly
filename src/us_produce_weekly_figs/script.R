@@ -13,6 +13,7 @@ exclude <- c("Alabama", # 3 report/week
              "Arkansas", # 5 report/week
              # "California", # 5 report/week according to JHU email,
                              # but still seems to have daily reports
+             "Colorado", # 5 report / week
              "Florida", # 1 report/week
              "Georgia", # 5 report/week
              "Illinois", # 5 report/week

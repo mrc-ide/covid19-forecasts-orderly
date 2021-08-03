@@ -47,7 +47,16 @@ sbsm_countries <- dplyr::filter(
 ## Make plots for only the latest week.
 ensb_pred <- ensb_pred[ensb_pred$week_ending == max(as.Date(ensb_pred$week_ending)), ]
 ensb_pred <- add_continents(ensb_pred, continents)
-
+## Check for presence of continents
+all_continents <- data.frame(continent = unique(continents$continent))
+pres_continents <- count(ensb_pred, continent)
+pres_continents <- left_join(all_continents, pres_continents)
+pres_continents$present <- case_when(
+  is.na(pres_continents$n) ~ FALSE,
+  pres_continents$n == 0 ~ FALSE,
+  pres_continents$n > 0 ~ TRUE
+)
+saveRDS(pres_continents, "continents_included.rds")
 by_continent_si <- split(
   ensb_pred, list(ensb_pred$continent, ensb_pred$si),
   sep = "_"

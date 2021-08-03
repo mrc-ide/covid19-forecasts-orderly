@@ -59,3 +59,4 @@ depends:
       indvdl_pred_South America_si_2.Rmd: indvdl_pred_South America_si_2.Rmd
       indvdl_pred_Oceania_si_2.Rmd: indvdl_pred_Oceania_si_2.Rmd      
       figures.zip: figures.zip
+      continents_included.rds: continents_included.rds
