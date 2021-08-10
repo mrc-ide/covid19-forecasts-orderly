@@ -513,6 +513,15 @@ raw_data$Cases[raw_data$DateRep == "2021-06-16" & raw_data$`Countries.and.territ
 ## https://www.worldometers.info/coronavirus/country/india/
 raw_data$Deaths[raw_data$DateRep == "2021-07-21" & raw_data$`Countries.and.territories` == "India"] <- 3998 - 3509
 
+## Worldometers
+raw_data$Cases[raw_data$DateRep == "2021-08-06" & raw_data$`Countries.and.territories` == "Turkey"] <- 24297
+raw_data$Cases[raw_data$DateRep == "2021-08-07" & raw_data$`Countries.and.territories` == "Turkey"] <- 23957
+raw_data$Deaths[raw_data$DateRep == "2021-08-06" & raw_data$`Countries.and.territories` == "Turkey"] <- 108
+raw_data$Deaths[raw_data$DateRep == "2021-08-07" & raw_data$`Countries.and.territories` == "Turkey"] <- 101
+
+
+
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%

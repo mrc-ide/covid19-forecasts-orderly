@@ -9,13 +9,15 @@ dates_forecast <- seq(
 
 ## exclude some states due to one-off data anomalies or because they only report weekly
 exclude <- c("Alabama", # 3 report/week
-             "Arizona", # 6 report/week
-             "Arkansas", # 5 report/week
+             # "Arizona", # 6 report/week # Appear to be reporting daily again (09 Aug)
+             # "Arkansas", # 5 report/week # Now reporting at weekends again
+                                          # Update from JHU email 03 August
              # "California", # 5 report/week according to JHU email,
                              # but still seems to have daily reports
              "Colorado", # 5 report / week
              "Florida", # 1 report/week
              "Georgia", # 5 report/week
+             "Idaho", # 5 report/week
              "Illinois", # 5 report/week
              "Indiana", # 6 report/week
              "Iowa", # 1 report / week
