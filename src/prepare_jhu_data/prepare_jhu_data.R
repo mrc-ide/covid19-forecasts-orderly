@@ -306,6 +306,16 @@ raw_data$Deaths[raw_data$DateRep == "2021-06-09" & raw_data$province_state == "W
 raw_data$Deaths[raw_data$DateRep == "2021-06-09" & raw_data$province_state == "Alaska"] <- 4 - 4
 
 
+##########################################
+## Corrections for 16 August 2021 report ##
+##########################################
+
+## New York
+## Anomaly in death reporting for 15 August (~ 10 times higher than other days that week)
+## Use reported deaths from Worldometer for 15 August instead
+
+raw_data$Deaths[raw_data$DateRep == "2021-08-15" & raw_data$province_state == "New York"] <- 19
+
 
 
 ## Save wide versions of death and case data
