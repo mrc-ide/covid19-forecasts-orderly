@@ -519,6 +519,9 @@ raw_data$Cases[raw_data$DateRep == "2021-08-07" & raw_data$`Countries.and.territ
 raw_data$Deaths[raw_data$DateRep == "2021-08-06" & raw_data$`Countries.and.territories` == "Turkey"] <- 108
 raw_data$Deaths[raw_data$DateRep == "2021-08-07" & raw_data$`Countries.and.territories` == "Turkey"] <- 101
 
+raw_data$Deaths[raw_data$DateRep == "2021-08-15" & raw_data$`Countries.and.territories` == "South_Africa"] <- 238
+raw_data$Cases[raw_data$DateRep == "2021-08-15" & raw_data$`Countries.and.territories` == "South_Africa"] <- 13020
+
 
 
 
