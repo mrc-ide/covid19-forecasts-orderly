@@ -15,6 +15,7 @@ exclude <- c("Alabama", # 3 report/week
              # "California", # 5 report/week according to JHU email,
                              # but still seems to have daily reports
              "Colorado", # 5 report / week
+             "Connecticut", # < 7 report / week (unclear on exact reporting freq.)
              "Florida", # 1 report/week
              "Georgia", # 5 report/week
              "Idaho", # 5 report/week
@@ -29,13 +30,15 @@ exclude <- c("Alabama", # 3 report/week
              "Michigan", # 2 report/week
              "Minnesota", # 5 report / week
              "Mississippi", # 5 report / week
-             "Missouri", # 6 report / week
+             # "Missouri", # 6 report / week
+                           # seem s to be back to reporting every day (23/08/21)
              "Nevada", # 5 report/week
              "New Hampshire", # 5 report / week (tbc)
              "New Mexico", # 3 report/week
              "North Carolina", # 5 report / week
              "Oklahoma", # 1 report / week
              "Oregon", # 5 report / week
+             "Pennsylvania", # may have switched to 5 reports / week (23/08/21)
              "South Carolina", # 5 report / week
              "South Dakota", # 1 report/week
              "Tennessee", # 5 report / week
