@@ -27,3 +27,5 @@ backup/db/
 *.tiff
 
 *.pdf
+
+aws.sh
