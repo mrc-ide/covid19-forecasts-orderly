@@ -30,7 +30,8 @@ exclude <- c("Alabama", # 3 report/week
              "Michigan", # 2 report/week
              "Minnesota", # 5 report / week
              "Mississippi", # 5 report / week
-             "Missouri", # 6 report / week
+             # "Missouri", # 6 report / week
+                           # seem s to be back to reporting every day (23/08/21)
              "Nevada", # 5 report/week
              "New Hampshire", # 5 report / week (tbc)
              "New Mexico", # 3 report/week
