@@ -7,5 +7,6 @@ rmarkdown::render(
       before_body = "other_files/header.html",
       after_body = "other_files/footer.html"
     )
-  )
+    ),
+  output_file = "index.html"
 )
