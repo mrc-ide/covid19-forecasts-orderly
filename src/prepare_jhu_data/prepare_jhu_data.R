@@ -317,6 +317,20 @@ raw_data$Deaths[raw_data$DateRep == "2021-06-09" & raw_data$province_state == "A
 raw_data$Deaths[raw_data$DateRep == "2021-08-15" & raw_data$province_state == "New York"] <- 19
 
 
+##########################################
+## Corrections for 23 August 2021 report ##
+##########################################
+
+## Missouri
+## Some reporting of backlogged deaths following death certificate review
+## Source: JHU email (16/08/21)
+## SOurce: https://abc17news.com/news/coronavirus/2021/08/09/missouri-dhss-adds-109-coronavirus-related-deaths-after-analyzing-death-certificates/
+## Source: https://abc17news.com/top-stories/2021/08/16/missouri-adds-86-coronavirus-related-deaths-after-analyzing-death-certificates/
+
+raw_data$Deaths[raw_data$DateRep == "2021-08-10" & raw_data$province_state == "Missouri"] <- 138 - 109
+raw_data$Deaths[raw_data$DateRep == "2021-08-17" & raw_data$province_state == "Missouri"] <- 120 - 86
+
+
 
 ## Save wide versions of death and case data
 
