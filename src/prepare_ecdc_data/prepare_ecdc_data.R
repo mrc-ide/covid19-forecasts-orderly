@@ -523,6 +523,8 @@ raw_data$Deaths[raw_data$DateRep == "2021-08-15" & raw_data$`Countries.and.terri
 raw_data$Cases[raw_data$DateRep == "2021-08-15" & raw_data$`Countries.and.territories` == "South_Africa"] <- 13020
 
 
+raw_data$Deaths[raw_data$DateRep == "2021-08-16" & raw_data$`Countries.and.territories` == "Bolivia"] <- 7
+raw_data$Deaths[raw_data$DateRep == "2021-08-17" & raw_data$`Countries.and.territories` == "Bolivia"] <- 26
 
 
 by_country_deaths_all <- dplyr::select(
@@ -652,10 +654,10 @@ exclude <- c(
   "Nepal",
   "Namibia",
   "Ecuador", ## Massive backlog reported & some negative deaths,
-  "Vietnam"
+  "Vietnam",
   ##"Sweden",
   ##"Switzerland", ## Numbers do not agree with those on worldometers
-  ##"Spain" ## latest data not yet available.
+  "Spain" ## latest data not yet available.
 )
 
 saveRDS(exclude, "exclude.rds")
