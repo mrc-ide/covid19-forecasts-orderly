@@ -20,9 +20,10 @@ artefacts:
         - continents_included.rds
 
 packages:
+  - ggforce
   - ggplot2
   - ggpubr
-  - ggforce
+  - ggpmisc
   - dplyr
   - purrr
   - gridExtra

@@ -1,4 +1,4 @@
-projection_plot <- function(obs, pred) {
+projection_plot <- function(obs, pred,   date_min = as.Date("2020-03-01")) {
 
     ## Number of projections
   nprojs <- length(unique(pred$proj))
@@ -24,7 +24,7 @@ projection_plot <- function(obs, pred) {
   ## date_min <- max(
   ##   as.Date(pred$week_ending) - 28, as.Date("2020-03-01")
   ## )
-  date_min <- as.Date("2020-03-01")
+
   date_max <- max(pred$date) + 2
   dates_to_mark <- seq(
     from = date_min,

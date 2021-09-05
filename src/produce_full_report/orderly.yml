@@ -3,7 +3,7 @@ script: script.R
 artefacts:
   - report:
       description: Full Report
-      filenames: produce_full_report.html
+      filenames: index.html
 
 packages:
   - knitr

@@ -1,5 +1,8 @@
 ## List of continents-coutnry mapping
 dir.create("figs")
+zoom <- TRUE
+if (zoom) zoom_lims <- as.Date(week_ending) - 14
+
 continents <- readr::read_csv("country_continent.csv")
 continents <- janitor::clean_names(continents)
 
@@ -89,12 +92,45 @@ plots <- imap(
       cntry_local <- countries[idx]
       obs_local <- obs[obs$country %in% cntry_local, ]
       pred_local <- pred[pred$country %in% cntry_local, ]
-      p <- projection_plot(obs_local, pred_local) +
+      p <- projection_plot(obs_local, pred_local)
+      if (zoom) {
+        obs_local <- obs_local[obs_local$dates >= zoom_lims, ]
+        pred_local <- pred_local[pred_local$date >= zoom_lims, ]
+        inset <- projection_plot(
+          obs_local, pred_local, date_min = zoom_lims
+        ) +
+          ## Make the theme different, so that inset looks different
+          theme_classic() +
+          theme(
+            axis.text.x = element_text(angle = 0),
+            axis.title = element_blank(),
+            legend.position = "none"
+          )
+        countries <- unique(obs_local$country)
+        insets <- map(
+          seq_along(countries), function(i) {
+            inset + ggforce::facet_wrap_paginate(
+                               ~country, nrow = 1, ncol = 1, page = i,
+                               scales = "free_y"
+                             ) +
+              theme(strip.background = element_blank(),
+                    strip.text = element_blank())
+          }
+        )
+        df <- tibble::tibble(x = 0.01, y = 0.9, plot = insets,
+                             country = countries)
+        p <- p +
+          geom_plot_npc(
+            data = df, aes(npcx = x, npcy = y, label = plot)
+          )
+      }
+      p <- p +
         theme(legend.position = "none") +
          facet_wrap(
            ~country, scales = "free_y", ncol = ncols, nrow = nrows,
            labeller = as_labeller(nice_names),
            )
+
       if (length(cntry_local) < npanels) {
         ## if the number of countries is smaller, then the facets are
         ## bigger. Add empty grobs to fix the size
