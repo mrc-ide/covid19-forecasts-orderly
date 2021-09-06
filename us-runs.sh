@@ -1,187 +1,187 @@
 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 
- orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05 
- orderly run us_run_apeestim week_ending=2021-09-05
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05 
- orderly run us_run_deca week_ending=2021-09-05
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05 
- orderly run us_produce_ensemble_outputs week_ending=2021-09-05
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Alabama" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Alaska" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Arizona" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Arkansas" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="California" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Colorado" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Connecticut" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Delaware" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Florida" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Georgia" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Hawaii" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Idaho" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Illinois" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Indiana" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Iowa" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Kansas" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Kentucky" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Louisiana" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Maryland" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Massachusetts" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Michigan" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Minnesota" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Mississippi" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Missouri" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Montana" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Nebraska" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Nevada" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="New Hampshire" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="New Jersey" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="New Mexico" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="New York" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="North Carolina" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Ohio" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Oklahoma" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Oregon" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Pennsylvania" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Puerto Rico" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="South Carolina" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Tennessee" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Texas" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Utah" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Virginia" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Washington" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="West Virginia" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Wisconsin" 
+ orderly run us_run_jointlyr short_run=FALSE week_ending=2021-09-05 location="Wyoming"
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Alabama" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Alaska" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Arizona" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Arkansas" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="California" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Colorado" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Connecticut" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Delaware" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Florida" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Georgia" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Hawaii" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Idaho" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Illinois" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Indiana" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Iowa" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Kansas" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Kentucky" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Louisiana" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Maryland" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Massachusetts" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Michigan" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Minnesota" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Mississippi" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Missouri" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Montana" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Nebraska" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Nevada" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="New Hampshire" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="New Jersey" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="New Mexico" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="New York" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="North Carolina" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Ohio" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Oklahoma" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Oregon" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Pennsylvania" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Puerto Rico" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="South Carolina" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Tennessee" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Texas" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Utah" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Virginia" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Washington" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="West Virginia" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Wisconsin" 
+ orderly run us_run_apeestim week_ending=2021-09-05 location="Wyoming"
+ orderly run us_run_deca week_ending=2021-09-05 location="Alabama" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Alaska" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Arizona" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Arkansas" 
+ orderly run us_run_deca week_ending=2021-09-05 location="California" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Colorado" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Connecticut" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Delaware" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Florida" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Georgia" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Hawaii" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Idaho" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Illinois" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Indiana" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Iowa" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Kansas" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Kentucky" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Louisiana" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Maryland" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Massachusetts" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Michigan" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Minnesota" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Mississippi" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Missouri" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Montana" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Nebraska" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Nevada" 
+ orderly run us_run_deca week_ending=2021-09-05 location="New Hampshire" 
+ orderly run us_run_deca week_ending=2021-09-05 location="New Jersey" 
+ orderly run us_run_deca week_ending=2021-09-05 location="New Mexico" 
+ orderly run us_run_deca week_ending=2021-09-05 location="New York" 
+ orderly run us_run_deca week_ending=2021-09-05 location="North Carolina" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Ohio" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Oklahoma" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Oregon" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Pennsylvania" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Puerto Rico" 
+ orderly run us_run_deca week_ending=2021-09-05 location="South Carolina" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Tennessee" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Texas" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Utah" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Virginia" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Washington" 
+ orderly run us_run_deca week_ending=2021-09-05 location="West Virginia" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Wisconsin" 
+ orderly run us_run_deca week_ending=2021-09-05 location="Wyoming"
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Alabama" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Alaska" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Arizona" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Arkansas" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="California" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Colorado" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Connecticut" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Delaware" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Florida" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Georgia" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Hawaii" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Idaho" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Illinois" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Indiana" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Iowa" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Kansas" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Kentucky" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Louisiana" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Maryland" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Massachusetts" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Michigan" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Minnesota" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Mississippi" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Missouri" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Montana" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Nebraska" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Nevada" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="New Hampshire" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="New Jersey" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="New Mexico" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="New York" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="North Carolina" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Ohio" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Oklahoma" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Oregon" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Pennsylvania" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Puerto Rico" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="South Carolina" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Tennessee" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Texas" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Utah" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Virginia" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Washington" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="West Virginia" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Wisconsin" 
+ orderly run us_produce_ensemble_outputs week_ending=2021-09-05 location="Wyoming"
  orderly run us_collate_weekly_outputs week_ending=2021-09-05
  orderly run us_produce_weekly_figs week_ending=2021-09-05
