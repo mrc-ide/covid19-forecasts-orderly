@@ -526,6 +526,15 @@ raw_data$Cases[raw_data$DateRep == "2021-08-15" & raw_data$`Countries.and.territ
 raw_data$Deaths[raw_data$DateRep == "2021-08-16" & raw_data$`Countries.and.territories` == "Bolivia"] <- 7
 raw_data$Deaths[raw_data$DateRep == "2021-08-17" & raw_data$`Countries.and.territories` == "Bolivia"] <- 26
 
+## Corrections 6th September 2021
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2021-08-30"] <- 11
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2021-08-29"] <- 20
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2021-08-30"] <- 254
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2021-08-29"] <- 355
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-05"] <- 182
+raw_data$Cases[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-05"] <- 8410
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories

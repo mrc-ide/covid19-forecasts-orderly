@@ -9,6 +9,7 @@ dates_forecast <- seq(
 
 ## exclude some states due to one-off data anomalies or because they only report weekly
 exclude <- c("Alabama", # 3 report/week
+             "Alaska", # 2 report/week
              # "Arizona", # 6 report/week # Appear to be reporting daily again (09 Aug)
              # "Arkansas", # 5 report/week # Now reporting at weekends again
                                           # Update from JHU email 03 August
@@ -16,8 +17,10 @@ exclude <- c("Alabama", # 3 report/week
                              # but still seems to have daily reports
              "Colorado", # 5 report / week
              "Connecticut", # < 7 report / week (unclear on exact reporting freq.)
+             "Delaware", # < 7 report / week
              "Florida", # 1 report/week
              "Georgia", # 5 report/week
+             "Hawaii", # < 7 report/week
              "Idaho", # 5 report/week
              "Illinois", # 5 report/week
              "Indiana", # 6 report/week
@@ -32,13 +35,17 @@ exclude <- c("Alabama", # 3 report/week
              "Mississippi", # 5 report / week
              # "Missouri", # 6 report / week
                            # seem s to be back to reporting every day (23/08/21)
+             "Montana", # 5 report / week
+             "Nebraska", # 5 report / week
              "Nevada", # 5 report/week
-             "New Hampshire", # 5 report / week (tbc)
+             "New Hampshire", # 5 report / week
              "New Mexico", # 3 report/week
              "North Carolina", # 5 report / week
+             "Ohio", # 2 report / week
              "Oklahoma", # 1 report / week
              "Oregon", # 5 report / week
              "Pennsylvania", # may have switched to 5 reports / week (23/08/21)
+             "Puerto Rico", # gets shown in the country level forecasts
              "South Carolina", # 5 report / week
              "South Dakota", # 1 report/week
              "Tennessee", # 5 report / week
