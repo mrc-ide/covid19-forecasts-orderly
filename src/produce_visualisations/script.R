@@ -99,6 +99,8 @@ plots <- imap(
         inset <- projection_plot(
           obs_local, pred_local, date_min = zoom_lims
         ) +
+          scale_x_date(breaks = "1 week") +
+          scale_y_continuous(breaks = waiver(), n.breaks = 4) +
           ## Make the theme different, so that inset looks different
           theme_classic() +
           theme(
@@ -109,11 +111,13 @@ plots <- imap(
         countries <- unique(obs_local$country)
         insets <- map(
           seq_along(countries), function(i) {
-            inset + ggforce::facet_wrap_paginate(
-                               ~country, nrow = 1, ncol = 1, page = i,
-                               scales = "free_y"
-                             ) +
-              theme(strip.background = element_blank(),
+            inset +
+              facet_wrap_paginate(
+                ~country, nrow = 1, ncol = 1, page = i,
+                scales = "free_y"
+              ) +
+              theme(text = element_text(size = 16),
+                    strip.background = element_blank(),
                     strip.text = element_blank())
           }
         )
