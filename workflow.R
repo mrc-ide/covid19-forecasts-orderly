@@ -106,6 +106,10 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   )
   if (commit) orderly_commit(a)
 
+  orderly_pull_archive(
+    "us_produce_weekly_figs", parameter = list(week_ending = week)
+  )
+
   a <- orderly_run(
     "produce_full_report",
     use_draft = use_draft,
