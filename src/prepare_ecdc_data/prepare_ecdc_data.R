@@ -669,6 +669,7 @@ exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   "Austria",
   "Botswana",
+  "Ireland",
   "Philippines", ## Erratic data
   "Kazakhstan",
   "Kyrgyzstan",
