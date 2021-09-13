@@ -55,6 +55,7 @@ exclude <- c("Alabama", # 3 report/week
              "West Virginia", # 5 report / week
              "Wisconsin", # 5 report / week
              "Wyoming" # 5 report / week
+             
 )
 
 ## ensemble projections
