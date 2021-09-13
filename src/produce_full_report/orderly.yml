@@ -11,6 +11,7 @@ packages:
   - dplyr
   - ggplot2
   - ggpubr
+  - zip
 
 resources:
   - produce_full_report.Rmd
@@ -60,3 +61,7 @@ depends:
       indvdl_pred_Oceania_si_2.Rmd: indvdl_pred_Oceania_si_2.Rmd      
       figures.zip: figures.zip
       continents_included.rds: continents_included.rds
+  produce_visualisations:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      us-figs.zip: us-figs.zip

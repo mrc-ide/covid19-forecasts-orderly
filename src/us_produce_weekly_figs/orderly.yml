@@ -8,14 +8,15 @@ packages:
 - ggplot2
 - rincewind
 - tidyr
+- zip
 
 sources: R/utils.R
 
 artefacts:
-  staticgraph:
-    description: Ensemble model forecasts
+  data:
+    description: Ensemble model forecasts and other figures
     filenames:
-      - figures/us_ensemble_forecasts_1.png
+      - us-figs.zip
 
 depends:
   us_collate_weekly_outputs:

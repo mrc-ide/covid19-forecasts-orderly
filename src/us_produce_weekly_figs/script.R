@@ -55,7 +55,7 @@ exclude <- c("Alabama", # 3 report/week
              "West Virginia", # 5 report / week
              "Wisconsin", # 5 report / week
              "Wyoming" # 5 report / week
-             
+
 )
 
 ## ensemble projections
@@ -228,3 +228,5 @@ ggsave("figures/us_indvdl_rt_line_1.png", p1)
 ggsave("figures/us_indvdl_rt_line_2.png", p2)
 ggsave("figures/us_indvdl_rt_line.png", p)
 
+files2zip <- dir('figures', full.names = TRUE)
+zip::zip(zipfile = 'us-figs.zip', files = files2zip)
