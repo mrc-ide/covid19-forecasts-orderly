@@ -2,7 +2,7 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-09-05"
+week <- "2021-09-12"
 
 a <- orderly_run("download_jhu_data")
 orderly_commit(a)
@@ -21,7 +21,7 @@ orderly_pull_archive(
 )
 
 model_input <- readRDS(
-  "archive/prepare_jhu_data/20210906-090436-81c16948/latest_model_input.rds"
+  "archive/prepare_jhu_data/20210913-151811-e1ec7d02/latest_model_input.rds"
 )
 locations <- model_input$State
 

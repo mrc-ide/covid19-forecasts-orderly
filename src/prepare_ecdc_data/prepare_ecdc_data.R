@@ -536,6 +536,35 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-05"] <- 182
 raw_data$Cases[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-05"] <- 8410
 
+########### 13th September 2021
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Azerbaijan" & raw_data$DateRep == "2021-09-12"] <- 34
+raw_data$Cases[raw_data$`Countries.and.territories` == "Azerbaijan" & raw_data$DateRep == "2021-09-12"] <- 2372
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Croatia" & raw_data$DateRep == "2021-09-11"] <- 14
+raw_data$Cases[raw_data$`Countries.and.territories` == "Croatia" & raw_data$DateRep == "2021-09-11"] <- 1162
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Croatia" & raw_data$DateRep == "2021-09-12"] <- 13
+raw_data$Cases[raw_data$`Countries.and.territories` == "Croatia" & raw_data$DateRep == "2021-09-12"] <- 807
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jordan" & raw_data$DateRep == "2021-09-06"] <- 8
+raw_data$Cases[raw_data$`Countries.and.territories` == "Jordan" & raw_data$DateRep == "2021-09-06"] <- 1048
+raw_data$Cases[raw_data$`Countries.and.territories` == "Jordan" & raw_data$DateRep == "2021-09-07"] <- 1061
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jordan" & raw_data$DateRep == "2021-09-07"] <- 6
+
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-06"] <- 80
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-06"] <- 3043
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-07"] <- 1923
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-07"] <- 72
+
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-08"] <- 282
+raw_data$Cases[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-08"] <- 5372
+raw_data$Cases[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-09"] <- 7338
+raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-09"] <- 253
+
+
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -640,6 +669,7 @@ exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   "Austria",
   "Botswana",
+  "Ireland",
   "Philippines", ## Erratic data
   "Kazakhstan",
   "Kyrgyzstan",

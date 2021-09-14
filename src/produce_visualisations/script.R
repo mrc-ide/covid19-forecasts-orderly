@@ -354,4 +354,4 @@ iwalk(
 )
 
 files2zip <- dir('figs', full.names = TRUE)
-utils::zip(zipfile = 'figures.zip', files = files2zip)
+zip::zip(zipfile = 'figures.zip', files = files2zip)

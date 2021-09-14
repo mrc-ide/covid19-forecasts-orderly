@@ -17,7 +17,7 @@ orderly_envir.yml
 *gadm36*
 *.R#
 .orderly/*
-
+metadata/*
 src/produce_full_report/jquery.easyPaginate-master/
 
 src/produce_full_report/produce_full_report_files/

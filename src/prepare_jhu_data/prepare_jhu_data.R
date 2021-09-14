@@ -331,6 +331,17 @@ raw_data$Deaths[raw_data$DateRep == "2021-08-10" & raw_data$province_state == "M
 raw_data$Deaths[raw_data$DateRep == "2021-08-17" & raw_data$province_state == "Missouri"] <- 120 - 86
 
 
+##########################################
+## Corrections for 13 September 2021 report ##
+##########################################
+
+## Missouri
+## Some reporting of backlogged deaths following death certificate review
+## Source: JHU email (07/09/21)
+## SOurce: https://fox2now.com/news/coronavirus/missouri-adds-157-new-covid-deaths-on-last-day-of-august/
+
+raw_data$Deaths[raw_data$DateRep == "2021-08-31" & raw_data$province_state == "Missouri"] <- 157 - 137
+
 
 ## Save wide versions of death and case data
 
