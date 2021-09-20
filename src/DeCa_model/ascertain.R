@@ -477,11 +477,11 @@ summary_14days <- purrr::map_dfr(
   function(country) {
     summary_r <- deaths_to_cases_qntls[[country]]
     summary_rho <- ascertainment_qntls[[country]]
-    last_week <- quantile(
-      colSums(episize_projected[[country]], na.rm = TRUE),
-      c(0.5, 0.025, 0.975),
-      na.rm = TRUE
-    )
+    ## last_week <- quantile(
+    ##   colSums(episize_projected[[country]], na.rm = TRUE),
+    ##   c(0.5, 0.025, 0.975),
+    ##   na.rm = TRUE
+    ## )
     last_week <- data.frame(last_week) %>%
       tibble::rownames_to_column() %>%
       tidyr::spread(rowname, last_week)
