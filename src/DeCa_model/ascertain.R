@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2020-07-19"))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-09-19"))
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
 set.seed(1)
 dir.create("figures")
@@ -128,8 +128,12 @@ ascertainment <- purrr::map(
   countries,
   function(country) {
     message(country)
+    if (country == "Cote_dIvoire") idx <- "Cote_dIvoire"
+    else if (country == "Timor_Leste") idx <- "Timor-Leste"
+    else idx <- snakecase::to_title_case(country)
+
     ascertainr::ascertainment(
-      cfr_distr = ifr[[snakecase::to_title_case(country)]],
+      cfr_distr = ifr[[idx]],
       death_to_case = deaths_to_cases[[country]]
     )
   }
