@@ -564,6 +564,24 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "South_Africa" & raw_data
 raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2021-09-09"] <- 253
 
 
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-14"] <- 72
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-15"] <- 65
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-16"] <- 46
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-17"] <- 46
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-18"] <- 53
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-19"] <- 48
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-14"] <- 917
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-15"] <- 2785
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-16"] <- 2642
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-17"] <- 2432
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-18"] <- 2412
+raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2021-09-19"] <- 2291
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2021-09-19"] <- 6745
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2021-09-19"] <- 35
+
+
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
