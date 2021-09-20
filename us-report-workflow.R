@@ -21,7 +21,7 @@ orderly_pull_archive(
 )
 
 model_input <- readRDS(
-  "archive/prepare_jhu_data/20210913-151811-e1ec7d02/latest_model_input.rds"
+  "archive/prepare_jhu_data/20210920-111910-92952b52/latest_model_input.rds"
 )
 locations <- model_input$State
 
