@@ -22,7 +22,6 @@ artefacts:
     description: Latest model outputs
     filenames:
       - DeCa_latest.rds
-      - summary_DeathToRepoted_14days.csv
 
 depends:
   - prepare_ecdc_data:

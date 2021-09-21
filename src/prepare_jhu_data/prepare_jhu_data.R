@@ -394,8 +394,9 @@ by_state_cases <- dplyr::select(
 
 ## For consistency with Pierre's code, rename DateRep to dates
 cases_to_use <- dplyr::rename(by_state_cases, dates = "DateRep")
-
 deaths_to_use <- dplyr::rename(by_state_deaths, dates = "DateRep")
+cases_to_use <- cases_to_use[cases_to_use$dates <= as.Date(week_ending), ]
+deaths_to_use <- deaths_to_use[deaths_to_use$dates <= as.Date(week_ending), ]
 
 State <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 

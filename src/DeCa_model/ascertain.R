@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2020-07-19"))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-09-19"))
 ## ----options, include = FALSE, message = FALSE, warning = FALSE, error = FALSE----
 set.seed(1)
 dir.create("figures")
@@ -128,8 +128,12 @@ ascertainment <- purrr::map(
   countries,
   function(country) {
     message(country)
+    if (country == "Cote_dIvoire") idx <- "Cote_dIvoire"
+    else if (country == "Timor_Leste") idx <- "Timor-Leste"
+    else idx <- snakecase::to_title_case(country)
+
     ascertainr::ascertainment(
-      cfr_distr = ifr[[snakecase::to_title_case(country)]],
+      cfr_distr = ifr[[idx]],
       death_to_case = deaths_to_cases[[country]]
     )
   }
@@ -168,118 +172,6 @@ ascertainment_qntls <- purrr::map(
 ######################################################################
 ######################################################################
 
-episize_prev <- purrr::map(
-  countries,
-  function(country) {
-    idx <- seq(
-      1, length(ascertainr_deaths[[country]]) ##- round(mu_delta)
-    )
-    ascertainr::episize_before_mu(
-      deaths = matrix(
-        ascertainr_deaths[[country]][idx], ncol = 1
-      ),
-      mu_delta = mu_delta,
-      cfr_distr = ifr[[snakecase::to_title_case(country)]]
-    )
-  }
-)
-## As above, results in the same ball park.
-## For Yemen, from Pierre's code:
-##          dates Yemen
-## 126 2020-05-04    51
-## 133 2020-05-11    52
-## 134 2020-05-12   266
-## 149 2020-05-27   555
-## For Yemen, from packaged code:
-##         date Yemen
-## 1 2020-05-04    51
-## 2 2020-05-11    50
-## 3 2020-05-12   268
-
-episize_prev_qntls <- purrr::imap_dfr(
-  episize_prev,
-  function(x, country) {
-    idx <- seq(
-      1, length(ascertainr_deaths[[country]])) ##- round(mu_delta))
-    df <- quantiles_to_df(x)
-    cbind(date = ascertainr_deaths[["dates"]][idx],df)
-  }, .id = "country"
-)
-
-
-episize_projected <- purrr::map(
-  countries,
-  function(country) {
-    idx <- seq(
-      from = length(
-        ascertainr_cases[[country]]) - round(mu_delta) + 1,
-      to = length(ascertainr_deaths[[country]])
-    )
-    ascertainr::episize_after_mu(
-      cases = matrix(ascertainr_cases[[country]][idx], ncol = 1),
-      rho = ascertainment[[country]][idx, ]
-    )
-  }
-)
-## same as above.
-## Pierre's code:
-##          dates Yemen
-## 155 2020-06-02   891
-## 156 2020-06-03  1280
-## 157 2020-06-04    99
-## 158 2020-06-05  1813
-## 159 2020-06-06   579
-## 160 2020-06-07   108
-## ascertainr code:
-##     country       date  50.0%
-## 535   Yemen 2020-06-02  845.5
-## 536   Yemen 2020-06-03 1244.0
-## 537   Yemen 2020-06-04   96.0
-## 538   Yemen 2020-06-05 1698.0
-## 539   Yemen 2020-06-06  592.0
-## 540   Yemen 2020-06-07  120.0
-
-episize_projected_qntls <- purrr::imap(
-  episize_projected,
-  function(x, country) {
-    idx <- seq(
-      from = length(
-        ascertainr_deaths[[country]]
-      ) - round(mu_delta) + 1,
-      to = length(ascertainr_deaths[[country]])
-    )
-    df <- quantiles_to_df(x)
-    cbind(date = ascertainr_deaths[["dates"]][idx], df)
-  }
-)
-
-
-######################################################################
-#################### Episize quantiles ###############################
-######################################################################
-######################################################################
-## x <- dplyr::bind_rows(episize_projected_qntls, .id = "country")
-## x <- rbind(episize_prev_qntls, x)
-
-## p <- ggplot(x) +
-##   geom_ribbon(aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
-##   geom_line(aes(x = date, y = `50.0%`), size = 1.1) +
-##   theme_minimal() +
-##   xlab("") +
-##   ylab("Episize")
-
-## for (page in 1:npages) {
-##   y <- tail(ascertainr_deaths[["dates"]], 1) - round(mu_delta)
-##   p <-  p +
-##     geom_vline(xintercept = y) +
-##     facet_wrap_paginate(
-##       ~country, ncol = 1, nrow = 4, page = page, scales = "free_y"
-##   )
-##   ggsave(glue::glue("figures/episize_{page}.png"), p)
-## }
-
-######################################################################
-######################################################################
 
 cases_augmented <- purrr::map(
   countries,
@@ -570,57 +462,3 @@ out <- list(
 )
 
 saveRDS(object = out, file = paste0('DeCa_latest.rds'))
-
-
-#####################################################################
-############################# Summary ###############################
-#####################################################################
-## country,deaths_to_reported_ratio,estimated_reporting,factor_to_real_size,Observed_case_last_week,Predicted_True_case_last_week
-## Yemen,0.32 (0.248 - 0.396),4.3% (3.4% - 5.7%),23.23 (17.66 - 29.64),232,5230 (4290 - 6400)
-## United_States_of_America,0.038 (0.037 - 0.038),36.7% (32.7% - 40.8%),2.73 (2.45 - 3.05),154465,434000 (390000 - 486000)
-## United_Kingdom,0.091 (0.086 - 0.096),15.1% (13.3% - 17.0%),6.64 (5.89 - 7.51),9507,66600 (59700 - 74700)
-## United_Arab_Emirates,0.003 (0.002 - 0.005),100.0% (100.0% - 100.0%),1 (1 - 1),3632,3630 (3630 - 3630)
-summary_14days <- purrr::map_dfr(
-  countries,
-  function(country) {
-    summary_r <- deaths_to_cases_qntls[[country]]
-    summary_rho <- ascertainment_qntls[[country]]
-    last_week <- quantile(
-      colSums(episize_projected[[country]], na.rm = TRUE),
-      c(0.5, 0.025, 0.975),
-      na.rm = TRUE
-    )
-    last_week <- data.frame(last_week) %>%
-      tibble::rownames_to_column() %>%
-      tidyr::spread(rowname, last_week)
-
-    data.frame(
-      country = country,
-      deaths_to_reported_ratio = glue::glue(
-        "{round(summary_r$median_ratio[nrow(ascertainr_deaths)], 3) }",
-        " ({round(summary_r$low_ratio[nrow(ascertainr_deaths)], 3)} - {round(summary_r$up_ratio[nrow(ascertainr_deaths)],3)})",
-      ),
-      estimated_reporting = glue::glue(
-        "{scales::percent(as.numeric(round(summary_rho$`50.0%`[nrow(ascertainr_deaths)], 3)), accuracy = 0.1)}",
-        " ({scales::percent(as.numeric(round(summary_rho$`2.5%`[nrow(ascertainr_deaths)],3)), accuracy = 0.1)} - {scales::percent(as.numeric(round(summary_rho$`97.5%`[nrow(ascertainr_deaths)],3)), accuracy = 0.1)})",
-        ),
-      factor_to_real_size = glue::glue(
-        "{round(1/summary_rho$`50.0%`[nrow(ascertainr_deaths)], 2)}",
-        " ({round(1/summary_rho$`97.5%`[nrow(ascertainr_deaths)], 2)} - {round(1/summary_rho$`2.5%`[nrow(ascertainr_deaths)], 2)})",
-        ),
-      Observed_case_last_week = sum(tail(ascertainr_cases[[country]], 7)),
-      Predicted_True_case_last_week = glue::glue(
-          "{prettyNum(signif(last_week$`50%`, digits = 3), big.mark = ",")} ",
-          "({prettyNum(signif(last_week$`2.5%`, digits = 3), big.mark = ",")}",
-          " - {prettyNum(signif(last_week$`97.5%`, digits = 3), big.mark = ",")})"
-      )
-    )
-  }
-)
-
-## TODO check why we have NAs
-summary_14days <- na.omit(summary_14days)
-readr::write_csv(
-  x = summary_14days,
-  path = 'summary_DeathToRepoted_14days.csv'
-)
