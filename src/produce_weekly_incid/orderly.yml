@@ -15,3 +15,9 @@ artefacts:
       - countries_included.rds
       - weekly_incidence.rds
       - weeks_included.rds
+
+depends:
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == latest_week)
+    use:
+      model_input.rds: latest_deaths_wide_no_filter.rds      

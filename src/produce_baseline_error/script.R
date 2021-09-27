@@ -1,8 +1,8 @@
 ## orderly::orderly_develop_start("src/produce_baseline_error/", parameters = list(latest_week = "2020-12-13", week_starting = "2020-02-22"), use_draft = "newer")
 dir.create("figures")
 
-weekly_cv <- function(vec) sd(vec) / mean(vec)
-
+week_starting <- as.Date(week_starting)
+week_ending <- as.Date(latest_week)
 window_past <- 10
 window_future <- 7
 model_input <- readRDS("model_input.rds")
