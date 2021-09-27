@@ -8,27 +8,28 @@ weekly_phase <- split(
     function(x) {
       x$week_starting <- as.Date(x$week_starting)
       x <- arrange(x, week_starting)
-      x$change_from_prev_week <- c(NA, diff(x$weekly_incid))
-      ## Change over previous week
-      x$rel_change <- x$change_from_prev_week / lag(x$weekly_incid)
+      x$phase <- case_when(
+      (lead(x$weekly_incid) > x$weekly_incid - 0.5 * x$sigma) &
+      (lead(x$weekly_incid) < x$weekly_incid + 0.5 * x$sigma) ~ "indeterminate",
+
+      (lead(x$weekly_incid) < x$weekly_incid - 0.5 * x$sigma) &
+      (lead(x$weekly_incid) > x$weekly_incid -  x$sigma) ~ "likely decreasing",
+
+      (lead(x$weekly_incid) < x$weekly_incid - x$sigma) ~ "definitely decreasing",
+
+
+      (lead(x$weekly_incid) > x$weekly_incid + 0.5 * x$sigma) &
+      (lead(x$weekly_incid) < x$weekly_incid + x$sigma) ~ "likely growing",
+
+      lead(x$weekly_incid) > (x$weekly_incid + x$sigma) ~ "definitely growing"
+      )
       x
+
     }, .id = "country"
   )
 
-weekly_phase$phase <- case_when(
-  weekly_phase$change_from_prev_week > 0 ~ "Growing",
-
-)
-
-india$phase <- case_when(
-(lead(india$weekly_incid) > india$weekly_incid - 0.5 * india$sigma) &
-(lead(india$weekly_incid) < india$weekly_incid + 0.5 * india$sigma) ~ "stable",
-
-(lead(india$weekly_incid) < india$weekly_incid - 0.5 * india$sigma) &
-(lead(india$weekly_incid) > india$weekly_incid -  india$sigma) ~ "declining",
 
 
-(lead(india$weekly_incid) > india$weekly_incid + 0.5 * india$sigma) &
-(lead(india$weekly_incid) < india$weekly_incid + india$sigma) ~ "growing"
-
+saveRDS(
+  weekly_phase, "empirical_epidemic_phase.rds"
 )

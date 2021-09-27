@@ -10,6 +10,12 @@ parameters:
   - week_starting
   - latest_week
 
+artefacts:
+  data:
+    description: Empirical epidemic phase
+    filenames:
+      - empirical_epidemic_phase.rds
+      
 depends:
   - produce_weekly_incid:
       id: latest(parameter:latest_week == latest_week && parameter:week_starting == week_starting)
