@@ -24,7 +24,7 @@ model_input <- readRDS(
   "archive/prepare_jhu_data/20210927-093326-a2aacd70/latest_model_input.rds"
 )
 locations <- model_input$State
-exclude <- "Nebraska"
+exclude <- c("Nebraska", "Ohio")
 locations <- locations[!locations %in% exclude]
 ## Debugging
 ## locations <- c("Alabama", "California", "Montana", "Texas", "Michigan")
