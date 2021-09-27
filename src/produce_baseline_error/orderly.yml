@@ -10,19 +10,25 @@ artefacts:
     filenames:
       - null_model_error.rds
       - linear_model_error.rds      
-      - weekly_incidence.rds
       - exclude.rds
 packages:
-- dplyr
-- tidyr
 - assessr
-- slider
-- purrr
+- dplyr
 - ggplot2
 - glue
+- purrr
 - rstanarm
+- slider
+- tidyr
+
 depends:
 - prepare_ecdc_data:
     id: latest(parameter:week_ending == latest_week)
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds
+- produce_weekly_incidence:
+    id: latest(parameter:latest_week == latest_week && parameter:week_starting == week_starting)
+    use:
+      weekly_incidence.rds: weekly_incidence.rds
+      countries_included.rds: countries_included.rds
+      weeks_included.rds: weeks_included.rds

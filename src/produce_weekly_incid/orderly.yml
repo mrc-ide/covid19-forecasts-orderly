@@ -1,0 +1,17 @@
+script: weekly_incid.R
+
+parameters:
+- week_starting
+- latest_week
+
+packages:
+- purrr
+- tidyr
+
+artefacts:
+  data:
+    description: Weekly incidence of deaths
+    filenames:
+      - countries_included.rds
+      - weekly_incidence.rds
+      - weeks_included.rds

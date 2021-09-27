@@ -5,55 +5,13 @@ weekly_cv <- function(vec) sd(vec) / mean(vec)
 
 window_past <- 10
 window_future <- 7
-
-week_starting <- as.Date(week_starting)
-week_ending <- as.Date(latest_week)
-weeks <- seq(from = week_starting, to = week_ending, by = "7 days")
-weeks_day1 <- seq(week_starting, week_ending, "7 days")
-weeks <- map(
-  weeks_day1,
-  function(x) seq(from = x + 1, length.out = 7, by = "1 day")
-)
-
-names(weeks) <- weeks_day1
 model_input <- readRDS("model_input.rds")
 model_input <- model_input[model_input$dates > week_starting - window_past &
                            model_input$dates <= week_ending, ]
 
-## We only include countries with at least 100 deaths
-total_deaths <- colSums(model_input[, -1])
-include <- total_deaths[total_deaths >= 100]
-model_input <- model_input[, c("dates", names(include))]
-countries <- setNames(
-  colnames(model_input)[-1], colnames(model_input)[-1]
-)
-
-
-tall <- tidyr::gather(model_input, country, deaths, -dates)
-
-weekly <- map_dfr(
-  countries,
-  function(country) {
-    message(country)
-    imap_dfr(
-      weeks,
-      function(week, week_starting) {
-        message(paste(week, collapse = " "))
-        incid <- model_input[model_input$dates %in% week, country]
-        if (inherits(incid, "data.frame")) incid <- as.numeric(incid[[country]])
-        cv <- weekly_cv(incid)
-        data.frame(
-          week_starting = week_starting,
-          dates = week,
-          weekly_incid = sum(incid),
-          weekly_cv = cv,
-          country = country
-        )
-      }
-    )
-  }, .id = "country"
-)
-
+weekly <- readRDS("weekly_incidence.rds")
+countries <- readRDS("countries_included.rds")
+weeks <- readRDS("weeks_included.rds")
 ## threshold for excluding countries
 by_country <- filter(weekly, weekly_cv > 0) %>%
   group_by(country) %>%
