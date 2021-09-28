@@ -22,6 +22,10 @@ packages:
 - tidyr
 
 depends:
+- produce_empirical_phase:
+    id: latest
+    use:
+      empirical_epidemic_phase.rds: empirical_epidemic_phase.rds
 - collate_epidemic_phase:
     id: latest
     use:

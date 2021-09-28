@@ -15,18 +15,26 @@ dir.create("figures")
 ## rather than the other way around
 short_term <- readRDS("collated_short_term_phase.rds")
 short_term <- short_term[short_term$model_name == "ensemble", ]
+
+empirical <- readRDS("empirical_epidemic_phase.rds")
+empirical <- na.omit(empirical)
+##empirical$week_starting <- as.character(empirical$week_starting)
+
 medium_term <- readRDS("collated_medium_term_phase.rds")
 medium_term$day <- as.integer(medium_term$day)
 medium_term <- medium_term[medium_term$day <= 28, ]
+medium_term$week_starting <- as.Date(medium_term$model) - 1
+
 compare_phase <- left_join(
-  short_term, medium_term, by = c("country", "model"),
-  suffix = c("_weekly", "_eff")
+  medium_term, empirical,
+  by = c("country", "week_starting"),
+  suffix = c("_eff", "_empirical")
 )
 compare_phase <- distinct(compare_phase)
 ## The only NAs should now be from the first three weeks
 ## for which we did not produce medium-term forecasts.
 ## x <- compare_phase[! complete.cases(compare_phase), ]
-## unique(x$forecast_date)
+## unique(x$week_starting)
 ## [1] "2020-03-22" "2020-03-08" "2020-03-15"]
 ## Therefore we can safely omit these
 compare_phase <- na.omit(compare_phase)
