@@ -85,6 +85,61 @@ reff_qntls <- split(
 
 reff_bycountry <- split(reff_qntls, reff_qntls$country, drop = TRUE)
 
+assigned_phase <- readRDS("collated_medium_term_phase.rds")
+phase_by_country <- split(assigned_phase, assigned_phase$country)
+
+emp_phase <- readRDS("empirical_epidemic_phase.rds")
+emp_phase_by_country <- split(emp_phase, emp_phase$country)
+
+country <- "India"
+x <- reff_bycountry[[country]]
+x <- x[x$forecast_week %in% unique(x$forecast_week)[seq(1, 34, by = 3)], ]
+y <- emp_phase_by_country[[country]]
+## Forcast runs from Monday to Sunday
+## week_starting here is Saturday of the previous week.
+y$start_of_week <- as.Date(y$week_starting) + 2
+y$end_of_week <- as.Date(y$week_starting) + 8
+
+z <- phase_by_country[[country]]
+z$date <- as.Date(z$model) + as.integer(z$day)
+y <- na.omit(y)
+z <- na.omit(z)
+z <- z[z$model %in% unique(x$forecast_week), ]
+
+ggplot() +
+  geom_ribbon(
+    data = x,
+    aes(date, ymin = `2.5%`, ymax = `97.5%`, group = forecast_week),
+    alpha = 0.3
+  ) +
+  geom_line(data = x, aes(date, `50%`, group = forecast_week)) +
+  geom_segment(
+    data = y, aes(y = 3, yend = 3, x = start_of_week, xend = end_of_week, col = phase),
+    size = 4
+  ) +
+  geom_point(
+    data = z, aes(x = date, y = 0.5, col = phase),
+    size = 1.2
+  ) +
+  scale_x_date(
+    breaks = "1 week",
+    limits = c(as.Date("2020-04-13"), as.Date("2020-12-27"))
+  ) +
+  scale_color_manual(
+    values = c("likely stable" = "#000000",
+               "likely decreasing" = "#E69F00",
+               "definitely decreasing" = "#56B4E9",
+               "likely growing" = "#009E73",
+               "definitely growing" = "#F0E442",
+               "indeterminate" = "#0072B2"),
+    breaks = c("likely stable", "likely decreasing", "definitely decreasing",
+               "likely growing", "definitely growing", "indeterminate")
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top", axis.text.x = element_text(angle = 90))
+
+
+
 pred_qntls <- readRDS("longer_projections_qntls.rds")
 pred_qntls$forecast_week <- as.Date(pred_qntls$forecast_week)
 pred_qntls <- pred_qntls[!pred_qntls$country %in% exclude, ]

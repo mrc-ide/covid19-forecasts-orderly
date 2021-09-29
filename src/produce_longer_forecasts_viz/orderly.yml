@@ -30,6 +30,14 @@ packages:
 sources: R/utils.R
 
 depends:
+  produce_empirical_phase:
+    id: "latest"
+    use:
+      empirical_epidemic_phase.rds: empirical_epidemic_phase.rds
+  collate_epidemic_phase:
+    id: "latest"
+    use:
+      collated_medium_term_phase.rds: collated_medium_term_phase.rds
   collate_longer_forecasts:
     id: "latest"
     use:
