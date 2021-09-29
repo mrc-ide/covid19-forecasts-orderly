@@ -3,20 +3,11 @@
 ## whereas our values are already in (0, 100). We just want anice
 ## % sign
 mypercent <- function(vec) scales::percent(vec/100, accuracy = 0.01)
-##mypercent <- function(vec) glue("{round(vec, 2)}\\%")
+
 
 dir.create("figures")
-######################################################################
-######### Compare phase assigned by the two Rts ######################
-######################################################################
-## There will be instances (countries and weeks) where we will have
-## Rt from medium-term forecasts, but not from weekly Rt
-## Therefore it is better to join weekly_rt to reff_qntls
-## rather than the other way around
-short_term <- readRDS("collated_short_term_phase.rds")
-short_term <- short_term[short_term$model_name == "ensemble", ]
-
 empirical <- readRDS("empirical_epidemic_phase.rds")
+## phase is NA when SD is either 0 or NA
 empirical <- na.omit(empirical)
 ##empirical$week_starting <- as.character(empirical$week_starting)
 
@@ -24,6 +15,19 @@ medium_term <- readRDS("collated_medium_term_phase.rds")
 medium_term$day <- as.integer(medium_term$day)
 medium_term <- medium_term[medium_term$day <= 28, ]
 medium_term$week_starting <- as.Date(medium_term$model) - 1
+## How often does the phase vary within a week?
+medium_term$week_of_forecast <- case_when(
+  medium_term$day <= 7 ~ "1-week ahead",
+  7 < medium_term$day & medium_term$day <= 14 ~ "2-weeks ahead",
+  14 < medium_term$day & medium_term$day <= 21 ~ "3-weeks ahead",
+  21 < medium_term$day & medium_term$day <= 28  ~ "4-weeks ahead",
+  28 < medium_term$day & medium_term$day <= 35  ~ "5-weeks ahead",
+  35 < medium_term$day & medium_term$day <= 42  ~ "6-weeks ahead"
+)
+
+x <- group_by(medium_term, model, country, week_of_forecast) %>%
+  summarise(ndiff = length(unique(phase))) %>%
+  ungroup()
 
 compare_phase <- left_join(
   medium_term, empirical,
@@ -48,14 +52,49 @@ compare_phase$week_of_forecast <- case_when(
   28 < compare_phase$day & compare_phase$day <= 35  ~ "5-weeks ahead",
   35 < compare_phase$day & compare_phase$day <= 42  ~ "6-weeks ahead"
 )
-######################################################################
-########### Total number of country weeks for short term
-########### That is, n_countries X n_weeks
-########### 82 * 2222 = 182204
-country_weeks <- group_by(short_term, country) %>%
-  summarise(nweeks = length(unique(model))) %>%
-  ungroup() %>%
-  arrange(nweeks)
+
+x <- tabyl(compare_phase, phase_empirical, phase_eff, day) %>%
+  adorn_percentages("row") %>%
+  bind_rows(.id = "day_of_forecast")
+
+x <- select(x, day_of_forecast, phase_empirical, `likely stable`,`likely decreasing` ,`definitely decreasing`, `likely growing` ,`definitely growing`, `indeterminate`)
+xtall <- gather(x, phase_eff, val, -day_of_forecast, -phase_empirical)
+xtall$phase_empirical <-
+  factor(
+    xtall$phase_empirical,
+    levels = c(
+      "likely stable",
+      "likely decreasing",
+      "definitely decreasing",
+      "likely growing",
+      "definitely growing"
+    ), ordered = TRUE
+  )
+
+xtall$phase_eff <-
+  factor(
+    xtall$phase_eff,
+    levels = c(
+      "likely stable",
+      "likely decreasing",
+      "definitely decreasing",
+      "likely growing",
+      "definitely growing",
+      "indeterminate"
+    ), ordered = TRUE
+  )
+
+ggplot(xtall) +
+  geom_tile(
+    aes(phase_empirical, phase_eff, fill = val),
+    width = 0.9, height = 0.9
+  ) +
+  facet_wrap(~day_of_forecast, ncol = 7) +
+  scale_fill_distiller(
+    palette = "RdYlBu", limits = c(0, 1)
+  ) +
+  theme(axis.text.x = element_text(angle = 90))
+
 
 ########### Total number of country weeks for medium term
 ########### That is, n_countries X n_weeks
@@ -69,23 +108,8 @@ country_weeks <- group_by(medium_term, country) %>%
 ####### Option 1: Compare the phase assigned #########################
 ######################################################################
 x <- select(
-  compare_phase, day, week_of_forecast, phase_eff, phase_weekly
+  compare_phase, day, week_of_forecast, phase_eff, phase_empirical
 )
-
-## Across all countries and weeks for which we
-## produced forecasts, the phase definition using the reproduction
-## number estimates from
-## medium-term forecasts (RtS ) was consistent with that using the
-## estimates from the short-term forecasts (Rcurr)
-## in xx.x% of country-weeks in 1-week ahead forecasts and in xx.x% t
-## of country-weeks in 4 week ahead forecasts
-nforecasts <- count(x, week_of_forecast, name = "n_forecasts")
-wellclassified <- filter(x, phase_weekly == phase_eff)
-ncorrect <- count(wellclassified, week_of_forecast, name = "n_correct")
-wellclassified <- left_join(nforecasts, ncorrect)
-wellclassified$prop <- wellclassified$n_correct / wellclassified$n_forecasts
-saveRDS(wellclassified, 'phase_wellclassified.rds')
-### stargazer::stargazer(misclassified, summary=FALSE, rownames = FALSE)
 
 ## Not counting indeterminate
 wellclassified <- filter(x, phase_eff != "indeterminate")
@@ -95,9 +119,9 @@ wellclassified$overall_eff <- case_when(
   )
 
 wellclassified$overall_weekly <- case_when(
-  wellclassified$phase_weekly %in% c("definitely growing", "likely growing") ~ "growing",
-  wellclassified$phase_weekly %in% c("definitely decreasing", "likely decreasing") ~ "not growing",
-  )
+  wellclassified$phase_empirical %in% c("definitely growing", "likely growing") ~ "growing",
+  wellclassified$phase_empirical %in% c("definitely decreasing", "likely decreasing") ~ "not growing",
+)
 
 ncorrect <- filter(wellclassified, phase_eff != "indeterminate") %>%
   filter(overall_eff == overall_weekly) %>%
@@ -110,9 +134,9 @@ ncorrect <- filter(wellclassified, phase_eff != "indeterminate") %>%
 ## the medium-term were most frequently
 ## misclassified as stable/growing slowly (46.8\%) or unclear
 ## (18.4\%).
-misclassified <- filter(x, phase_weekly != phase_eff)
+misclassified <- filter(x, phase_empirical != phase_eff)
 misclassified <- tabyl(
-  misclassified, phase_weekly, phase_eff
+  misclassified, phase_empirical, phase_eff
 ) %>%
   adorn_totals(where = c("row", "col")) %>%
   adorn_percentages(denominator = "row") %>%
@@ -121,20 +145,20 @@ misclassified <- tabyl(
 saveRDS(misclassified, 'phase_misclassified.rds')
 
 ## opposite trend
-opposite <- filter(x, phase_weekly != phase_eff)
+opposite <- filter(x, phase_empirical != phase_eff)
 opp_idx1 <- which(
   opposite$phase_eff %in% c('likely growing', 'definitely growing') &
-  opposite$phase_weekly %in% c('likely decreasing', 'definitely decreasing')
+  opposite$phase_empirical %in% c('likely decreasing', 'definitely decreasing')
 )
 
 opp_idx2 <- which(
   opposite$phase_eff %in% c('likely decreasing', 'definitely decreasing') &
-  opposite$phase_weekly %in% c('likely growing', 'definitely growing')
+  opposite$phase_empirical %in% c('likely growing', 'definitely growing')
 )
 
 ## Summary across all weeks for which we have medium-term
 ## forecasts
-y <- tabyl(x, phase_eff, phase_weekly) %>%
+y <- tabyl(x, phase_eff, phase_empirical) %>%
   adorn_totals(where = c("row", "col")) %>%
   adorn_percentages(denominator = "all") %>%
   adorn_pct_formatting(digits = 2) %>%
@@ -142,7 +166,7 @@ y <- tabyl(x, phase_eff, phase_weekly) %>%
 
 saveRDS(y, 'phase_eff_weekly_overall.rds')
 
-out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
+out <- tabyl(x, phase_empirical, phase_eff, week_of_forecast) %>%
   adorn_totals(where = c("row", "col")) %>%
   adorn_percentages(denominator = "row") %>%
   adorn_pct_formatting(digits = 2) %>%
@@ -154,10 +178,10 @@ out <- select(out, -Total)
 out <- gather(out, phase_eff, label, `definitely decreasing`:`likely growing`)
 out <- tidyr::separate(out, label, into = c("label", "total"), sep = "%")
 out$val <- readr::parse_number(out$label)
-out <- filter(out, phase_weekly != 'Total', phase_eff != 'Total')
+out <- filter(out, phase_empirical != 'Total', phase_eff != 'Total')
 
-out$phase_weekly <- factor(
-  out$phase_weekly,
+out$phase_empirical <- factor(
+  out$phase_empirical,
   levels = c("definitely growing",  "likely growing",
              "definitely decreasing", "likely decreasing",
              "indeterminate"),
@@ -174,12 +198,12 @@ out$phase_eff <- factor(
 out$perc_label <- mypercent(as.numeric(out$label))
 
 p <- ggplot(
-  out, aes(phase_weekly, phase_eff, fill = val),
+  out, aes(phase_empirical, phase_eff, fill = val),
   alpha = 0.7
 ) +
   geom_tile(width = 0.9, height = 0.9) +
   geom_text(
-    aes(phase_weekly, phase_eff, label = perc_label),
+    aes(phase_empirical, phase_eff, label = perc_label),
     size = 8 /.pt
   ) +
   facet_wrap(~ `Week of forecast`, nrow = 2) +
@@ -228,7 +252,7 @@ save_multiple(p, "figures/percentage_phase_agree")
 ##   filter(n > 1) %>%
 ##   arrange(desc(n))
 ## A maximum of 2 different phases have been assigned within a week
-out <- tabyl(x, phase_weekly, phase_eff, day) %>%
+out <- tabyl(x, phase_empirical, phase_eff, day) %>%
   adorn_percentages(denominator = "row") %>%
   adorn_pct_formatting(digits = 2) %>%
   bind_rows(.id = "day")
@@ -270,7 +294,7 @@ daily_phase_compare <- function(x, phase) {
   p
 }
 
-plots <- split(out, out$phase_weekly) %>%
+plots <- split(out, out$phase_empirical) %>%
   imap(function(y, phase) daily_phase_compare(y, phase))
 
 ## Top left

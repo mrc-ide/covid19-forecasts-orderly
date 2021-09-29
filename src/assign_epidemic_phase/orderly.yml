@@ -12,12 +12,17 @@ artefacts:
     description: Short-term and medium-term phase
     filenames:
       - short_term_phase.rds
+      - medium_term_phase.rds
 
 depends:
   produce_ensemble_outputs:
     id: latest(parameter:week_ending == week_ending)
     use:
       unwtd_ensemble_model_rt.rds: ensemble_model_rt_samples.rds
+  produce_longer_forecasts:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      weighted_per_country_rsaturation.rds: weighted_per_country_rsaturation.rds
   run_rti0:
     id: latest(parameter:week_ending == week_ending)
     use:
@@ -29,5 +34,4 @@ depends:
   run_apeestim:
     id: latest(parameter:week_ending == week_ending)
     use:
-      apeestim.rds: apeestim_model_outputs.rds
-      
+      apeestim.rds: apeestim_model_outputs.rds      

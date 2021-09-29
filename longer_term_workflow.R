@@ -63,6 +63,17 @@ for (week in weeks) {
   )
 }
 
+
+for (week in weeks) {
+  message("################ ", week, "#############################")
+  parameter <- list(week_ending = week, use_si = use_si)
+  a <-  orderly_run(
+    "assign_epidemic_phase", parameters = parameter, use_draft = use_draft
+  )
+  ##orderly::orderly_commit(a)
+}
+
+
 ## Collation
 week_starting <- as.Date(head(weeks, 1)[[1]])
 week_ending <- as.Date(tail(weeks, 1)[[1]])

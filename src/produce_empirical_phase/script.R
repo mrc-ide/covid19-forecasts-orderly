@@ -10,7 +10,7 @@ weekly_phase <- split(
       x <- arrange(x, week_starting)
       x$phase <- case_when(
       (lead(x$weekly_incid) > x$weekly_incid - 0.5 * x$sigma) &
-      (lead(x$weekly_incid) < x$weekly_incid + 0.5 * x$sigma) ~ "indeterminate",
+      (lead(x$weekly_incid) < x$weekly_incid + 0.5 * x$sigma) ~ "likely stable",
 
       (lead(x$weekly_incid) < x$weekly_incid - 0.5 * x$sigma) &
       (lead(x$weekly_incid) > x$weekly_incid -  x$sigma) ~ "likely decreasing",
