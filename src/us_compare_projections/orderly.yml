@@ -1,0 +1,19 @@
+parameters: week_ending
+
+depends:
+  us_collate_weekly_outputs:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      us_ensemble_rt_qntls.rds: us_ensemble_rt_qntls.rds
+      us_ensemble_forecasts_qntls.rds: us_ensemble_forecasts_qntls.rds
+      rti0_qntls.rds: rti0_qntls.rds
+      apeestim_qntls.rds: apeestim_qntls.rds
+      deca_qntls.rds: deca_qntls.rds
+      rti0_rt_qntls.rds: rti0_rt_qntls.rds
+      apeestim_rt_qntls.rds: apeestim_rt_qntls.rds
+      deca_rt_qntls.rds: deca_rt_qntls.rds
+  produce_ensemble_outputs:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      ensemble_daily_qntls.rds: ensemble_daily_qntls.rds
+      
