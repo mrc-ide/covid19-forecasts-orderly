@@ -21,80 +21,10 @@ orderly_pull_archive(
 )
 
 model_input <- readRDS(
-  "archive/prepare_jhu_data/20210927-093326-a2aacd70/latest_model_input.rds"
+  "archive/prepare_jhu_data/20211011-113843-3edb9c45/latest_model_input.rds"
 )
 locations <- model_input$State
-exclude <- c("Nebraska", "Ohio")
-locations <- locations[!locations %in% exclude]
-## Debugging
-## locations <- c("Alabama", "California", "Montana", "Texas", "Michigan")
-
-walk(
-  locations, function(location) {
-    a <- orderly_run(
-      "src/us_run_jointlyr",
-      parameters = list(
-        location = location,
-        week_ending = as.character(week),
-        short_run = FALSE
-      ), use_draft = "newer"
-    )
-    orderly_commit(a)
-  }
-)
-
-walk(
-  locations, function(location) {
-    a <- orderly_run(
-      "src/us_run_apeestim/",
-      parameters = list(
-        location = location, week_ending = as.character(week)
-      ), use_draft = "newer"
-    )
-    orderly_commit(a)
-  }
-)
-
-walk(
-  locations, function(location) {
-    a <- orderly_run(
-      "src/us_run_deca/",
-      parameters = list(
-        location = location, week_ending = as.character(week)
-      ), use_draft = "newer"
-    )
-    orderly_commit(a)
-  }
-)
-
-walk(
-  locations, function(location) {
-    a <- orderly_run(
-      "src/us_produce_ensemble_outputs",
-      parameters = list(
-        location = location, week_ending = as.character(week)
-      ), use_draft = "newer"
-    )
-    orderly_commit(a)
-  }
-)
-
-
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
-
-a <- orderly_run(
-  "src/us_collate_weekly_outputs", use_draft = "newer",
-  parameters = list(week_ending = week),
-)
-orderly_commit(a)
-
-a <- orderly_run(
-  "src/us_produce_weekly_figs", parameters = list(week_ending = week),
-  use_draft = "newer"
-)
-orderly_commit(a)
-
-
 ### On the server
 cat(
   sprintf("\n orderly run us_run_jointlyr short_run=FALSE week_ending=%s location=\"%s\"", week, locations),
