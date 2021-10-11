@@ -698,6 +698,7 @@ exclude <- c(
   "Philippines", ## Erratic data
   "Kazakhstan",
   "Kyrgyzstan",
+  "Lesotho",
 ##  "Tunisia",
   "Oman",
 ##  "United_States_of_America",
