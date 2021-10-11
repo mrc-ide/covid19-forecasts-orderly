@@ -156,10 +156,6 @@ depends:
     use:
       rti0_model_outputs_North Dakota.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-10" && parameter:location == "Ohio")
-    use:
-      rti0_model_outputs_Ohio.rds: rti0_model_outputs.rds
-- us_run_jointlyr:
     id: latest(parameter:week_ending == "2021-10-10" && parameter:location == "Oklahoma")
     use:
       rti0_model_outputs_Oklahoma.rds: rti0_model_outputs.rds
@@ -366,10 +362,6 @@ depends:
     use:
       DeCa_latest_North Dakota.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-10" && parameter:location == "Ohio")
-    use:
-      DeCa_latest_Ohio.rds: DeCa_latest.rds
-- us_run_deca:
     id: latest(parameter:week_ending == "2021-10-10" && parameter:location == "Oklahoma")
     use:
       DeCa_latest_Oklahoma.rds: DeCa_latest.rds
@@ -575,10 +567,6 @@ depends:
       Dakota")
     use:
       apeestim_model_outputs_North Dakota.rds: apeestim_model_outputs.rds
-- us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-10" && parameter:location == "Ohio")
-    use:
-      apeestim_model_outputs_Ohio.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
     id: latest(parameter:week_ending == "2021-10-10" && parameter:location == "Oklahoma")
     use:
@@ -818,11 +806,6 @@ depends:
     use:
       ensemble_model_rt_North Dakota.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_North Dakota.rds: ensemble_daily_qntls.rds
-- us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-10" && parameter:location == "Ohio")
-    use:
-      ensemble_model_rt_Ohio.rds: ensemble_model_rt.rds
-      ensemble_daily_qntls_Ohio.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2021-10-10" && parameter:location == "Oklahoma")
     use:
