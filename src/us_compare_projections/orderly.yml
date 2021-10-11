@@ -1,19 +1,232 @@
+script: script.R
 parameters: week_ending
 
+packages:
+- dplyr
+- ggforce
+- glue
+- ggplot2
+- rincewind
+- tidyr
+- zip
+
 depends:
-  us_collate_weekly_outputs:
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Alabama")
+    use:
+      ensemble_model_rt_Alabama.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Alabama.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Arizona")
+    use:
+      ensemble_model_rt_Arizona.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Arizona.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Arkansas")
+    use:
+      ensemble_model_rt_Arkansas.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Arkansas.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "California")
+    use:
+      ensemble_model_rt_California.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_California.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Colorado")
+    use:
+      ensemble_model_rt_Colorado.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Colorado.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Connecticut")
+    use:
+      ensemble_model_rt_Connecticut.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Connecticut.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Florida")
+    use:
+      ensemble_model_rt_Florida.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Florida.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Georgia")
+    use:
+      ensemble_model_rt_Georgia.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Georgia.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Idaho")
+    use:
+      ensemble_model_rt_Idaho.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Idaho.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Illinois")
+    use:
+      ensemble_model_rt_Illinois.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Illinois.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Indiana")
+    use:
+      ensemble_model_rt_Indiana.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Indiana.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Iowa")
+    use:
+      ensemble_model_rt_Iowa.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Iowa.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Kansas")
+    use:
+      ensemble_model_rt_Kansas.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Kansas.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Kentucky")
+    use:
+      ensemble_model_rt_Kentucky.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Kentucky.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Louisiana")
+    use:
+      ensemble_model_rt_Louisiana.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Louisiana.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Maryland")
+    use:
+      ensemble_model_rt_Maryland.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Maryland.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Massachusetts")
+    use:
+      ensemble_model_rt_Massachusetts.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Massachusetts.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Michigan")
+    use:
+      ensemble_model_rt_Michigan.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Michigan.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Minnesota")
+    use:
+      ensemble_model_rt_Minnesota.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Minnesota.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Mississippi")
+    use:
+      ensemble_model_rt_Mississippi.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Mississippi.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Missouri")
+    use:
+      ensemble_model_rt_Missouri.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Missouri.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Nevada")
+    use:
+      ensemble_model_rt_Nevada.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Nevada.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "New
+      Hampshire")
+    use:
+      ensemble_model_rt_New Hampshire.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_New Hampshire.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "New
+      Jersey")
+    use:
+      ensemble_model_rt_New Jersey.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_New Jersey.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "New
+      Mexico")
+    use:
+      ensemble_model_rt_New Mexico.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_New Mexico.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "New
+      York")
+    use:
+      ensemble_model_rt_New York.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_New York.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "North
+      Carolina")
+    use:
+      ensemble_model_rt_North Carolina.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_North Carolina.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Ohio")
+    use:
+      ensemble_model_rt_Ohio.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Ohio.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Oklahoma")
+    use:
+      ensemble_model_rt_Oklahoma.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Oklahoma.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Oregon")
+    use:
+      ensemble_model_rt_Oregon.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Oregon.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Pennsylvania")
+    use:
+      ensemble_model_rt_Pennsylvania.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Pennsylvania.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Puerto
+      Rico")
+    use:
+      ensemble_model_rt_Puerto Rico.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Puerto Rico.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "South
+      Carolina")
+    use:
+      ensemble_model_rt_South Carolina.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_South Carolina.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "South
+      Dakota")
+    use:
+      ensemble_model_rt_South Dakota.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_South Dakota.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Tennessee")
+    use:
+      ensemble_model_rt_Tennessee.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Tennessee.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Texas")
+    use:
+      ensemble_model_rt_Texas.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Texas.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Utah")
+    use:
+      ensemble_model_rt_Utah.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Utah.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Virginia")
+    use:
+      ensemble_model_rt_Virginia.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Virginia.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Washington")
+    use:
+      ensemble_model_rt_Washington.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Washington.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "West
+      Virginia")
+    use:
+      ensemble_model_rt_West Virginia.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_West Virginia.rds: ensemble_daily_qntls.rds
+- us_produce_ensemble_outputs:
+    id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Wisconsin")
+    use:
+      ensemble_model_rt_Wisconsin.rds: ensemble_model_rt.rds
+      ensemble_daily_qntls_Wisconsin.rds: ensemble_daily_qntls.rds
+- produce_ensemble_outputs:
     id: latest(parameter:week_ending == week_ending)
     use:
-      us_ensemble_rt_qntls.rds: us_ensemble_rt_qntls.rds
-      us_ensemble_forecasts_qntls.rds: us_ensemble_forecasts_qntls.rds
-      rti0_qntls.rds: rti0_qntls.rds
-      apeestim_qntls.rds: apeestim_qntls.rds
-      deca_qntls.rds: deca_qntls.rds
-      rti0_rt_qntls.rds: rti0_rt_qntls.rds
-      apeestim_rt_qntls.rds: apeestim_rt_qntls.rds
-      deca_rt_qntls.rds: deca_rt_qntls.rds
-  produce_ensemble_outputs:
-    id: latest(parameter:week_ending == week_ending)
-    use:
-      ensemble_daily_qntls.rds: ensemble_daily_qntls.rds
+      ensemble_model_predictions.rds: ensemble_model_predictions.rds
       
