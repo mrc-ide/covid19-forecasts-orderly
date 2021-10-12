@@ -44,10 +44,11 @@ exclude <- c("Alabama", # 3 report/week
              "New Hampshire", # 5 report / week
              "New Mexico", # 3 report/week
              "North Carolina", # 5 report / week
+             "North Dakota",
              "Ohio", # 2 report / week
              "Oklahoma", # 1 report / week
              "Oregon", # 5 report / week
-             "Pennsylvania", # reporting daily again 
+             "Pennsylvania", # reporting daily again
                              # no reports weekend 9/10 Oct
              "Puerto Rico", # gets shown in the country level forecasts
              "Rhode Island", # <7 reports / week
