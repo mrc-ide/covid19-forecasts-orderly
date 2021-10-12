@@ -182,9 +182,9 @@ use_draft <- "newer"
 ## This is the sunday before the Monday for which we are producing
 ## the report.
 weeks <- seq(
-  from = as.Date("2020-03-08"),
+  from = as.Date("2021-03-21"),
   ##to = as.Date("2021-03-01"),
-  to = as.Date("2020-11-29"),
+  to = as.Date("2021-10-10"),
   by = "7 days"
 )
 
