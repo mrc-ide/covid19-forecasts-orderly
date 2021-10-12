@@ -581,6 +581,13 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$Date
 raw_data$Cases[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2021-09-19"] <- 6745
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2021-09-19"] <- 35
 
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-08"] <- 38
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-09"] <- 29
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-08"] <- 1387
+raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-09"] <- 726
+
+
 
 
 by_country_deaths_all <- dplyr::select(
@@ -686,11 +693,12 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   "Austria",
-  "Botswana",
+  "Botswana", "Cuba",
   "Ireland",
   "Philippines", ## Erratic data
   "Kazakhstan",
   "Kyrgyzstan",
+  "Lesotho",
 ##  "Tunisia",
   "Oman",
 ##  "United_States_of_America",

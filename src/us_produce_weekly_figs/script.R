@@ -12,8 +12,8 @@ exclude <- c("Alabama", # 3 report/week
              "Alaska", # 2 report/week
              "Arizona", # 6 report/week # Appear to be reporting daily again (09 Aug)
                         # Exclude again: no report 13 September
-             "Arkansas", # 5 report/week # Now reporting at weekends again (Update from JHU email 03 August)
-                                         # But no report 19 September
+             "Arkansas", # Now reporting at weekends again (Update from JHU email 03 August)
+                        # exclude again: anomalous large report 10 October
              # "California", # 5 report/week according to JHU email,
                              # but still seems to have daily reports
              "Colorado", # 5 report / week
@@ -21,6 +21,7 @@ exclude <- c("Alabama", # 3 report/week
              "Delaware", # < 7 report / week
              "Florida", # 1 report/week
              "Georgia", # 5 report/week
+             "Guam", # < 7 report / week
              "Hawaii", # < 7 report/week
              "Idaho", # 5 report/week
              "Illinois", # 5 report/week
@@ -30,30 +31,33 @@ exclude <- c("Alabama", # 3 report/week
              "Kentucky", # 5 report/week
              "Louisiana", # 5 report/week
              "Maine", # 5 report / week
-             "Maryland", # no report 19 September
+             # "Maryland", # no report 19 September
              "Massachusetts", # 5 report / week
              "Michigan", # 2 report/week
              "Minnesota", # 5 report / week
              "Mississippi", # 5 report / week
-             "Missouri", # 6 report / week
+             # "Missouri", # 6 report / week
                          # seems to be back to reporting every day (23/08/21)
-                         # No report 19 September
              "Montana", # 5 report / week
              "Nebraska", # 5 report / week
              "Nevada", # 5 report/week
              "New Hampshire", # 5 report / week
              "New Mexico", # 3 report/week
              "North Carolina", # 5 report / week
+             "North Dakota",
              "Ohio", # 2 report / week
              "Oklahoma", # 1 report / week
              "Oregon", # 5 report / week
-             "Pennsylvania", # may have switched to 5 reports / week (23/08/21)
+             "Pennsylvania", # reporting daily again
+                             # no reports weekend 9/10 Oct
              "Puerto Rico", # gets shown in the country level forecasts
              "Rhode Island", # <7 reports / week
              "South Carolina", # 5 report / week
              "South Dakota", # 1 report/week
              "Tennessee", # 5 report / week
+             "Texas", # reports for 9/10 Oct are anomalously low (only 2/3)
              "Utah", # 5 report/week
+             "Vermont", # not daily reports
              "Virginia", # 5 report / week
              "Washington", # 5 report / week
              "West Virginia", # 5 report / week

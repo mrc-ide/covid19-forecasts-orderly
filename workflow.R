@@ -112,8 +112,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   )
 
   a <- orderly_run(
-    "produce_full_report",
-    use_draft = use_draft,
+    "produce_full_report", use_draft = use_draft,
     parameter = list(week_ending = week)
   )
 
