@@ -739,7 +739,7 @@ exclude <- c(
   ##"Switzerland", ## Numbers do not agree with those on worldometers
   "Spain", ## latest data not yet available.
   "United_States_of_America", ## Missing data
-  "Brazil", "Colombia"
+  "Brazil", "Colombia", "El_Salvador"
 )
 
 saveRDS(exclude, "exclude.rds")
