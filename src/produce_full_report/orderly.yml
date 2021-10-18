@@ -23,6 +23,7 @@ resources:
 
 parameters:
   - week_ending
+  - week_in_words
 
 depends:
   format_model_outputs:
