@@ -94,10 +94,10 @@ models explicitly accounting for interventions, see
 knitr::include_graphics("figs/epicurve_pline.png")
 ```
 *Figure 1.* (A) The reported number of deaths due to COVID-19 in
-Africa, Asia, Europe, North & Central America, and South America. (B) The number
+Africa, Asia, Europe, North & Central America, Oceania, and South America. (B) The number
 of countries with active transmission (at least 100
 deaths reported, and at least *ten* deaths observed in each of the past
-two weeks) in Africa, Asia, Europe, North & Central America, and South America.
+two weeks) in Africa, Asia, Europe, North & Central America, Oceania, and South America.
 
 
 
