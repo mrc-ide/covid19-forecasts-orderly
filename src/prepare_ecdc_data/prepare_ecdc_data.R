@@ -588,6 +588,21 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$Da
 raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-09"] <- 726
 
 
+## 18th October corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2021-10-14"] <- 18
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2021-10-15"] <- 17
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Colombia" & raw_data$DateRep == "2021-10-16"] <- 35
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Cuba" & raw_data$DateRep == "2021-10-16"] <- 24
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Cuba" & raw_data$DateRep == "2021-10-17"] <- 19
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2021-10-16"] <- 381
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2021-10-17"] <- 434
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2021-10-16"] <- 17
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2021-10-17"] <- 24
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Romania" & raw_data$DateRep == "2021-10-17"] <- 298
+
 
 
 by_country_deaths_all <- dplyr::select(
@@ -722,7 +737,9 @@ exclude <- c(
   "Vietnam",
   ##"Sweden",
   ##"Switzerland", ## Numbers do not agree with those on worldometers
-  "Spain" ## latest data not yet available.
+  "Spain", ## latest data not yet available.
+  "United_States_of_America", ## Missing data
+  "Brazil", "Colombia", "El_Salvador"
 )
 
 saveRDS(exclude, "exclude.rds")
