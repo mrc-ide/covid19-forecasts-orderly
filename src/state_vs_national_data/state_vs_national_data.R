@@ -56,10 +56,90 @@ all_cases_weekly <- left_join(global_cases_weekly, state_cases_weekly, by = c("y
 ### continue here. Make a plot showing how the national figure compares to aggregated states over time
 # May need log scale.
 
-ggplot(all_cases_weekly) +
-  geom_point(aes(x = ))
+
+all_cases_weekly <- all_cases_weekly %>% 
+  mutate(week_axis = ifelse(year == 2021, week + 53, week),
+         rel_diff = (state_cases - country_cases) / country_cases)
+
+plot_cases_over_time <- ggplot(all_cases_weekly) +
+  geom_point(aes(x = week_axis, y = rel_diff)) +
+  ylab("(State total - country total) / country total") +
+  scale_y_continuous(minor_breaks = seq(-1, 1, 0.1)) +
+  ggtitle("Case reporting") +
+  theme_bw()
+
+plot_cases_over_time2 <-
+  ggplot(all_cases_weekly) +
+  geom_point(aes(x = week_axis, y = rel_diff)) +
+  ylab("(State total - country total) / country total") +
+  ylim(c(-0.2, 0.2)) +
+  theme_bw()
 
 
 
+## Same plots for deaths
+
+state_deaths$national_sum <- rowSums(state_deaths[,2:ncol(state_deaths)])
+
+state_deaths_weekly <- state_deaths %>%
+  select(dates, national_sum) %>% 
+  mutate(week = week(ymd(dates)),
+         year = year(ymd(dates))) %>% 
+  group_by(year, week) %>% 
+  summarise(state_deaths = sum(national_sum))
 
 
+global_deaths_weekly <- select(global_deaths, c("dates", "United_States_of_America")) %>% 
+  mutate(week = week(ymd(dates)),
+         year = year(ymd(dates))) %>% 
+  group_by(year, week) %>% 
+  summarise(country_deaths = sum(`United_States_of_America`))
+
+all_deaths_weekly <- left_join(global_deaths_weekly, state_deaths_weekly, by = c("year", "week"))
+
+
+all_deaths_weekly <- all_deaths_weekly %>% 
+  mutate(week_axis = ifelse(year == 2021, week + 53, week),
+         rel_diff = (state_deaths - country_deaths) / country_deaths,
+         abs_diff = state_deaths - country_deaths)
+
+plot_deaths_over_time <-
+  all_deaths_weekly %>% 
+  filter(rel_diff != Inf) %>% 
+  ggplot() +
+  geom_point(aes(x = week_axis, y = rel_diff)) +
+  ylab("(State total - country total) / country total") +
+  # scale_y_continuous(minor_breaks = seq(-1, 1, 0.1)) +
+  ggtitle("Death reporting") +
+  theme_bw()
+
+plot_deaths_over_time
+
+
+plot_deaths_over_time_abs <-
+  all_deaths_weekly %>% 
+  filter(rel_diff != Inf) %>% 
+  ggplot() +
+  geom_point(aes(x = week_axis, y = abs_diff)) +
+  ylab("State total - country total") +
+  # scale_y_continuous(minor_breaks = seq(-1, 1, 0.1)) +
+  ggtitle("Death reporting (absolute diff)") +
+  theme_bw()
+
+
+plot_deaths_over_time
+plot_deaths_over_time_abs
+
+summary(all_deaths_weekly$rel_diff)
+
+plot_cases_over_time
+plot_cases_over_time2
+
+summary(all_cases_weekly$rel_diff)
+
+
+# NEXT TIME: LOOK AT WHAT HAPPENS IF WE CHANGE THE LEAD?LAG OF COUNTRY LEVEL VS STATE
+# CAN WE SHIFT COUNTRY BY A DAY OR TWO TO GET BETTER MATCHES?
+
+# ANOTHER THING TO LOOK AT: dataset changes over time
+# How many overwrites occurred for past dates? Can we get an idea of how reliable the RT data was?
