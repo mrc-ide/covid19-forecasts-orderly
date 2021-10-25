@@ -11,11 +11,11 @@ dates_forecast <- seq(
 exclude <- c("Alabama", # 3 report/week
              "Alaska", # 2 report/week
              "Arizona", # 6 report/week # Appear to be reporting daily again (09 Aug)
-                        # Exclude again: no report 4, 11, 17 October
+                        # Exclude again: no reports 4, 11, 17/18 October
              "Arkansas", # Now reporting at weekends again (Update from JHU email 03 August)
                          # exclude again: anomalous large report 10/11 October
                          # JHU email 12 October states that these are from throughout pandemic, no indication of size of backlog
-                         # "California", # 5 report/week according to JHU email,
+             # "California", # 5 report/week according to JHU email,
                          # but still seems to have daily reports
              "Colorado", # 5 report / week
              "Connecticut", # < 7 report / week (unclear on exact reporting freq.)
