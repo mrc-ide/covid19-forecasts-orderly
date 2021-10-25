@@ -734,12 +734,12 @@ exclude <- c(
   "Nepal",
   "Namibia",
   "Ecuador", ## Massive backlog reported & some negative deaths,
-  "Vietnam",
+  "Vietnam"
   ##"Sweden",
   ##"Switzerland", ## Numbers do not agree with those on worldometers
-  "Spain", ## latest data not yet available.
-  "United_States_of_America", ## Missing data
-  "Brazil", "Colombia", "El_Salvador"
+  ##"Spain", ## latest data not yet available.
+  ##"United_States_of_America", ## Missing data
+  ##"Brazil", "Colombia", "El_Salvador"
 )
 
 saveRDS(exclude, "exclude.rds")
