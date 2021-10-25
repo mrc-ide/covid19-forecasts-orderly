@@ -9,7 +9,7 @@ artefacts:
         - model_rt_samples.rds
         - weekly_predictions_qntls.rds
 
-parameters:  week_ending
+parameters: week_ending
 
 packages:
   - purrr

@@ -15,10 +15,8 @@ projection_plot <- function(obs, pred,   date_min = as.Date("2020-03-01")) {
   ## names(palette) <- unique(pred$proj)
 
   ## Plot only the latest projections.
-  palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7", "#999999")
-  names(palette) <- c(
-    "Model 4", "Model 2", "Model 1", "Model 3", "Ensemble", "Weighted Ensemble"
-  )
+  palette <- c("#56B4E9", "#009E73", "#D55E00", "#CC79A7")
+  names(palette) <- c("Model 1", "Model 2", "Model 3", "Ensemble")
   pred <- pred[pred$week_ending == max(as.Date(pred$week_ending)), ]
 
   ## date_min <- max(
@@ -91,8 +89,8 @@ projection_plot <- function(obs, pred,   date_min = as.Date("2020-03-01")) {
 
 rt_lineplot <- function(rt, nice_names) {
 
-  palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7")
-  names(palette) <- c("Model 4", "Model 2", "Model 1", "Model 3", "Ensemble")
+  palette <- c("#56B4E9", "#009E73", "#D55E00", "#CC79A7")
+  names(palette) <- c("Model 1", "Model 2", "Model 3", "Ensemble")
 
   rt$country <- reorder(rt$country, -rt$`50%`)
   if (length(unique(rt$model)) == 1) width <- 0.1
@@ -132,8 +130,8 @@ rt_boxplot <- function(rt, nice_names) {
   #nice_names <- snakecase::to_title_case(rt$country)
   #names(nice_names) <- rt$country
   ##rt$country <- reorder(rt$country, -rt$`50%`)
-  palette <- c("#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7")
-  names(palette) <- c("Model 4", "Model 2", "Model 1", "Model 3", "Ensemble")
+  palette <- c("#56B4E9", "#009E73", "#D55E00", "#CC79A7")
+  names(palette) <- c("Model 1", "Model 2", "Model 3", "Ensemble")
 
   rt$country <- reorder(rt$country, -rt$`50%`)
   p <- ggplot(rt) +

@@ -57,8 +57,8 @@ x <- dplyr::select(
 # Introduction 
 
 As of `r week_in_words` 2021, more than
-240,000,000 cases of COVID-19 have been reported across the world, 
-with more than 4,890,000 deaths [@whositrep]. 
+243,000,000 cases of COVID-19 have been reported across the world, 
+with more than 4,940,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 

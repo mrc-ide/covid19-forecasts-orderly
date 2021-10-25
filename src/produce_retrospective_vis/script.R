@@ -60,11 +60,11 @@ pline <- ggplot() +
   ) +
   scale_x_date(
     breaks = seq(
-      from = as.Date("2020-06-01"),
+      from = as.Date("2020-09-01"),
       to = week_ending,
       by = "8 weeks"
     ),
-    limits = c(as.Date("2020-06-01"), week_ending)
+    limits = c(as.Date("2020-09-01"), week_ending)
   ) +
   coord_cartesian(clip = 'off') +
   theme_minimal() +
@@ -84,11 +84,11 @@ pline2 <- ggplot() +
   ) +
   scale_x_date(
     breaks = seq(
-      from = as.Date("2020-06-01"),
+      from = as.Date("2020-09-01"),
       to = week_ending,
       by = "8 weeks"
     ),
-    limits = c(as.Date("2020-06-01"), as.Date("2020-12-10")),
+    limits = c(as.Date("2020-09-01"), as.Date("2020-12-10")),
     date_labels = "%d - %b"
   ) +
   coord_cartesian(clip = 'off') +
@@ -129,11 +129,11 @@ epicurve <- ggplot() +
   scale_color_manual(values = palette) +
   scale_x_date(
     breaks = seq(
-      from = as.Date("2020-06-01"),
+      from = as.Date("2020-09-01"),
       to = week_ending,
       by = "8 weeks"
     ),
-    limits = c(as.Date("2020-06-01"), week_ending)
+    limits = c(as.Date("2020-09-01"), week_ending)
   ) +
   theme_minimal() +
   theme(legend.position = "top", legend.title = element_blank()) +
