@@ -24,7 +24,7 @@ model_input <- readRDS(
   "archive/prepare_jhu_data/20211025-121331-d2356f6b/latest_model_input.rds"
 )
 locations <- model_input$State
-locations <- locations[!locations %in% "Ohio"]
+locations <- locations[!locations %in% c("Ohio", "Nebraska")]
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
 ### On the server
 cat(
