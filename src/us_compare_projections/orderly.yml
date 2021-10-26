@@ -11,6 +11,10 @@ packages:
 - zip
 
 depends:
+- prepare_jhu_data:
+    id: latest
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
 - us_produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2021-05-23" && parameter:location == "Alabama")
     use:
