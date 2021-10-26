@@ -19,875 +19,841 @@ packages:
 - tibble
 depends:
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Alabama")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Alabama")
     use:
       rti0_model_outputs_Alabama.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Alaska")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Alaska")
     use:
       rti0_model_outputs_Alaska.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Arizona")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Arizona")
     use:
       rti0_model_outputs_Arizona.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Arkansas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Arkansas")
     use:
       rti0_model_outputs_Arkansas.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "California")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "California")
     use:
       rti0_model_outputs_California.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Colorado")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Colorado")
     use:
       rti0_model_outputs_Colorado.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Connecticut")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Connecticut")
     use:
       rti0_model_outputs_Connecticut.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Delaware")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Delaware")
     use:
       rti0_model_outputs_Delaware.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Florida")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Florida")
     use:
       rti0_model_outputs_Florida.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Georgia")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Georgia")
     use:
       rti0_model_outputs_Georgia.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Guam")
-    use:
-      rti0_model_outputs_Guam.rds: rti0_model_outputs.rds
-- us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Hawaii")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Hawaii")
     use:
       rti0_model_outputs_Hawaii.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Idaho")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Idaho")
     use:
       rti0_model_outputs_Idaho.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Illinois")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Illinois")
     use:
       rti0_model_outputs_Illinois.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Indiana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Indiana")
     use:
       rti0_model_outputs_Indiana.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Iowa")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Iowa")
     use:
       rti0_model_outputs_Iowa.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Kansas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Kansas")
     use:
       rti0_model_outputs_Kansas.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Kentucky")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Kentucky")
     use:
       rti0_model_outputs_Kentucky.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Louisiana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Louisiana")
     use:
       rti0_model_outputs_Louisiana.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Maine")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Maine")
     use:
       rti0_model_outputs_Maine.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Maryland")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Maryland")
     use:
       rti0_model_outputs_Maryland.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Massachusetts")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Massachusetts")
     use:
       rti0_model_outputs_Massachusetts.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Michigan")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Michigan")
     use:
       rti0_model_outputs_Michigan.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Minnesota")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Minnesota")
     use:
       rti0_model_outputs_Minnesota.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Mississippi")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Mississippi")
     use:
       rti0_model_outputs_Mississippi.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Missouri")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Missouri")
     use:
       rti0_model_outputs_Missouri.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Montana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Montana")
     use:
       rti0_model_outputs_Montana.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Nevada")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Nevada")
     use:
       rti0_model_outputs_Nevada.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Hampshire")
     use:
       rti0_model_outputs_New Hampshire.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Jersey")
     use:
       rti0_model_outputs_New Jersey.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Mexico")
     use:
       rti0_model_outputs_New Mexico.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       York")
     use:
       rti0_model_outputs_New York.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "North
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "North
       Carolina")
     use:
       rti0_model_outputs_North Carolina.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "North
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "North
       Dakota")
     use:
       rti0_model_outputs_North Dakota.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Oklahoma")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Oklahoma")
     use:
       rti0_model_outputs_Oklahoma.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Oregon")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Oregon")
     use:
       rti0_model_outputs_Oregon.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Pennsylvania")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Pennsylvania")
     use:
       rti0_model_outputs_Pennsylvania.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Puerto
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Puerto
       Rico")
     use:
       rti0_model_outputs_Puerto Rico.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "South
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "South
       Carolina")
     use:
       rti0_model_outputs_South Carolina.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "South
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "South
       Dakota")
     use:
       rti0_model_outputs_South Dakota.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Tennessee")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Tennessee")
     use:
       rti0_model_outputs_Tennessee.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Texas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Texas")
     use:
       rti0_model_outputs_Texas.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Utah")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Utah")
     use:
       rti0_model_outputs_Utah.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Vermont")
-    use:
-      rti0_model_outputs_Vermont.rds: rti0_model_outputs.rds
-- us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Virginia")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Virginia")
     use:
       rti0_model_outputs_Virginia.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Washington")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Washington")
     use:
       rti0_model_outputs_Washington.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "West
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "West
       Virginia")
     use:
       rti0_model_outputs_West Virginia.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Wisconsin")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Wisconsin")
     use:
       rti0_model_outputs_Wisconsin.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Wyoming")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Wyoming")
     use:
       rti0_model_outputs_Wyoming.rds: rti0_model_outputs.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Alabama")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Alabama")
     use:
       DeCa_latest_Alabama.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Alaska")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Alaska")
     use:
       DeCa_latest_Alaska.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Arizona")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Arizona")
     use:
       DeCa_latest_Arizona.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Arkansas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Arkansas")
     use:
       DeCa_latest_Arkansas.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "California")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "California")
     use:
       DeCa_latest_California.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Colorado")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Colorado")
     use:
       DeCa_latest_Colorado.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Connecticut")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Connecticut")
     use:
       DeCa_latest_Connecticut.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Delaware")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Delaware")
     use:
       DeCa_latest_Delaware.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Florida")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Florida")
     use:
       DeCa_latest_Florida.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Georgia")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Georgia")
     use:
       DeCa_latest_Georgia.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Guam")
-    use:
-      DeCa_latest_Guam.rds: DeCa_latest.rds
-- us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Hawaii")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Hawaii")
     use:
       DeCa_latest_Hawaii.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Idaho")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Idaho")
     use:
       DeCa_latest_Idaho.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Illinois")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Illinois")
     use:
       DeCa_latest_Illinois.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Indiana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Indiana")
     use:
       DeCa_latest_Indiana.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Iowa")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Iowa")
     use:
       DeCa_latest_Iowa.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Kansas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Kansas")
     use:
       DeCa_latest_Kansas.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Kentucky")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Kentucky")
     use:
       DeCa_latest_Kentucky.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Louisiana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Louisiana")
     use:
       DeCa_latest_Louisiana.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Maine")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Maine")
     use:
       DeCa_latest_Maine.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Maryland")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Maryland")
     use:
       DeCa_latest_Maryland.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Massachusetts")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Massachusetts")
     use:
       DeCa_latest_Massachusetts.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Michigan")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Michigan")
     use:
       DeCa_latest_Michigan.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Minnesota")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Minnesota")
     use:
       DeCa_latest_Minnesota.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Mississippi")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Mississippi")
     use:
       DeCa_latest_Mississippi.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Missouri")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Missouri")
     use:
       DeCa_latest_Missouri.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Montana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Montana")
     use:
       DeCa_latest_Montana.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Nevada")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Nevada")
     use:
       DeCa_latest_Nevada.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Hampshire")
     use:
       DeCa_latest_New Hampshire.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Jersey")
     use:
       DeCa_latest_New Jersey.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Mexico")
     use:
       DeCa_latest_New Mexico.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       York")
     use:
       DeCa_latest_New York.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "North
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "North
       Carolina")
     use:
       DeCa_latest_North Carolina.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "North
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "North
       Dakota")
     use:
       DeCa_latest_North Dakota.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Oklahoma")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Oklahoma")
     use:
       DeCa_latest_Oklahoma.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Oregon")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Oregon")
     use:
       DeCa_latest_Oregon.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Pennsylvania")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Pennsylvania")
     use:
       DeCa_latest_Pennsylvania.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Puerto
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Puerto
       Rico")
     use:
       DeCa_latest_Puerto Rico.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "South
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "South
       Carolina")
     use:
       DeCa_latest_South Carolina.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "South
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "South
       Dakota")
     use:
       DeCa_latest_South Dakota.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Tennessee")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Tennessee")
     use:
       DeCa_latest_Tennessee.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Texas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Texas")
     use:
       DeCa_latest_Texas.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Utah")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Utah")
     use:
       DeCa_latest_Utah.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Vermont")
-    use:
-      DeCa_latest_Vermont.rds: DeCa_latest.rds
-- us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Virginia")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Virginia")
     use:
       DeCa_latest_Virginia.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Washington")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Washington")
     use:
       DeCa_latest_Washington.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "West
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "West
       Virginia")
     use:
       DeCa_latest_West Virginia.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Wisconsin")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Wisconsin")
     use:
       DeCa_latest_Wisconsin.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Wyoming")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Wyoming")
     use:
       DeCa_latest_Wyoming.rds: DeCa_latest.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Alabama")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Alabama")
     use:
       apeestim_model_outputs_Alabama.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Alaska")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Alaska")
     use:
       apeestim_model_outputs_Alaska.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Arizona")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Arizona")
     use:
       apeestim_model_outputs_Arizona.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Arkansas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Arkansas")
     use:
       apeestim_model_outputs_Arkansas.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "California")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "California")
     use:
       apeestim_model_outputs_California.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Colorado")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Colorado")
     use:
       apeestim_model_outputs_Colorado.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Connecticut")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Connecticut")
     use:
       apeestim_model_outputs_Connecticut.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Delaware")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Delaware")
     use:
       apeestim_model_outputs_Delaware.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Florida")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Florida")
     use:
       apeestim_model_outputs_Florida.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Georgia")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Georgia")
     use:
       apeestim_model_outputs_Georgia.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Guam")
-    use:
-      apeestim_model_outputs_Guam.rds: apeestim_model_outputs.rds
-- us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Hawaii")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Hawaii")
     use:
       apeestim_model_outputs_Hawaii.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Idaho")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Idaho")
     use:
       apeestim_model_outputs_Idaho.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Illinois")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Illinois")
     use:
       apeestim_model_outputs_Illinois.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Indiana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Indiana")
     use:
       apeestim_model_outputs_Indiana.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Iowa")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Iowa")
     use:
       apeestim_model_outputs_Iowa.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Kansas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Kansas")
     use:
       apeestim_model_outputs_Kansas.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Kentucky")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Kentucky")
     use:
       apeestim_model_outputs_Kentucky.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Louisiana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Louisiana")
     use:
       apeestim_model_outputs_Louisiana.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Maine")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Maine")
     use:
       apeestim_model_outputs_Maine.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Maryland")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Maryland")
     use:
       apeestim_model_outputs_Maryland.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Massachusetts")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Massachusetts")
     use:
       apeestim_model_outputs_Massachusetts.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Michigan")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Michigan")
     use:
       apeestim_model_outputs_Michigan.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Minnesota")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Minnesota")
     use:
       apeestim_model_outputs_Minnesota.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Mississippi")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Mississippi")
     use:
       apeestim_model_outputs_Mississippi.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Missouri")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Missouri")
     use:
       apeestim_model_outputs_Missouri.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Montana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Montana")
     use:
       apeestim_model_outputs_Montana.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Nevada")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Nevada")
     use:
       apeestim_model_outputs_Nevada.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Hampshire")
     use:
       apeestim_model_outputs_New Hampshire.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Jersey")
     use:
       apeestim_model_outputs_New Jersey.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Mexico")
     use:
       apeestim_model_outputs_New Mexico.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       York")
     use:
       apeestim_model_outputs_New York.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "North
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "North
       Carolina")
     use:
       apeestim_model_outputs_North Carolina.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "North
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "North
       Dakota")
     use:
       apeestim_model_outputs_North Dakota.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Oklahoma")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Oklahoma")
     use:
       apeestim_model_outputs_Oklahoma.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Oregon")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Oregon")
     use:
       apeestim_model_outputs_Oregon.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Pennsylvania")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Pennsylvania")
     use:
       apeestim_model_outputs_Pennsylvania.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Puerto
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Puerto
       Rico")
     use:
       apeestim_model_outputs_Puerto Rico.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "South
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "South
       Carolina")
     use:
       apeestim_model_outputs_South Carolina.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "South
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "South
       Dakota")
     use:
       apeestim_model_outputs_South Dakota.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Tennessee")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Tennessee")
     use:
       apeestim_model_outputs_Tennessee.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Texas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Texas")
     use:
       apeestim_model_outputs_Texas.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Utah")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Utah")
     use:
       apeestim_model_outputs_Utah.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Vermont")
-    use:
-      apeestim_model_outputs_Vermont.rds: apeestim_model_outputs.rds
-- us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Virginia")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Virginia")
     use:
       apeestim_model_outputs_Virginia.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Washington")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Washington")
     use:
       apeestim_model_outputs_Washington.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "West
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "West
       Virginia")
     use:
       apeestim_model_outputs_West Virginia.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Wisconsin")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Wisconsin")
     use:
       apeestim_model_outputs_Wisconsin.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Wyoming")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Wyoming")
     use:
       apeestim_model_outputs_Wyoming.rds: apeestim_model_outputs.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Alabama")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Alabama")
     use:
       ensemble_model_rt_Alabama.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Alabama.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Alaska")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Alaska")
     use:
       ensemble_model_rt_Alaska.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Alaska.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Arizona")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Arizona")
     use:
       ensemble_model_rt_Arizona.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Arizona.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Arkansas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Arkansas")
     use:
       ensemble_model_rt_Arkansas.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Arkansas.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "California")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "California")
     use:
       ensemble_model_rt_California.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_California.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Colorado")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Colorado")
     use:
       ensemble_model_rt_Colorado.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Colorado.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Connecticut")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Connecticut")
     use:
       ensemble_model_rt_Connecticut.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Connecticut.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Delaware")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Delaware")
     use:
       ensemble_model_rt_Delaware.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Delaware.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Florida")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Florida")
     use:
       ensemble_model_rt_Florida.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Florida.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Georgia")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Georgia")
     use:
       ensemble_model_rt_Georgia.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Georgia.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Guam")
-    use:
-      ensemble_model_rt_Guam.rds: ensemble_model_rt.rds
-      ensemble_daily_qntls_Guam.rds: ensemble_daily_qntls.rds
-- us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Hawaii")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Hawaii")
     use:
       ensemble_model_rt_Hawaii.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Hawaii.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Idaho")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Idaho")
     use:
       ensemble_model_rt_Idaho.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Idaho.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Illinois")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Illinois")
     use:
       ensemble_model_rt_Illinois.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Illinois.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Indiana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Indiana")
     use:
       ensemble_model_rt_Indiana.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Indiana.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Iowa")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Iowa")
     use:
       ensemble_model_rt_Iowa.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Iowa.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Kansas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Kansas")
     use:
       ensemble_model_rt_Kansas.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Kansas.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Kentucky")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Kentucky")
     use:
       ensemble_model_rt_Kentucky.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Kentucky.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Louisiana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Louisiana")
     use:
       ensemble_model_rt_Louisiana.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Louisiana.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Maine")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Maine")
     use:
       ensemble_model_rt_Maine.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Maine.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Maryland")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Maryland")
     use:
       ensemble_model_rt_Maryland.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Maryland.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Massachusetts")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Massachusetts")
     use:
       ensemble_model_rt_Massachusetts.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Massachusetts.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Michigan")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Michigan")
     use:
       ensemble_model_rt_Michigan.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Michigan.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Minnesota")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Minnesota")
     use:
       ensemble_model_rt_Minnesota.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Minnesota.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Mississippi")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Mississippi")
     use:
       ensemble_model_rt_Mississippi.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Mississippi.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Missouri")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Missouri")
     use:
       ensemble_model_rt_Missouri.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Missouri.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Montana")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Montana")
     use:
       ensemble_model_rt_Montana.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Montana.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Nevada")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Nevada")
     use:
       ensemble_model_rt_Nevada.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Nevada.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Hampshire")
     use:
       ensemble_model_rt_New Hampshire.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_New Hampshire.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Jersey")
     use:
       ensemble_model_rt_New Jersey.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_New Jersey.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       Mexico")
     use:
       ensemble_model_rt_New Mexico.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_New Mexico.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "New
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "New
       York")
     use:
       ensemble_model_rt_New York.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_New York.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "North
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "North
       Carolina")
     use:
       ensemble_model_rt_North Carolina.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_North Carolina.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "North
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "North
       Dakota")
     use:
       ensemble_model_rt_North Dakota.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_North Dakota.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Oklahoma")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Oklahoma")
     use:
       ensemble_model_rt_Oklahoma.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Oklahoma.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Oregon")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Oregon")
     use:
       ensemble_model_rt_Oregon.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Oregon.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Pennsylvania")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Pennsylvania")
     use:
       ensemble_model_rt_Pennsylvania.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Pennsylvania.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Puerto
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Puerto
       Rico")
     use:
       ensemble_model_rt_Puerto Rico.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Puerto Rico.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "South
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "South
       Carolina")
     use:
       ensemble_model_rt_South Carolina.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_South Carolina.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "South
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "South
       Dakota")
     use:
       ensemble_model_rt_South Dakota.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_South Dakota.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Tennessee")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Tennessee")
     use:
       ensemble_model_rt_Tennessee.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Tennessee.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Texas")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Texas")
     use:
       ensemble_model_rt_Texas.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Texas.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Utah")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Utah")
     use:
       ensemble_model_rt_Utah.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Utah.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Vermont")
-    use:
-      ensemble_model_rt_Vermont.rds: ensemble_model_rt.rds
-      ensemble_daily_qntls_Vermont.rds: ensemble_daily_qntls.rds
-- us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Virginia")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Virginia")
     use:
       ensemble_model_rt_Virginia.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Virginia.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Washington")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Washington")
     use:
       ensemble_model_rt_Washington.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Washington.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "West
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "West
       Virginia")
     use:
       ensemble_model_rt_West Virginia.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_West Virginia.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Wisconsin")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Wisconsin")
     use:
       ensemble_model_rt_Wisconsin.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Wisconsin.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-10-17" && parameter:location == "Wyoming")
+    id: latest(parameter:week_ending == "2021-10-24" && parameter:location == "Wyoming")
     use:
       ensemble_model_rt_Wyoming.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Wyoming.rds: ensemble_daily_qntls.rds
