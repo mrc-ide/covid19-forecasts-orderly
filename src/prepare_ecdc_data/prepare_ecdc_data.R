@@ -708,7 +708,7 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   "Austria",
-  "Botswana", "Cuba",
+  "Botswana", "Cuba", "Guatemala",
   "Ireland",
   "Philippines", ## Erratic data
   "Kazakhstan",
