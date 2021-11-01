@@ -33,17 +33,19 @@ exclude <- c("Alabama", # 3 report/week
              "Kentucky", # 5 report/week
              "Louisiana", # 5 report/week
              "Maine", # 5 report / week
-                      # "Maryland", # no report 19 September
+             # "Maryland", # no report 19 September
              "Massachusetts", # 5 report / week
              "Michigan", # 2 report/week
              "Minnesota", # 5 report / week
              "Mississippi", # 5 report / week
-             # "Missouri", # 6 report / week
+             "Missouri", # 6 report / week
                            # seems to be back to reporting every day (23/08/21)
+                           # no report 25 October
              "Montana", # 5 report / week
              "Nebraska", # 5 report / week
              "Nevada", # 5 report/week
              "New Hampshire", # 5 report / week
+             "New Jersey", # no report 31 October
              "New Mexico", # 3 report/week
              "North Carolina", # 5 report / week
              "North Dakota", # <7 report/day
