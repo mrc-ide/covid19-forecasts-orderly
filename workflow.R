@@ -113,7 +113,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "produce_full_report", use_draft = use_draft,
-    parameter = list(week_ending = week, week_in_words = "25^th^ October")
+    parameter = list(week_ending = week, week_in_words = "1^st^ November")
   )
 
   if (commit) orderly_commit(a)
