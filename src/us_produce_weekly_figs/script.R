@@ -12,7 +12,7 @@ exclude <- c("Alabama", # 3 report/week
              "Alaska", # 2 report/week
              "Arizona", # 6 report/week # Appear to be reporting daily again (09 Aug)
                         # Exclude again: no reports 4, 11, 17/18 October
-             "Arkansas", # Now reporting at weekends again (Update from JHU email 03 August)
+             # "Arkansas", # Now reporting at weekends again (Update from JHU email 03 August)
                          # exclude again: anomalous large report 10/11 October
                          # JHU email 12 October states that these are from throughout pandemic, no indication of size of backlog
              "California", # 5 report/week according to JHU email,
@@ -40,12 +40,12 @@ exclude <- c("Alabama", # 3 report/week
              "Mississippi", # 5 report / week
              "Missouri", # 6 report / week
                            # seems to be back to reporting every day (23/08/21)
-                           # no report 25 October
+                           # no report 25 October, 1st or 7th November
              "Montana", # 5 report / week
              "Nebraska", # 5 report / week
              "Nevada", # 5 report/week
              "New Hampshire", # 5 report / week
-             "New Jersey", # no report 31 October
+             "New Jersey", # no report 31 October, 4 November
              "New Mexico", # 3 report/week
              "North Carolina", # 5 report / week
              "North Dakota", # <7 report/day
@@ -53,14 +53,15 @@ exclude <- c("Alabama", # 3 report/week
              "Oklahoma", # 1 report / week
              "Oregon", # 5 report / week
              "Pennsylvania", # reporting daily again 
-                            # no reports weekend 9/10 Oct or 16/17 Oct
+                            # no reports weekend 9/10 Oct or 16/17 Oct, 7 Nov
              "Puerto Rico", # gets shown in the country level forecasts
              "Rhode Island", # <7 reports / week
              "South Carolina", # 5 report / week
              "South Dakota", # 1 report/week
              "Tennessee", # 5 report / week
-             "Texas", # reports for 9/10 Oct are anomalously low (only 2/3)
+             # "Texas", # reports for 9/10 Oct are anomalously low (only 2/3)
                       # 13 Oct figure v large (backlog from previous days?)
+                      # 08/11/21: include again
              "Utah", # 5 report/week
              "Vermont", # not daily reports
              "Virginia", # 5 report / week
