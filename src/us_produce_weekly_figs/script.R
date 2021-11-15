@@ -40,7 +40,7 @@ exclude <- c("Alabama", # 3 report/week
              "Mississippi", # 5 report / week
              "Missouri", # 6 report / week
                            # seems to be back to reporting every day (23/08/21)
-                           # no report 25 October, 1st or 7th November
+                           # no report 25 October, 1st or 7th/8th/11th November
              "Montana", # 5 report / week
              "Nebraska", # 5 report / week
              "Nevada", # 5 report/week
