@@ -1,30 +1,252 @@
 script: script.R
-
+resources: country-and-continent-codes-list.csv
+parameters: week_ending
 artefacts:
   staticgraph:
     description: Number of countries included
     filenames:
-      - n_included_line.png
-      - epicurve_by_continent.png
-      - epicurve_pline.png
-      - countries_included_each_week.csv
-
+    - n_included_line.png
+    - epicurve_by_continent.png
+    - epicurve_pline.png
+    - countries_included_each_week.csv
 packages:
-  - ggplot2
-  - ggthemes
-  - dplyr
-  - ggrepel
-  - cowplot
-  - purrr
-  - rincewind
-
-resources:
-  - country-and-continent-codes-list.csv
-
-parameters: week_ending
-
+- cowplot
+- dplyr
+- ggplot2
+- ggthemes
+- glue
+- purrr
+- rincewind
 depends:
-  prepare_ecdc_data:
-    id: latest(parameter:week_ending == week_ending)
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-09-06")
     use:
-      model_input.rds: latest_deaths_wide_no_filter.rds
+      model_input_2020-09-06.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-09-13")
+    use:
+      model_input_2020-09-13.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-09-20")
+    use:
+      model_input_2020-09-20.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-09-27")
+    use:
+      model_input_2020-09-27.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-10-04")
+    use:
+      model_input_2020-10-04.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-10-11")
+    use:
+      model_input_2020-10-11.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-10-18")
+    use:
+      model_input_2020-10-18.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-10-25")
+    use:
+      model_input_2020-10-25.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-11-01")
+    use:
+      model_input_2020-11-01.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-11-08")
+    use:
+      model_input_2020-11-08.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-11-15")
+    use:
+      model_input_2020-11-15.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-11-22")
+    use:
+      model_input_2020-11-22.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-11-29")
+    use:
+      model_input_2020-11-29.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-12-06")
+    use:
+      model_input_2020-12-06.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-12-13")
+    use:
+      model_input_2020-12-13.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-12-20")
+    use:
+      model_input_2020-12-20.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2020-12-27")
+    use:
+      model_input_2020-12-27.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-01-03")
+    use:
+      model_input_2021-01-03.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-01-10")
+    use:
+      model_input_2021-01-10.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-01-17")
+    use:
+      model_input_2021-01-17.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-01-24")
+    use:
+      model_input_2021-01-24.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-01-31")
+    use:
+      model_input_2021-01-31.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-02-07")
+    use:
+      model_input_2021-02-07.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-02-14")
+    use:
+      model_input_2021-02-14.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-02-21")
+    use:
+      model_input_2021-02-21.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-02-28")
+    use:
+      model_input_2021-02-28.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-03-07")
+    use:
+      model_input_2021-03-07.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-03-14")
+    use:
+      model_input_2021-03-14.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-03-21")
+    use:
+      model_input_2021-03-21.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-03-28")
+    use:
+      model_input_2021-03-28.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-04-11")
+    use:
+      model_input_2021-04-11.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-04-18")
+    use:
+      model_input_2021-04-18.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-04-25")
+    use:
+      model_input_2021-04-25.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-05-09")
+    use:
+      model_input_2021-05-09.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-05-16")
+    use:
+      model_input_2021-05-16.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-05-23")
+    use:
+      model_input_2021-05-23.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-06-06")
+    use:
+      model_input_2021-06-06.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-06-13")
+    use:
+      model_input_2021-06-13.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-06-20")
+    use:
+      model_input_2021-06-20.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-06-27")
+    use:
+      model_input_2021-06-27.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-07-04")
+    use:
+      model_input_2021-07-04.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-07-11")
+    use:
+      model_input_2021-07-11.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-07-18")
+    use:
+      model_input_2021-07-18.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-07-25")
+    use:
+      model_input_2021-07-25.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-08-01")
+    use:
+      model_input_2021-08-01.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-08-08")
+    use:
+      model_input_2021-08-08.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-08-15")
+    use:
+      model_input_2021-08-15.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-08-22")
+    use:
+      model_input_2021-08-22.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-09-05")
+    use:
+      model_input_2021-09-05.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-09-12")
+    use:
+      model_input_2021-09-12.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-09-19")
+    use:
+      model_input_2021-09-19.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-09-26")
+    use:
+      model_input_2021-09-26.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-10-10")
+    use:
+      model_input_2021-10-10.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-10-17")
+    use:
+      model_input_2021-10-17.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-10-24")
+    use:
+      model_input_2021-10-24.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-10-31")
+    use:
+      model_input_2021-10-31.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-11-07")
+    use:
+      model_input_2021-11-07.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-11-14")
+    use:
+      model_input_2021-11-14.rds: latest_model_input.rds

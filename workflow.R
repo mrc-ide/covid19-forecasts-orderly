@@ -93,7 +93,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
     use_draft = use_draft, parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
-
+  source("orderly-helper-scripts/dependencies_collate_retrospective_vis.R")
   a <- orderly_run(
     "produce_retrospective_vis",
     use_draft = use_draft, parameter = list(week_ending = week)
@@ -113,7 +113,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "produce_full_report", use_draft = use_draft,
-    parameter = list(week_ending = week, week_in_words = "8^th^ November")
+    parameter = list(week_ending = week, week_in_words = "15^th^ November")
   )
 
   if (commit) orderly_commit(a)
