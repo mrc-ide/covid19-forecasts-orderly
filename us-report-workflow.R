@@ -21,7 +21,7 @@ orderly_pull_archive(
 )
 
 model_input <- readRDS(
-  "archive/prepare_jhu_data/20211115-145521-1bea0498/latest_model_input.rds"
+  "archive/prepare_jhu_data/20211122-113859-1e1ce6ca/latest_model_input.rds"
 )
 locations <- model_input$State
 locations <- locations[!locations %in% c("Ohio", "Nebraska")]
