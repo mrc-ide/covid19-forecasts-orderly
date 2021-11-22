@@ -2,7 +2,7 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-11-14"
+week <- "2021-11-21"
 use_draft <- "newer"
 a <- orderly_run("download_jhu_data")
 orderly_commit(a)
