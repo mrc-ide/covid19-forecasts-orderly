@@ -21,10 +21,10 @@ orderly_pull_archive(
 )
 
 model_input <- readRDS(
-  "archive/prepare_jhu_data/20211122-113859-1e1ce6ca/latest_model_input.rds"
+  "archive/prepare_jhu_data/20211129-113959-a9c5fa5e/latest_model_input.rds"
 )
 locations <- model_input$State
-locations <- locations[!locations %in% c("Ohio", "Nebraska")]
+locations <- locations[!locations %in% c("Florida", "Ohio", "Nebraska")]
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
 ### On the server
 cat(

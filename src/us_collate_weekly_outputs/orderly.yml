@@ -51,10 +51,6 @@ depends:
     use:
       rti0_model_outputs_Delaware.rds: rti0_model_outputs.rds
 - us_run_jointlyr:
-    id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Florida")
-    use:
-      rti0_model_outputs_Florida.rds: rti0_model_outputs.rds
-- us_run_jointlyr:
     id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Georgia")
     use:
       rti0_model_outputs_Georgia.rds: rti0_model_outputs.rds
@@ -240,10 +236,6 @@ depends:
     use:
       DeCa_latest_Delaware.rds: DeCa_latest.rds
 - us_run_deca:
-    id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Florida")
-    use:
-      DeCa_latest_Florida.rds: DeCa_latest.rds
-- us_run_deca:
     id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Georgia")
     use:
       DeCa_latest_Georgia.rds: DeCa_latest.rds
@@ -428,10 +420,6 @@ depends:
     id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Delaware")
     use:
       apeestim_model_outputs_Delaware.rds: apeestim_model_outputs.rds
-- us_run_apeestim:
-    id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Florida")
-    use:
-      apeestim_model_outputs_Florida.rds: apeestim_model_outputs.rds
 - us_run_apeestim:
     id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Georgia")
     use:
@@ -625,11 +613,6 @@ depends:
     use:
       ensemble_model_rt_Delaware.rds: ensemble_model_rt.rds
       ensemble_daily_qntls_Delaware.rds: ensemble_daily_qntls.rds
-- us_produce_ensemble_outputs:
-    id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Florida")
-    use:
-      ensemble_model_rt_Florida.rds: ensemble_model_rt.rds
-      ensemble_daily_qntls_Florida.rds: ensemble_daily_qntls.rds
 - us_produce_ensemble_outputs:
     id: latest(parameter:week_ending == "2021-11-28" && parameter:location == "Georgia")
     use:
