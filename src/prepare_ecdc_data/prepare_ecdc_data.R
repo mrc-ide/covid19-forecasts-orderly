@@ -608,6 +608,17 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Turkey" & raw_data$Date
 raw_data$Cases[raw_data$`Countries.and.territories` == "Turkey" & raw_data$DateRep == "2021-11-20"] <- 23810
 
 
+## 30th November corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Algeria" & raw_data$DateRep == "2021-11-21"] <- 2
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Algeria" & raw_data$DateRep == "2021-11-22"] <- 4
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2021-11-21"] <- 10
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2021-11-22"] <- 10
+
+
+
+
+
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
