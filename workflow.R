@@ -78,6 +78,7 @@ performance_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
 ## These functions have not been configured to pull in week-specific
 ## outputs, they will always pull in the latest runs of dependancies.
+## This is run locally rather than on the server.
 report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   orderly_pull_dependencies(
     "format_model_outputs", parameter = list(week_ending = week)
@@ -87,7 +88,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
     use_draft = use_draft, parameter = list(week_ending = week)
   )
   if (commit) orderly_commit(a)
-
+  ## This gives an error on the server, don't run it there,
   a <- orderly_run(
     "produce_maps",
     use_draft = use_draft, parameter = list(week_ending = week)
@@ -113,16 +114,20 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "produce_full_report", use_draft = use_draft,
-    parameter = list(week_ending = week, week_in_words = "15^th^ November")
+    parameter = list(week_ending = week, week_in_words = "29^th^ November")
   )
 
   if (commit) orderly_commit(a)
-
+  ## Uses dir structure specific to my
+  ## machine, you will have to edit it.
+  ## For Europe hub
   orderly_run(
     "reformat_forecasts", use_draft = use_draft,
     parameter = list(week_ending = week)
   )
-
+  ## for MRIIDS. After running this task
+  ## you will have to use AWS CLI or an FTP client
+  ## to push outputs to mriids server.
   orderly_run(
     "prepare_hm_outputs", use_draft = use_draft,
     parameter = list(week_ending = week)
