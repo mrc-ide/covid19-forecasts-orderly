@@ -19,138 +19,6 @@ packages:
 - rincewind
 depends:
 - prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-09-06")
-    use:
-      model_input_2020-09-06.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-09-13")
-    use:
-      model_input_2020-09-13.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-09-20")
-    use:
-      model_input_2020-09-20.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-09-27")
-    use:
-      model_input_2020-09-27.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-10-04")
-    use:
-      model_input_2020-10-04.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-10-11")
-    use:
-      model_input_2020-10-11.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-10-18")
-    use:
-      model_input_2020-10-18.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-10-25")
-    use:
-      model_input_2020-10-25.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-11-01")
-    use:
-      model_input_2020-11-01.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-11-08")
-    use:
-      model_input_2020-11-08.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-11-15")
-    use:
-      model_input_2020-11-15.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-11-22")
-    use:
-      model_input_2020-11-22.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-11-29")
-    use:
-      model_input_2020-11-29.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-12-06")
-    use:
-      model_input_2020-12-06.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-12-13")
-    use:
-      model_input_2020-12-13.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-12-20")
-    use:
-      model_input_2020-12-20.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2020-12-27")
-    use:
-      model_input_2020-12-27.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-01-03")
-    use:
-      model_input_2021-01-03.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-01-10")
-    use:
-      model_input_2021-01-10.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-01-17")
-    use:
-      model_input_2021-01-17.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-01-24")
-    use:
-      model_input_2021-01-24.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-01-31")
-    use:
-      model_input_2021-01-31.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-02-07")
-    use:
-      model_input_2021-02-07.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-02-14")
-    use:
-      model_input_2021-02-14.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-02-21")
-    use:
-      model_input_2021-02-21.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-02-28")
-    use:
-      model_input_2021-02-28.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-03-07")
-    use:
-      model_input_2021-03-07.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-03-14")
-    use:
-      model_input_2021-03-14.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-03-21")
-    use:
-      model_input_2021-03-21.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-03-28")
-    use:
-      model_input_2021-03-28.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-04-11")
-    use:
-      model_input_2021-04-11.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-04-18")
-    use:
-      model_input_2021-04-18.rds: latest_model_input.rds
-- prepare_ecdc_data:
-    id: latest(parameter:week_ending == "2021-04-25")
-    use:
-      model_input_2021-04-25.rds: latest_model_input.rds
-- prepare_ecdc_data:
     id: latest(parameter:week_ending == "2021-05-09")
     use:
       model_input_2021-05-09.rds: latest_model_input.rds
@@ -250,3 +118,11 @@ depends:
     id: latest(parameter:week_ending == "2021-11-14")
     use:
       model_input_2021-11-14.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-11-21")
+    use:
+      model_input_2021-11-21.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-11-28")
+    use:
+      model_input_2021-11-28.rds: latest_model_input.rds

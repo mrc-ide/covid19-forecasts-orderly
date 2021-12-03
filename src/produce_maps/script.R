@@ -5,12 +5,12 @@ world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 world <- world[world$geounit != "Antarctica", ]
 weekly_qntls <- readRDS("ensemble_weekly_qntls.rds")
 
-weekly_qntls$iso_a3_eh <-countrycode::countrycode(
+weekly_qntls$iso_a3 <-countrycode::countrycode(
   snakecase::to_title_case(weekly_qntls$country),
   "country.name",
   "iso3c"
   )
-if (any(is.na(weekly_qntls$iso_a3_eh))) {
+if (any(is.na(weekly_qntls$iso_a3))) {
   warning(print("Country names need matching to ISO 3 codes"))
 }
 
@@ -20,7 +20,7 @@ weekly_qntls <- dplyr::left_join(world, weekly_qntls)
 rt_estimates <- readRDS("ensemble_model_rt.rds")
 exclude <- readRDS("exclude.rds")
 rt_estimates <- rt_estimates[! rt_estimates$country %in% exclude, ]
-rt_estimates$iso_a3_eh <-countrycode::countrycode(
+rt_estimates$iso_a3 <-countrycode::countrycode(
   snakecase::to_title_case(rt_estimates$country),
   "country.name",
   "iso3c"

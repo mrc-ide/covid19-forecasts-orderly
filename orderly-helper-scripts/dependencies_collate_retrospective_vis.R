@@ -15,7 +15,7 @@ x <- list(
 )
 
 unwtd_weeks <- seq(
-  from = as.Date("2020-09-06"), to = as.Date(week), by = "7 days"
+  from = as.Date("2021-05-09"), to = as.Date(week), by = "7 days"
 )
 not_run <- c("2021-04-04", "2021-05-02", "2021-05-30", "2021-08-29",
              "2021-10-03")
