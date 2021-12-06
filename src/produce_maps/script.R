@@ -1,5 +1,8 @@
 # Produce maps of deaths by continent
 
+# need to set this in the more recent versions of sf package
+sf_use_s2(FALSE)
+
 # loading the map data (simple features format)
 world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 world <- world[world$geounit != "Antarctica", ]
