@@ -19,7 +19,7 @@ resources:
   - annual-review-of-statistics-and-its-application.csl
   - case_ascertainment_methods.Rmd
   - other_files/
-  - us-figs/
+  # - us-figs/
 
 parameters:
   - week_ending

@@ -608,6 +608,17 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Turkey" & raw_data$Date
 raw_data$Cases[raw_data$`Countries.and.territories` == "Turkey" & raw_data$DateRep == "2021-11-20"] <- 23810
 
 
+## 30th November corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Algeria" & raw_data$DateRep == "2021-11-21"] <- 2
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Algeria" & raw_data$DateRep == "2021-11-22"] <- 4
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2021-11-21"] <- 10
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2021-11-22"] <- 10
+
+
+
+
+
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
@@ -712,6 +723,8 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   "Austria",
+  "Burkina_Faso",
+  "Mauritius",
   "Botswana", "Cuba", "Guatemala",
   "Ireland",
   "Philippines", ## Erratic data
