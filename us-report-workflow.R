@@ -2,7 +2,7 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-11-28"
+week <- "2021-12-05"
 use_draft <- "newer"
 a <- orderly_run("download_jhu_data")
 orderly_commit(a)
@@ -25,6 +25,7 @@ model_input <- readRDS(
 )
 locations <- model_input$State
 locations <- locations[!locations %in% c("Florida", "Ohio", "Nebraska")]
+
 source("orderly-helper-scripts/dependancies_collate_weekly.R")
 ### On the server
 cat(
