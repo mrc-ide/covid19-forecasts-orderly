@@ -13,10 +13,11 @@ exclude <- c("Alabama", # 3 report/week
              # "Arizona", # 6 report/week # Appear to be reporting daily again (09 Aug)
                         # Exclude again: no reports 4, 11, 17/18 October, 15 November
                         # Include again 06/12/21
-             "Arkansas", # Now reporting at weekends again (Update from JHU email 03 August)
+             #"Arkansas", # Now reporting at weekends again (Update from JHU email 03 August)
                          # exclude again: anomalous large report 10/11 October
                          # JHU email 12 October states that these are from throughout pandemic, no indication of size of backlog
                          # no reports 26th/28th November - Thanksgiving
+                        # Include again 13th Dec
              # "California", # 5 report/week according to JHU email,
                          # but still seems to have daily reports
                          # anomalous large report 19 October. Include again 22 Nov.
@@ -57,9 +58,10 @@ exclude <- c("Alabama", # 3 report/week
              "Ohio", # 2 report / week
              "Oklahoma", # 1 report / week
              "Oregon", # 5 report / week
-             "Pennsylvania", # reporting daily again 
+             #"Pennsylvania", # reporting daily again 
                             # no reports weekend 9/10 Oct or 16/17 Oct, 7 Nov
                             # no report 26 Nov - Thanksgiving
+                            # Included again 13th Dec
              "Puerto Rico", # gets shown in the country level forecasts
              "Rhode Island", # <7 reports / week
              "South Carolina", # 5 report / week
