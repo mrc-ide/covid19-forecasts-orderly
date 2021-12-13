@@ -616,8 +616,13 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$Dat
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2021-11-22"] <- 10
 
 
+## 7th December corrections
 
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2021-12-05"] <- 5
 
+raw_data$Deaths[raw_data$`Countries.and.territories` == "India" & raw_data$DateRep == "2021-12-05"] <- 372
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Paraguay" & raw_data$DateRep == "2021-11-29"] <- 1
 
 
 by_country_deaths_all <- dplyr::select(

@@ -57,8 +57,8 @@ x <- dplyr::select(
 # Introduction 
 
 As of `r week_in_words` 2021, more than
-260,000,000 cases of COVID-19 have been reported across the world, 
-with more than 5,200,000 deaths [@whositrep]. 
+265,000,000 cases of COVID-19 have been reported across the world, 
+with more than 5,250,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 
@@ -237,7 +237,7 @@ and 3, see Methods). Inset: the last two weeks of data and forecasts for the wee
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figures/us_ensemble_forecasts_1.png")
-##knitr::include_graphics("figures/us_ensemble_forecasts_2.png")
+knitr::include_graphics("figures/us_ensemble_forecasts_2.png")
 ##knitr::include_graphics("figures/us_ensemble_forecasts_3.png")
 ##knitr::include_graphics("figures/us_ensemble_forecasts_4.png")
 
@@ -603,7 +603,7 @@ CrI of the projections.
 
 ```{r}
 knitr::include_graphics("figures/us_indvdl_forecasts_1.png")
-##knitr::include_graphics("figures/us_indvdl_forecasts_2.png")
+knitr::include_graphics("figures/us_indvdl_forecasts_2.png")
 ##knitr::include_graphics("figures/us_indvdl_forecasts_3.png")
 ##knitr::include_graphics("figures/us_indvdl_forecasts_4.png")
 
