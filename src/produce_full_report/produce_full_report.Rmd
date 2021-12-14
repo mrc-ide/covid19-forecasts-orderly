@@ -57,8 +57,8 @@ x <- dplyr::select(
 # Introduction 
 
 As of `r week_in_words` 2021, more than
-265,000,000 cases of COVID-19 have been reported across the world, 
-with more than 5,250,000 deaths [@whositrep]. 
+269,000,000 cases of COVID-19 have been reported across the world, 
+with more than 5,300,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 
@@ -705,7 +705,7 @@ within the MRC Centre for Global Infectious Disease Analysis, Abdul
 Latif Jameel Institute for Disease and Emergency Analytics (J-IDEA),
 Imperial College London.
 
-Sangeeta Bhatia, Jack Wardle, Anne Cori, Kris V Parag, Swapnil Mishra, Laura V Cooper,
+Sangeeta Bhatia, Jack Wardle, Rebecca Nash, Anne Cori, Kris V Parag, Swapnil Mishra, Laura V Cooper,
 Kylie E C Ainslie, Marc Baguelin, Samir Bhatt, Adhiratha Boonyasiri,
 Olivia Boyd, Lorenzo Cattarino, Zulma Cucunubá, Gina Cuomo-Dannenburg,
 Amy Dighe, Ilaria Dorigatti, Sabine van Elsland,
