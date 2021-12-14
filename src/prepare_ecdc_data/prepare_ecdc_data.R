@@ -625,6 +625,12 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "India" & raw_data$DateR
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Paraguay" & raw_data$DateRep == "2021-11-29"] <- 1
 
 
+## 14th December corrections
+
+
+
+
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -729,39 +735,46 @@ exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   "Austria",
   "Burkina_Faso",
-  "Mauritius",
-  "Botswana", "Cuba", "Guatemala",
+  "Belgium", # excluded 14th dec (delay)
+  "Brazil", # excluded 14th dec (delay)
+  "Botswana", 
+  "Bosnia_and_Herzegovina",
+  "Cameroon", # excluded 14th dec (erratic)
+  "Costa_Rica",
+  "Cuba", 
+  "Ecuador", ## Massive backlog reported & some negative deaths,
+  "El_Salvador",
+  "Guatemala",
+  "Hungary", # excluded 14th dec
   "Ireland",
-  "Philippines", ## Erratic data
+  "Israel",
   "Kazakhstan",
+  "Kosovo",
   "Kyrgyzstan",
   "Lesotho",
-##  "Tunisia",
-  "Oman",
-##  "United_States_of_America",
-  "Syria",
-  "Zimbabwe",
-  "Israel",
-  "Ecuador",
-  "El_Salvador",
-  "Costa_Rica",
-  "Bosnia_and_Herzegovina",
-  "Kosovo",
-  "Uganda",
-  "Sudan",
-  "Slovenia",
+  "Mauritius",
   "Mauritania",
-  "Rwanda",
   "Mexico",
   "Nepal",
   "Namibia",
-  "Ecuador", ## Massive backlog reported & some negative deaths,
-  "Vietnam"
-  ##"Sweden",
-  ##"Switzerland", ## Numbers do not agree with those on worldometers
-  ##"Spain", ## latest data not yet available.
-  ##"United_States_of_America", ## Missing data
-  ##"Brazil", "Colombia", "El_Salvador"
+  "Oman",
+  "Philippines", ## Erratic data
+  "Rwanda",
+  "Syria",
+  "Sudan",
+  "Spain", # excluded 14th dec (delay)
+  "Switzerland", # excluded 14th dec (delay)
+  "Slovenia",
+  "Uganda",
+  "Vietnam",
+  "Zimbabwe"
+  ##  "Tunisia",
+  ## "Sweden",
+  ## "Switzerland", ## Numbers do not agree with those on worldometers
+  ## "Spain", ## latest data not yet available.
+  ##" United_States_of_America", ## Missing data
+  ## "Colombia", "El_Salvador"
+  ## Discuss list later
 )
 
 saveRDS(exclude, "exclude.rds")
