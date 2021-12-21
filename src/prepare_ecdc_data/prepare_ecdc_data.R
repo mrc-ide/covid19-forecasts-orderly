@@ -625,9 +625,9 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "India" & raw_data$DateR
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Paraguay" & raw_data$DateRep == "2021-11-29"] <- 1
 
 
-## 14th December corrections
+## 21st December corrections
 
-
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2021-12-19"] <- 24
 
 
 
@@ -735,8 +735,8 @@ exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   "Austria",
   "Burkina_Faso",
-  "Belgium", # excluded 14th dec (delay)
-  "Brazil", # excluded 14th dec (delay)
+  "Belgium", # excluded 14th/21st dec (weekend data delayed)
+  "Brazil", # excluded 14th/21st dec (delay)
   "Botswana", 
   "Bosnia_and_Herzegovina",
   "Cameroon", # excluded 14th dec (erratic)
