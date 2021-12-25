@@ -28,11 +28,8 @@ depends:
       id: latest(parameter:week_ending == week_ending)
       use:
          model_input.rds: latest_model_input.rds
+         exclude.rds: exclude.rds
   - produce_epi_params:
       id: latest
       use:
          population_weighted_ifr.rds: population_weighted_ifr.rds
-  - produce_baseline_error:
-      id: latest(parameter:latest_week == "2020-11-29")
-      use:
-         exclude.rds: exclude.rds

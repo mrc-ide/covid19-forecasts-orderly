@@ -56,9 +56,9 @@ x <- dplyr::select(
 
 # Introduction 
 
-As of 20^th^ September 2021, more than
-228,000,000 cases of COVID-19 have been reported across the world, 
-with more than 4,690,000 deaths [@whositrep]. 
+As of `r week_in_words` 2021, more than
+269,000,000 cases of COVID-19 have been reported across the world, 
+with more than 5,300,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 
@@ -94,10 +94,10 @@ models explicitly accounting for interventions, see
 knitr::include_graphics("figs/epicurve_pline.png")
 ```
 *Figure 1.* (A) The reported number of deaths due to COVID-19 in
-Africa, Asia, Europe, North & Central America, and South America. (B) The number
+Africa, Asia, Europe, North & Central America, Oceania, and South America. (B) The number
 of countries with active transmission (at least 100
 deaths reported, and at least *ten* deaths observed in each of the past
-two weeks) in Africa, Asia, Europe, North & Central America, and South America.
+two weeks) in Africa, Asia, Europe, North & Central America, Oceania, and South America.
 
 
 
@@ -110,7 +110,7 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week starting 20^th^ September 2021, 
+two weeks. For the week starting `r week_in_words` 2021, 
 the number of countries/regions included based on these thresholds is `r nrow(x)`.
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -194,14 +194,6 @@ and 3, see Methods). Inset: the last two weeks of data and forecasts for the wee
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_North America_si_2.Rmd')}
 ```
-
-### Oceania
-
-
-```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_Oceania_si_2.Rmd')}
-```
-
-
 *Figure 5.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in North & Central America with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
@@ -210,6 +202,20 @@ dashed line shows the start of the week (Monday). Projections for countries mark
 a * are based on an unweighted ensemble of three models (Models 1, 2
 and 3, see Methods). Inset: the last two weeks of data and forecasts for the week ahead.
 
+### Oceania
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_Oceania_si_2.Rmd')}
+```
+*Figure 6.* Reported daily deaths and current forecasts based on the ensemble
+model. For each country in Oceania with active transmission (see Methods),
+we plot the observed incidence of deaths (black dots). Forecasts
+for the week ahead are shown in red (median and 95% CrI). Vertical
+dashed line shows the start of the week (Monday). Projections for countries marked with
+a * are based on an unweighted ensemble of three models (Models 1, 2
+and 3, see Methods). Inset: the last two weeks of data and forecasts for the week ahead.
+
+
 
 
 ### South America
@@ -217,7 +223,7 @@ and 3, see Methods). Inset: the last two weeks of data and forecasts for the wee
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_South America_si_2.Rmd')}
 ```
-*Figure 6.* Reported daily deaths and current forecasts based on the ensemble
+*Figure 7.* Reported daily deaths and current forecasts based on the ensemble
 model. For each country in South America with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
 for the week ahead are shown in red (median and 95% CrI). Vertical
@@ -236,7 +242,7 @@ knitr::include_graphics("figures/us_ensemble_forecasts_2.png")
 ##knitr::include_graphics("figures/us_ensemble_forecasts_4.png")
 
 ```
-*Figure 7.* Reported daily deaths and current forecasts based on the ensemble
+*Figure 8.* Reported daily deaths and current forecasts based on the ensemble
 model. For each state/territory in the United States of America with active transmission (see Methods),
 we plot the observed incidence of deaths (black dots). Forecasts
 for the week ahead are shown in red (median and 95% CrI). Vertical
@@ -253,7 +259,7 @@ and 3, see Methods).
 ```{r}
 knitr::include_graphics("figs/rt_phase_si_2.png")
 ```
-*Figure 8.* Latest estimates of transmissibility in countries with active
+*Figure 9.* Latest estimates of transmissibility in countries with active
 transmission. A country is defined
 to be in the declining phase if the 97.5^th^ quantile of the effective
 reproduction number is below 1. It is defined to be in the growing
@@ -275,7 +281,7 @@ deaths. This assumption does not always hold.
 knitr::include_graphics("figs/ensemble_rt_Europe_si_2_boxplot.png")
 
 ```
-*Figure 9.* Latest estimates of effective reproduction numbers by country
+*Figure 10.* Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in Europe
 with sustained transmission. Estimates of $R_t$ for countries marked with
 a * are based on an unweighted ensemble of Models 1, 2 and 3. 
@@ -287,7 +293,7 @@ a * are based on an unweighted ensemble of Models 1, 2 and 3.
 knitr::include_graphics("figs/ensemble_rt_Asia_si_2_boxplot.png")
 
 ```
-*Figure 10.*: Latest estimates of effective reproduction numbers by country
+*Figure 11.*: Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in Asia
 with sustained transmission. Estimates of $R_t$ for countries marked with
 a * are based on an unweighted ensemble of Models 1, 2 and 3.
@@ -300,7 +306,7 @@ Results from individual models are shown in the section Methods.
 knitr::include_graphics("figs/ensemble_rt_Africa_si_2_boxplot.png")
 
 ```
-*Figure 11.*: Latest estimates of effective reproduction numbers by country
+*Figure 12.*: Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in Africa
 with sustained transmission. Estimates of $R_t$ for countries marked with
 a * are based on an unweighted ensemble of Models 1, 2 and 3.
@@ -314,7 +320,7 @@ in the section Methods.
 knitr::include_graphics("figs/ensemble_rt_North America_si_2_boxplot.png")
 
 ```
-*Figure 12.*: Latest estimates of effective reproduction numbers by country
+*Figure 13.*: Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in North & Central America
 with sustained transmission. Estimates of $R_t$ for countries marked with
 a * are based on an unweighted ensemble of Models 1, 2 and 3.
@@ -328,6 +334,12 @@ in the section Methods.
 knitr::include_graphics("figs/ensemble_rt_Oceania_si_2_boxplot.png")
 
 ```
+*Figure 14.*: Latest estimates of effective reproduction numbers by country
+(median, inter-quartile range and 95% CrI) for each country in Oceania
+with sustained transmission. Estimates of $R_t$ for countries marked with
+a * are based on an unweighted ensemble of Models 1, 2 and 3.
+Results from individual models are shown
+in the section Methods.
 
 ### South America
 
@@ -336,9 +348,7 @@ knitr::include_graphics("figs/ensemble_rt_Oceania_si_2_boxplot.png")
 knitr::include_graphics("figs/ensemble_rt_South America_si_2_boxplot.png")
 
 ```
-
-
-*Figure 13.*: Latest estimates of effective reproduction numbers by country
+*Figure 15.*: Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in South America
 with sustained transmission. Estimates of $R_t$ for countries marked with
 a * are based on an unweighted ensemble of Models 1, 2 and 3.
@@ -350,7 +360,7 @@ in the section Methods.
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 knitr::include_graphics("figures/us_ensemble_rt_box_1.png")
 ```
-*Figure 14.*: Latest estimates of effective reproduction numbers 
+*Figure 16.*: Latest estimates of effective reproduction numbers 
 (median, inter-quartile range and 95% CrI) for each state/territory in
 the United States of America
 with sustained transmission. Estimates of $R_t$ 
@@ -362,7 +372,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-20^th^ September 2021, the observed number of deaths in the week before,
+`r week_in_words` 2021, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -525,7 +535,7 @@ built from Models 1, 2 and 3.
 
 ```{r, code = readLines('indvdl_pred_Europe_si_2.Rmd')}
 ```
-*Figure 15.* Projections (7-day ahead) for the week starting 20^th^ September 2021 from individual models
+*Figure 17.* Projections (7-day ahead) for the week starting `r week_in_words` 2021 from individual models
 for each country in Europe with active transmission (see Methods). 
 For each model, the solid line shows the median and the shaded region shows the 95%
 CrI of the projections. 
@@ -536,7 +546,7 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_Asia_si_2.Rmd')}
 ```
-*Figure 16.* Projections (7-day ahead) for the week starting 31^st^
+*Figure 18.* Projections (7-day ahead) for the week starting 31^st^
 January 2021 from individual models (Models 1, 2
 and 3) for each country in Asia with active transmission (see
 Methods). For each model,
@@ -549,7 +559,7 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_Africa_si_2.Rmd')}
 ```
-*Figure 17.* Projections (7-day ahead) for the week starting 20^th^ September 2021 from individual models (Models 1, 2
+*Figure 19.* Projections (7-day ahead) for the week starting `r week_in_words` 2021 from individual models (Models 1, 2
 and 3) for each country in Africa with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -560,7 +570,7 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_North America_si_2.Rmd')}
 ```
-*Figure 18.* Projections (7-day ahead) for the week starting 20^th^ September 2021 from individual models (Models 1, 2
+*Figure 20.* Projections (7-day ahead) for the week starting `r week_in_words` 2021 from individual models (Models 1, 2
 and 3) for each country in North & Central America with
 active transmission (see Methods). Model 4 did not include these countries. For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -570,15 +580,19 @@ CrI of the projections.
 
 ```{r, code = readLines('indvdl_pred_Oceania_si_2.Rmd')}
 ```
+*Figure 21.* Projections (7-day ahead) for the week starting `r week_in_words` 2021 from individual models (Models 1, 2
+and 3) for each country in Oceania with
+active transmission (see Methods). Model 4 did not include these countries. For each model,
+the solid line shows the median and the shaded region shows the 95%
+CrI of the projections. 
 
 #### South America
 
 ```{r, code = readLines('indvdl_pred_South America_si_2.Rmd')}
 ```
 
-
-*Figure 19.* Projections (7-day ahead) for the week starting
-20^th^ September 2021 from individual models (Models 1, 2
+*Figure 22.* Projections (7-day ahead) for the week starting
+`r week_in_words` 2021 from individual models (Models 1, 2
 and 3) for each country in South America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -595,8 +609,8 @@ knitr::include_graphics("figures/us_indvdl_forecasts_2.png")
 
 
 ```
-*Figure 20.* Projections (7-day ahead) for the week starting
-20^th^ September 2021 from individual models (Models 1, 2
+*Figure 23.* Projections (7-day ahead) for the week starting
+`r week_in_words` 2021 from individual models (Models 1, 2
 and 3) for each state/territory in the United States of America with
 active transmission (see Methods). For each model,
 the solid line shows the median and the shaded region shows the 95%
@@ -609,9 +623,9 @@ CrI of the projections.
 ```{r}
 knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
-*Figure 21.* Estimates of $R_t$ from individual models for each country in Europe with
+*Figure 24.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-20^th^ September 2021. 
+`r week_in_words` 2021. 
 
 
 #### Asia
@@ -621,9 +635,9 @@ active transmission (see Methods) for the week starting
 knitr::include_graphics("figs/rt_si_2_Asia.png")
 ```
 
-*Figure 22.* Estimates of $R_t$ from individual models for each country in Asia with
+*Figure 25.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-20^th^ September 2021. 
+`r week_in_words` 2021. 
 
 
 #### Africa
@@ -632,9 +646,9 @@ active transmission (see Methods) for the week starting
 knitr::include_graphics("figs/rt_si_2_Africa.png")
 ```
 
-*Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
+*Figure 26.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-20^th^ September 2021. 
+`r week_in_words` 2021. 
 
 
 #### North & Central America
@@ -642,36 +656,40 @@ active transmission (see Methods) for the week starting
 ```{r}
 knitr::include_graphics("figs/rt_si_2_North America.png")
 ```
-*Figure 24.* Estimates of $R_t$ from individual models for each country in
+*Figure 27.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-20^th^ September 2021. 
+`r week_in_words` 2021. 
 
 #### Oceania
 
 ```{r}
 knitr::include_graphics("figs/rt_si_2_Oceania.png")
 ```
+*Figure 28.* Estimates of $R_t$ from individual models for each country in
+Oceania with
+active transmission (see Methods) for the week starting
+`r week_in_words` 2021. 
 
 #### South America
 
 ```{r}
 knitr::include_graphics("figs/rt_si_2_South America.png")
 ```
-*Figure 25.* Estimates of $R_t$ from individual models for each
+*Figure 29.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-20^th^ September 2021. 
+`r week_in_words` 2021. 
 
 #### USA (sub-national)
 
 ```{r}
 knitr::include_graphics("figures/us_indvdl_rt_line_1.png")
 ```
-*Figure 26.* Estimates of $R_t$ from individual models for each
+*Figure 30.* Estimates of $R_t$ from individual models for each
 state in the United States of America with
 active transmission (see Methods) for the week starting
-20^th^ September 2021. 
+`r week_in_words` 2021. 
 
 ## Code 
 
@@ -687,7 +705,7 @@ within the MRC Centre for Global Infectious Disease Analysis, Abdul
 Latif Jameel Institute for Disease and Emergency Analytics (J-IDEA),
 Imperial College London.
 
-Sangeeta Bhatia, Jack Wardle, Anne Cori, Kris V Parag, Swapnil Mishra, Laura V Cooper,
+Sangeeta Bhatia, Jack Wardle, Rebecca Nash, Anne Cori, Kris V Parag, Swapnil Mishra, Laura V Cooper,
 Kylie E C Ainslie, Marc Baguelin, Samir Bhatt, Adhiratha Boonyasiri,
 Olivia Boyd, Lorenzo Cattarino, Zulma Cucunubá, Gina Cuomo-Dannenburg,
 Amy Dighe, Ilaria Dorigatti, Sabine van Elsland,

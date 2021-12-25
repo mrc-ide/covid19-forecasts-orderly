@@ -304,6 +304,7 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Belgium" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2020-11-11"] <- 857
 
 
+
 raw_data <- split(raw_data, raw_data$`Countries.and.territories`) %>%
   map_dfr(
     function(df) {
@@ -581,6 +582,53 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Morocco" & raw_data$Date
 raw_data$Cases[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2021-09-19"] <- 6745
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Serbia" & raw_data$DateRep == "2021-09-19"] <- 35
 
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-08"] <- 38
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-09"] <- 29
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-08"] <- 1387
+raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2021-10-09"] <- 726
+
+
+## 18th October corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2021-10-14"] <- 18
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2021-10-15"] <- 17
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Colombia" & raw_data$DateRep == "2021-10-16"] <- 35
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Cuba" & raw_data$DateRep == "2021-10-16"] <- 24
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Cuba" & raw_data$DateRep == "2021-10-17"] <- 19
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2021-10-16"] <- 381
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2021-10-17"] <- 434
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2021-10-16"] <- 17
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Peru" & raw_data$DateRep == "2021-10-17"] <- 24
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Romania" & raw_data$DateRep == "2021-10-17"] <- 298
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Turkey" & raw_data$DateRep == "2021-11-20"] <- 218
+raw_data$Cases[raw_data$`Countries.and.territories` == "Turkey" & raw_data$DateRep == "2021-11-20"] <- 23810
+
+
+## 30th November corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Algeria" & raw_data$DateRep == "2021-11-21"] <- 2
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Algeria" & raw_data$DateRep == "2021-11-22"] <- 4
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2021-11-21"] <- 10
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2021-11-22"] <- 10
+
+
+## 7th December corrections
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2021-12-05"] <- 5
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "India" & raw_data$DateRep == "2021-12-05"] <- 372
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Paraguay" & raw_data$DateRep == "2021-11-29"] <- 1
+
+
+## 14th December corrections
+
+
+
 
 
 by_country_deaths_all <- dplyr::select(
@@ -686,35 +734,47 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   "Austria",
-  "Botswana",
-  "Ireland",
-  "Philippines", ## Erratic data
-  "Kazakhstan",
-  "Kyrgyzstan",
-##  "Tunisia",
-  "Oman",
-##  "United_States_of_America",
-  "Syria",
-  "Zimbabwe",
-  "Israel",
-  "Ecuador",
-  "El_Salvador",
-  "Costa_Rica",
+  "Burkina_Faso",
+  "Belgium", # excluded 14th dec (delay)
+  "Brazil", # excluded 14th dec (delay)
+  "Botswana", 
   "Bosnia_and_Herzegovina",
+  "Cameroon", # excluded 14th dec (erratic)
+  "Costa_Rica",
+  "Cuba", 
+  "Ecuador", ## Massive backlog reported & some negative deaths,
+  "El_Salvador",
+  "Guatemala",
+  "Hungary", # excluded 14th dec
+  "Ireland",
+  "Israel",
+  "Kazakhstan",
   "Kosovo",
-  "Uganda",
-  "Sudan",
-  "Slovenia",
+  "Kyrgyzstan",
+  "Lesotho",
+  "Mauritius",
   "Mauritania",
-  "Rwanda",
   "Mexico",
   "Nepal",
   "Namibia",
-  "Ecuador", ## Massive backlog reported & some negative deaths,
+  "Oman",
+  "Philippines", ## Erratic data
+  "Rwanda",
+  "Syria",
+  "Sudan",
+  "Spain", # excluded 14th dec (delay)
+  "Switzerland", # excluded 14th dec (delay)
+  "Slovenia",
+  "Uganda",
   "Vietnam",
-  ##"Sweden",
-  ##"Switzerland", ## Numbers do not agree with those on worldometers
-  "Spain" ## latest data not yet available.
+  "Zimbabwe"
+  ##  "Tunisia",
+  ## "Sweden",
+  ## "Switzerland", ## Numbers do not agree with those on worldometers
+  ## "Spain", ## latest data not yet available.
+  ##" United_States_of_America", ## Missing data
+  ## "Colombia", "El_Salvador"
+  ## Discuss list later
 )
 
 saveRDS(exclude, "exclude.rds")

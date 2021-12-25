@@ -10,17 +10,23 @@ dates_forecast <- seq(
 ## exclude some states due to one-off data anomalies or because they only report weekly
 exclude <- c("Alabama", # 3 report/week
              "Alaska", # 2 report/week
-             "Arizona", # 6 report/week # Appear to be reporting daily again (09 Aug)
-                        # Exclude again: no report 13 September
-             "Arkansas", # 5 report/week # Now reporting at weekends again (Update from JHU email 03 August)
-                                         # But no report 19 September
+             # "Arizona", # 6 report/week # Appear to be reporting daily again (09 Aug)
+                        # Exclude again: no reports 4, 11, 17/18 October, 15 November
+                        # Include again 06/12/21
+             #"Arkansas", # Now reporting at weekends again (Update from JHU email 03 August)
+                         # exclude again: anomalous large report 10/11 October
+                         # JHU email 12 October states that these are from throughout pandemic, no indication of size of backlog
+                         # no reports 26th/28th November - Thanksgiving
+                        # Include again 13th Dec
              # "California", # 5 report/week according to JHU email,
-                             # but still seems to have daily reports
+                         # but still seems to have daily reports
+                         # anomalous large report 19 October. Include again 22 Nov.
              "Colorado", # 5 report / week
              "Connecticut", # < 7 report / week (unclear on exact reporting freq.)
              "Delaware", # < 7 report / week
              "Florida", # 1 report/week
              "Georgia", # 5 report/week
+             "Guam", # < 7 report / week
              "Hawaii", # < 7 report/week
              "Idaho", # 5 report/week
              "Illinois", # 5 report/week
@@ -31,35 +37,48 @@ exclude <- c("Alabama", # 3 report/week
              "Louisiana", # 5 report/week
              "Maine", # 5 report / week
              "Maryland", # no report 19 September
+                         # no report 25/26 November (Thanksgiving)
              "Massachusetts", # 5 report / week
              "Michigan", # 2 report/week
              "Minnesota", # 5 report / week
              "Mississippi", # 5 report / week
              "Missouri", # 6 report / week
-                         # seems to be back to reporting every day (23/08/21)
-                         # No report 19 September
+                           # seems to be back to reporting every day (23/08/21)
+                           # no report 25 October, 1st or 7th/8th/11th/15th November
+                           # no report 25/26 Nov - Thanksgiving
+                           # v large spike from addition of probable deaths on 02/12/21
              "Montana", # 5 report / week
              "Nebraska", # 5 report / week
              "Nevada", # 5 report/week
              "New Hampshire", # 5 report / week
+             # "New Jersey", # no report 31 October, 4 November
              "New Mexico", # 3 report/week
              "North Carolina", # 5 report / week
+             "North Dakota", # <7 report/day
              "Ohio", # 2 report / week
              "Oklahoma", # 1 report / week
              "Oregon", # 5 report / week
-             "Pennsylvania", # may have switched to 5 reports / week (23/08/21)
+             #"Pennsylvania", # reporting daily again 
+                            # no reports weekend 9/10 Oct or 16/17 Oct, 7 Nov
+                            # no report 26 Nov - Thanksgiving
+                            # Included again 13th Dec
              "Puerto Rico", # gets shown in the country level forecasts
              "Rhode Island", # <7 reports / week
              "South Carolina", # 5 report / week
              "South Dakota", # 1 report/week
              "Tennessee", # 5 report / week
+             "Texas", # reports for 9/10 Oct are anomalously low (only 2/3)
+                      # 13 Oct figure v large (backlog from previous days?)
+                      # 08/11/21: include again
+                      # no report 25-28 Nov - Thanksgiving
              "Utah", # 5 report/week
+             "Vermont", # not daily reports
              "Virginia", # 5 report / week
              "Washington", # 5 report / week
              "West Virginia", # 5 report / week
              "Wisconsin", # 5 report / week
              "Wyoming" # 5 report / week
-
+             
 )
 
 ## ensemble projections
@@ -93,7 +112,7 @@ for (page in seq_len(npages)) {
       ~state, ncol = ncols, nrow = nrows, page = page, scales = "free_y"
     ) + theme(legend.position = "none")
   ggsave(glue("figures/us_ensemble_forecasts_{page}.png"), p)
-
+  
 }
 
 #############################################################
@@ -107,7 +126,7 @@ m1_forecasts <- readRDS("rti0_qntls.rds") %>%
 
 m2_forecasts <- readRDS("apeestim_qntls.rds") %>%
   filter(! state %in% exclude) %>%
-    pivot_longer(cols = as.character(dates_forecast), names_to = "date") %>%
+  pivot_longer(cols = as.character(dates_forecast), names_to = "date") %>%
   pivot_wider(names_from = "qntl", values_from = "value")
 
 m3_forecasts <- readRDS("deca_qntls.rds") %>%
@@ -137,7 +156,7 @@ for (page in seq_len(npages)) {
     )
   if (page > 1) p <-  p + theme(legend.position = "none")
   ggsave(glue("figures/us_indvdl_forecasts_{page}.png"), p)
-
+  
 }
 
 #############################################################
@@ -202,7 +221,7 @@ m2_rt <- readRDS("apeestim_rt_qntls.rds") %>%
 
 m3_rt <- readRDS("deca_rt_qntls.rds") %>%
   filter(! state %in% exclude) %>%
-    spread(qntl, out2)
+  spread(qntl, out2)
 
 m1_rt$proj <- "Model 1"
 m2_rt$proj <- "Model 2"

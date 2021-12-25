@@ -1,24 +1,16 @@
-week_starting <- as.Date("2020-03-08")
+model_input <- readRDS(glue("model_input_{week_ending}.rds"))
 week_ending <- as.Date(week_ending)
-weeks <- seq(from = week_starting, to = week_ending, by = "7 days")
-names(weeks) <- weeks
-
-model_input <- readRDS("model_input.rds")
-tall <- tidyr::gather(model_input, country, Deaths, -dates)
-tall <- rename(tall, DateRep = "dates")
-
+run_info <- orderly::orderly_run_info()
+prev_model_inputs <- run_info$depends$as
+names(prev_model_inputs) <- gsub(
+  x = prev_model_inputs, pattern = "model_input_", replacement = ""
+) %>% gsub(x = ., pattern = ".rds", replacement = "")
+prev_model_inputs <- map(prev_model_inputs, readRDS)
 
 included <- map_dfr(
-  weeks,
-  function(week) {
-    input_in_week <- tall[tall$DateRep <= week, ]
-    wide <- split(input_in_week, input_in_week$country)
-    out <- bind_rows(keep(wide, rincewind::deaths_threshold))
-    data.frame(country = unique(out$country), week_starting = week)
-  }
+  prev_model_inputs, ~ data.frame(country = .[["Country"]]),
+  .id = "week_starting"
 )
-
-
 ## These are now included in the ECDC data. ECDC doesn;t distuish
 ## N and S America
 ## continents <- readr::read_csv(
@@ -60,11 +52,11 @@ pline <- ggplot() +
   ) +
   scale_x_date(
     breaks = seq(
-      from = as.Date("2020-06-01"),
+      from = as.Date("2021-05-09"),
       to = week_ending,
       by = "8 weeks"
     ),
-    limits = c(as.Date("2020-06-01"), week_ending)
+    limits = c(as.Date("2021-05-09"), week_ending)
   ) +
   coord_cartesian(clip = 'off') +
   theme_minimal() +
@@ -84,11 +76,11 @@ pline2 <- ggplot() +
   ) +
   scale_x_date(
     breaks = seq(
-      from = as.Date("2020-06-01"),
+      from = as.Date("2020-09-01"),
       to = week_ending,
       by = "8 weeks"
     ),
-    limits = c(as.Date("2020-06-01"), as.Date("2020-12-10")),
+    limits = c(as.Date("2020-09-01"), as.Date("2020-12-10")),
     date_labels = "%d - %b"
   ) +
   coord_cartesian(clip = 'off') +
@@ -105,6 +97,9 @@ ggsave("n_included_line_si.png", pline2)
 ############# Epicurve by continent #################################
 #####################################################################
 #####################################################################
+model_input <- model_input[["D_active_transmission"]]
+tall <- tidyr::gather(model_input, country, Deaths, -dates)
+tall <- rename(tall, DateRep = "dates")
 
 model_input <- tall[tall$country %in% included$country, ]
 model_input$iso3c <- countrycode::countrycode(
@@ -129,11 +124,11 @@ epicurve <- ggplot() +
   scale_color_manual(values = palette) +
   scale_x_date(
     breaks = seq(
-      from = as.Date("2020-06-01"),
+      from = as.Date("2021-05-09"),
       to = week_ending,
       by = "8 weeks"
     ),
-    limits = c(as.Date("2020-06-01"), week_ending)
+    limits = c(as.Date("2021-05-09"), week_ending)
   ) +
   theme_minimal() +
   theme(legend.position = "top", legend.title = element_blank()) +

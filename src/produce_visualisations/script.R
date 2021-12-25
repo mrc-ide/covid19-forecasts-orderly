@@ -34,7 +34,8 @@ daily_predictions_qntls <- readRDS("daily_predictions_qntls.rds")
 daily_predictions_qntls$model <- glue::glue(
   "{daily_predictions_qntls$model}_{week_ending}"
 )
-daily_predictions_qntls <- daily_predictions_qntls[! daily_predictions_qntls$country %in% exclude, ]
+#daily_predictions_qntls <- daily_predictions_qntls[! daily_predictions_qntls$country %in% exclude, ]
+daily_predictions_qntls <- daily_predictions_qntls[daily_predictions_qntls$country %in% ensb_pred$country, ]
 daily_predictions_qntls <- tidyr::separate(
   daily_predictions_qntls,
   col = "model",
@@ -303,7 +304,7 @@ iwalk(
 
 
 model_rt <- readRDS("model_rt_qntls.rds")
-model_rt <- model_rt[! model_rt$country %in% exclude,]
+model_rt <- model_rt[ model_rt$country %in% ensemble_rt$country,]
 model_rt$model <- gsub(
   x = model_rt$model,
   pattern = "Std_results_week_end_",
