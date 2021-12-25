@@ -43,16 +43,7 @@ compare_phase <- distinct(compare_phase)
 ## Therefore we can safely omit these
 compare_phase <- na.omit(compare_phase)
 
-
-compare_phase$week_of_forecast <- case_when(
-  compare_phase$day <= 7 ~ "1-week ahead",
-  7 < compare_phase$day & compare_phase$day <= 14 ~ "2-weeks ahead",
-  14 < compare_phase$day & compare_phase$day <= 21 ~ "3-weeks ahead",
-  21 < compare_phase$day & compare_phase$day <= 28  ~ "4-weeks ahead",
-  28 < compare_phase$day & compare_phase$day <= 35  ~ "5-weeks ahead",
-  35 < compare_phase$day & compare_phase$day <= 42  ~ "6-weeks ahead"
-)
-
+## Compare by day
 x <- tabyl(compare_phase, phase_empirical, phase_eff, day) %>%
   adorn_percentages("row") %>%
   bind_rows(.id = "day_of_forecast")
@@ -83,6 +74,7 @@ xtall$phase_eff <-
       "indeterminate"
     ), ordered = TRUE
   )
+xtall$day_of_forecast <- as.integer(xtall$day_of_forecast)
 
 ggplot(xtall) +
   geom_tile(
@@ -94,6 +86,99 @@ ggplot(xtall) +
     palette = "RdYlBu", limits = c(0, 1)
   ) +
   theme(axis.text.x = element_text(angle = 90))
+
+### Assign phase to week rather than day, rule - the phase assigned
+### to majority of days in the week is the weekly phase.
+weekly_phase <- split(
+  medium_term,
+  list(medium_term$country, medium_term$week_starting,
+       medium_term$week_of_forecast)
+) %>% map_dfr(function(x) {
+  freq <- tabyl(x$phase)
+  if (nrow(freq) > 1) {
+    message("More than 1 phase detected in ", x$country[1],
+            " week ", x$week_starting[1])
+  }
+  most_freq <- which.max(freq$n)
+  ## Return just the first row without the day, and the most
+  ## frequent phase
+  x$phase <- freq[[1]][most_freq]
+  x[1, ]
+})
+
+## Now compare weekly phase with empirical phase, as before
+compare_phase <- left_join(
+  weekly_phase, empirical,
+  by = c("country", "week_starting"),
+  suffix = c("_eff", "_empirical")
+)
+compare_phase <- distinct(compare_phase)
+## The only NAs should now be from the first three weeks
+## for which we did not produce medium-term forecasts.
+## x <- compare_phase[! complete.cases(compare_phase), ]
+## unique(x$week_starting)
+## [1] "2020-03-22" "2020-03-08" "2020-03-15"]
+## Therefore we can safely omit these
+compare_phase <- na.omit(compare_phase)
+
+## Compare by day
+x <- tabyl(compare_phase, phase_empirical, phase_eff, week_of_forecast) %>%
+  adorn_percentages("row") %>%
+  bind_rows(.id = "week_of_forecast")
+
+x <- select(x, week_of_forecast, phase_empirical, `likely stable`,`likely decreasing` ,`definitely decreasing`, `likely growing` ,`definitely growing`, `indeterminate`)
+xtall <- gather(x, phase_eff, val, -week_of_forecast, -phase_empirical)
+xtall$phase_empirical <-
+  factor(
+    xtall$phase_empirical,
+    levels = c(
+      "likely stable",
+      "likely decreasing",
+      "definitely decreasing",
+      "likely growing",
+      "definitely growing"
+    ), ordered = TRUE
+  )
+
+xtall$phase_eff <-
+  factor(
+    xtall$phase_eff,
+    levels = c(
+      "likely stable",
+      "likely decreasing",
+      "definitely decreasing",
+      "likely growing",
+      "definitely growing",
+      "indeterminate"
+    ), ordered = TRUE
+  )
+
+ggplot(xtall) +
+  geom_tile(
+    aes(phase_empirical, phase_eff, fill = val),
+    width = 0.9, height = 0.9
+  ) +
+  facet_wrap(~week_of_forecast) +
+  scale_fill_distiller(
+    palette = "Greens", limits = c(0, 1)
+  ) +
+  theme(axis.text.x = element_text(angle = 90))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ########### Total number of country weeks for medium term

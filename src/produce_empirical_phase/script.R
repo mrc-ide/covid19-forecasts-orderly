@@ -28,6 +28,13 @@ weekly_phase <- split(
     }, .id = "country"
   )
 
+## Sanity check; looks alright.
+## x <- weekly_incid[weekly_incid$country == "India", ]
+## y <- weekly_phase[weekly_phase$country == "India", ]
+## x$week_starting <- as.Date(x$week_starting)
+## z <- left_join(x, y, by = "week_starting")
+## ggplot(z, aes(week_starting, weekly_incid.x, col = phase)) +
+##   geom_point()
 
 
 saveRDS(

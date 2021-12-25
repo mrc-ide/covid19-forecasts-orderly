@@ -2,6 +2,7 @@ script: script.R
 
 packages:
 - dplyr
+- ggplot2
 - purrr
 
 ## The last week for which we want
