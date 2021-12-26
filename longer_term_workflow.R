@@ -73,6 +73,8 @@ for (week in weeks) {
   ##orderly::orderly_commit(a)
 }
 
+orderly_run("collate_epidemic_phase", use_draft = use_draft)
+
 
 ## Collation
 week_starting <- as.Date(head(weeks, 1)[[1]])

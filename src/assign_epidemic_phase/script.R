@@ -1,24 +1,24 @@
 ## orderly::orderly_develop_start(parameters = list(week_ending = "2020-11-29", use_si = "si_2"), use_draft = "newer")
-assign_epidemic_phase2 <- function(rt) {
+## assign_epidemic_phase2 <- function(rt) {
 
-  med <- quantile(rt, prob = 0.5)
-  iqr <- quantile(rt, prob = 0.975) - quantile(rt, prob = 0.025)
-  ratio <- iqr / med
-  if (med > 1) {
-    ## could be growing, but need to take into account the width of the
-    ## distribution
-    if (ratio < med/3) phase <- "growing"
-    else if (med/3 <= ratio & ratio < 2 * med/3) phase <- "likely growing"
-    else if (2 * med/3 <= ratio & ratio < med)  phase <- "likely stable"
-    else phase <- "indeterminate"
-  } else {
-    if (ratio < med/3) phase <- "definitely declining"
-    else if (med/3 <= ratio & ratio < 2 * med/3) phase <- "likely declining"
-    else if (2 * med/3 <= ratio & ratio < med)  phase <- "likely stable"
-    else phase <- "indeterminate"
-  }
-  phase
-}
+##   med <- quantile(rt, prob = 0.5)
+##   iqr <- quantile(rt, prob = 0.975) - quantile(rt, prob = 0.025)
+##   ratio <- iqr / med
+##   if (med > 1) {
+##     ## could be growing, but need to take into account the width of the
+##     ## distribution
+##     if (ratio < med/3) phase <- "growing"
+##     else if (med/3 <= ratio & ratio < 2 * med/3) phase <- "likely growing"
+##     else if (2 * med/3 <= ratio & ratio < med)  phase <- "likely stable"
+##     else phase <- "indeterminate"
+##   } else {
+##     if (ratio < med/3) phase <- "definitely declining"
+##     else if (med/3 <= ratio & ratio < 2 * med/3) phase <- "likely declining"
+##     else if (2 * med/3 <= ratio & ratio < med)  phase <- "likely stable"
+##     else phase <- "indeterminate"
+##   }
+##   phase
+## }
 
 rti0 <- readRDS("rti0.rds")
 apeestim <- readRDS("apeestim.rds")
