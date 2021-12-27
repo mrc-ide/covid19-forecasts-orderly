@@ -34,8 +34,9 @@ ggplot() +
     aes(x = date, ymin = `2.5%`, ymax = `97.5%`, fill = "blue", group = forecast_week),
     alpha = 0.1
   ) +
+  labs(fill = "Adjusted for declining p_s") +
   scale_fill_identity(
-    breaks = c("red", "blue"),
-    labels = c("with", "without"),
+    breaks = c("red", "blue"), labels = c("Yes", "No"),
     guide = "legend"
-  ) + scale_x_date(limits = range(x$date))
+  ) + scale_x_date(limits = range(x$date)) +
+  theme(legend.position = "top")
