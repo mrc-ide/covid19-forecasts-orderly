@@ -1,0 +1,46 @@
+script: longer_forecasts_no_ps.R
+
+parameters:
+  - week_ending
+  - use_si
+
+artefacts:
+  data:
+    description: Projections
+    filenames:
+      - weighted_per_country_pred_qntls.rds
+      - weighted_per_country_projections.rds
+packages:
+  - ggplot2
+  - glue
+  - patchwork
+  - purrr
+  - rincewind
+  - stringr
+  - snakecase
+  - tidyr
+
+resources:
+  - ecdc_pop2018.csv
+
+sources:
+  - R/utils.R
+  
+depends:
+  produce_combined_rt:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      combined_weighted_estimates_per_country.rds: combined_weighted_estimates_per_country.rds
+  produce_epi_params:
+    id: latest
+    use:
+      si_distrs.rds: si_distrs.rds
+      population_weighted_ifr.rds: population_weighted_ifr.rds
+  prepare_ecdc_data:
+    id: latest(parameter:week_ending == week_ending)
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
+  produce_baseline_error:
+    id: latest(parameter:latest_week == "2020-11-29")
+    use:
+      exclude.rds: exclude.rds
