@@ -1,0 +1,16 @@
+script: compare.R
+
+packages:
+- ggplot2
+
+
+depends:
+  prepare_ecdc_data:
+    id: "latest"
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
+  collate_longer_forecasts:
+    id: "latest"
+    use:
+      longer_projections_qntls.rds: wtd_per_country_projections_qntls.rds
+      no_ps_projections_qntls.rds: no_ps_projections_qntls.rds
