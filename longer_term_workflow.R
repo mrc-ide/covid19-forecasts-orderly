@@ -99,7 +99,7 @@ orderly::orderly_run("collate_combined_rt", use_draft = "newer")
 source(
   "orderly-helper-scripts/dependencies_collate_longer_forecasts.R"
 )
-orderly::orderly_run("src/collate_longer_forecasts/", use_draft = "newer")
+orderly::orderly_run("collate_longer_forecasts", use_draft = "newer")
 
 orderly::orderly_run(
   "produce_longer_forecasts_viz", use_draft = "newer"

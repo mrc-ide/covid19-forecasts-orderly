@@ -12,6 +12,15 @@ named_infiles <- function(infiles, pattern) {
   x
 }
 
+no_ps <- named_infiles(infiles, pattern = "no_ps")
+pred_qntls <- map(no_ps, readRDS)
+out <- map_dfr(
+  pred_qntls, ~ bind_rows(., .id = "country"), .id = "forecast_week"
+)
+saveRDS(out, glue("no_ps_projections_qntls.rds"))
+
+
+
 unwtd <- named_infiles(infiles, pattern = "unweighted_pred_qntls")
 wtd_across_all <- named_infiles(
   infiles, pattern = "weighted_across_countries_pred_qntls"
@@ -38,6 +47,7 @@ iwalk(
     saveRDS(out, glue("{strategy}_projections_qntls.rds"))
   }
 )
+
 
 
 unwtd <- named_infiles(infiles, pattern = "unweighted_ps_qntls")
