@@ -54,6 +54,18 @@ for (week in weeks) {
   )
 }
 
+
+for (week in weeks) {
+  message("################ ", week, "#############################")
+  week_ending <- as.Date(week)
+  parameter <- list(week_ending = week, use_si = use_si)
+  m2 <- orderly_run(
+    "produce_longer_forecasts_no_ps", parameters = parameter,
+    use_draft = use_draft
+  )
+}
+
+
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
