@@ -1,8 +1,16 @@
 script: compare.R
 
 packages:
+- dplyr
 - ggplot2
+- glue
+- purrr
 
+artefacts:
+  staticgraph:
+    description: Compare forecasts with and without ps
+    filenames:
+      - Mexico.pdf
 
 depends:
   prepare_ecdc_data:
