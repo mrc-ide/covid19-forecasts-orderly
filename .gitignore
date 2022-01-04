@@ -29,3 +29,4 @@ backup/db/
 *.pdf
 
 aws.sh
+covid19-forecasts-orderly.Rproj

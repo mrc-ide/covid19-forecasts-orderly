@@ -67,10 +67,11 @@ exclude <- c("Alabama", # 3 report/week
              "South Carolina", # 5 report / week
              "South Dakota", # 1 report/week
              "Tennessee", # 5 report / week
-             "Texas", # reports for 9/10 Oct are anomalously low (only 2/3)
+             #"Texas", # reports for 9/10 Oct are anomalously low (only 2/3)
                       # 13 Oct figure v large (backlog from previous days?)
                       # 08/11/21: include again
                       # no report 25-28 Nov - Thanksgiving
+                      # Included again 20 Dec
              "Utah", # 5 report/week
              "Vermont", # not daily reports
              "Virginia", # 5 report / week
