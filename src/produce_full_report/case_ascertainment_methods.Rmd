@@ -2,7 +2,6 @@
 
 * Estimate trends in case ascertainment and the ratio of deaths to
   reported cases.
-* Use these to estimate the true size of the epidemic.
 * Use these to forecast the number of deaths in the coming week.
 
 *Assumptions*
@@ -11,8 +10,7 @@ We assume
 
 * that deaths due to COVID-19 are perfectly reported;
 * a known distribution for delay from report to death (gamma
-  distribution with mean 10 days and standard deviation 2 days); and,
-* a known distribution for CFR [@verity2020].
+  distribution with mean 10 days and standard deviation 2 days).
 
 
 Let $D_{i, t}$ be the number of deaths in location $i$ at time $t$.
@@ -33,38 +31,6 @@ D_{i, t} \sim Binom\left( \int\limits_0^{\infty}{\Gamma(x \mid \mu,
 \]
 
 This allows us to obtain a posterior distribution for $r_{i, t}$.
-
-Case ascertainment is defined as:
-
-\[ \rho_{i, t} = \frac{CFR}{r_{i, t}}.\]
-
-Thus a posterior distribution for $\rho_{i, t}$ can be obtained using
-the posterior distribution for $r_{i, t}$ and the posterior distribution
-for CFR.
-
-Combining the CFR and the case ascertainment, we can estimate the true
-number of cases in the epidemic at any point. 
-
-For the period over which we have information on deaths i.e., up to
-time $t - \mu$, we use the posterior distribution of
-CFR to obtain $I_{i, t}^{true}$. The true number of cases in a
-location $i$ at time $t$ is the sum cases that did not die and the
-number of deaths. 
-\[
-I_{i, t}^{true} \sim D_{i, t - \mu} + NBin(D_{i, t - \mu}, CFR).
-\]
-
-In this formulation, the negative binomial is parameterised as $NBin(n, p)$ where
-$n$ is the number of failure (i.e. death), and $p$ is the probability of observing a failure.
-
-For the period over which we do not have information on deaths i.e.,
-after time $t - \mu$, we use
-the posterior distribution of case ascertainment to obtain
-
-\[
-I_{i, t}^{true} \sim I_{i, t}^{r} + NBin(I_{i, t}^{r}, \rho_{i,
-t}).
-\]
 
 To obtain forecast of deaths, we rely on reported cases to obtain
 $\int\limits_0^{\infty}{\Gamma(x \mid \mu,\sigma)I_{i, t - x}^{r}dx}$.
