@@ -729,6 +729,12 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-09"] <- 14
 
 
+## 17th January 2022 corrections
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2022-01-16"] <- 127
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Libya" & raw_data$DateRep == "2022-01-16"] <- 13
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -831,18 +837,17 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
-  "Austria",
   "Burkina_Faso",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
   "Bosnia_and_Herzegovina",
   "Botswana",
-  "Brazil", # excluded 14th/21st dec (delay)
   "Cameroon", # excluded 14th dec (erratic)
-  "Costa_Rica",
+  "Cape_Verde",
   "Cuba",
-  "Denmark", ## excluded 10th Jan, outliers and can't correct as time series diff to worldometer
+  "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
   "El_Salvador",
+  "Ghana", # exclude 18 Jan (no weekends)
   "Guatemala",
   "Hungary", # excluded 14th dec
   "Ireland",
@@ -865,8 +870,8 @@ exclude <- c(
   "Sudan",
   #"Slovenia",
   "Spain", # excluded 14th dec (delay and can't find matches in worldometer)
+  "Sweden",
   "Switzerland", # excluded 14th dec (delay)
-  "Syria", # excluded 10th Jan (delay)
   "Uganda",
   "Vietnam",
   "Zimbabwe"

@@ -102,7 +102,8 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   # then pull latest branch on server. And then...
   # orderly run produce_retrospective_vis week_ending=2021-12-05 (NB: put latest date here)
   
-  orderly_run(
+  #orderly_run(
+  orderly_pull_archive(
     "produce_retrospective_vis",
     parameter = list(week_ending = week)
   ) 
@@ -118,7 +119,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "produce_full_report", use_draft = use_draft,
-    parameter = list(week_ending = week, week_in_words = "10^th^ January 2022")
+    parameter = list(week_ending = week, week_in_words = "17^th^ January 2022")
   )
 
   if (commit) orderly_commit(a)

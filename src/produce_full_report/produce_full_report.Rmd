@@ -56,8 +56,8 @@ x <- dplyr::select(
 # Introduction 
 
 As of `r week_in_words`, more than
-305,900,000 cases of COVID-19 have been reported across the world, 
-with more than 5,480,000 deaths [@whositrep]. 
+326,200,000 cases of COVID-19 have been reported across the world, 
+with more than 5,540,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 
@@ -107,7 +107,7 @@ transmission.
 * We define a country as having active transmission if at least 100
 deaths have been reported in a country so far, and 
 at least *ten* deaths were observed in the country in each of the past
-two weeks. For the week starting `r week_in_words` 2022, 
+two weeks. For the week starting `r week_in_words`, 
 the number of countries/regions included based on these thresholds is `r nrow(x)`.
 
 * We forecast the number of potential deaths as the reporting of deaths
@@ -333,7 +333,7 @@ in the section Methods.
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
-`r week_in_words` , the observed number of deaths in the week before,
+`r week_in_words`, the observed number of deaths in the week before,
 and the estimated levels of transmissibility from the ensemble model
 for each country with active transmission (see Methods). For the
 forecasted weekly deaths counts and estimates of $R_t$, the table
@@ -463,10 +463,10 @@ This allows us to construct the accumulated predictive error (APE) under
 some window length *k* and under a given generation time distribution
 as:
 
-$$\text{AP}E_{k} = \sum_{t = 0}^{T - 1}{- \log{P\left( I_{t + 1} = I_{t + 1}^{*}\  \right|\ I_{t - k + 1}^{t})\ \ }}$$
+$$\text{APE}_{k} = \sum_{t = 0}^{T - 1}{- \log{P\left( I_{t + 1} = I_{t + 1}^{*}\  \right|\ I_{t - k + 1}^{t})\ \ }}$$
 
 The optimal window length *k\** is then
-$k^{*} = \arg{\min_{k}{\text{AP}E_{k}}}$.  Here
+$k^{*} = \arg{\min_{k}{\text{APE}_{k}}}$.  Here
 *T* is the last time point in the existing incidence curve.
 
 **Forward Projections**
@@ -570,7 +570,7 @@ knitr::include_graphics("figs/rt_si_2_Europe.png")
 ```
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
-`r week_in_words` . 
+`r week_in_words`. 
 
 
 #### Asia
@@ -582,7 +582,7 @@ knitr::include_graphics("figs/rt_si_2_Asia.png")
 
 *Figure 22.* Estimates of $R_t$ from individual models for each country in Asia with
 active transmission (see Methods) for the week starting
-`r week_in_words` . 
+`r week_in_words`. 
 
 
 #### Africa
@@ -593,7 +593,7 @@ knitr::include_graphics("figs/rt_si_2_Africa.png")
 
 *Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
-`r week_in_words` . 
+`r week_in_words`. 
 
 
 #### North & Central America
@@ -604,7 +604,7 @@ knitr::include_graphics("figs/rt_si_2_North America.png")
 *Figure 24.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
 active transmission (see Methods) for the week starting
-`r week_in_words` . 
+`r week_in_words`. 
 
 #### Oceania
 
@@ -614,7 +614,7 @@ knitr::include_graphics("figs/rt_si_2_Oceania.png")
 *Figure 25.* Estimates of $R_t$ from individual models for each country in
 Oceania with
 active transmission (see Methods) for the week starting
-`r week_in_words` . 
+`r week_in_words`. 
 
 #### South America
 
@@ -624,7 +624,7 @@ knitr::include_graphics("figs/rt_si_2_South America.png")
 *Figure 26.* Estimates of $R_t$ from individual models for each
 country in South America with
 active transmission (see Methods) for the week starting
-`r week_in_words` . 
+`r week_in_words`. 
 
 
 
