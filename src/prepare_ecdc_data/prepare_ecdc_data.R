@@ -842,6 +842,7 @@ exclude <- c(
   "Bosnia_and_Herzegovina",
   "Botswana",
   "Cameroon", # excluded 14th dec (erratic)
+  "Cape_Verde",
   "Cuba",
   "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
