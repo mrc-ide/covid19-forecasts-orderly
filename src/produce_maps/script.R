@@ -6,13 +6,16 @@ sf_use_s2(FALSE)
 # loading the map data (simple features format)
 world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 world <- world[world$geounit != "Antarctica", ]
+## 24.01.2022 Weirdly, iso_a3 is NA only for France in world.
+## not sure why! setting it explicitly
+world$iso_a3[world$name_en == "France"] <- "FRA"
 weekly_qntls <- readRDS("ensemble_weekly_qntls.rds")
 
 weekly_qntls$iso_a3 <-countrycode::countrycode(
   snakecase::to_title_case(weekly_qntls$country),
   "country.name",
   "iso3c"
-  )
+)
 if (any(is.na(weekly_qntls$iso_a3))) {
   warning(print("Country names need matching to ISO 3 codes"))
 }

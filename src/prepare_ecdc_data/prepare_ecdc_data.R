@@ -730,10 +730,19 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$Date
 
 
 ## 17th January 2022 corrections
-
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2022-01-16"] <- 127
-
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Libya" & raw_data$DateRep == "2022-01-16"] <- 13
+
+## 24th Jan 2022
+## 19/01 - 17101, 59
+## 17/01 - 76
+## 18/01 - 59
+## 16/01 - 227
+## 15/01 - 195
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-16"] <- 227
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-17"] <- 59
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-18"] <- 76
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-19"] <- 59
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
@@ -879,7 +888,7 @@ exclude <- c(
   ## "Sweden",
   ## "Spain", ## latest data not yet available.
   ##" United_States_of_America", ## Missing data
-  ## "Colombia", 
+  ## "Colombia",
   ## Discuss list later
 )
 
