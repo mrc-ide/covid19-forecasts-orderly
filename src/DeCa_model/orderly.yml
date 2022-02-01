@@ -29,7 +29,3 @@ depends:
       use:
          model_input.rds: latest_model_input.rds
          exclude.rds: exclude.rds
-  - produce_epi_params:
-      id: latest
-      use:
-         population_weighted_ifr.rds: population_weighted_ifr.rds

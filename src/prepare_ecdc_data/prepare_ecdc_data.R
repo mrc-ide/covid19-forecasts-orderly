@@ -744,6 +744,25 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-18"] <- 76
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-19"] <- 59
 
+## 31st Jan 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-24"] <- 38
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-25"] <- 22
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-30"] <- 41
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2022-01-30"] <- 140
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jamaica" & raw_data$DateRep == "2022-01-30"] <- 11
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Libya" & raw_data$DateRep == "2022-01-30"] <- 14
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Panama" & raw_data$DateRep == "2022-01-27"] <- 19
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Panama" & raw_data$DateRep == "2022-01-28"] <- 17
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-23"] <- 24
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-24"] <- 8
+
+##
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -846,21 +865,23 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
-  "Burkina_Faso",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
   "Bosnia_and_Herzegovina",
   "Botswana",
+  "Burkina_Faso",
   "Cameroon", # excluded 14th dec (erratic)
   "Cape_Verde",
   "Cuba",
   "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
-  "El_Salvador",
+  "El_Salvador", 
+  "Fiji", # excluded 31st Jan
   "Ghana", # exclude 18 Jan (no weekends)
   "Guatemala",
+  "Honduras", # excluded 31st Jan
   "Hungary", # excluded 14th dec
   "Ireland",
-  "Israel",
+  #"Israel", # included again 31st Jan
   "Kazakhstan",
   "Kosovo",
   "Kyrgyzstan",
