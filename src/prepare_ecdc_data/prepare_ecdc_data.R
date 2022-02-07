@@ -760,8 +760,9 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Panama" & raw_data$Date
 
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-23"] <- 24
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-24"] <- 8
-
-##
+## worldometers
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2022-02-04"] <- 321
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2022-02-05"] <- 318
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
@@ -874,7 +875,7 @@ exclude <- c(
   "Cuba",
   "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
-  "El_Salvador", 
+  "El_Salvador",
   "Fiji", # excluded 31st Jan
   "Ghana", # exclude 18 Jan (no weekends)
   "Guatemala",
@@ -904,7 +905,8 @@ exclude <- c(
   "Switzerland", # excluded 14th dec (delay)
   "Uganda",
   "Vietnam",
-  "Zimbabwe"
+  "Zimbabwe",
+  "United_Republic_of_Tanzania"
   ## "Tunisia",
   ## "Sweden",
   ## "Spain", ## latest data not yet available.
