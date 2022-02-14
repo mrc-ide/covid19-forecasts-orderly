@@ -764,6 +764,10 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & 
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2022-02-04"] <- 321
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2022-02-05"] <- 318
 
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-02-09"] <- 132
+raw_data$Cases[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-02-09"] <- 6343
+
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
