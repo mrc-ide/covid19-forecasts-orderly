@@ -909,6 +909,9 @@ exclude <- c(
   "Switzerland", # excluded 14th dec (delay)
   "Uganda",
   "Vietnam",
+  "Yemen",
+  "Argentina",
+  "Armenia",
   "Zimbabwe",
   "United_Republic_of_Tanzania"
   ## "Tunisia",
