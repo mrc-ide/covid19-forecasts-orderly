@@ -910,8 +910,10 @@ exclude <- c(
   "Uganda",
   "Vietnam",
   "Yemen",
-  "Argentina",
-  "Armenia",
+  ##"Argentina",
+  ##"Armenia",
+  "Mexico", ## cannot reconcile,
+  "Saint_Lucia",
   "Zimbabwe",
   "United_Republic_of_Tanzania"
   ## "Tunisia",
