@@ -9,6 +9,8 @@ artefacts:
       - deaths_per_1e6.csv
       - cases_per_1e6.csv
       - latest_model_outputs.csv
+      - weekly_projected_deaths.csv
+      - country_epidemic_phase.csv  
 
 parameters: week_ending
 
@@ -20,6 +22,10 @@ packages:
 - purrr
 
 depends:
+  - produce_maps:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+        country_epidemic_phase.csv: country_epidemic_phase.csv  
   - prepare_ecdc_data:
       id: latest(parameter:week_ending == week_ending)
       use:
@@ -29,3 +35,4 @@ depends:
       id: latest(parameter:week_ending == week_ending)
       use:
          ensemble_model_predictions.rds: ensemble_daily_qntls.rds
+         ensemble_weekly_qntls.rds: ensemble_weekly_qntls.rds

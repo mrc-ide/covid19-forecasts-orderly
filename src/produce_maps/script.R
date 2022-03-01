@@ -25,7 +25,7 @@ rt_estimates <- left_join(world, rt_estimates)
 out <- select(
   rt_estimates,
   country, phase, continent, si,
-  `2.5%`, `50%`, `97.5%`
+  `2.5%`, `25%`, `50%`,`75%` ,`97.5%`
 )
 out <- st_drop_geometry(out)
 out$week_of_forecast <- week_ending
