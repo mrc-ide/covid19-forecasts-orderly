@@ -767,6 +767,18 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$D
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-02-09"] <- 132
 raw_data$Cases[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-02-09"] <- 6343
 
+## 28th Feb 2022 corrections
+raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2022-02-11"] <- 31
+raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2022-02-12"] <- 23
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-02-25"] <- 8
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-02-26"] <- 5
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-02-27"] <- 7
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$DateRep == "2022-02-26"] <- 32
+raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$DateRep == "2022-02-27"] <- 28
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "United_Kingdom" & raw_data$DateRep == "2022-02-27"] <- 45
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
@@ -870,12 +882,17 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
+  ##"Argentina",
+  ##"Armenia",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
   "Bosnia_and_Herzegovina",
   "Botswana",
+  "Brazil", # excluded 1st March (delay and no worldometer match)
   "Burkina_Faso",
+  "Canada", # excluded 1st March (erratic reporting over last week & no worldometer match)
   "Cameroon", # excluded 14th dec (erratic)
   "Cape_Verde",
+  ## "Colombia",
   "Cuba",
   "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
@@ -901,26 +918,21 @@ exclude <- c(
   "Oman",
   "Philippines", ## Erratic data
   "Rwanda",
+  "Saint_Lucia",
   "Syria",
   "Sudan",
-  #"Slovenia",
+  "Slovenia", # excluded 1st March (delay & no match)
   "Spain", # excluded 14th dec (delay and can't find matches in worldometer)
   "Sweden",
   "Switzerland", # excluded 14th dec (delay)
+  "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
+  "Tunisia", # excluded again 1st March (delay & no match)
   "Uganda",
   "Vietnam",
   "Yemen",
-  ##"Argentina",
-  ##"Armenia",
-  "Mexico", ## cannot reconcile,
-  "Saint_Lucia",
   "Zimbabwe",
   "United_Republic_of_Tanzania"
-  ## "Tunisia",
-  ## "Sweden",
-  ## "Spain", ## latest data not yet available.
   ##" United_States_of_America", ## Missing data
-  ## "Colombia",
   ## Discuss list later
 )
 
