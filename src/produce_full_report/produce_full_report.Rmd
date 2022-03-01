@@ -566,7 +566,7 @@ CrI of the projections.
 #### Europe
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_Europe.png")
+knitr::include_graphics("figs/rt_Europe_si_2.png")
 ```
 *Figure 21.* Estimates of $R_t$ from individual models for each country in Europe with
 active transmission (see Methods) for the week starting
@@ -577,7 +577,7 @@ active transmission (see Methods) for the week starting
 
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_Asia.png")
+knitr::include_graphics("figs/rt_Asia_si_2.png")
 ```
 
 *Figure 22.* Estimates of $R_t$ from individual models for each country in Asia with
@@ -588,7 +588,7 @@ active transmission (see Methods) for the week starting
 #### Africa
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_Africa.png")
+knitr::include_graphics("figs/rt_Africa_si_2.png")
 ```
 
 *Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
@@ -599,7 +599,7 @@ active transmission (see Methods) for the week starting
 #### North & Central America
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_North America.png")
+knitr::include_graphics("figs/rt_North America_si_2.png")
 ```
 *Figure 24.* Estimates of $R_t$ from individual models for each country in
 North & Central America with
@@ -609,7 +609,7 @@ active transmission (see Methods) for the week starting
 #### Oceania
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_Oceania.png")
+knitr::include_graphics("figs/rt_Oceania_si_2.png")
 ```
 *Figure 25.* Estimates of $R_t$ from individual models for each country in
 Oceania with
@@ -619,7 +619,7 @@ active transmission (see Methods) for the week starting
 #### South America
 
 ```{r}
-knitr::include_graphics("figs/rt_si_2_South America.png")
+knitr::include_graphics("figs/rt_South America_si_2.png")
 ```
 *Figure 26.* Estimates of $R_t$ from individual models for each
 country in South America with
