@@ -1,4 +1,5 @@
 ## List of continents-coutnry mapping
+##orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2022-02-27"))
 dir.create("figs")
 zoom <- TRUE
 if (zoom) zoom_lims <- as.Date(week_ending) - 14
@@ -277,15 +278,18 @@ ensemble_rt_wide <- add_continents(ensemble_rt_wide, continents)
 ensemble_rt_wide <- ensemble_rt_wide[ensemble_rt_wide$model == max(as.Date(ensemble_rt_wide$model)), ]
 ensemble_rt_wide$proj <- "Ensemble"
 
-
-plots <- split(
+ensemble_rt_split <- split(
   ensemble_rt_wide,
   list(
     ensemble_rt_wide$continent,
     ensemble_rt_wide$si
   ),
   sep = "_"
-) %>% map(~ rt_boxplot(., nice_names) + theme(legend.position = "none"))
+)
+
+plots <- map(
+  ensemble_rt_split, ~ rt_boxplot(., nice_names) + theme(legend.position = "none")
+)
 
 iwalk(
   plots,
@@ -332,13 +336,18 @@ rt_both$proj <- dplyr::case_when(
 )
 
 rt_both <- add_continents(rt_both, continents)
-
-plots <- split(
+rt_both_split <- split(
   rt_both,
-  list(rt_both$si, rt_both$continent),
+  list(rt_both$continent, rt_both$si),
   sep = "_"
-) %>%
-  map(~ rt_lineplot(., nice_names))
+)
+
+plots <- imap(
+  rt_both_split,
+  function(rt, name) {
+    rt_lineplot(rt, nice_names, ensemble_rt_split[[name]])
+  })
+
 
 iwalk(
   plots,
