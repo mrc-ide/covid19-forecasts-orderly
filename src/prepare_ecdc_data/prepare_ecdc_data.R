@@ -780,6 +780,11 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$Dat
 
 raw_data$Cases[raw_data$`Countries.and.territories` == "United_Kingdom" & raw_data$DateRep == "2022-02-27"] <- 45
 
+## 7 March 2022 corrections
+raw_data$Cases[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-02-28"] <- 176
+raw_data$Cases[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-03-01"] <- 187
+
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -904,6 +909,7 @@ exclude <- c(
   "Hungary", # excluded 14th dec
   "Ireland",
   #"Israel", # included again 31st Jan
+  "Jordan", # excluded 8 March (no data since March 2nd)
   "Kazakhstan",
   "Kosovo",
   "Kyrgyzstan",
@@ -928,6 +934,7 @@ exclude <- c(
   "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
   "Tunisia", # excluded again 1st March (delay & no match)
   "Uganda",
+  "United_Kingdom", # excluded 8th March (no Sunday data from most recent week)
   "Vietnam",
   "Yemen",
   "Zimbabwe",
