@@ -87,24 +87,24 @@ projection_plot <- function(obs, pred,   date_min = as.Date("2020-03-01")) {
 }
 
 
-rt_lineplot <- function(rt, nice_names) {
+rt_lineplot <- function(rt, nice_names, rt_ensb) {
 
   palette <- c("#56B4E9", "#009E73", "#D55E00", "#CC79A7")
   names(palette) <- c("Model 1", "Model 2", "Model 3", "Ensemble")
-
-  rt$country <- reorder(rt$country, -rt$`50%`)
+  rt_ensb$country <- reorder(rt_ensb$country, -rt_ensb$`50%`)
+  rt$country <- factor(rt$country, levels = levels(rt_ensb$country))
   if (length(unique(rt$model)) == 1) width <- 0.1
   else width <- 0.7
 
-  p <- ggplot() +
+  p <- ggplot(rt) +
     geom_errorbar(
-      data = rt,
+      ##data = rt,
       aes(x = country, ymin = `2.5%`, ymax = `97.5%`, col = proj),
       position = position_dodge(width = width),
       size = 1.1
     ) +
     geom_point(
-      data = rt,
+      ##data = rt,
       aes(x = country, y = `50%`, col = proj),
       position = position_dodge(width = width),
       size = 4

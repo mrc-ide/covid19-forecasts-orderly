@@ -625,10 +625,164 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "India" & raw_data$DateR
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Paraguay" & raw_data$DateRep == "2021-11-29"] <- 1
 
 
-## 14th December corrections
+## 21st December corrections
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2021-12-19"] <- 24
+
+## 10th January 2022 corrections
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Angola" & raw_data$DateRep == "2022-01-04"] <- 3
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Angola" & raw_data$DateRep == "2022-01-05"] <- 3
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Angola" & raw_data$DateRep == "2022-01-09"] <- 10
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2022-01-02"] <- 23
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2022-01-03"] <- 12
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2021-12-26"] <- 6
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2021-12-27"] <- 2
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-02"] <- 31
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-03"] <- 11
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-09"] <- 24
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2022-01-09"] <- 84
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2022-01-06"] <- 27
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2022-01-07"] <- 19
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2022-01-08"] <- 27
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Egypt" & raw_data$DateRep == "2022-01-09"] <- 26
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ethiopia" & raw_data$DateRep == "2021-12-28"] <- 6
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ethiopia" & raw_data$DateRep == "2021-12-29"] <- 0
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ethiopia" & raw_data$DateRep == "2022-01-01"] <- 11
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ethiopia" & raw_data$DateRep == "2022-01-02"] <- 10
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-01-07"] <- 24
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-01-08"] <- 19
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-01-09"] <- 26
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iraq" & raw_data$DateRep == "2022-01-07"] <- 3
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iraq" & raw_data$DateRep == "2022-01-08"] <- 4
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iraq" & raw_data$DateRep == "2022-01-09"] <- 2
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jamaica" & raw_data$DateRep == "2022-01-04"] <- 1
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jamaica" & raw_data$DateRep == "2022-01-05"] <- 2
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jordan" & raw_data$DateRep == "2022-01-07"] <- 19
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jordan" & raw_data$DateRep == "2022-01-08"] <- 21
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jordan" & raw_data$DateRep == "2022-01-09"] <- 25
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Kenya" & raw_data$DateRep == "2022-01-09"] <- 12
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-01-06"] <- 20
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-01-07"] <- 18
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-01-08"] <- 19
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-01-09"] <- 17
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Libya" & raw_data$DateRep == "2022-01-07"] <- 15
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Libya" & raw_data$DateRep == "2022-01-08"] <- 11
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Libya" & raw_data$DateRep == "2022-01-09"] <- 10
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2022-01-06"] <- 5
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2022-01-07"] <- 11
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2022-01-08"] <- 13
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Morocco" & raw_data$DateRep == "2022-01-09"] <- 7
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2021-12-20"] <- 2
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2021-12-24"] <- 1
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2021-12-25"] <- 4
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2021-12-26"] <- 2
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2021-12-27"] <- 1
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2021-12-28"] <- 5
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2021-12-30"] <- 12
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2021-12-31"] <- 8
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2022-01-01"] <- 10
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mozambique" & raw_data$DateRep == "2022-01-02"] <- 6
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2022-01-07"] <- 5
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2022-01-08"] <- 6
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Pakistan" & raw_data$DateRep == "2022-01-09"] <- 7
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Palestine" & raw_data$DateRep == "2022-01-06"] <- 10
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Palestine" & raw_data$DateRep == "2022-01-07"] <- 3
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Palestine" & raw_data$DateRep == "2022-01-08"] <- 6
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Palestine" & raw_data$DateRep == "2022-01-09"] <- 9
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "South_Africa" & raw_data$DateRep == "2022-01-07"] <- 45
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2021-12-25"] <- 19
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2021-12-26"] <- 37
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-03"] <- 14
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-04"] <- 31
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-05"] <- 22
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-08"] <- 19
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-09"] <- 18
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-01"] <- 6
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-02"] <- 3
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-03"] <- 10
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-04"] <- 9
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-05"] <- 10
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-06"] <- 10
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-07"] <- 8
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-08"] <- 8
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Zambia" & raw_data$DateRep == "2022-01-09"] <- 14
 
 
+## 17th January 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2022-01-16"] <- 127
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Libya" & raw_data$DateRep == "2022-01-16"] <- 13
 
+## 24th Jan 2022
+## 19/01 - 17101, 59
+## 17/01 - 76
+## 18/01 - 59
+## 16/01 - 227
+## 15/01 - 195
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-16"] <- 227
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-17"] <- 59
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-18"] <- 76
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-01-19"] <- 59
+
+## 31st Jan 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-24"] <- 38
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-25"] <- 22
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-01-30"] <- 41
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Canada" & raw_data$DateRep == "2022-01-30"] <- 140
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Jamaica" & raw_data$DateRep == "2022-01-30"] <- 11
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Libya" & raw_data$DateRep == "2022-01-30"] <- 14
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Panama" & raw_data$DateRep == "2022-01-27"] <- 19
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Panama" & raw_data$DateRep == "2022-01-28"] <- 17
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-23"] <- 24
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Trinidad_and_Tobago" & raw_data$DateRep == "2022-01-24"] <- 8
+## worldometers
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2022-02-04"] <- 321
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Argentina" & raw_data$DateRep == "2022-02-05"] <- 318
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-02-09"] <- 132
+raw_data$Cases[raw_data$`Countries.and.territories` == "Mexico" & raw_data$DateRep == "2022-02-09"] <- 6343
+
+## 28th Feb 2022 corrections
+raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2022-02-11"] <- 31
+raw_data$Cases[raw_data$`Countries.and.territories` == "Sri_Lanka" & raw_data$DateRep == "2022-02-12"] <- 23
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-02-25"] <- 8
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-02-26"] <- 5
+raw_data$Cases[raw_data$`Countries.and.territories` == "Bolivia" & raw_data$DateRep == "2022-02-27"] <- 7
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$DateRep == "2022-02-26"] <- 32
+raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$DateRep == "2022-02-27"] <- 28
+
+raw_data$Cases[raw_data$`Countries.and.territories` == "United_Kingdom" & raw_data$DateRep == "2022-02-27"] <- 45
+
+## 7 March 2022 corrections
+raw_data$Cases[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-02-28"] <- 176
+raw_data$Cases[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-03-01"] <- 187
 
 
 by_country_deaths_all <- dplyr::select(
@@ -733,47 +887,59 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
-  "Austria",
-  "Burkina_Faso",
-  "Belgium", # excluded 14th dec (delay)
-  "Brazil", # excluded 14th dec (delay)
-  "Botswana", 
+  ##"Argentina",
+  ##"Armenia",
+  "Belgium", # excluded 14th/21st dec (weekend data delayed)
   "Bosnia_and_Herzegovina",
+  "Botswana",
+  "Brazil", # excluded 1st March (delay and no worldometer match)
+  "Burkina_Faso",
+  "Canada", # excluded 1st March (erratic reporting over last week & no worldometer match)
   "Cameroon", # excluded 14th dec (erratic)
-  "Costa_Rica",
-  "Cuba", 
+  "Cape_Verde",
+  ## "Colombia",
+  "Cuba",
+  "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
   "El_Salvador",
+  "Fiji", # excluded 31st Jan
+  "Ghana", # exclude 18 Jan (no weekends)
   "Guatemala",
+  "Honduras", # excluded 31st Jan
   "Hungary", # excluded 14th dec
   "Ireland",
-  "Israel",
+  #"Israel", # included again 31st Jan
+  "Jordan", # excluded 8 March (no data since March 2nd)
   "Kazakhstan",
   "Kosovo",
   "Kyrgyzstan",
   "Lesotho",
+  "Madagascar", # excluded 10th Jan (weekly reporting)
   "Mauritius",
   "Mauritania",
   "Mexico",
-  "Nepal",
   "Namibia",
+  "Nepal",
+  "Norway", # excluded 10th Jan (seems mostly weekly reporting)
   "Oman",
   "Philippines", ## Erratic data
   "Rwanda",
+  "Saint_Lucia",
   "Syria",
   "Sudan",
-  "Spain", # excluded 14th dec (delay)
+  "Slovenia", # excluded 1st March (delay & no match)
+  "Spain", # excluded 14th dec (delay and can't find matches in worldometer)
+  "Sweden",
   "Switzerland", # excluded 14th dec (delay)
-  "Slovenia",
+  "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
+  "Tunisia", # excluded again 1st March (delay & no match)
   "Uganda",
+  "United_Kingdom", # excluded 8th March (no Sunday data from most recent week)
   "Vietnam",
-  "Zimbabwe"
-  ##  "Tunisia",
-  ## "Sweden",
-  ## "Switzerland", ## Numbers do not agree with those on worldometers
-  ## "Spain", ## latest data not yet available.
+  "Yemen",
+  "Zimbabwe",
+  "United_Republic_of_Tanzania"
   ##" United_States_of_America", ## Missing data
-  ## "Colombia", "El_Salvador"
   ## Discuss list later
 )
 

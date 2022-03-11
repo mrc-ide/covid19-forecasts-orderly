@@ -2,26 +2,27 @@ script: script.R
 
 artefacts:
   - staticgraph:
-      description: Maps of median projected deaths for the week of the report
+      description: Maps of epidemic phase for the week of the report
       filenames:
-        - median_deaths_si_1.png
-        - median_deaths_si_2.png
         - rt_phase_si_2.png
+        - country_epidemic_phase.csv
         
 sources:
   - R/utils.R
 
 packages:
-  - ggplot2
-  - ggpubr
-  - ggforce
-  - dplyr
-  - tidyr
-  - sp
-  - sf
-  - rnaturalearth
   - countrycode
-  - ggrepel
+  - dplyr  
+  - ggplot2
+  - glue
+  - purrr
+  - readr
+  - rincewind
+  - rnaturalearth 
+  - sf
+  - snakecase
+  - tidyr
+
 
 parameters:
   - week_ending

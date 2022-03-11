@@ -122,37 +122,37 @@ deaths_to_cases_qntls <- purrr::imap(
 # c(mean(x),quantile(x,c(.025,.975)))
 # hist(rbeta(1e4,shape1 = shape1,shape2 = shape2))
 
-ifr <- readRDS("population_weighted_ifr.rds")
+## ifr <- readRDS("population_weighted_ifr.rds")
 
-ascertainment <- purrr::map(
-  countries,
-  function(country) {
-    message(country)
-    if (country == "Cote_dIvoire") idx <- "Cote_dIvoire"
-    else if (country == "Timor_Leste") idx <- "Timor-Leste"
-    else idx <- snakecase::to_title_case(country)
+## ascertainment <- purrr::map(
+##   countries,
+##   function(country) {
+##     message(country)
+##     if (country == "Cote_dIvoire") idx <- "Cote_dIvoire"
+##     else if (country == "Timor_Leste") idx <- "Timor-Leste"
+##     else idx <- snakecase::to_title_case(country)
 
-    ascertainr::ascertainment(
-      cfr_distr = ifr[[idx]],
-      death_to_case = deaths_to_cases[[country]]
-    )
-  }
-)
-## Same as above, results in the same ball park as Pierre',
-## Pierre's rho for Yemen:
-## 0.03438778 0.03465549 0.03694185 0.02719840 0.02697257 0.03408934
-## From tje packaged code
-## 0.03597449 0.03582383 0.03803099 0.02911610 0.02633064 0.03032737
-ascertainment_qntls <- purrr::map(
-  ascertainment,
-  function(rho) {
-    df <- quantiles_to_df(rho)
-    cbind(
-      date = ascertainr_deaths[["dates"]],
-      df
-    )
-  }
-)
+##     ascertainr::ascertainment(
+##       cfr_distr = ifr[[idx]],
+##       death_to_case = deaths_to_cases[[country]]
+##     )
+##   }
+## )
+## ## Same as above, results in the same ball park as Pierre',
+## ## Pierre's rho for Yemen:
+## ## 0.03438778 0.03465549 0.03694185 0.02719840 0.02697257 0.03408934
+## ## From tje packaged code
+## ## 0.03597449 0.03582383 0.03803099 0.02911610 0.02633064 0.03032737
+## ascertainment_qntls <- purrr::map(
+##   ascertainment,
+##   function(rho) {
+##     df <- quantiles_to_df(rho)
+##     cbind(
+##       date = ascertainr_deaths[["dates"]],
+##       df
+##     )
+##   }
+## )
 
 ######################################################################
 ################# ascertainment quantiles ############################

@@ -2,7 +2,7 @@ library(orderly)
 library(purrr)
 library(glue)
 
-week <- "2021-12-12"
+week <- "2022-03-06"
 use_draft <- "newer"
 a <- orderly_run("download_jhu_data")
 orderly_commit(a)
@@ -21,7 +21,7 @@ orderly_pull_archive(
 )
 
 model_input <- readRDS(
-  "archive/prepare_jhu_data/20211213-123100-55b421e5/latest_model_input.rds"
+  "archive/prepare_jhu_data/20211220-131558-96fd9b10/latest_model_input.rds"
 )
 locations <- model_input$State
 locations <- locations[!locations %in% c("Florida", "Ohio", "Nebraska")]

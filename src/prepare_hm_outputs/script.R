@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2021-03-28"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2022-02-27"), use_draft = "newer")
 
 deaths <- readRDS("latest_deaths.rds")
 cases <- readRDS("latest_cases.rds")
@@ -40,4 +40,7 @@ write_csv(deaths_per_1e6, "deaths_per_1e6.csv")
 model_outputs <- readRDS("ensemble_model_predictions.rds")
 write_csv(model_outputs, "latest_model_outputs.csv")
 
+## weekly
+weekly <- readRDS("ensemble_weekly_qntls.rds")
+write_csv(weekly, "weekly_projected_deaths.csv")
 file.create("deploy.txt")

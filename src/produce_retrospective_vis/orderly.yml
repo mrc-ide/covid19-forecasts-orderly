@@ -134,3 +134,43 @@ depends:
     id: latest(parameter:week_ending == "2021-12-12")
     use:
       model_input_2021-12-12.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2021-12-19")
+    use:
+      model_input_2021-12-19.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-01-09")
+    use:
+      model_input_2022-01-09.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-01-16")
+    use:
+      model_input_2022-01-16.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-01-23")
+    use:
+      model_input_2022-01-23.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-01-30")
+    use:
+      model_input_2022-01-30.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-02-06")
+    use:
+      model_input_2022-02-06.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-02-13")
+    use:
+      model_input_2022-02-13.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-02-20")
+    use:
+      model_input_2022-02-20.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-02-27")
+    use:
+      model_input_2022-02-27.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-03-06")
+    use:
+      model_input_2022-03-06.rds: latest_model_input.rds
