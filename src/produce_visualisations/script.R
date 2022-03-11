@@ -27,6 +27,9 @@ ensb_pred$proj <- "Ensemble"
 ##   "Zambia", "Kyrgyzstan", "Sudan", "Haiti"
 ## )
 exclude <- readRDS("exclude.rds")
+
+##Also exclude Ukraine
+exclude <- c(exclude, "Ukraine")
 ensb_pred <- ensb_pred[! ensb_pred$country %in% exclude, ]
 
 ## Read in the model specific outputs here so that we can construct
