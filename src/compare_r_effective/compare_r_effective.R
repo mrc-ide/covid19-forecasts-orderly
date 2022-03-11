@@ -13,7 +13,12 @@ medium_term <- readRDS("collated_medium_term_phase.rds")
 medium_term$day <- as.integer(medium_term$day)
 medium_term <- medium_term[medium_term$day <= 28, ]
 medium_term$week_starting <- as.Date(medium_term$model) - 1
-
+medium_term$week_of_forecast <- case_when(
+  medium_term$day <= 7 ~ "1-week ahead",
+  medium_term$day > 7 & medium_term$day <= 14 ~ "2-weeks ahead",
+  medium_term$day > 14 & medium_term$day <= 21 ~ "3-weeks ahead",
+  medium_term$day > 21 & medium_term$day <= 28 ~ "4-weeks ahead",
+)
 ### Assign phase to week rather than day, rule - the phase assigned
 ### to majority of days in the week is the weekly phase.
 weekly_phase <- split(
@@ -164,9 +169,9 @@ p <- ggplot(
   facet_wrap(~ `Week of forecast`, nrow = 2) +
   scale_fill_gradient(
     low = "#e5f2e5", high = "#66b266",
-    labels = c("0.0%", "50.0%", "100%"),
-    breaks = c(0, 50, 100),
-    limits = c(0, 100),
+    labels = c("0.0%", "25.0%", "50.0%"),
+    breaks = c(0, 25, 50),
+    limits = c(0, 50),
     name = "% agreement",
     guide = guide_colorbar(title.hjust = 0.5, title.vjust = 0.95)
   ) +
