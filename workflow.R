@@ -187,7 +187,7 @@ library(glue)
 library(orderly)
 source("orderly-helper-scripts/dependencies_weighted_performance.R")
 source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
-week <- "2022-02-27"
+week <- "2022-03-13"
 use_draft <- "newer"
 ## This is the sunday before the Monday for which we are producing
 ## the report.
