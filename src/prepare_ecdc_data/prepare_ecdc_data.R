@@ -938,7 +938,8 @@ exclude <- c(
   "Vietnam",
   "Yemen",
   "Zimbabwe",
-  "United_Republic_of_Tanzania"
+  "United_Republic_of_Tanzania",
+  "Ukraine"
   ##" United_States_of_America", ## Missing data
   ## Discuss list later
 )
