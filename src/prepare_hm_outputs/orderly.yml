@@ -20,6 +20,7 @@ packages:
 - dplyr
 - readr
 - purrr
+- tidyr
 
 depends:
   - produce_maps:
