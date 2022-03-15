@@ -51,3 +51,7 @@ weekly <- readRDS("ensemble_weekly_qntls.rds")
 weekly <- mutate_if(weekly, is.numeric, as.integer)
 write_csv(weekly, "weekly_projected_deaths.csv")
 file.create("deploy.txt")
+
+x <- read_csv("country_epidemic_phase2.csv")
+x <- mutate_if(x, is.numeric, ~ round(., 2))
+write_csv(x, "country_epidemic_phase.csv")

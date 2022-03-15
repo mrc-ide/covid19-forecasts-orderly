@@ -26,7 +26,7 @@ depends:
   - produce_maps:
       id: latest(parameter:week_ending == week_ending)
       use:
-        country_epidemic_phase.csv: country_epidemic_phase.csv  
+        country_epidemic_phase2.csv: country_epidemic_phase.csv  
   - prepare_ecdc_data:
       id: latest(parameter:week_ending == week_ending)
       use:
