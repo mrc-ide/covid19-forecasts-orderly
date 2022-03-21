@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-11-29", use_si = "si_2"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"), use_draft = "newer")
 ## assign_epidemic_phase2 <- function(rt) {
 
 ##   med <- quantile(rt, prob = 0.5)
@@ -36,9 +36,9 @@ indvdl_phase <- map_dfr(
       country = country,
       model = week_ending,
       phase = c(
-        assign_epidemic_phase2(m1_rt),
-        assign_epidemic_phase2(m2_rt),
-        assign_epidemic_phase2(m3_rt)
+        assign_epidemic_phase2(m1_rt)[["phase"]],
+        assign_epidemic_phase2(m2_rt)[["phase"]],
+        assign_epidemic_phase2(m3_rt)[["phase"]]
       )
     )
   }
@@ -53,19 +53,24 @@ ensb_phase <- split(ensb_rt, ensb_rt$country) %>%
       model_name = "ensemble",
       country = x$country[1],
       model = x$model[1],
-      phase = out
+      phase = out[["phase"]],
+      rt_cv = out[["cv"]],
+      less_than_1 = out[["less_than_1"]]
     )
   })
 
-shortterm_phase <- rbind(indvdl_phase, ensb_phase)
+shortterm_phase <- ensb_phase
 
 longer_rs <- readRDS("weighted_per_country_rsaturation.rds")
 
 
 longer_phase <- map_dfr(longer_rs, function(country_rs) {
   imap_dfr(country_rs, function(day_rs, day) {
+    out <- assign_epidemic_phase2(day_rs)
     data.frame(
-      phase = assign_epidemic_phase2(day_rs),
+      phase = out[["phase"]],
+      rt_cv = out[["cv"]],
+      less_than_1 = out[["less_than_1"]],
       low = quantile(day_rs, prob = 0.025),
       med = quantile(day_rs, prob = 0.5),
       high = quantile(day_rs, prob = 0.975)

@@ -25,6 +25,60 @@ short_term <- short_term[short_term$model_name == "ensemble", ]
 short_term$model <- as.Date(short_term$model)
 short_term$phase_for_week <- phase_for_week(short_term$model - 6, short_term$model)
 
+y <- short_term[short_term$phase %in% c("likely stable", "indeterminate"), ]
+p1 <- ggplot(y, aes(rt_cv)) +
+  geom_histogram() +
+  geom_vline(xintercept = 0.5, linetype = "dashed") +
+  xlab("Width of 95% CrI") +
+  theme_bw()
+
+ggsave("cri_width_hist.pdf", p1)
+
+p2 <- ggplot(short_term, aes(less_than_1, rt_cv, col = phase)) +
+  geom_point() +
+  geom_hline(yintercept = 0.5, linetype = "dashed", size = 1.1) +
+  xlab("% samples less than 1") +
+  ylab("Width of 95% CrI") +
+  theme_bw() +
+  theme(legend.position = "top",
+        legend.title = element_blank())
+ggsave("cri_width_lessthan1.pdf", p2)
+
+deaths <- readRDS("model_input.rds")
+deaths <- deaths[deaths$dates <= as.Date("2020-12-31"), ]
+
+x <- split(short_term, short_term$country)
+iwalk(
+  x, function(df, country) {
+    df$start <- as.Date(df$model) - 6
+    df$end <- as.Date(df$model)
+    y <- deaths[, c("dates", country)]
+    y[["incid"]] <- y[[country]]
+    ymax <- max(y$incid)
+    p <- ggplot() +
+      geom_rect(
+        data = df,
+        aes(xmin = start, xmax = end,
+            ymin = 0, ymax = ymax, fill = phase),
+        alpha = 0.3
+      ) +
+      geom_point(data = y, aes(dates, incid)) +
+      scale_x_date(
+        limits = c(as.Date("2020-03-01"), as.Date("2020-12-31"))
+      ) +
+      ylab("Daily Incidence") +
+      theme_minimal() +
+      theme(legend.position = "top",
+            legend.title = element_blank(),
+            axis.title.x = element_blank())
+
+    ggsave(glue("figures/{country}.pdf"), p)
+
+
+  }
+)
+
+
 
 ## Medium-term phase is define prospectively
 medium_term <- readRDS("collated_medium_term_phase.rds")
@@ -43,17 +97,21 @@ weekly_phase <- split(
   medium_term,
   list(medium_term$country, medium_term$model,
        medium_term$week_of_forecast)
-) %>% map_dfr(function(x) {
+) %>%
+  keep(~ nrow(.) > 0) %>%
+  map_dfr(function(x) {
+
   freq <- tabyl(x$phase)
   if (nrow(freq) > 1) {
     message("More than 1 phase detected in ", x$country[1],
-            " week ", x$week_starting[1])
+            " week ", x$model[1])
   }
   most_freq <- which.max(freq$n)
   ## Return just the first row without the day, and the most
   ## frequent phase
   x$phase <- freq[[1]][most_freq]
   out <- x[1, ]
+  if (is.na(out$country)) browser()
   f <- function(y, day) {
     ## starts on a Monday
     y <- as.Date(y)
@@ -73,25 +131,30 @@ weekly_phase <- split(
 
 
 
-compare_phase <- left_join(
+compare_phase <- inner_join(
   short_term, weekly_phase, by = c("country", "phase_for_week"),
   suffix = c("_weekly", "_eff")
 )
-compare_phase <- distinct(compare_phase)
-## The only NAs should now be from the first three weeks
-## for which we did not produce medium-term forecasts.
-## x <- compare_phase[! complete.cases(compare_phase), ]
-## unique(x$forecast_date)
-## [1] "2020-03-22" "2020-03-08" "2020-03-15"]
-## Therefore we can safely omit these
-compare_phase <- na.omit(compare_phase)
-
-
+            ## > rows only in x  (  103)
+            ## > rows only in y  (1,050)
+            ## > matched rows     7,790    (includes duplicates)
+            ## >                 =======
+            ## > rows total       7,790
+check1 <- anti_join(
+  short_term, weekly_phase, by = c("country", "phase_for_week"),
+  suffix = c("_weekly", "_eff")
+)
+## Medium-term phase only starts from 30 March
+## Short-term from 23rd March. so there will be no matches where
+## phase for week is 23 March-29 March 2020.
+## The second reason for non-matching rows is that because short-term phase is
+## defined retrospecively and medium-term prospectively
+## we may not have the same countries included in the analysis.
 
 ######################################################################
 ########### Total number of country weeks for short term
 ########### That is, n_countries X n_weeks
-########### 82 * 2222 = 182204
+########### 82 * 2210 = 181220
 country_weeks <- group_by(short_term, country) %>%
   summarise(nweeks = length(unique(model))) %>%
   ungroup() %>%
@@ -111,7 +174,10 @@ country_weeks <- group_by(medium_term, country) %>%
 x <- select(
   compare_phase, day, week_of_forecast, phase_eff, phase_weekly
 )
-
+## The number of 1-, 2- , 3- and 4-week ahead forecasts is not the same
+## because (a) for a given week we will make multiple (at most 4 forecasts),
+## (b) but not exactly 4 becase the countries included in the analysis chane
+## from one week to another.
 ## Across all countries and weeks for which we
 ## produced forecasts, the phase definition using the reproduction
 ## number estimates from
