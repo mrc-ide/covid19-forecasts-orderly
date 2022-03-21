@@ -811,8 +811,18 @@ saveRDS(
 
 ## Apply thresholds
 pass <- split(raw_data, raw_data$`Countries.and.territories`) %>%
-  purrr::keep(rincewind::deaths_threshold) %>%
-  dplyr::bind_rows()
+  keep(rincewind::deaths_threshold) %>%
+  bind_rows()
+
+## Always keep "United_Kingdom" and Slovenia
+if (! "United_Kingdom" %in% unique(pass$Countries.and.territories)) {
+  x <- raw_data[raw_data$`Countries.and.territories` == "United_Kingdom", ]
+  pass <- rbind(pass, x)
+}
+if (! "Slovenia" %in% unique(pass$Countries.and.territories)) {
+  x <- raw_data[raw_data$`Countries.and.territories` == "Slovenia", ]
+  pass <- rbind(pass, x)
+}
 
 ## Still have some negative cases. Replace the negative case count
 ## with an average of previous and later 3 days.
@@ -927,14 +937,13 @@ exclude <- c(
   "Saint_Lucia",
   "Syria",
   "Sudan",
-  "Slovenia", # excluded 1st March (delay & no match)
   "Spain", # excluded 14th dec (delay and can't find matches in worldometer)
   "Sweden",
   "Switzerland", # excluded 14th dec (delay)
   "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
   "Tunisia", # excluded again 1st March (delay & no match)
   "Uganda",
-  "United_Kingdom", # excluded 8th March (no Sunday data from most recent week)
+  "Portugal",
   "Vietnam",
   "Yemen",
   "Zimbabwe",
