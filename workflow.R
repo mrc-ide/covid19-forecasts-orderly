@@ -103,7 +103,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   # orderly run produce_retrospective_vis week_ending=2021-12-05 (NB: put latest date here)
 
   orderly_run(
-  ##orderly_pull_archive(
+  # orderly_pull_archive(
     "produce_retrospective_vis",
     parameter = list(week_ending = week), use_draft = use_draft
   )
@@ -119,7 +119,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "produce_full_report", use_draft = use_draft,
-    parameter = list(week_ending = week, week_in_words = "14^th^ March 2022")
+    parameter = list(week_ending = week, week_in_words = "21^st^ March 2022")
   )
 
   if (commit) orderly_commit(a)
@@ -187,7 +187,7 @@ library(glue)
 library(orderly)
 source("orderly-helper-scripts/dependencies_weighted_performance.R")
 source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
-week <- "2022-03-13"
+week <- "2022-03-20"
 use_draft <- "newer"
 ## This is the sunday before the Monday for which we are producing
 ## the report.

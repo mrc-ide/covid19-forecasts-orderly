@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2022-02-27"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2022-03-20"), use_draft = "newer")
 
 deaths <- readRDS("latest_deaths.rds")
 cases <- readRDS("latest_cases.rds")
@@ -42,16 +42,20 @@ write_csv(deaths_per_1e6, "deaths_per_1e6.csv")
 
 
 ## outputs
+exclude <- readRDS("exclude.rds")
 model_outputs <- readRDS("ensemble_model_predictions.rds")
 model_outputs <- mutate_if(model_outputs, is.numeric, as.integer)
+model_outputs <- model_outputs[!model_outputs$country %in% exclude, ]
 write_csv(model_outputs, "latest_model_outputs.csv")
 
 ## weekly
 weekly <- readRDS("ensemble_weekly_qntls.rds")
 weekly <- mutate_if(weekly, is.numeric, as.integer)
+weekly <- weekly[!weekly$country %in% exclude, ]
 write_csv(weekly, "weekly_projected_deaths.csv")
 file.create("deploy.txt")
 
 x <- read_csv("country_epidemic_phase2.csv")
 x <- mutate_if(x, is.numeric, ~ round(., 2))
+x <- x[!x$country %in% exclude, ]
 write_csv(x, "country_epidemic_phase.csv")
