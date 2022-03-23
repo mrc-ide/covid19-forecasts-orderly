@@ -32,7 +32,7 @@ country_groups <- readRDS("country_groups.rds")
 ######################################################################
 
 unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
-  dplyr::filter(si == use_si, model_name == "ensemble")
+  filter(si == use_si, model_name == "ensemble")
 
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
 ##unwtd_pred_error$strategy <- "Unweighted"
@@ -201,7 +201,7 @@ x50_all$pred_category[x50_all$median_pred >= 5100] <- "[5100, Inf)"
 categories <- glue::glue("[{bin_start}, {bin_end})")
 categories <- c(categories, "[5100, Inf)")
 
-##y <- dplyr::count(x50_all, pred_category, obs_category)
+##y <- count(x50_all, pred_category, obs_category)
 x50_all$forecast_month <- lubridate::month(
   x50_all$forecast_date, label = TRUE, abbr = FALSE
 )
