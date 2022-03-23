@@ -20,17 +20,19 @@ packages:
 - dplyr
 - readr
 - purrr
+- tidyr
 
 depends:
   - produce_maps:
       id: latest(parameter:week_ending == week_ending)
       use:
-        country_epidemic_phase.csv: country_epidemic_phase.csv  
+        country_epidemic_phase2.csv: country_epidemic_phase.csv  
   - prepare_ecdc_data:
       id: latest(parameter:week_ending == week_ending)
       use:
          latest_deaths.rds: latest_deaths_wide_no_filter.rds
-         latest_cases.rds: latest_cases_wide_no_filter.rds         
+         latest_cases.rds: latest_cases_wide_no_filter.rds
+         exclude.rds: exclude.rds
   - produce_ensemble_outputs:
       id: latest(parameter:week_ending == week_ending)
       use:
