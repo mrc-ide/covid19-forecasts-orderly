@@ -26,7 +26,7 @@ prop_in_cri_heatmap <- function(df, weeks, CrI = "50%") {
     theme_minimal() +
     theme(
       text = element_text(family = "CMU Sans Serif"),
-      axis.text.x = element_text(angle = 90, hjust = 0.5, size = 14),
+      axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 1, size = 14),
       axis.text.y = element_text(size = 10.5),
       axis.title = element_blank(),
       legend.position = "top",
@@ -143,7 +143,7 @@ relative_error_heatmap <- function(df, x_labels, y_labels) {
     ## files saved from R and rendered through Tikz
     ## have same fonts
     text = element_text(family = "CMU Sans Serif"),
-    axis.text.x = element_text(angle = 90, hjust = 0.5, size = fontsize),
+    axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 1, size = fontsize),
     axis.text.y = element_text(size = fontsize),
     axis.title = element_blank(),
     legend.position = "top",

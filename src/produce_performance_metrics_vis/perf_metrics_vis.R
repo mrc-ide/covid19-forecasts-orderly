@@ -110,7 +110,7 @@ prow <- plot_grid(
 p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 
 outfile <- "figures/p50/proportion_in_50_CrI_si"
-rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
+save_multiple(plot = p50, filename = outfile, two_col = TRUE)
 
 
 ######################################################################
@@ -145,7 +145,7 @@ prow <- plot_grid(
 
 p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 outfile <- glue("figures/p95/proportion_in_95_CrI_si")
-rincewind::save_multiple(plot = p95, filename = outfile)
+save_multiple(plot = p95, filename = outfile)
 
 
 
@@ -179,7 +179,7 @@ x50_all$obs_category <- apply(
       bin_start, bin_end, function(x, y) between(row[["obs"]], x, y)
     )
     idx <- Position(isTRUE, idx)
-    glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
+    glue("[{bin_start[idx]}, {bin_end[idx]})")
   }
 )
 
@@ -192,7 +192,7 @@ x50_all$pred_category <- apply(
       bin_start, bin_end, function(x, y) between(row[["median_pred"]], x, y)
     )
     idx <- Position(isTRUE, idx)
-    glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
+    glue("[{bin_start[idx]}, {bin_end[idx]})")
   }
 )
 
