@@ -3,6 +3,10 @@
 ## whereas our values are already in (0, 100). We just want anice
 ## % sign
 mypercent <- function(vec) scales::percent(vec/100, accuracy = 0.01)
+date2words <- function(x) format(x, "%d %B")
+phase_for_week <- function(start, end) {
+  glue("{date2words(start)}-{date2words(end)} 2020")
+}
 ##mypercent <- function(vec) glue("{round(vec, 2)}\\%")
 
 dir.create("figures")
@@ -15,35 +19,142 @@ dir.create("figures")
 ## rather than the other way around
 short_term <- readRDS("collated_short_term_phase.rds")
 short_term <- short_term[short_term$model_name == "ensemble", ]
+## model denotes the Sunday on which models were run
+## the phase therefore is retrospectively applied to the week ending on this
+## Sunday
+short_term$model <- as.Date(short_term$model)
+short_term$phase_for_week <- phase_for_week(short_term$model - 6, short_term$model)
+
+y <- short_term[short_term$phase %in% c("likely stable", "indeterminate"), ]
+p1 <- ggplot(y, aes(rt_cv)) +
+  geom_histogram() +
+  geom_vline(xintercept = 0.5, linetype = "dashed") +
+  xlab("Width of 95% CrI") +
+  theme_bw()
+
+ggsave("cri_width_hist.pdf", p1)
+
+p2 <- ggplot(short_term, aes(less_than_1, rt_cv, col = phase)) +
+  geom_point() +
+  geom_hline(yintercept = 0.5, linetype = "dashed", size = 1.1) +
+  xlab("% samples less than 1") +
+  ylab("Width of 95% CrI") +
+  theme_bw() +
+  theme(legend.position = "top",
+        legend.title = element_blank())
+ggsave("cri_width_lessthan1.pdf", p2)
+
+deaths <- readRDS("model_input.rds")
+deaths <- deaths[deaths$dates <= as.Date("2020-12-31"), ]
+
+x <- split(short_term, short_term$country)
+iwalk(
+  x, function(df, country) {
+    df$start <- as.Date(df$model) - 6
+    df$end <- as.Date(df$model)
+    y <- deaths[, c("dates", country)]
+    y[["incid"]] <- y[[country]]
+    ymax <- max(y$incid)
+    p <- ggplot() +
+      geom_rect(
+        data = df,
+        aes(xmin = start, xmax = end,
+            ymin = 0, ymax = ymax, fill = phase),
+        alpha = 0.3
+      ) +
+      geom_point(data = y, aes(dates, incid)) +
+      scale_x_date(
+        limits = c(as.Date("2020-03-01"), as.Date("2020-12-31"))
+      ) +
+      ylab("Daily Incidence") +
+      theme_minimal() +
+      theme(legend.position = "top",
+            legend.title = element_blank(),
+            axis.title.x = element_blank())
+
+    ggsave(glue("figures/{country}.pdf"), p)
+
+
+  }
+)
+
+
+
+## Medium-term phase is define prospectively
 medium_term <- readRDS("collated_medium_term_phase.rds")
 medium_term$day <- as.integer(medium_term$day)
 medium_term <- medium_term[medium_term$day <= 28, ]
-compare_phase <- left_join(
-  short_term, medium_term, by = c("country", "model"),
+medium_term$week_of_forecast <- case_when(
+  medium_term$day <= 7 ~ "1-week ahead",
+  7 < medium_term$day & medium_term$day <= 14 ~ "2-weeks ahead",
+  14 < medium_term$day & medium_term$day <= 21 ~ "3-weeks ahead",
+  21 < medium_term$day & medium_term$day <= 28  ~ "4-weeks ahead"
+)
+
+### Assign phase to week rather than day, rule - the phase assigned
+### to majority of days in the week is the weekly phase.
+weekly_phase <- split(
+  medium_term,
+  list(medium_term$country, medium_term$model,
+       medium_term$week_of_forecast)
+) %>%
+  keep(~ nrow(.) > 0) %>%
+  map_dfr(function(x) {
+
+  freq <- tabyl(x$phase)
+  if (nrow(freq) > 1) {
+    message("More than 1 phase detected in ", x$country[1],
+            " week ", x$model[1])
+  }
+  most_freq <- which.max(freq$n)
+  ## Return just the first row without the day, and the most
+  ## frequent phase
+  x$phase <- freq[[1]][most_freq]
+  out <- x[1, ]
+  if (is.na(out$country)) browser()
+  f <- function(y, day) {
+    ## starts on a Monday
+    y <- as.Date(y)
+    start <- y + (day - 1) * 7 + 1
+    end <- start + 6
+    phase_for_week(start, end)
+  }
+  out$phase_for_week <- case_when(
+    out$week_of_forecast == "1-week ahead" ~ f(out$model, 1),
+    out$week_of_forecast == "2-weeks ahead" ~ f(out$model, 2),
+    out$week_of_forecast == "3-weeks ahead" ~ f(out$model, 3),
+    out$week_of_forecast == "4-weeks ahead" ~ f(out$model, 4)
+  )
+  out
+})
+
+
+
+
+compare_phase <- inner_join(
+  short_term, weekly_phase, by = c("country", "phase_for_week"),
   suffix = c("_weekly", "_eff")
 )
-compare_phase <- distinct(compare_phase)
-## The only NAs should now be from the first three weeks
-## for which we did not produce medium-term forecasts.
-## x <- compare_phase[! complete.cases(compare_phase), ]
-## unique(x$forecast_date)
-## [1] "2020-03-22" "2020-03-08" "2020-03-15"]
-## Therefore we can safely omit these
-compare_phase <- na.omit(compare_phase)
-
-
-compare_phase$week_of_forecast <- case_when(
-  compare_phase$day <= 7 ~ "1-week ahead",
-  7 < compare_phase$day & compare_phase$day <= 14 ~ "2-weeks ahead",
-  14 < compare_phase$day & compare_phase$day <= 21 ~ "3-weeks ahead",
-  21 < compare_phase$day & compare_phase$day <= 28  ~ "4-weeks ahead",
-  28 < compare_phase$day & compare_phase$day <= 35  ~ "5-weeks ahead",
-  35 < compare_phase$day & compare_phase$day <= 42  ~ "6-weeks ahead"
+            ## > rows only in x  (  103)
+            ## > rows only in y  (1,050)
+            ## > matched rows     7,790    (includes duplicates)
+            ## >                 =======
+            ## > rows total       7,790
+check1 <- anti_join(
+  short_term, weekly_phase, by = c("country", "phase_for_week"),
+  suffix = c("_weekly", "_eff")
 )
+## Medium-term phase only starts from 30 March
+## Short-term from 23rd March. so there will be no matches where
+## phase for week is 23 March-29 March 2020.
+## The second reason for non-matching rows is that because short-term phase is
+## defined retrospecively and medium-term prospectively
+## we may not have the same countries included in the analysis.
+
 ######################################################################
 ########### Total number of country weeks for short term
 ########### That is, n_countries X n_weeks
-########### 82 * 2222 = 182204
+########### 82 * 2210 = 181220
 country_weeks <- group_by(short_term, country) %>%
   summarise(nweeks = length(unique(model))) %>%
   ungroup() %>%
@@ -63,7 +174,10 @@ country_weeks <- group_by(medium_term, country) %>%
 x <- select(
   compare_phase, day, week_of_forecast, phase_eff, phase_weekly
 )
-
+## The number of 1-, 2- , 3- and 4-week ahead forecasts is not the same
+## because (a) for a given week we will make multiple (at most 4 forecasts),
+## (b) but not exactly 4 becase the countries included in the analysis chane
+## from one week to another.
 ## Across all countries and weeks for which we
 ## produced forecasts, the phase definition using the reproduction
 ## number estimates from
@@ -143,7 +257,7 @@ out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
 
 saveRDS(out, 'phase_eff_weekly_week_of_forecast.rds')
 out <- select(out, -Total)
-out <- gather(out, phase_eff, label, `definitely decreasing`:`likely growing`)
+out <- gather(out, phase_eff, label, `definitely decreasing`:`likely stable`)
 out <- tidyr::separate(out, label, into = c("label", "total"), sep = "%")
 out$val <- readr::parse_number(out$label)
 out <- filter(out, phase_weekly != 'Total', phase_eff != 'Total')
@@ -152,6 +266,7 @@ out$phase_weekly <- factor(
   out$phase_weekly,
   levels = c("definitely growing",  "likely growing",
              "definitely decreasing", "likely decreasing",
+             "likely stable",
              "indeterminate"),
   ordered = TRUE
 )
@@ -160,6 +275,7 @@ out$phase_eff <- factor(
   out$phase_eff,
   levels = c("definitely growing",  "likely growing",
              "definitely decreasing", "likely decreasing",
+             "likely stable",
              "indeterminate"),
   ordered = TRUE
 )
@@ -171,7 +287,7 @@ p <- ggplot(
 ) +
   geom_tile(width = 0.9, height = 0.9) +
   geom_text(
-    aes(phase_weekly, phase_eff, label = perc_label),
+    aes(phase_weekly, phase_eff, label = label),
     size = 8 /.pt
   ) +
   facet_wrap(~ `Week of forecast`, nrow = 2) +
@@ -186,6 +302,7 @@ p <- ggplot(
   scale_x_discrete(
     breaks = c("definitely growing",  "likely growing",
                "definitely decreasing", "likely decreasing",
+               "likely stable",
                "indeterminate"),
     labels = function(x) nice_country_name(x),
     drop = FALSE
@@ -193,6 +310,7 @@ p <- ggplot(
   scale_y_discrete(
     breaks = c("definitely growing",  "likely growing",
                "definitely decreasing", "likely decreasing",
+               "likely stable",
                "indeterminate"),
     labels = function(x) nice_country_name(x),
     drop = FALSE

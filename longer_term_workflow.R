@@ -54,6 +54,18 @@ for (week in weeks) {
   )
 }
 
+
+for (week in weeks) {
+  message("################ ", week, "#############################")
+  week_ending <- as.Date(week)
+  parameter <- list(week_ending = week, use_si = use_si)
+  m2 <- orderly_run(
+    "produce_longer_forecasts_no_ps", parameters = parameter,
+    use_draft = use_draft
+  )
+}
+
+
 for (week in weeks) {
   message("################ ", week, "#############################")
   week_ending <- as.Date(week)
@@ -62,6 +74,19 @@ for (week in weeks) {
     "produce_longer_forecasts_metrics", parameters = parameter, use_draft = use_draft
   )
 }
+
+
+for (week in weeks) {
+  message("################ ", week, "#############################")
+  parameter <- list(week_ending = week, use_si = use_si)
+  a <-  orderly_run(
+    "assign_epidemic_phase", parameters = parameter, use_draft = use_draft
+  )
+  ##orderly::orderly_commit(a)
+}
+
+orderly_run("collate_epidemic_phase", use_draft = use_draft)
+
 
 ## Collation
 week_starting <- as.Date(head(weeks, 1)[[1]])
@@ -74,7 +99,7 @@ orderly::orderly_run("collate_combined_rt", use_draft = "newer")
 source(
   "orderly-helper-scripts/dependencies_collate_longer_forecasts.R"
 )
-orderly::orderly_run("src/collate_longer_forecasts/", use_draft = "newer")
+orderly::orderly_run("collate_longer_forecasts", use_draft = "newer")
 
 orderly::orderly_run(
   "produce_longer_forecasts_viz", use_draft = "newer"

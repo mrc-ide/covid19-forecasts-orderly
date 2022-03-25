@@ -1,6 +1,7 @@
 ## orderly::orderly_develop_start(
 ## use_draft = "newer", parameters = list(use_si = "si_2"))
 ######### Performance metrics
+source("R/weekly_error_summary.R")
 dir.create("figures")
 dir.create("figures/p50")
 dir.create("figures/p95")
@@ -31,7 +32,7 @@ country_groups <- readRDS("country_groups.rds")
 ######################################################################
 
 unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
-  dplyr::filter(si == use_si, model_name == "ensemble")
+  filter(si == use_si, model_name == "ensemble")
 
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
 ##unwtd_pred_error$strategy <- "Unweighted"
@@ -43,41 +44,6 @@ n_forecast <- group_by(unwtd_pred_error, country) %>%
   summarise(n = length(unique(forecast_date))) %>%
   ungroup()
 
-weekly_summary <- function(df) {
-######################################################################
-################## Weekly Summary for each country ###################
-######################################################################
-  weekly <- group_by(df, forecast_date, country) %>%
-    summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
-    ungroup()
-
-######################################################################
-################## Summary for each country ##########################
-######################################################################
-  by_country <- group_by(df, country) %>%
-    summarise_if(is.numeric, list(c_mu = mean, c_sd = sd)) %>%
-    ungroup()
-
-######################################################################
-################## Summary for each week ##########################
-######################################################################
-  by_week <- group_by(df, forecast_date) %>%
-    summarise_if(is.numeric, list(d_mu = mean, d_sd = sd)) %>%
-    ungroup()
-
-  n_forecast <- count(weekly, country)
-
-  weekly <- left_join(weekly, n_forecast)
-  weekly <- left_join(weekly, by_country)
-  weekly <- left_join(weekly, by_week)
-
-  ## weekly$country <- factor(
-  ##   weekly$country, ordered = TRUE
-  ##   ##levels = better_than_null$country,
-  ## )
-  ## weekly$country <- droplevels(weekly$country)
-  weekly
-}
 
 weekly_summaries <- map(
   country_groups,
@@ -144,7 +110,7 @@ prow <- plot_grid(
 p50 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 
 outfile <- "figures/p50/proportion_in_50_CrI_si"
-rincewind::save_multiple(plot = p50, filename = outfile, two_col = TRUE)
+save_multiple(plot = p50, filename = outfile, two_col = TRUE)
 
 
 ######################################################################
@@ -179,7 +145,7 @@ prow <- plot_grid(
 
 p95 <- plot_grid(legend, prow, ncol = 1, rel_heights = c(0.1, 1))
 outfile <- glue("figures/p95/proportion_in_95_CrI_si")
-rincewind::save_multiple(plot = p95, filename = outfile)
+save_multiple(plot = p95, filename = outfile)
 
 
 
@@ -213,7 +179,7 @@ x50_all$obs_category <- apply(
       bin_start, bin_end, function(x, y) between(row[["obs"]], x, y)
     )
     idx <- Position(isTRUE, idx)
-    glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
+    glue("[{bin_start[idx]}, {bin_end[idx]})")
   }
 )
 
@@ -226,7 +192,7 @@ x50_all$pred_category <- apply(
       bin_start, bin_end, function(x, y) between(row[["median_pred"]], x, y)
     )
     idx <- Position(isTRUE, idx)
-    glue::glue("[{bin_start[idx]}, {bin_end[idx]})")
+    glue("[{bin_start[idx]}, {bin_end[idx]})")
   }
 )
 
@@ -235,7 +201,7 @@ x50_all$pred_category[x50_all$median_pred >= 5100] <- "[5100, Inf)"
 categories <- glue::glue("[{bin_start}, {bin_end})")
 categories <- c(categories, "[5100, Inf)")
 
-##y <- dplyr::count(x50_all, pred_category, obs_category)
+##y <- count(x50_all, pred_category, obs_category)
 x50_all$forecast_month <- lubridate::month(
   x50_all$forecast_date, label = TRUE, abbr = FALSE
 )

@@ -1,0 +1,24 @@
+script: compare.R
+
+packages:
+- dplyr
+- ggplot2
+- glue
+- purrr
+
+artefacts:
+  staticgraph:
+    description: Compare forecasts with and without ps
+    filenames:
+      - Mexico.pdf
+
+depends:
+  prepare_ecdc_data:
+    id: "latest"
+    use:
+      latest_deaths_wide_no_filter.rds: latest_deaths_wide_no_filter.rds
+  collate_longer_forecasts:
+    id: "latest"
+    use:
+      longer_projections_qntls.rds: wtd_per_country_projections_qntls.rds
+      no_ps_projections_qntls.rds: no_ps_projections_qntls.rds

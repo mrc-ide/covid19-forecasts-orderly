@@ -1,4 +1,24 @@
 ## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-29", use_si = "si_2"), use_draft = "newer")
+## assign_epidemic_phase2 <- function(rt) {
+
+##   med <- quantile(rt, prob = 0.5)
+##   iqr <- quantile(rt, prob = 0.975) - quantile(rt, prob = 0.025)
+##   ratio <- iqr / med
+##   if (med > 1) {
+##     ## could be growing, but need to take into account the width of the
+##     ## distribution
+##     if (ratio < med/3) phase <- "growing"
+##     else if (med/3 <= ratio & ratio < 2 * med/3) phase <- "likely growing"
+##     else if (2 * med/3 <= ratio & ratio < med)  phase <- "likely stable"
+##     else phase <- "indeterminate"
+##   } else {
+##     if (ratio < med/3) phase <- "definitely declining"
+##     else if (med/3 <= ratio & ratio < 2 * med/3) phase <- "likely declining"
+##     else if (2 * med/3 <= ratio & ratio < med)  phase <- "likely stable"
+##     else phase <- "indeterminate"
+##   }
+##   phase
+## }
 
 rti0 <- readRDS("rti0.rds")
 apeestim <- readRDS("apeestim.rds")
@@ -16,9 +36,9 @@ indvdl_phase <- map_dfr(
       country = country,
       model = week_ending,
       phase = c(
-        assign_epidemic_phase2(m1_rt),
-        assign_epidemic_phase2(m2_rt),
-        assign_epidemic_phase2(m3_rt)
+        assign_epidemic_phase2(m1_rt)[["phase"]],
+        assign_epidemic_phase2(m2_rt)[["phase"]],
+        assign_epidemic_phase2(m3_rt)[["phase"]]
       )
     )
   }
@@ -33,23 +53,33 @@ ensb_phase <- split(ensb_rt, ensb_rt$country) %>%
       model_name = "ensemble",
       country = x$country[1],
       model = x$model[1],
-      phase = out
+      phase = out[["phase"]],
+      rt_cv = out[["cv"]],
+      less_than_1 = out[["less_than_1"]]
     )
   })
 
-shortterm_phase <- rbind(indvdl_phase, ensb_phase)
+shortterm_phase <- ensb_phase
 
-## longer_rs <- readRDS("weighted_per_country_rsaturation.rds")
-## longer_phase <- map_dfr(longer_rs, function(country_rs) {
-##   imap_dfr(country_rs, function(day_rs, day) {
-##     data.frame(
-##       phase = assign_epidemic_phase2(day_rs)
-##     )
-##   }, .id = "day")
-## }, .id = "country")
+longer_rs <- readRDS("weighted_per_country_rsaturation.rds")
 
-## longer_phase$model <- week_ending
+
+longer_phase <- map_dfr(longer_rs, function(country_rs) {
+  imap_dfr(country_rs, function(day_rs, day) {
+    out <- assign_epidemic_phase2(day_rs)
+    data.frame(
+      phase = out[["phase"]],
+      rt_cv = out[["cv"]],
+      less_than_1 = out[["less_than_1"]],
+      low = quantile(day_rs, prob = 0.025),
+      med = quantile(day_rs, prob = 0.5),
+      high = quantile(day_rs, prob = 0.975)
+    )
+  }, .id = "day")
+}, .id = "country")
+
+longer_phase$model <- week_ending
 
 
 saveRDS(shortterm_phase, "short_term_phase.rds")
-##saveRDS(longer_phase, "medium_term_phase.rds")
+saveRDS(longer_phase, "medium_term_phase.rds")

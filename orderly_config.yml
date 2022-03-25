@@ -18,3 +18,4 @@ fields:
     required: false
 
 minimum_orderly_version: 1.2.36
+global_resources: helper-scripts

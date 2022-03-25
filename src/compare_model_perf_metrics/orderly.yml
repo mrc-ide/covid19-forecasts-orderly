@@ -1,0 +1,31 @@
+script: script.R
+
+packages:
+- dplyr
+- ggplot2
+- purrr
+- readr
+
+parameters:
+  - use_si
+
+global_resources:
+  R/weekly_error_summary.R: weekly_error_summary.R
+
+
+depends:
+  - compare_with_null_model:
+      id: latest
+      use:
+        better_than_null.rds: better_than_null.rds
+        country_groups.rds: country_groups.rds
+  - produce_baseline_error:
+      id: 20210608-160701-244f6b41
+      use:
+        null_model_error.rds: null_model_error.rds
+        weekly_incidence.rds: weekly_incidence.rds
+        exclude.rds: exclude.rds
+  - collate_weighted_performance_metrics:
+      id: latest
+      use:
+        unwtd_pred_error.csv: unwtd_pred_error.csv

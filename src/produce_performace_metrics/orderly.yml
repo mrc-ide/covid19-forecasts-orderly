@@ -28,6 +28,6 @@ depends:
     use:
       DeCa_latest_output.rds: DeCa_latest.rds
 - prepare_ecdc_data:
-    id: []
+    id: latest
     use:
       model_input.rds: latest_deaths_wide_no_filter.rds

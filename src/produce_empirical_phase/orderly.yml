@@ -1,0 +1,27 @@
+script: script.R
+
+packages:
+- dplyr
+- ggplot2
+- purrr
+
+## The last week for which we want
+## the phase. 
+parameters:
+  - week_starting
+  - latest_week
+
+artefacts:
+  data:
+    description: Empirical epidemic phase
+    filenames:
+      - empirical_epidemic_phase.rds
+      
+depends:
+  - produce_weekly_incid:
+      id: latest(parameter:latest_week == latest_week && parameter:week_starting == week_starting)
+      use:
+        weekly_incidence.rds: weekly_incidence.rds
+        countries_included.rds: countries_included.rds
+        weeks_included.rds: weeks_included.rds
+         

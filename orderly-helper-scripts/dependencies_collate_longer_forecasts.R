@@ -12,7 +12,8 @@ x <- list(
       "unwtd_reff_qntls.rds",
       "wtd_per_country_reff_qntls.rds",
       "unwtd_reff_qntls_with_underreporting.rds",
-      "wtd_per_country_reff_qntls_with_underreporting.rds"
+      "wtd_per_country_reff_qntls_with_underreporting.rds",
+      "no_ps_projections_qntls.rds"
     )
   )
  ),
@@ -55,6 +56,26 @@ dependancies <- purrr::map(
  }
 )
 
+
+
+dependancies2 <- purrr::map(
+  weeks,
+  function(week) {
+    query <- glue::glue(
+      "latest(parameter:week_ending == \"{week}\" ",
+       " && parameter:use_si == \"{use_si}\")"
+    )
+    y <- list(
+      produce_longer_forecasts_no_ps = list(
+        id = query,
+        use =  list("weighted_per_country_pred_qntls.rds")
+      )
+    )
+    names(y$produce_longer_forecasts_no_ps$use) <- glue::glue("no_ps_{week}.rds")
+  y
+ }
+)
+
 dependancies5 <- list(
   list(
     prepare_ecdc_data = list(
@@ -66,7 +87,7 @@ dependancies5 <- list(
   )
 )
 
-x$depends <- c(dependancies, dependancies5)
+x$depends <- c(dependancies, dependancies2, dependancies5)
 
 
 con <- file(

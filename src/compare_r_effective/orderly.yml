@@ -22,6 +22,10 @@ packages:
 - tidyr
 
 depends:
+- prepare_ecdc_data:
+    id: latest
+    use:
+      model_input.rds: latest_deaths_wide_no_filter.rds
 - collate_epidemic_phase:
     id: latest
     use:
