@@ -955,7 +955,9 @@ exclude <- c(
   "Zimbabwe",
   "United_Republic_of_Tanzania",
   "Ukraine",
-  "United_Kingdom" # data missing over weekend and reporting delays
+  "United_Kingdom", # data missing over weekend and reporting delays
+  
+  "India", "Chile" # JW cleaned case data rather than deaths so need to exclude this week
   ##" United_States_of_America", ## Missing data
   ## Discuss list later
 )
