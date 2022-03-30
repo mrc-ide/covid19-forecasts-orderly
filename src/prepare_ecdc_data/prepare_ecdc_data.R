@@ -781,13 +781,13 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$Dat
 raw_data$Cases[raw_data$`Countries.and.territories` == "United_Kingdom" & raw_data$DateRep == "2022-02-27"] <- 45
 
 ## 7 March 2022 corrections
-raw_data$Cases[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-02-28"] <- 176
-raw_data$Cases[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-03-01"] <- 187
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-02-28"] <- 176
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-03-01"] <- 187
 
 ## 29 March 2022 corrections
-raw_data$Cases[raw_data$`Countries.and.territories` == "Chile" & raw_data$DateRep == "2022-03-22"] <- 0
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Chile" & raw_data$DateRep == "2022-03-22"] <- 0
 
-raw_data$Cases[raw_data$`Countries.and.territories` == "India" & raw_data$DateRep == "2022-03-26"] <- 95
+raw_data$Deaths[raw_data$`Countries.and.territories` == "India" & raw_data$DateRep == "2022-03-26"] <- 95
 
 
 

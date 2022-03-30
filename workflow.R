@@ -119,7 +119,7 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
 
   a <- orderly_run(
     "produce_full_report", use_draft = use_draft,
-    parameter = list(week_ending = week, week_in_words = "21^st^ March 2022")
+    parameter = list(week_ending = week, week_in_words = "28^th^ March 2022")
   )
 
   if (commit) orderly_commit(a)
