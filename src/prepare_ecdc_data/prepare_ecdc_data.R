@@ -781,8 +781,14 @@ raw_data$Cases[raw_data$`Countries.and.territories` == "Portugal" & raw_data$Dat
 raw_data$Cases[raw_data$`Countries.and.territories` == "United_Kingdom" & raw_data$DateRep == "2022-02-27"] <- 45
 
 ## 7 March 2022 corrections
-raw_data$Cases[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-02-28"] <- 176
-raw_data$Cases[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-03-01"] <- 187
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-02-28"] <- 176
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-03-01"] <- 187
+
+## 29 March 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Chile" & raw_data$DateRep == "2022-03-22"] <- 0
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "India" & raw_data$DateRep == "2022-03-26"] <- 95
+
 
 
 by_country_deaths_all <- dplyr::select(
@@ -897,17 +903,17 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
-  ##"Argentina",
+  "Argentina", # excluded 29/03/22 - all historic data for past few months seems off
   ##"Armenia",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
   "Bosnia_and_Herzegovina",
   "Botswana",
-  "Brazil", # excluded 1st March (delay and no worldometer match)
+  # "Brazil", # excluded 1st March (delay and no worldometer match)
   "Burkina_Faso",
   "Canada", # excluded 1st March (erratic reporting over last week & no worldometer match)
   "Cameroon", # excluded 14th dec (erratic)
   "Cape_Verde",
-  ## "Colombia",
+  "Costa_Rica",
   "Cuba",
   "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
@@ -939,7 +945,7 @@ exclude <- c(
   "Sudan",
   "Spain", # excluded 14th dec (delay and can't find matches in worldometer)
   "Sweden",
-  "Switzerland", # excluded 14th dec (delay)
+  # "Switzerland", # excluded 14th dec (delay)
   "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
   "Tunisia", # excluded again 1st March (delay & no match)
   "Uganda",
@@ -949,7 +955,9 @@ exclude <- c(
   "Zimbabwe",
   "United_Republic_of_Tanzania",
   "Ukraine",
-  "United_Kingdom" # data missing over weekend and reporting delays
+  "United_Kingdom", # data missing over weekend and reporting delays
+  
+  "India", "Chile" # JW cleaned case data rather than deaths so need to exclude this week
   ##" United_States_of_America", ## Missing data
   ## Discuss list later
 )
