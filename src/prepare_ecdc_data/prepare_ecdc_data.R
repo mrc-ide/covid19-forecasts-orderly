@@ -966,8 +966,8 @@ exclude <- c(
   "Yemen",
   "Zimbabwe",
   "United_Republic_of_Tanzania",
-  "Ukraine"
-  #"United_Kingdom", # data missing over weekend and reporting delays
+  "Ukraine",
+  "United_Kingdom" # data missing over weekend and reporting delays
   
   ##" United_States_of_America", ## Missing data
   ## Discuss list later
