@@ -926,6 +926,7 @@ exclude <- c(
   "Cape_Verde",
   # "Costa_Rica",
   "Cuba",
+  "Cyprus",
   "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
   "Egypt", # weekly reporting
@@ -941,6 +942,7 @@ exclude <- c(
   "Kazakhstan",
   "Kosovo",
   "Kyrgyzstan",
+  "Laos",
   "Lesotho",
   "Libya",
   "Madagascar", # excluded 10th Jan (weekly reporting)
