@@ -795,7 +795,9 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateR
 
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$DateRep == "2022-04-03"] <- 13
 
-
+## 11 April 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-04-01"] <- 6
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-04-02"] <- 4
 
 
 
@@ -911,7 +913,7 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
-  "Australia", # excluded 04/04/22 - huge outlier in deaths, no worldometer match
+  # "Australia", # excluded 04/04/22 - huge outlier in deaths, no worldometer match
   "Argentina", # excluded 29/03/22 - all historic data for past few months seems off
   ##"Armenia",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
@@ -922,7 +924,7 @@ exclude <- c(
   #"Canada", # excluded 1st March (erratic reporting over last week & no worldometer match)
   "Cameroon", # excluded 14th dec (erratic)
   "Cape_Verde",
-  "Costa_Rica",
+  # "Costa_Rica",
   "Cuba",
   "Democratic_Republic_of_the_Congo",
   "Ecuador", ## Massive backlog reported & some negative deaths,
@@ -940,7 +942,9 @@ exclude <- c(
   "Kosovo",
   "Kyrgyzstan",
   "Lesotho",
+  "Libya",
   "Madagascar", # excluded 10th Jan (weekly reporting)
+  "Malta",
   "Mauritius",
   "Mauritania",
   "Mexico",
@@ -949,19 +953,18 @@ exclude <- c(
   "Norway", # weekly reporting
   "Oman",
   "Paraguay", 
-  "Portugal", # delay and can't find matches in worldometer
+  # "Portugal", # delay and can't find matches in worldometer
   "Philippines", ## Erratic data
   "Rwanda",
   "Saint_Lucia",
   "Syria",
   "Sudan",
-  "Spain", # delay and can't find matches in worldometer
+  # "Spain", # delay and can't find matches in worldometer
   "Sweden",
   "Switzerland", # delay and can't find matches in worldometer
   "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
   "Tunisia", # excluded again 1st March (delay & no match)
   "Uganda",
-  "Portugal",
   "Vietnam",
   "Yemen",
   "Zimbabwe",
