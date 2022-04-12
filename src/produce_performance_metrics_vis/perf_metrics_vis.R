@@ -31,7 +31,7 @@ country_groups <- readRDS("country_groups.rds")
 ######################################################################
 ######################################################################
 
-unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
+unwtd_pred_error <- read_csv("unwtd_pred_error.csv") %>%
   filter(si == use_si, model_name == "ensemble")
 
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
@@ -56,21 +56,32 @@ weekly_summaries <- map(
 )
 
 overall <- weekly_summary(unwtd_pred_error)
-readr::write_csv(overall, "unwtd_pred_weekly_summary.csv")
+write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Summary by phase######## ##########################
 ######################################################################
+date2words <- function(x) format(x, "%d %B")
+phase_for_week <- function(start, end) {
+  glue("{date2words(start)}-{date2words(end)} 2020")
+}
 phase <- readRDS("short_term_phase.rds")
 phase <- filter(phase, model_name == 'ensemble')
 phase <- rename(phase, c('forecast_date' = 'model'))
 phase$forecast_date <- as.Date(phase$forecast_date)
+## Projections span Monday to Sunday of the week starting after the
+## forecast date. Error is therefore also for this period.
+unwtd_pred_error$err_for_week <- phase_for_week(
+  unwtd_pred_error$forecast_date + 1,
+  unwtd_pred_error$forecast_date + 7
+)
+phase$phase_for_week <- phase_for_week(phase$forecast_date - 6, phase$forecast_date)
 
-by_phase <- left_join(unwtd_pred_error, phase) %>%
+by_phase <- left_join(unwtd_pred_error, phase, by = c("country", "err_for_week" = "phase_for_week")) %>%
   group_by(phase) %>%
     summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
     ungroup()
 
-readr::write_csv(by_phase, "unwtd_pred_summary_by_phase.csv")
+write_csv(by_phase, "unwtd_pred_summary_by_phase.csv")
 
 ######################################################################
 ################## Proportion in 50% CrI by country ##################
@@ -84,7 +95,7 @@ plots <- imap(
     x <- complete(x, forecast_date, country)
     p <- prop_in_cri_heatmap(x, unique(df$forecast_date))
     outfile <- glue("figures/p50/proportion_in_50_CrI_{page}")
-    rincewind::save_multiple(plot = p, filename = outfile)
+    save_multiple(plot = p, filename = outfile)
 
     p
   }
@@ -123,7 +134,7 @@ plots <- imap(
     x <- complete(x, forecast_date, country)
     p <- prop_in_cri_heatmap(x, unique(df$forecast_date), CrI = "95%")
     outfile <- glue("figures/p95/proportion_in_95_CrI_{page}")
-    rincewind::save_multiple(plot = p, filename = outfile, two_col = FALSE)
+    save_multiple(plot = p, filename = outfile, two_col = FALSE)
     p
   }
 )
@@ -303,7 +314,7 @@ ggsave(
 
 normalised <- spread(normalised, pred_category, proportion, fill = 0)
 
-readr::write_csv(normalised, "obs_predicted_2d_density.csv")
+write_csv(normalised, "obs_predicted_2d_density.csv")
 
 
 ######################################################################
@@ -323,11 +334,11 @@ plots <- map(
   }
 )
 
-plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
+plots <- customise_for_rows(plots, in_rows = c(2, 3, 4))
 iwalk(
   plots, function(p, page) {
     outfile <- glue("figures/rme/relative_error_heatmap_{page}")
-    rincewind::save_multiple(plot = p, filename = outfile)
+    save_multiple(plot = p, filename = outfile)
   }
 )
 
@@ -337,11 +348,11 @@ iwalk(
 
 ## Comparison with linear error is all in SI.
 
-plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
+plots <- customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
 iwalk(
   plots, function(p, page) {
     outfile <- glue("figures/rme/relative_error_heatmap_{page}_2")
-    rincewind::save_multiple(plot = p, filename = outfile)
+    save_multiple(plot = p, filename = outfile)
   }
 )
 
