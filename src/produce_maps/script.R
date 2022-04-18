@@ -28,7 +28,7 @@ out <- select(
   `2.5%`, `25%`, `50%`,`75%` ,`97.5%`
 )
 out <- st_drop_geometry(out)
-out$week_of_forecast <- week_ending
+out$week_of_forecast <- as.Date(week_ending) + 1
 out <- na.omit(out)
 write_csv(out, "country_epidemic_phase.csv")
 
