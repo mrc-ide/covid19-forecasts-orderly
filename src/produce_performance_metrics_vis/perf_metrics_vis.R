@@ -76,10 +76,29 @@ unwtd_pred_error$err_for_week <- phase_for_week(
 )
 phase$phase_for_week <- phase_for_week(phase$forecast_date - 6, phase$forecast_date)
 
-by_phase <- left_join(unwtd_pred_error, phase, by = c("country", "err_for_week" = "phase_for_week")) %>%
-  group_by(phase) %>%
+by_phase <- left_join(
+  unwtd_pred_error, phase, by = c("country", "err_for_week" = "phase_for_week")
+)
+
+## Checks. Rows only in unwtd_pred_error
+## Either the first week of forecast, or
+## for a country X, week N if X was not included in week N + 1
+##
+## x <- anti_join(
+##   unwtd_pred_error, phase, by = c("country", "err_for_week" = "phase_for_week")
+## )
+## Rows only in phase: same reason as above,
+## For example, Germany was included for the first time in
+## the week starting 2020-03-29, so while we have a phase from
+## 23 March-29 March 2020, we don't have model forecasts for this
+## period, and hence no error stats.
+## x <- anti_join(
+##   phase, unwtd_pred_error, by = c("country", "phase_for_week" = "err_for_week")
+## )
+by_phase <- na.omit(by_phase)
+by_phase <- group_by(by_phase, phase) %>%
     summarise_if(is.numeric, list(mu = mean, sd = sd)) %>%
-    ungroup()
+  ungroup()
 
 write_csv(by_phase, "unwtd_pred_summary_by_phase.csv")
 
