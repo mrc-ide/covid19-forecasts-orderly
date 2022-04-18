@@ -9,7 +9,13 @@ artefacts:
 
 packages:
 - dplyr
+- glue
+- lubridate
 - purrr
+
+global_resources:
+  R/utils.R: utils.R
+
 
 depends:
 - assign_epidemic_phase:

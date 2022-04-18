@@ -1,5 +1,7 @@
 ## orderly::orderly_develop_start(
 ## use_draft = "newer", parameters = list(use_si = "si_2"))
+
+source("R/utils2.R")
 dir.create("figures")
 dir.create("figures/null")
 dir.create("figures/linear")
@@ -22,7 +24,7 @@ weekly_delta <- split(
 
 
 unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
-  dplyr::filter(si == use_si, model_name == "ensemble")
+  filter(si == use_si, model_name == "ensemble")
 
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
 unwtd_pred_error$strategy <- "Unweighted"
@@ -53,19 +55,27 @@ unwtd_pred_error$country[unwtd_pred_error$country == "Czech Republic"] <- "Czech
 ######################################################################
 ######################################################################
 out <- data_prep(unwtd_pred_error, null_error)
+better_than_null <- out[["better_than_null"]]
 ##  out[["weekly_compare"]][!complete.cases(out[["weekly_compare"]]), ]
 
 null_compare <- na.omit(out[["weekly_compare"]])
-better_than_null <- out[["better_than_null"]]
+null_compare$forecast_date <- as.Date(null_compare$forecast_date)
+
+null_compare$err_for_week <- phase_for_week(
+  null_compare$forecast_date + 1,
+  null_compare$forecast_date + 7
+)
+
+
 
 phase <- readRDS("short_term_phase.rds") %>%
   filter(model_name == 'ensemble')
 
-phase <- rename(phase, c('forecast_date' = 'model'))
+##phase <- distinct(phase)
 
-phase <- distinct(phase)
-
-y <- left_join(null_compare, phase) %>%
+y <- left_join(
+  null_compare, phase, by = c("country", "err_for_week" = "phase_for_week")
+) %>%
   na.omit() %>%
   tabyl(phase, err_level) %>%
   adorn_percentages("row") %>%
@@ -108,14 +118,14 @@ plots <- map(
   }
 )
 
-plots <- rincewind::customise_for_rows(plots, in_rows = c(2, 3, 4))
+plots <- customise_for_rows(plots, in_rows = c(2, 3, 4))
 
 iwalk(
   plots, function(p, page) {
     outfile <- glue(
       "figures/null/comparison_with_baseline_error_{page}"
     )
-    rincewind::save_multiple(filename = outfile, plot = p)
+    save_multiple(filename = outfile, plot = p)
   }
 )
 
@@ -149,7 +159,7 @@ ggsave(
   "figures/null/log_ratio_vs_delta.png", p, width = 5,
   height = 5, unit = "in"
 )
-## x <- dplyr::count(null_compare, country)
+## x <- count(null_compare, country)
 ## countries <- x$country
 
 
@@ -163,11 +173,21 @@ ggsave(
 ######################################################################
 ######################################################################
 out <- data_prep(unwtd_pred_error, linear_error)
-null_compare <- out[["weekly_compare"]]
 better_than_null <- out[["better_than_null"]]
+null_compare <- out[["weekly_compare"]]
+null_compare <- na.omit(out[["weekly_compare"]])
+null_compare$forecast_date <- as.Date(null_compare$forecast_date)
+
+null_compare$err_for_week <- phase_for_week(
+  null_compare$forecast_date + 1,
+  null_compare$forecast_date + 7
+)
 
 
-y <- left_join(null_compare, phase) %>%
+
+y <- left_join(
+  null_compare, phase, by = c("country", "err_for_week" = "phase_for_week")
+) %>%
   na.omit() %>%
   tabyl(phase, err_level) %>%
   adorn_percentages("row") %>%
@@ -195,11 +215,11 @@ plots <- map(
 
 
 
-plots <- rincewind::customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
+plots <- customise_for_rows(plots, in_rows = c(1, 2, 3, 4))
 
 iwalk(plots, function(p, page) {
   outfile <- glue(
     "figures/linear/comparison_with_linear_error_{page}"
   )
-  rincewind::save_multiple(filename = outfile, plot = p)
+  save_multiple(filename = outfile, plot = p)
 })

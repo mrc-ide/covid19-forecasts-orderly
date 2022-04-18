@@ -21,6 +21,10 @@ packages:
 - patchwork
 - tidyr
 
+global_resources:
+  R/utils.R: utils.R
+
+
 depends:
 - prepare_ecdc_data:
     id: latest

@@ -19,11 +19,15 @@ packages:
   - ggnewscale
   - ggtext  
   - glue
-  - janitor  
+  - janitor
+  - lubridate
   - purrr
   - rincewind
   - snakecase
   - tidyr  
+
+global_resources:
+  R/utils2.R: utils.R
 
 
 ## use_si should be one of si_1 or si_2

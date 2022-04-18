@@ -60,21 +60,17 @@ write_csv(overall, "unwtd_pred_weekly_summary.csv")
 ######################################################################
 ################## Summary by phase######## ##########################
 ######################################################################
-date2words <- function(x) format(x, "%d %B")
-phase_for_week <- function(start, end) {
-  glue("{date2words(start)}-{date2words(end)} 2020")
-}
+
 phase <- readRDS("short_term_phase.rds")
 phase <- filter(phase, model_name == 'ensemble')
-phase <- rename(phase, c('forecast_date' = 'model'))
-phase$forecast_date <- as.Date(phase$forecast_date)
+
 ## Projections span Monday to Sunday of the week starting after the
 ## forecast date. Error is therefore also for this period.
 unwtd_pred_error$err_for_week <- phase_for_week(
   unwtd_pred_error$forecast_date + 1,
   unwtd_pred_error$forecast_date + 7
 )
-phase$phase_for_week <- phase_for_week(phase$forecast_date - 6, phase$forecast_date)
+
 
 by_phase <- left_join(
   unwtd_pred_error, phase, by = c("country", "err_for_week" = "phase_for_week")

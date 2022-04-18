@@ -3,12 +3,7 @@
 ## whereas our values are already in (0, 100). We just want anice
 ## % sign
 mypercent <- function(vec) scales::percent(vec/100, accuracy = 0.01)
-date2words <- function(x) format(x, "%d %B")
-phase_for_week <- function(start, end) {
-  glue("{date2words(start)}-{date2words(end)} 2020")
-}
-##mypercent <- function(vec) glue("{round(vec, 2)}\\%")
-
+source("R/utils.R")
 dir.create("figures")
 ######################################################################
 ######### Compare phase assigned by the two Rts ######################
@@ -19,11 +14,6 @@ dir.create("figures")
 ## rather than the other way around
 short_term <- readRDS("collated_short_term_phase.rds")
 short_term <- short_term[short_term$model_name == "ensemble", ]
-## model denotes the Sunday on which models were run
-## the phase therefore is retrospectively applied to the week ending on this
-## Sunday
-short_term$model <- as.Date(short_term$model)
-short_term$phase_for_week <- phase_for_week(short_term$model - 6, short_term$model)
 
 y <- short_term[short_term$phase %in% c("likely stable", "indeterminate"), ]
 p1 <- ggplot(y, aes(rt_cv)) +
@@ -44,39 +34,39 @@ p2 <- ggplot(short_term, aes(less_than_1, rt_cv, col = phase)) +
         legend.title = element_blank())
 ggsave("cri_width_lessthan1.pdf", p2)
 
-deaths <- readRDS("model_input.rds")
-deaths <- deaths[deaths$dates <= as.Date("2020-12-31"), ]
+## deaths <- readRDS("model_input.rds")
+## deaths <- deaths[deaths$dates <= as.Date("2020-12-31"), ]
 
-x <- split(short_term, short_term$country)
-iwalk(
-  x, function(df, country) {
-    df$start <- as.Date(df$model) - 6
-    df$end <- as.Date(df$model)
-    y <- deaths[, c("dates", country)]
-    y[["incid"]] <- y[[country]]
-    ymax <- max(y$incid)
-    p <- ggplot() +
-      geom_rect(
-        data = df,
-        aes(xmin = start, xmax = end,
-            ymin = 0, ymax = ymax, fill = phase),
-        alpha = 0.3
-      ) +
-      geom_point(data = y, aes(dates, incid)) +
-      scale_x_date(
-        limits = c(as.Date("2020-03-01"), as.Date("2020-12-31"))
-      ) +
-      ylab("Daily Incidence") +
-      theme_minimal() +
-      theme(legend.position = "top",
-            legend.title = element_blank(),
-            axis.title.x = element_blank())
+## x <- split(short_term, short_term$country)
+## iwalk(
+##   x, function(df, country) {
+##     df$start <- as.Date(df$forecast_date) - 6
+##     df$end <- as.Date(df$forecast_date)
+##     y <- deaths[, c("dates", country)]
+##     y[["incid"]] <- y[[country]]
+##     ymax <- max(y$incid)
+##     p <- ggplot() +
+##       geom_rect(
+##         data = df,
+##         aes(xmin = start, xmax = end,
+##             ymin = 0, ymax = ymax, fill = phase),
+##         alpha = 0.3
+##       ) +
+##       geom_point(data = y, aes(dates, incid)) +
+##       scale_x_date(
+##         limits = c(as.Date("2020-03-01"), as.Date("2020-12-31"))
+##       ) +
+##       ylab("Daily Incidence") +
+##       theme_minimal() +
+##       theme(legend.position = "top",
+##             legend.title = element_blank(),
+##             axis.title.x = element_blank())
 
-    ggsave(glue("figures/{country}.pdf"), p)
+##     ggsave(glue("figures/{country}.pdf"), p)
 
 
-  }
-)
+##   }
+## )
 
 
 
@@ -156,7 +146,7 @@ check1 <- anti_join(
 ########### That is, n_countries X n_weeks
 ########### 82 * 2210 = 181220
 country_weeks <- group_by(short_term, country) %>%
-  summarise(nweeks = length(unique(model))) %>%
+  summarise(nweeks = length(unique(forecast_date))) %>%
   ungroup() %>%
   arrange(nweeks)
 
