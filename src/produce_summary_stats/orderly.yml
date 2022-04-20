@@ -35,6 +35,7 @@ depends:
         better_than_linear.rds: better_than_linear.rds
         better_than_null_by_phase.rds: better_than_null_by_phase.rds
         better_than_linear_by_phase.rds: better_than_linear_by_phase.rds
+        no_change_compare.rds: no_change_compare.rds
   - collate_longer_forecasts_metrics:
       id: latest
       use:

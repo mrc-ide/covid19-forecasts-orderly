@@ -141,7 +141,7 @@ y <- sum(better_than_linear$n_less_than_1) / sum(better_than_linear$n_forecasts)
 model would have made in `r scales::percent(x, 0.1)` of weeks for which forecasts were
 produced.
 
-- The relative error of the model was smaller than the error a null 
+- The relative error of the model was smaller than the error a linear 
 model would have made in `r scales::percent(y, 0.1)` of weeks for which forecasts were
 produced.
 
@@ -154,6 +154,23 @@ x$phase <- snakecase::to_sentence_case(x$phase)
 
 ```{r}
 knitr::kable(x)
+```
+
+```{r}
+no_change_compare <- readRDS("no_change_compare.rds")
+```
+
+Summary of weekly relative error in weeks when the performance was no
+better than the no-change model.
+
+```{r}
+x <- no_change_compare[no_change_compare$err_level == "greater_than_1", ]
+z <- stack(summary(x$weekly_rel_err))
+z$values <- signif(z$values, digits = 3)
+```
+
+```{r}
+knitr::kable(z)
 ```
 ### Comparison with linear model
 
@@ -170,7 +187,6 @@ left_join(x, x2, by = "phase", suffix = c("_null", "_linear")) %>%
   stargazer::stargazer(rownames = FALSE, summary = FALSE)
 
 ```
-
 ## Medium-term forecasts
 
 ```{r}
