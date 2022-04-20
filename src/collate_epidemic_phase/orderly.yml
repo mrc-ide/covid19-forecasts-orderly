@@ -5,11 +5,13 @@ artefacts:
     description: Collated epidemic phase
     filenames:
     - collated_short_term_phase.rds
-    - collated_medium_term_phase.rds
+    - collated_medium_term_phase_daily.rds
+    - collated_medium_term_phase_weekly.rds
 
 packages:
 - dplyr
 - glue
+- janitor
 - lubridate
 - purrr
 
