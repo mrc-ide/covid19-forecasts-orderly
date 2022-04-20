@@ -9,6 +9,7 @@ artefacts:
       - better_than_linear.rds
       - better_than_linear_by_phase.rds
       - country_groups.rds
+      - no_change_compare.rds
       
   
 packages:

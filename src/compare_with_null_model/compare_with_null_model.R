@@ -59,6 +59,7 @@ better_than_null <- out[["better_than_null"]]
 ##  out[["weekly_compare"]][!complete.cases(out[["weekly_compare"]]), ]
 
 null_compare <- na.omit(out[["weekly_compare"]])
+saveRDS(null_compare, "no_change_compare.rds")
 null_compare$forecast_date <- as.Date(null_compare$forecast_date)
 
 null_compare$err_for_week <- phase_for_week(
