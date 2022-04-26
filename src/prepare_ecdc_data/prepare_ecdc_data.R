@@ -799,6 +799,15 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$Dat
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-04-01"] <- 6
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-04-02"] <- 4
 
+## 25 April 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-04-22"] <- 23
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-04-23"] <- 11
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-04-24"] <- 32
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$DateRep == "2022-04-24"] <- 20
+
+
+
 
 
 by_country_deaths_all <- dplyr::select(
@@ -921,10 +930,10 @@ exclude <- c(
   "Botswana",
   # "Brazil", # excluded 1st March (delay and no worldometer match)
   "Burkina_Faso",
-  #"Canada", # excluded 1st March (erratic reporting over last week & no worldometer match)
+  "Canada", # excluded again 25th April (4 days missing data over Easter)
   "Cameroon", # excluded 14th dec (erratic)
   "Cape_Verde",
-  # "Costa_Rica",
+  "Costa_Rica",
   "Cuba",
   "Cyprus",
   "Democratic_Republic_of_the_Congo",
@@ -936,7 +945,7 @@ exclude <- c(
   "Guatemala",
   "Honduras", # excluded 31st Jan
   "Hungary", # excluded 14th dec
-  #"Ireland",
+  "Ireland",
   #"Israel", # included again 31st Jan
   "Jordan", # weekly reporting
   "Kazakhstan",
@@ -955,13 +964,13 @@ exclude <- c(
   "Norway", # weekly reporting
   "Oman",
   "Paraguay", 
-  # "Portugal", # delay and can't find matches in worldometer
+  "Portugal", # delay and can't find match in worldometer
   "Philippines", ## Erratic data
   "Rwanda",
   "Saint_Lucia",
   "Syria",
   "Sudan",
-  # "Spain", # delay and can't find matches in worldometer
+  "Spain", # delay and can't find match in worldometer
   "Sweden",
   "Switzerland", # delay and can't find matches in worldometer
   "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
@@ -972,7 +981,7 @@ exclude <- c(
   "Zimbabwe",
   "United_Republic_of_Tanzania",
   "Ukraine",
-  "United_Kingdom" # data missing over weekend and reporting delays
+  "United_Kingdom" # reporting delays and big discrepancies with wordlometer
   
   ##" United_States_of_America", ## Missing data
   ## Discuss list later
