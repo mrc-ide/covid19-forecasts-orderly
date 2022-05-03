@@ -71,13 +71,9 @@ ggsave("cri_width_lessthan1.pdf", p2)
 
 
 ## Medium-term phase is define prospectively
-medium_term <- readRDS("collated_medium_term_phase_weekly.rds")
-
-
-
-
+medium_term <- readRDS("collated_medium_term_phase.rds")
 compare_phase <- inner_join(
-  short_term, weekly_phase, by = c("country", "phase_for_week"),
+  short_term, medium_term, by = c("country", "phase_for_week"),
   suffix = c("_weekly", "_eff")
 )
             ## > rows only in x  (  103)
@@ -86,7 +82,7 @@ compare_phase <- inner_join(
             ## >                 =======
             ## > rows total       7,790
 check1 <- anti_join(
-  short_term, weekly_phase, by = c("country", "phase_for_week"),
+  short_term, medium_term, by = c("country", "phase_for_week"),
   suffix = c("_weekly", "_eff")
 )
 ## Medium-term phase only starts from 30 March
@@ -119,6 +115,7 @@ country_weeks <- group_by(medium_term, country) %>%
 x <- select(
   compare_phase, day, week_of_forecast, phase_eff, phase_weekly
 )
+
 ## The number of 1-, 2- , 3- and 4-week ahead forecasts is not the same
 ## because (a) for a given week we will make multiple (at most 4 forecasts),
 ## (b) but not exactly 4 becase the countries included in the analysis chane
@@ -203,8 +200,8 @@ out <- tabyl(x, phase_weekly, phase_eff, week_of_forecast) %>%
 saveRDS(out, 'phase_eff_weekly_week_of_forecast.rds')
 out <- select(out, -Total)
 out <- gather(out, phase_eff, label, `definitely decreasing`:`likely stable`)
-out <- tidyr::separate(out, label, into = c("label", "total"), sep = "%")
-out$val <- readr::parse_number(out$label)
+out <- separate(out, label, into = c("label", "total"), sep = "%")
+out$val <- parse_number(out$label)
 out <- filter(out, phase_weekly != 'Total', phase_eff != 'Total')
 
 out$phase_weekly <- factor(
@@ -274,143 +271,3 @@ p <- ggplot(
   )
 
 save_multiple(p, "figures/percentage_phase_agree")
-
-## phase_eff is estimated on a daily scale. Before aggregating it to
-## a weekly metric, check if there are instances where it different
-## within a week
-## group_by(compare_phase, forecast_week, country, week_of_forecast) %>%
-##   summarise(n = length(unique(phase_eff))) %>%
-##   filter(n > 1) %>%
-##   arrange(desc(n))
-## A maximum of 2 different phases have been assigned within a week
-out <- tabyl(x, phase_weekly, phase_eff, day) %>%
-  adorn_percentages(denominator = "row") %>%
-  adorn_pct_formatting(digits = 2) %>%
-  bind_rows(.id = "day")
-
-out <- gather(out, phase_eff, label, `definitely decreasing`:`likely growing`)
-out$val <- readr::parse_number(out$label)
-
-out$week_of_forecast <- case_when(
-  out$day <= 7 ~ "Week 1",
-  7 < out$day & out$day <= 14 ~ "Week 2",
-  14 < out$day & out$day <= 21 ~ "Week 3",
-  21 < out$day  ~ "Week 4"
-)
-
-out$day <- factor(out$day, levels = 1:28, ordered = TRUE)
-
-saveRDS(out, "phase_compare_daily.rds")
-
-
-daily_phase_compare <- function(x, phase) {
-  p <- ggplot() +
-    geom_tile(
-      data = x[x$phase_eff == phase, ], aes(day, phase_eff, fill = val),
-      width = 0.5, height = 0.5
-  ) +
-  scale_fill_distiller(
-    palette = "Greens", direction = 1, breaks = c(0, 50, 100),
-    limits = c(0, 100), label = mypercent
-  ) +
-  ggnewscale::new_scale_fill() +
-  geom_tile(
-    data = x[x$phase_eff != phase, ], aes(day, phase_eff, fill = val),
-      width = 0.5, height = 0.5
-  ) +
-  scale_fill_distiller(
-    palette = "OrRd", direction = 1, breaks = c(0, 50, 100),
-    limits = c(0, 100), label = mypercent
-  )
-  p
-}
-
-plots <- split(out, out$phase_weekly) %>%
-  imap(function(y, phase) daily_phase_compare(y, phase))
-
-## Top left
-unclear <- plots[["indeterminate"]] +
-  scale_y_discrete(
-    breaks = c("definitely growing",  "likely growing",
-               "definitely decreasing", "likely decreasing",
-               "indeterminate"),
-    labels = function(x) nice_country_name(x),
-    drop = FALSE
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_blank(), axis.ticks.x = element_blank()
-  ) +
-  ggtitle(
-    label = NULL,
-    subtitle = expression(
-      paste("Epidemic phase using ", R[t], ": Indeterminate")
-    )
-  )
-## Top right
-growing1 <- plots[["definitely growing"]] +
-  theme_minimal() +
-  theme(
-    axis.text = element_blank(), axis.ticks = element_blank()
-  ) +
-  ggtitle(label = NULL, subtitle = "Definitely growing")
-
-growing2 <- plots[["likely growing"]] +
-  theme_minimal() +
-  theme(
-    axis.text = element_blank(), axis.ticks = element_blank()
-    ) + ggtitle(label = NULL, subtitle = "Likely growing")
-
-## Bottom left
-decline1 <- plots[["definitely decreasing"]] +
-  theme_minimal() +
-  scale_y_discrete(
-    breaks = c("definitely growing",  "likely growing",
-               "definitely decreasing", "likely decreasing",
-               "indeterminate"),
-    labels = function(x) nice_country_name(x),
-    drop = FALSE
-  ) +
-  theme(axis.text.x = element_text(size = 6, angle = 90)) +
-  ggtitle(label = NULL, subtitle = "Definitely decreasing")
-
-
-decline2<- plots[["likely decreasing"]] +
-  theme_minimal() +
-  scale_y_discrete(
-    breaks = c("definitely growing",  "likely growing",
-               "definitely decreasing", "likely decreasing",
-               "indeterminate"),
-    labels = function(x) nice_country_name(x),
-    drop = FALSE
-  ) +
-  theme(axis.text.x = element_text(size = 6, angle = 90)) +
-  ggtitle(label = NULL, subtitle = "Likely decreasing")
-
-
-## Bottom right
-
-final <- unclear + growing1 + growing2 +
-  decline1 + decline2 +
-  ## Horizontal legend is placed *below* the subtitles for some reason
-  plot_layout(ncol = 2, nrow = 3, byrow = TRUE, guides = "collect") &
-  theme(
-    legend.title = element_blank(),
-    axis.title = element_blank(),
-    plot.subtitle = element_text(size = 8)
-  )
-
-label1 <- textGrob(
-  expression(paste("Epidemic phase using ", R^S)), rot = 90,
-  gp = gpar(fontsize = 8)
-)
-
-label2 <- textGrob("Day of forecast", gp = gpar(fontsize = 8))
-
-with_ylabel <- wrap_elements(label1) + wrap_elements(final) +
-  plot_layout(ncol = 2, widths = c(0.03, 1))
-
-with_xlabel <- wrap_elements(with_ylabel) + wrap_elements(label2) +
-  plot_layout(ncol = 1, heights = c(1, 0.03))
-
-save_multiple(with_xlabel, "figures/si_compare_phase_daily")

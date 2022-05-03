@@ -17,6 +17,7 @@ packages:
 - gridExtra
 - janitor
 - purrr
+- readr
 - rincewind
 - patchwork
 - tidyr
@@ -34,4 +35,4 @@ depends:
     id: latest
     use:
       collated_short_term_phase.rds: collated_short_term_phase.rds
-      collated_medium_term_phase.rds: collated_medium_term_phase.rds
+      collated_medium_term_phase.rds: collated_medium_term_phase_weekly.rds

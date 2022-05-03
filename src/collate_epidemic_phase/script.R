@@ -47,7 +47,7 @@ weekly_phase <- split(
   f <- function(y, day) {
     ## starts on a Monday
     y <- as.Date(y)
-    start <- y + (day - 1) * 7 + 1
+    start <- y + ((day - 1) * 7) + 1
     end <- start + 6
     phase_for_week(start, end)
   }
