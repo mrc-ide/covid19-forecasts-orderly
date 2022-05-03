@@ -56,8 +56,8 @@ x <- dplyr::select(
 # Introduction 
 
 As of `r week_in_words`, more than
-497,000,000 cases of COVID-19 (including potential re-infections) have been reported across the world, 
-with more than 6,179,000 deaths [@whositrep]. 
+511,400,000 cases of COVID-19 (including potential re-infections) have been reported across the world, 
+with more than 6,238,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 
@@ -69,7 +69,9 @@ COVID-19 to make these short-term forecasts as these are likely more
 reliable and stable over time than reported cases. In countries with
 poor reporting of deaths, these forecasts will likely represent an
 under-estimate while the forecasts for countries with few deaths might
-be unreliable.
+be unreliable. If there are reporting delays, prominent outliers, 
+or infrequent reporting, then we exclude those countries from
+the analysis.
 
 Note that the results presented in this report do not explicitly model
 the

@@ -92,6 +92,7 @@ rt_lineplot <- function(rt, nice_names, rt_ensb) {
 
   palette <- c("#56B4E9", "#009E73", "#D55E00", "#CC79A7")
   names(palette) <- c("Model 1", "Model 2", "Model 3", "Ensemble")
+  palette <- palette[names(palette) %in% unique(rt$proj)]
   rt_ensb$country <- reorder(rt_ensb$country, -rt_ensb$`50%`)
   rt$country <- factor(rt$country, levels = levels(rt_ensb$country))
   if (length(unique(rt$model)) == 1) width <- 0.1
