@@ -1,6 +1,6 @@
 raw_data <- list(
-  si_mean = c(4.80, 6.48),
-  si_std = c(2.70, 3.83)
+  si_mean = c(4.80, 3.30),
+  si_std = c(2.70, 3.50)
 )
 
 si_distrs <- map2(

@@ -50,13 +50,11 @@ depends:
     use:
       ensmbl_pred_Europe_si_2.Rmd: ensmbl_pred_Europe_si_2.Rmd
       ensmbl_pred_Asia_si_2.Rmd: ensmbl_pred_Asia_si_2.Rmd
-      ensmbl_pred_Africa_si_2.Rmd: ensmbl_pred_Africa_si_2.Rmd
       ensmbl_pred_North America_si_2.Rmd: ensmbl_pred_North America_si_2.Rmd
       ensmbl_pred_South America_si_2.Rmd: ensmbl_pred_South America_si_2.Rmd
       ensmbl_pred_Oceania_si_2.Rmd: ensmbl_pred_Oceania_si_2.Rmd      
       indvdl_pred_Europe_si_2.Rmd: indvdl_pred_Europe_si_2.Rmd
       indvdl_pred_Asia_si_2.Rmd: indvdl_pred_Asia_si_2.Rmd
-      indvdl_pred_Africa_si_2.Rmd: indvdl_pred_Africa_si_2.Rmd
       indvdl_pred_North America_si_2.Rmd: indvdl_pred_North America_si_2.Rmd
       indvdl_pred_South America_si_2.Rmd: indvdl_pred_South America_si_2.Rmd
       indvdl_pred_Oceania_si_2.Rmd: indvdl_pred_Oceania_si_2.Rmd      
