@@ -964,7 +964,7 @@ exclude <- c(
   "Nepal",
   "Norway", # weekly reporting
   "Oman",
-  "Paraguay", 
+  "Paraguay",
   "Portugal", # delay and can't find match in worldometer
   "Philippines", ## Erratic data
   "Rwanda",
@@ -982,8 +982,9 @@ exclude <- c(
   "Zimbabwe",
   "United_Republic_of_Tanzania",
   "Ukraine",
+  "South_Africa",
   "United_Kingdom" # reporting delays and big discrepancies with wordlometer
-  
+
   ##" United_States_of_America", ## Missing data
   ## Discuss list later
 )
