@@ -10,7 +10,7 @@ raw_data <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
   janitor::clean_names()
 
 raw_data$date_reported <- lubridate::ymd(raw_data$date_reported)
-raw_data <- filter(raw_data, date_reported <= as.Date(week_ending))
+raw_data <- dplyr::filter(raw_data, date_reported <= as.Date(week_ending))
 
 
 raw_data$iso3c <- countrycode(raw_data$country, "country.name", "iso3c")
@@ -35,7 +35,7 @@ raw_data <- na.omit(raw_data)
 ## Rename columns of WHO data, so that we can continue to reuse the
 ## old code
 
-raw_data <- rename(
+raw_data <- dplyr::rename(
   raw_data, Cases = "new_cases", Deaths = "new_deaths",
   DateRep = "date_reported",
   `Countries.and.territories` = "Countries and territories"
@@ -933,6 +933,7 @@ exclude <- c(
   "Canada", # excluded again 25th April (4 days missing data over Easter)
   "Cameroon", # excluded 14th dec (erratic)
   "Cape_Verde",
+  "Colombia", # appear to have started weekly reporting (16th May 22)
   "Costa_Rica",
   "Cuba",
   "Cyprus",
