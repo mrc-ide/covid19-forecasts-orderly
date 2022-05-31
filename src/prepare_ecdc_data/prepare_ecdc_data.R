@@ -806,6 +806,13 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRe
 
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$DateRep == "2022-04-24"] <- 20
 
+## 24 May 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2022-05-22"] <- 50
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-19"] <- 80
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-20"] <- 67
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-21"] <- 65
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-22"] <- 44
 
 
 
@@ -982,7 +989,7 @@ exclude <- c(
   "Zimbabwe",
   "United_Republic_of_Tanzania",
   "Ukraine",
-  "South_Africa",
+  # "South_Africa",
   "United_Kingdom" # reporting delays and big discrepancies with wordlometer
 
   ##" United_States_of_America", ## Missing data
