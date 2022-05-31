@@ -814,7 +814,10 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-21"] <- 65
 raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-22"] <- 44
 
+## 31 May 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2022-05-29"] <- 56
 
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-29"] <- 23
 
 
 by_country_deaths_all <- dplyr::select(
@@ -930,7 +933,7 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   # "Australia", # excluded 04/04/22 - huge outlier in deaths, no worldometer match
-  "Argentina", # excluded 29/03/22 - all historic data for past few months seems off
+  "Argentina", # now only weekly reporting
   ##"Armenia",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
   "Bosnia_and_Herzegovina",
@@ -972,6 +975,7 @@ exclude <- c(
   "Norway", # weekly reporting
   "Oman",
   "Paraguay",
+  "Poland", # no weekend reporting
   "Portugal", # delay and can't find match in worldometer
   "Philippines", ## Erratic data
   "Rwanda",
@@ -984,6 +988,7 @@ exclude <- c(
   "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
   "Tunisia", # excluded again 1st March (delay & no match)
   "Uganda",
+  "Ukraine", # weekly reporting
   "Vietnam",
   "Yemen",
   "Zimbabwe",
