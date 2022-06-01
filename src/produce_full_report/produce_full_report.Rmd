@@ -56,8 +56,8 @@ x <- dplyr::select(
 # Introduction 
 
 As of `r week_in_words`, more than
-497,000,000 cases of COVID-19 (including potential re-infections) have been reported across the world, 
-with more than 6,179,000 deaths [@whositrep]. 
+526,100,000 cases of COVID-19 (including potential re-infections) have been reported across the world, 
+with more than 6,286,000 deaths [@whositrep]. 
 
 This weekly report presents forecasts of the
 *reported* number of deaths in the week ahead 
@@ -69,7 +69,9 @@ COVID-19 to make these short-term forecasts as these are likely more
 reliable and stable over time than reported cases. In countries with
 poor reporting of deaths, these forecasts will likely represent an
 under-estimate while the forecasts for countries with few deaths might
-be unreliable.
+be unreliable. If there are reporting delays, prominent outliers, 
+or infrequent reporting, then we exclude those countries from
+the analysis.
 
 Note that the results presented in this report do not explicitly model
 the
@@ -120,14 +122,6 @@ the infection of COVID-19 fatalities. Therefore, the impact of
 controls on estimated transmissibility will be quantifiable with a
 delay between transmission and death.
 
-* This analysis uses parameters (the serial interval
-  distribution and delay from symptoms to death) that had been
-  estimated prior to the emergence of the Omicron variant of
-  SARS-CoV-2. Our reproduction number estimates and forecasts of
-  deaths may be biased for countries where Omicron is now the dominant
-  variant. We continue to review the literature and will update the
-  relevant values used as more information becomes available.
-
 
 # Projections and Effective Reproduction Number Estimates {.nav .nav-tabs} 
 
@@ -166,6 +160,7 @@ dashed line shows the start of the week (Monday). Projections for countries mark
 a * are based on an unweighted ensemble of three models (Models 1, 2
 and 3, see Methods). Inset: the last two weeks of data and forecasts for the week ahead.
 
+
 ### Africa
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_Africa_si_2.Rmd')}
@@ -177,6 +172,7 @@ for the week ahead are shown in red (median and 95% CrI). Vertical
 dashed line shows the start of the week (Monday). Projections for countries marked with
 a * are based on an unweighted ensemble of three models (Models 1, 2
 and 3, see Methods). Inset: the last two weeks of data and forecasts for the week ahead.
+
 
 ### North & Central America
 
@@ -192,7 +188,6 @@ a * are based on an unweighted ensemble of three models (Models 1, 2
 and 3, see Methods). Inset: the last two weeks of data and forecasts for the week ahead.
 
 ### Oceania
-
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, code = readLines('ensmbl_pred_Oceania_si_2.Rmd')}
 ```
@@ -271,12 +266,11 @@ with sustained transmission. Estimates of $R_t$ for countries marked with
 a * are based on an unweighted ensemble of Models 1, 2 and 3.
 Results from individual models are shown in the section Methods.
 
+
 ### Africa
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
-
 knitr::include_graphics("figs/ensemble_rt_Africa_si_2_boxplot.png")
-
 ```
 *Figure 11.*: Latest estimates of effective reproduction numbers by country
 (median, inter-quartile range and 95% CrI) for each country in Africa
@@ -284,6 +278,7 @@ with sustained transmission. Estimates of $R_t$ for countries marked with
 a * are based on an unweighted ensemble of Models 1, 2 and 3.
 Results from individual models are shown
 in the section Methods.
+
 
 ### North & Central America
 
@@ -328,8 +323,6 @@ Results from individual models are shown
 in the section Methods. 
 
 
-
-
 ## Summary of results
 
 **Table 1.** Forecasted weekly death counts for week starting 
@@ -356,8 +349,8 @@ consecutive weeks.
 We intend to produce forecasts every
 week, for the week ahead. Ensemble forecasts are produced from the
 outputs of three different models. We assume a gamma distributed
-serial interval with mean 6.48 days
-and standard deviation of 3.83 days following [@ferguson2020report].
+serial interval with mean 3.3 days
+and standard deviation of 3.5 days following [@abbott2022].
 
 
 ## Model 1
@@ -594,6 +587,7 @@ knitr::include_graphics("figs/rt_Africa_si_2.png")
 *Figure 23.* Estimates of $R_t$ from individual models for each country in Africa with
 active transmission (see Methods) for the week starting
 `r week_in_words`. 
+
 
 
 #### North & Central America

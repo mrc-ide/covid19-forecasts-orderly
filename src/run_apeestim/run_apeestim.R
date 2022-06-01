@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(parameters = list(week_ending = "2020-03-08"), use_draft = "newer")
+## orderly::orderly_develop_start(parameters = list(week_ending = "2022-05-15"), use_draft = "newer")
 dir.create("figures")
 
 model_input <- readRDS("model_input.rds")
@@ -41,6 +41,7 @@ inftvty <- purrr::map(
 r_apeestim <- purrr::imap(
   tall_deaths,
   function(deaths, country) {
+    message(country)
     ##deaths <- tall_deaths[[country]]
     r_prior <- c(1, 5)
     a <- 0.025

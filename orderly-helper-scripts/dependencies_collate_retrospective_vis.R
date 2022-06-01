@@ -18,7 +18,7 @@ unwtd_weeks <- seq(
   from = as.Date("2021-05-09"), to = as.Date(week), by = "7 days"
 )
 not_run <- c("2021-04-04", "2021-05-02", "2021-05-30", "2021-08-29",
-             "2021-10-03", "2021-12-26", "2022-01-02")
+             "2021-10-03", "2021-12-26", "2022-01-02", "2022-04-17")
 unwtd_weeks <- unwtd_weeks[! unwtd_weeks %in% as.Date(not_run)]
 
 x$depends <- map(

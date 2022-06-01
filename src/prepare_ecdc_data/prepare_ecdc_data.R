@@ -10,7 +10,7 @@ raw_data <- readr::read_csv("WHO-COVID-19-global-data.csv") %>%
   janitor::clean_names()
 
 raw_data$date_reported <- lubridate::ymd(raw_data$date_reported)
-raw_data <- filter(raw_data, date_reported <= as.Date(week_ending))
+raw_data <- dplyr::filter(raw_data, date_reported <= as.Date(week_ending))
 
 
 raw_data$iso3c <- countrycode(raw_data$country, "country.name", "iso3c")
@@ -35,7 +35,7 @@ raw_data <- na.omit(raw_data)
 ## Rename columns of WHO data, so that we can continue to reuse the
 ## old code
 
-raw_data <- rename(
+raw_data <- dplyr::rename(
   raw_data, Cases = "new_cases", Deaths = "new_deaths",
   DateRep = "date_reported",
   `Countries.and.territories` = "Countries and territories"
@@ -799,6 +799,25 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$Dat
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-04-01"] <- 6
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Lebanon" & raw_data$DateRep == "2022-04-02"] <- 4
 
+## 25 April 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-04-22"] <- 23
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-04-23"] <- 11
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-04-24"] <- 32
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Ireland" & raw_data$DateRep == "2022-04-24"] <- 20
+
+## 24 May 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2022-05-22"] <- 50
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-19"] <- 80
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-20"] <- 67
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-21"] <- 65
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-22"] <- 44
+
+## 31 May 2022 corrections
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$DateRep == "2022-05-29"] <- 56
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-29"] <- 23
 
 
 by_country_deaths_all <- dplyr::select(
@@ -914,17 +933,18 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
   # "Australia", # excluded 04/04/22 - huge outlier in deaths, no worldometer match
-  "Argentina", # excluded 29/03/22 - all historic data for past few months seems off
+  "Argentina", # now only weekly reporting
   ##"Armenia",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
   "Bosnia_and_Herzegovina",
   "Botswana",
   # "Brazil", # excluded 1st March (delay and no worldometer match)
   "Burkina_Faso",
-  #"Canada", # excluded 1st March (erratic reporting over last week & no worldometer match)
+  "Canada", # excluded again 25th April (4 days missing data over Easter)
   "Cameroon", # excluded 14th dec (erratic)
   "Cape_Verde",
-  # "Costa_Rica",
+  "Colombia", # appear to have started weekly reporting (16th May 22)
+  "Costa_Rica",
   "Cuba",
   "Cyprus",
   "Democratic_Republic_of_the_Congo",
@@ -936,7 +956,7 @@ exclude <- c(
   "Guatemala",
   "Honduras", # excluded 31st Jan
   "Hungary", # excluded 14th dec
-  #"Ireland",
+  "Ireland",
   #"Israel", # included again 31st Jan
   "Jordan", # weekly reporting
   "Kazakhstan",
@@ -954,26 +974,29 @@ exclude <- c(
   "Nepal",
   "Norway", # weekly reporting
   "Oman",
-  "Paraguay", 
-  # "Portugal", # delay and can't find matches in worldometer
+  "Paraguay",
+  "Poland", # no weekend reporting
+  "Portugal", # delay and can't find match in worldometer
   "Philippines", ## Erratic data
   "Rwanda",
   "Saint_Lucia",
   "Syria",
   "Sudan",
-  # "Spain", # delay and can't find matches in worldometer
+  "Spain", # delay and can't find match in worldometer
   "Sweden",
   "Switzerland", # delay and can't find matches in worldometer
   "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
   "Tunisia", # excluded again 1st March (delay & no match)
   "Uganda",
+  "Ukraine", # weekly reporting
   "Vietnam",
   "Yemen",
   "Zimbabwe",
   "United_Republic_of_Tanzania",
   "Ukraine",
-  "United_Kingdom" # data missing over weekend and reporting delays
-  
+  # "South_Africa",
+  "United_Kingdom" # reporting delays and big discrepancies with wordlometer
+
   ##" United_States_of_America", ## Missing data
   ## Discuss list later
 )
