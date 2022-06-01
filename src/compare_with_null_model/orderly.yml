@@ -10,6 +10,7 @@ artefacts:
       - better_than_linear_by_phase.rds
       - country_groups.rds
       - no_change_compare.rds
+      - worse_than_null.rds
       
   
 packages:
@@ -23,6 +24,7 @@ packages:
   - janitor
   - lubridate
   - purrr
+  - readr
   - rincewind
   - snakecase
   - tidyr  

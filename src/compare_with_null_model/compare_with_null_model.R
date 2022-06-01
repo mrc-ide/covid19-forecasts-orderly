@@ -23,7 +23,7 @@ weekly_delta <- split(
   )
 
 
-unwtd_pred_error <- readr::read_csv("unwtd_pred_error.csv") %>%
+unwtd_pred_error <- read_csv("unwtd_pred_error.csv") %>%
   filter(si == use_si, model_name == "ensemble")
 
 unwtd_pred_error$country[unwtd_pred_error$country == "Czech_Republic"] <- "Czechia"
@@ -56,7 +56,18 @@ unwtd_pred_error$country[unwtd_pred_error$country == "Czech Republic"] <- "Czech
 ######################################################################
 out <- data_prep(unwtd_pred_error, null_error)
 better_than_null <- out[["better_than_null"]]
-##  out[["weekly_compare"]][!complete.cases(out[["weekly_compare"]]), ]
+
+## What was the relative error in countries
+## and weeks when the ensemble did worse than null?
+x <- out$weekly_compare
+x <- x[x$err_level == "greater_than_1", ]
+x$forecast_date <- as.Date(x$forecast_date)
+worse_than_null <- left_join(
+  x, unwtd_pred_error
+)
+saveRDS(
+  worse_than_null, "worse_than_null.rds"
+)
 
 null_compare <- na.omit(out[["weekly_compare"]])
 saveRDS(null_compare, "no_change_compare.rds")
