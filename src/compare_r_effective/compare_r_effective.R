@@ -118,7 +118,7 @@ x <- select(
 
 ## The number of 1-, 2- , 3- and 4-week ahead forecasts is not the same
 ## because (a) for a given week we will make multiple (at most 4 forecasts),
-## (b) but not exactly 4 becase the countries included in the analysis chane
+## (b) but not exactly 4 because the countries included in the analysis change
 ## from one week to another.
 ## Across all countries and weeks for which we
 ## produced forecasts, the phase definition using the reproduction
