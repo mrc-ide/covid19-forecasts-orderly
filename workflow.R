@@ -104,8 +104,8 @@ report_workflow <- function(week, use_draft = "newer", commit = FALSE) {
   # then pull latest branch on server. And then...
   # orderly run produce_retrospective_vis week_ending=2021-12-05 (NB: put latest date here)
 
-   #orderly_run(
-  orderly_pull_archive(
+   orderly_run(
+  ##orderly_pull_archive(
     "produce_retrospective_vis",
     parameter = list(week_ending = week)#, use_draft = use_draft
   )
@@ -187,7 +187,7 @@ library(glue)
 library(orderly)
 source("orderly-helper-scripts/dependencies_weighted_performance.R")
 source("orderly-helper-scripts/dependencies_collated_outputs_viz.R")
-week <- "2022-05-15"
+week <- "2022-06-05"
 use_draft <- "newer"
 ## This is the sunday before the Monday for which we are producing
 ## the report.

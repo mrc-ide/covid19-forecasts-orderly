@@ -996,7 +996,7 @@ exclude <- c(
   "Ukraine",
   # "South_Africa",
   "United_Kingdom" # reporting delays and big discrepancies with wordlometer
-
+  , "Uruguay"
   ##" United_States_of_America", ## Missing data
   ## Discuss list later
 )
