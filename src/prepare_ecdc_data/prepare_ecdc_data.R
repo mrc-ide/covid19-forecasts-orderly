@@ -932,7 +932,7 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
-  # "Australia", # excluded 04/04/22 - huge outlier in deaths, no worldometer match
+  "Australia", # excluded again 20th June - 5 days missing
   "Argentina", # now only weekly reporting
   ##"Armenia",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
