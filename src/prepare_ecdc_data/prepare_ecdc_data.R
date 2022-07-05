@@ -819,6 +819,9 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "Australia" & raw_data$D
 
 raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-05-29"] <- 23
 
+## 4th July 2022
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-06-30"] <- 20
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-07-01"] <- 15
 
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
@@ -932,7 +935,7 @@ Country <- colnames(deaths_to_use)[!colnames(deaths_to_use) == "dates"]
 
 exclude <- c(
   ## 27 deaths in WHO data on 26th June. Time series toally different from worldometers
-  "Australia", # excluded again 20th June - 5 days missing
+  "Australia", # 6 day reporting
   "Argentina", # now only weekly reporting
   ##"Armenia",
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
