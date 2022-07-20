@@ -956,6 +956,7 @@ exclude <- c(
   "El_Salvador",
   "Fiji", # excluded 31st Jan
   "Ghana", # exclude 18 Jan (no weekends)
+  "Greece", 
   "Guatemala",
   "Honduras", # excluded 31st Jan
   "Hungary", # excluded 14th dec
