@@ -823,6 +823,15 @@ raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$Date
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-06-30"] <- 20
 raw_data$Deaths[raw_data$`Countries.and.territories` == "Japan" & raw_data$DateRep == "2022-07-01"] <- 15
 
+## 25th July 2022
+raw_data$Deaths[raw_data$`Countries.and.territories` == "France" & raw_data$DateRep == "2022-07-24"] <- 57
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-07-21"] <- 32
+raw_data$Deaths[raw_data$`Countries.and.territories` == "Iran" & raw_data$DateRep == "2022-07-22"] <- 29
+
+raw_data$Deaths[raw_data$`Countries.and.territories` == "New_Zealand" & raw_data$DateRep == "2022-07-20"] <- 34
+raw_data$Deaths[raw_data$`Countries.and.territories` == "New_Zealand" & raw_data$DateRep == "2022-07-21"] <- 31
+
 by_country_deaths_all <- dplyr::select(
   raw_data, dates = DateRep, Deaths, Countries.and.territories
 ) %>%
@@ -941,7 +950,7 @@ exclude <- c(
   "Belgium", # excluded 14th/21st dec (weekend data delayed)
   "Bosnia_and_Herzegovina",
   "Botswana",
-  # "Brazil", # excluded 1st March (delay and no worldometer match)
+  "Brazil", # delay and no worldometer match
   "Burkina_Faso",
   "Canada", # excluded again 25th April (4 days missing data over Easter)
   "Cameroon", # excluded 14th dec (erratic)
@@ -951,6 +960,7 @@ exclude <- c(
   "Cuba",
   "Cyprus",
   "Democratic_Republic_of_the_Congo",
+  "Denmark", # 5 day reporting now
   "Ecuador", ## Massive backlog reported & some negative deaths,
   "Egypt", # weekly reporting
   "El_Salvador",
@@ -986,7 +996,7 @@ exclude <- c(
   "Saint_Lucia",
   "Syria",
   "Sudan",
-  "Spain", # delay and can't find match in worldometer
+  "Spain", # sporadic reporting
   "Sweden",
   "Switzerland", # delay and can't find matches in worldometer
   "Trinidad_and_Tobago", # excluded 1st March (seems to be missing data & no worldometer match)
@@ -999,9 +1009,9 @@ exclude <- c(
   "United_Republic_of_Tanzania",
   "Ukraine",
   # "South_Africa",
-  "United_Kingdom" # reporting delays and big discrepancies with wordlometer
-  , "Uruguay"
-  ##" United_States_of_America", ## Missing data
+  "United_Kingdom", # reporting delays and big discrepancies with wordlometer
+  "Uruguay",
+  "United_States_of_America" ## Delay and no match
   ## Discuss list later
 )
 
