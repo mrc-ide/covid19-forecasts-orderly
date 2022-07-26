@@ -246,3 +246,7 @@ depends:
     id: latest(parameter:week_ending == "2022-07-17")
     use:
       model_input_2022-07-17.rds: latest_model_input.rds
+- prepare_ecdc_data:
+    id: latest(parameter:week_ending == "2022-07-24")
+    use:
+      model_input_2022-07-24.rds: latest_model_input.rds
