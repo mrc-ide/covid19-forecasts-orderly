@@ -14,7 +14,7 @@ artefacts:
   data:
     description: Reconstructed daily incidence
     filenames:
-      - reconstruct_incidence.rds
+      - reconstructed_daily_inc.rds
 
 depends:
   - prepare_jhu_data:

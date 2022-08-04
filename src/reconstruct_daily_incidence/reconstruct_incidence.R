@@ -63,6 +63,23 @@ recon_daily_inc <- map(weekly_dat, function(w) {
   
 })
 
+saveRDS(recon_daily_inc, "reconstructed_daily_inc.rds")
+
+# Create the model_input object that is used in the forecasting models
+# TO DO: continue from here
+
+x <- list(
+  date_week_ending = week_ending,
+  I_active_transmission = cases_to_use,
+  D_active_transmission = deaths_to_use,
+  State = State,
+  si_mean = params$si_mean,
+  si_std = params$si_std
+)
+
+out <- saveRDS(object = x, file = "latest_model_input.rds")
+
+
 # Compare reconstructed with the reported incidence
 
 compare_incid <- imap(forecast_weeks, function(week, index) {
@@ -88,6 +105,17 @@ compare_incid <- bind_rows(compare_incid, .id = "week_ending") %>%
                names_to = "incid_type",
                values_to = "incid")
 
-ggplot(compare_incid) +
+# simple plots to visualise comparison
+
+p <- ggplot(compare_incid) +
   geom_point(aes(x = dates, y = incid, col = incid_type)) +
   facet_wrap(~week_ending)
+
+ggsave("incid_reported_vs_recon.png", p)
+
+p <- ggplot(compare_incid) +
+  geom_point(aes(x = dates, y = incid, col = week_ending)) +
+  facet_wrap(~incid_type)
+
+ggsave("incid_by_forecast_date.png", p)
+
