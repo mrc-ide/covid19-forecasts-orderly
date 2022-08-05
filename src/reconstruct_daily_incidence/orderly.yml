@@ -10,11 +10,16 @@ packages:
   - EpiEstim
   - dplyr
   
+sources:
+  - R/utils.R
+  
 artefacts:
   data:
     description: Reconstructed daily incidence
     filenames:
-      - reconstructed_daily_inc.rds
+      - reconstructed_daily_cases.rds
+      - reconstructed_daily_deaths.rds
+      - latest_model_input.rds
 
 depends:
   - prepare_jhu_data:
