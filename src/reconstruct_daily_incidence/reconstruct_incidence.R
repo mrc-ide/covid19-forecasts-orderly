@@ -54,42 +54,22 @@ x <- list(
 out <- saveRDS(object = x, file = "latest_model_input.rds")
 
 
-# # Compare reconstructed with the reported incidence
-# 
-# compare_incid <- imap(forecast_weeks, function(week, index) {
-#   
-#   end <- as.Date(week)
-#   start <- end - 41 # select 6 weeks of data
-#   analysis_period <- seq.Date(from = as.Date(start),
-#                               to = as.Date(end),
-#                               by = 1)
-#   
-#   incid <- deaths_to_use[deaths_to_use$dates %in% analysis_period, c("dates", location)]
-#   colnames(incid) <- c("dates", "reported_incid")
-# 
-#   incid$reconstructed_incid <- recon_daily_inc[[index]]
-#   
-#   incid
-#   
-# })
-# 
-# names(compare_incid) <- forecast_weeks
-# compare_incid <- bind_rows(compare_incid, .id = "week_ending") %>% 
-#   pivot_longer(cols = reported_incid:reconstructed_incid,
-#                names_to = "incid_type",
-#                values_to = "incid")
-# 
-# # simple plots to visualise comparison
-# 
-# p <- ggplot(compare_incid) +
-#   geom_point(aes(x = dates, y = incid, col = incid_type)) +
-#   facet_wrap(~week_ending)
-# 
-# ggsave("incid_reported_vs_recon.png", p)
-# 
-# p <- ggplot(compare_incid) +
-#   geom_point(aes(x = dates, y = incid, col = week_ending)) +
-#   facet_wrap(~incid_type)
-# 
-# ggsave("incid_by_forecast_date.png", p)
+# Compare reconstructed with the reported incidence
 
+deaths <- deaths_to_use[deaths_to_use$dates %in% analysis_period, c("dates", location)]
+colnames(deaths) <- c("dates", "reported_incid")
+
+deaths$reconstructed_incid <- recon_daily_deaths
+
+
+compare_incid <- deaths %>% 
+  pivot_longer(cols = reported_incid:reconstructed_incid,
+               names_to = "incid_type",
+               values_to = "incid")
+
+# simple plots to visualise comparison
+
+p <- ggplot(compare_incid) +
+  geom_point(aes(x = dates, y = incid, col = incid_type))
+
+ggsave("incid_reported_vs_recon.png", p)
