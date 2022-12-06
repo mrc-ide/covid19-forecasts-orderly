@@ -1,7 +1,12 @@
 ## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-05-16", location = "Alabama", short_run = TRUE))
 set.seed(1)
 
-model_input <- readRDS("model_input.rds")
+if(reconstructed == TRUE){
+  model_input <- readRDS("model_input_reconstructed.rds")
+} else {
+  model_input <- readRDS("model_input.rds")
+}
+
 deaths_to_use <- model_input$D_active_transmission
 
 incid <- tail(deaths_to_use[[location]], 10)

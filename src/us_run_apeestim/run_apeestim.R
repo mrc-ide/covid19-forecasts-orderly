@@ -1,6 +1,12 @@
 ## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona"))
 
-model_input <- readRDS("model_input.rds")
+if(reconstructed == TRUE){
+  model_input <- readRDS("model_input_reconstructed.rds")
+} else {
+  model_input <- readRDS("model_input.rds")
+}
+
+
 deaths_to_use <- model_input$D_active_transmission
 
 ## locations <- model_input$State

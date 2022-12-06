@@ -14,7 +14,13 @@ SItrunc <- 30
 t.window <- 10
 ## ------------------------------------------------------------------
 ifr <- readRDS("population_weighted_ifr.rds")[[1]]
-model_input <- readRDS("model_input.rds")
+
+if(reconstructed == TRUE){
+  model_input <- readRDS("model_input_reconstructed.rds")
+} else {
+  model_input <- readRDS("model_input.rds")
+}
+
 ascertainr_deaths <- model_input$D_active_transmission
 ascertainr_cases <- model_input$I_active_transmission
 
