@@ -27,10 +27,10 @@ reconstruct_incid <- function(incidence_data, time_window, location,
   
   # use EpiEstim to get the reconstructed incidence
   
-  res <- estimate_R_agg(incid = weekly_dat,
-                        dt = 7, # aggregation window
-                        dt_out = 7, # length of sliding window used
-                        iter = 10,
+  res <- estimate_R(incid = weekly_dat,
+                        dt = 7L, # aggregation window
+                        dt_out = 7L, # length of sliding window used
+                        iter = 10L,
                         config = config, 
                         method = "parametric_si")
   

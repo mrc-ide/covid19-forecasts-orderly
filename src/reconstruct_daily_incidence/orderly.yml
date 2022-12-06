@@ -9,6 +9,7 @@ packages:
   - purrr
   - EpiEstim
   - dplyr
+  - ggplot2
   
 sources:
   - R/utils.R

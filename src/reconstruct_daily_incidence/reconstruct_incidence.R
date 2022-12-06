@@ -63,7 +63,7 @@ deaths$reconstructed_incid <- recon_daily_deaths
 
 
 compare_incid <- deaths %>% 
-  pivot_longer(cols = reported_incid:reconstructed_incid,
+  tidyr::pivot_longer(cols = reported_incid:reconstructed_incid,
                names_to = "incid_type",
                values_to = "incid")
 
