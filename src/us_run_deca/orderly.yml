@@ -26,7 +26,7 @@ depends:
       id: latest(parameter:week_ending == week_ending)
       use:
          model_input.rds: latest_model_input.rds
-  - reconstructed_daily_incidence:
+  - reconstruct_daily_incidence:
       id: latest(parameter:week_ending == week_ending)
       use:
          model_input_reconstructed.rds: latest_model_input.rds

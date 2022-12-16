@@ -18,6 +18,7 @@ si_distrs <- readRDS("si_distrs.rds")
 
 end <- as.Date(week_ending)
 start <- end - 41 # select 6 weeks of data
+dates <- seq(from = start, to = end, by = 1)
 analysis_period <- seq.Date(from = as.Date(start),
                               to = as.Date(end),
                               by = 1)
@@ -42,6 +43,9 @@ saveRDS(recon_daily_cases, "reconstructed_daily_cases.rds")
 
 # Create the model_input object that is used in the forecasting models
 
+recon_daily_deaths <- tibble(dates = analysis_period, !!location := recon_daily_deaths)
+recon_daily_cases <- tibble(dates = analysis_period, !!location := recon_daily_cases)
+
 x <- list(
   date_week_ending = week_ending,
   I_active_transmission = recon_daily_cases,
@@ -56,10 +60,11 @@ out <- saveRDS(object = x, file = "latest_model_input.rds")
 
 # Compare reconstructed with the reported incidence
 
+colnames(recon_daily_deaths) <- c("dates", "reconstructed_incid")
 deaths <- deaths_to_use[deaths_to_use$dates %in% analysis_period, c("dates", location)]
 colnames(deaths) <- c("dates", "reported_incid")
 
-deaths$reconstructed_incid <- recon_daily_deaths
+deaths <- inner_join(deaths, recon_daily_deaths)
 
 
 compare_incid <- deaths %>% 
@@ -70,6 +75,12 @@ compare_incid <- deaths %>%
 # simple plots to visualise comparison
 
 p <- ggplot(compare_incid) +
-  geom_point(aes(x = dates, y = incid, col = incid_type))
+  geom_line(aes(x = dates, y = incid, col = incid_type)) +
+  scale_colour_manual("", 
+                      breaks = c("reported_incid", "reconstructed_incid"),
+                      values = c("darkgrey", "seagreen4"),
+                      labels = c("Reported", "Reconstructed")) +
+  ylab("Incidence") +
+  xlab("Date") 
 
 ggsave("incid_reported_vs_recon.png", p)

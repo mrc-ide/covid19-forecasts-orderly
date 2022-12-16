@@ -7,6 +7,9 @@ ts_to_incid <- function(ts, date_col, case_col) {
   
   first_date <- min(ts[[date_col]])
   last_date <- max(ts[[date_col]])
+  if(!any(ts[[case_col]]%%1==0)){
+    ts[[case_col]] <- round(ts[[case_col]])
+  }
   x <- tidyr::uncount(ts, weights = ts[[case_col]])
   out <- incidence(
     x[[date_col]],
