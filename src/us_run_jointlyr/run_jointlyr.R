@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-05-16", location = "Alabama", short_run = TRUE))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-02-28", location = "Florida", short_run = TRUE, reconstructed = TRUE))
 set.seed(1)
 
 if(reconstructed == TRUE){
@@ -38,7 +38,11 @@ projections <- map(
   all_samples,
   function(samples) {
     foi <- samples[["incid_est"]][, 111:117]
-    index <- sample(nrow(foi), 1000, replace = FALSE)
+    if (nrow(foi)<1000){ # TODO: check with Sangeeta
+      index <- sample(nrow(foi), nrow(foi), replace = FALSE)
+    } else {
+      index <- sample(nrow(foi), 1000, replace = FALSE)
+    }
     foi <- foi[index, ]
     projections <- matrix(NA, nrow = 10000, ncol = 7)
     for (day in 1:7) {
@@ -54,7 +58,11 @@ r_est <- map(
   all_samples,
   function(samples) {
     r_est <- samples[['rt_est']]
-    sample(r_est, 10000, replace = FALSE)
+    if (length(r_est)<10000){ # TODO: Check with Sangeeta
+      sample(r_est, length(r_est), replace = FALSE)
+    } else {
+      sample(r_est, 10000, replace = FALSE)
+    }
   }
 )
 

@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-01", location = "Arizona"))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-02-28", location = "Florida", reconstructed = TRUE))
 set.seed(1)
 ## ------------------------------------------------------------------
 
