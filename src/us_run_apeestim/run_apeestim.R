@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-10", location = "Arizona"))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-02-28", location = "Florida", reconstructed = TRUE))
 
 if(reconstructed == TRUE){
   model_input <- readRDS("model_input_reconstructed.rds")
@@ -6,8 +6,9 @@ if(reconstructed == TRUE){
   model_input <- readRDS("model_input.rds")
 }
 
-
 deaths_to_use <- model_input$D_active_transmission
+
+si_distrs <- readRDS("si_distrs.rds")
 
 ## locations <- model_input$State
 ## Can modify this if we want to run for a smaller selection of states
@@ -18,8 +19,6 @@ tall_deaths <- gather(
   deaths_to_use[,c("dates", location)], key = province_state, value = deaths, -dates
 ) %>%
   ts_to_incid(date_col = "dates", case_col = "deaths")
-
-si_distrs <- readRDS("si_distrs.rds")
 
 ##apeestim
 inftvty <- purrr::map(
@@ -36,7 +35,12 @@ inftvty <- purrr::map(
 ## Run for selected location, for each SI Distribution,
 r_prior <- c(1, 5)
 a <- 0.025
-trunctime <- first_nonzero_incidence(tall_deaths)
+
+if(reconstructed == TRUE){
+  trunctime <- 8
+} else {
+  trunctime <- first_nonzero_incidence(tall_deaths)
+}
 
 r_apeestim <- purrr::map(
   si_distrs,

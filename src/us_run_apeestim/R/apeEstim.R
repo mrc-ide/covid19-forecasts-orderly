@@ -25,7 +25,7 @@ apeEstim <- function(Iday, sidistr, Lday, Rprior, a, trunctime, idStr){
   
   # APE scores and outpute
   ape = rep(0, lenk); pmse = ape; apeSet = list()
-  
+
   # For every window length compute R estimate and I predictions
   for(i in 1:lenk){
     # Compute APE(k), output is [[ape, pmse, prob, Rhat, Rhatci, Inex, Inexci]]
