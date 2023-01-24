@@ -1,6 +1,6 @@
 ## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-02-28", location = "Florida", reconstructed = TRUE))
 
-if(reconstructed == TRUE){
+if(reconstructed){
   model_input <- readRDS("model_input_reconstructed.rds")
 } else {
   model_input <- readRDS("model_input.rds")
@@ -36,7 +36,7 @@ inftvty <- purrr::map(
 r_prior <- c(1, 5)
 a <- 0.025
 
-if(reconstructed == TRUE){
+if(reconstructed){
   trunctime <- 8
 } else {
   trunctime <- first_nonzero_incidence(tall_deaths)
@@ -150,3 +150,4 @@ out <- saveRDS(
 )
 
 saveRDS(object = r_apeestim, file = "r_apeestim.rds")
+
