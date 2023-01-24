@@ -1,5 +1,5 @@
 # orderly::orderly_develop_start(use_draft = "newer", parameters = list(
-#                                week_ending = "2021-02-28",
+#                                week_ending = "2021-02-28", # "2021-03-07"
 #                                location = "Florida", short_run = TRUE))
 
 model_input <- readRDS("model_input.rds")
@@ -26,6 +26,7 @@ analysis_period <- seq.Date(from = as.Date(start),
 si_mean <- 4.80
 si_std <- 2.70
 
+# Daily cases and deaths reconstructed from aggregated data
 recon_daily_deaths <- reconstruct_incid(incidence_data = deaths_to_use,
                                         time_window = analysis_period,
                                         location = location,
@@ -41,8 +42,7 @@ recon_daily_cases <- reconstruct_incid(incidence_data = cases_to_use,
 saveRDS(recon_daily_deaths, "reconstructed_daily_deaths.rds")
 saveRDS(recon_daily_cases, "reconstructed_daily_cases.rds")
 
-# Create the model_input object that is used in the forecasting models
-
+# Create the model_input object that is used in the forecasting models  
 recon_daily_deaths <- tibble(dates = analysis_period, !!location := recon_daily_deaths)
 recon_daily_cases <- tibble(dates = analysis_period, !!location := recon_daily_cases)
 
@@ -59,13 +59,12 @@ out <- saveRDS(object = x, file = "latest_model_input.rds")
 
 
 # Compare reconstructed with the reported incidence
+report_daily_deaths <- deaths_to_use %>% select(dates, location) %>% filter(dates %in% analysis_period)
 
 colnames(recon_daily_deaths) <- c("dates", "reconstructed_incid")
-deaths <- deaths_to_use[deaths_to_use$dates %in% analysis_period, c("dates", location)]
-colnames(deaths) <- c("dates", "reported_incid")
+colnames(report_daily_deaths) <- c("dates", "reported_incid")
 
-deaths <- inner_join(deaths, recon_daily_deaths)
-
+deaths <- inner_join(report_daily_deaths, recon_daily_deaths)
 
 compare_incid <- deaths %>% 
   tidyr::pivot_longer(cols = reported_incid:reconstructed_incid,
@@ -73,7 +72,6 @@ compare_incid <- deaths %>%
                values_to = "incid")
 
 # simple plots to visualise comparison
-
 p <- ggplot(compare_incid) +
   geom_line(aes(x = dates, y = incid, col = incid_type)) +
   scale_colour_manual("", 
