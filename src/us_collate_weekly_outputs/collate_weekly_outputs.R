@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer")
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-02-28"))
 ## infiles <- list.files(pattern = "*.rds")
 
 probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
