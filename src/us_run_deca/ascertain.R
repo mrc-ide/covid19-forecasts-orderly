@@ -15,7 +15,7 @@ t.window <- 10
 ## ------------------------------------------------------------------
 ifr <- readRDS("population_weighted_ifr.rds")[[1]]
 
-if(reconstructed == TRUE){
+if(reconstructed){
   model_input <- readRDS("model_input_reconstructed.rds")
 } else {
   model_input <- readRDS("model_input.rds")
