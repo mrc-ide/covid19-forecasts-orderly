@@ -65,7 +65,7 @@ projection_plot <- function(obs, pred, date_min = "2021-01-01") {
   }
 
   p <- ggplot() +
-    geom_point(data = obs_to_plot, aes(dates, deaths)) +
+    geom_line(data = obs_to_plot, aes(dates, deaths)) +
     geom_line(
       data = pred,
       aes(date, `50%`, col = proj, group = proj),
@@ -81,7 +81,7 @@ projection_plot <- function(obs, pred, date_min = "2021-01-01") {
       alpha = 0.4) +
     scale_color_manual(
       values = palette,
-      aesthetics = c("color", "fill"),
+      aesthetics = c("color", "fill")
     ) +
     theme_minimal() +
     theme(legend.position = "top", legend.title = element_blank()) +

@@ -1,6 +1,9 @@
 script: script.R
 
-parameters: week_ending
+parameters:
+- week_ending
+- reconstructed
+
 packages:
 - dplyr
 - ggforce
@@ -34,3 +37,7 @@ depends:
     id: latest(parameter:week_ending == week_ending)
     use:
       latest_model_input.rds: latest_model_input.rds
+  reconstruct_daily_incidence:
+      id: latest(parameter:week_ending == week_ending)
+      use:
+         model_input_reconstructed.rds: latest_model_input.rds
