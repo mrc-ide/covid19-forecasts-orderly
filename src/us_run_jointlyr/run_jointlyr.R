@@ -1,7 +1,7 @@
 ## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-02-28", location = "Florida", short_run = TRUE, reconstructed = TRUE))
 set.seed(1)
 
-if(reconstructed == TRUE){
+if (reconstructed){
   model_input <- readRDS("model_input_reconstructed.rds")
 } else {
   model_input <- readRDS("model_input.rds")
@@ -38,7 +38,7 @@ projections <- map(
   all_samples,
   function(samples) {
     foi <- samples[["incid_est"]][, 111:117]
-    if (nrow(foi)<1000){ # TODO: check with Sangeeta
+    if (short_run){
       index <- sample(nrow(foi), nrow(foi), replace = FALSE)
     } else {
       index <- sample(nrow(foi), 1000, replace = FALSE)
@@ -58,7 +58,7 @@ r_est <- map(
   all_samples,
   function(samples) {
     r_est <- samples[['rt_est']]
-    if (length(r_est)<10000){ # TODO: Check with Sangeeta
+    if (short_run){ 
       sample(r_est, length(r_est), replace = FALSE)
     } else {
       sample(r_est, 10000, replace = FALSE)
