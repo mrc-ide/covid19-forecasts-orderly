@@ -1,4 +1,4 @@
-## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-01-01", location = "Alabama"))
+## orderly::orderly_develop_start(use_draft = "newer", parameters = list(week_ending = "2021-02-28", location = "Florida", reconstructed = FALSE))
 message("############################################################")
 message("LOCATION ", location)
 message("week_ending ", week_ending)
@@ -9,9 +9,9 @@ run_info <- orderly::orderly_run_info()
 output_files <- run_info$depends$as
 
 # ## Only need this during report development stage
-## output_files <- list("RtI0_Std_results.rds",
-##                      "sbkp_Std_results.rds",
-##                      "DeCa_Std_results.rds")
+# output_files <- list("RtI0_Std_results.rds",
+#                      "sbkp_Std_results.rds",
+#                      "DeCa_Std_results.rds")
 
 model_outputs <- map(output_files, readRDS)
 names(model_outputs) <- sub("\\_.*", "", output_files)
@@ -73,7 +73,7 @@ weights <- map(weights, df_to_list)
 ensemble_model_rt_samples <-  list(
   si_1 = pool_rt_weighted(y_1, weights$si_1),
   si_2 = pool_rt_weighted(y_2, weights$si_2)
-)
+  )
 
 
 ## Calculate quantiles from these rt samples

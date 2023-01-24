@@ -13,6 +13,7 @@ artefacts:
 parameters:
   - week_ending
   - location
+  - reconstructed
 
 packages:
   - purrr
