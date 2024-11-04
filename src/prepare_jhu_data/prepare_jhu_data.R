@@ -1,5 +1,34 @@
-params <- parameters(week_ending)
+## Set up for orderly2
 
+orderly_parameters(week_ending = NULL)
+
+orderly_artefact(
+  "Input data for modeling",
+  c(
+    "latest_model_input.rds",
+    "latest_deaths_wide_no_filter.rds"
+  )
+)
+
+source("R/utils.R")
+
+orderly_dependency(
+  "download_jhu_data",
+  "latest",
+  c(
+    "covid19_confirmed_US.csv",
+    "covid19_deaths_US.csv"
+  )
+)
+
+packages <- c("dplyr", "tidyr", "readr", "purrr", "ggplot2",
+              "rincewind", "countrycode")
+
+lapply(packages, require, character.only = TRUE)
+
+##-------------------------------------------------------------
+
+params <- parameters(week_ending)
 
 ## Read in Johns Hopkins data
 
