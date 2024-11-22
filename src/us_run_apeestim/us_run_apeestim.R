@@ -61,7 +61,7 @@ if(location == "all") {
 
 ## Sliding window of four-week ahead projections
 projection_week <- seq(from = as.Date(week_ending) - (7 * 4),
-                       to = min(deaths_to_use$dates), by = -7)
+                       to = as.Date("2020-03-15"), by = -7)
 
 ## Convert to incidence object
 tall_deaths <- gather(
@@ -91,30 +91,53 @@ first_five_date <- function(x) {
   dates[which(cum_counts >= 5)[1]]
 }
 
-## Estimate R for each state
-r_apeestim <- purrr::imap(
-  tall_deaths,
-  function(deaths, location) {
-    r_prior <- c(1, 5)
-    a <- 0.025
-    trunctime <- first_five_incidence(deaths)
-    truncdate <- first_five_date(deaths)
-    message("Truncating for ", location, " at ", trunctime, " (", truncdate, ")")
-    incid <- as.numeric(incidence::get_counts(deaths))
-    inftvty <- EpiEstim::overall_infectivity(incid, si_distr)
-    out <- apeEstim(
-      incid,
-      si_distr,
-      inftvty,
-      r_prior,
-      a,
-      trunctime,
-      location
-      )
-    out
-    }
-  )
-
+## Estimate R for each projection week and state
+r_apeestim <- purrr::map(
+  set_names(projection_week),
+  function(proj_week) {
+    message("Projection week: ", proj_week)
+    purrr::imap(
+      tall_deaths,
+      function(deaths, location) {
+        r_prior <- c(1, 5)
+        a <- 0.025
+        trunctime <- first_five_incidence(deaths)
+        truncdate <- first_five_date(deaths)
+        
+        # Calculate the difference in days
+        days_diff <- as.numeric(proj_week - truncdate)
+        
+        # If proj_week is over 100 days after truncdate, subset `deaths` accordingly
+        if (days_diff > 107) {
+          start_date <- proj_week - 107
+          deaths <- subset(deaths, from = start_date, to = proj_week, groups = TRUE)
+          trunctime <- 8
+          message("Subsetting deaths for ", location, " from ", start_date, " to ", proj_week)
+        } else {
+          # Use original subsetting if the difference is less than or equal to 100 days
+          deaths <- subset(deaths, to = proj_week, groups = TRUE)
+          message("Truncating for ", location, " at ", trunctime, " (", truncdate, ")")
+        }
+        
+        incid <- as.numeric(incidence::get_counts(deaths))
+        inftvty <- EpiEstim::overall_infectivity(incid, si_distr)
+        
+        if (proj_week > truncdate) {
+          out <- apeEstim(
+            incid,
+            si_distr,
+            inftvty,
+            r_prior,
+            a,
+            trunctime,
+            location
+          )
+          out
+        }
+      }
+    )
+  }
+)
 
 ## Each element of r_apeestim is a list with the following
 ## components: "best_k_ape", "best_set_ape", "best_k_pmse",
@@ -124,29 +147,51 @@ r_apeestim <- purrr::imap(
 ## "tplus1_ci", "alpha", "beta", "post_negbin_pr". We want the
 ## last values of alpha and beta.
 n_sim <- 1e4
+projection_week <- as.character(projection_week)
 
-rsamples_ape <- map(
-  r_apeestim,
-  function(location) {
-    shape <- tail(location[["best_set_ape"]][["alpha"]], 1)
-    scale <- tail(location[["best_set_ape"]][["beta"]], 1)
-    rgamma(n_sim, shape = shape, scale = scale)
-    }
-  )
+rsamples_ape <- purrr::map(
+  set_names(projection_week),
+  function(proj_week) {
+    message("Projection week: ", proj_week)
+    r_ests <- r_apeestim[[proj_week]]
+    
+    # Process each state within the current projection week
+    state_samples <- purrr::map(
+      set_names(location),
+      function(state) {
+        message("  State: ", state)
+        if (!is.null(r_ests[[state]][["best_set_ape"]][["alpha"]])) {
+          shape <- tail(r_ests[[state]][["best_set_ape"]][["alpha"]], 1)
+          scale <- tail(r_ests[[state]][["best_set_ape"]][["beta"]], 1)
+          # Generate 10,000 samples from the gamma distribution
+          rgamma(n_sim, shape = shape, scale = scale)
+        } else {
+          NULL
+        }
+      }
+    )
+    state_samples
+  }
+)
+
+saveRDS(object = r_apeestim, file = "r_apeestim.rds")
+rm(r_apeestim)
 
 # Sliding window of four-week ahead forecasts
-date_to_project_from <- projection_week
 sims_per_rt <- 10
 n_days <- 7 * 4
 
 ## Projections using projections package with Poisson offspring distribution
-ape_projections <- purrr::map(date_to_project_from, function(proj_date) {
+ape_projections <- purrr::map(projection_week, function(proj_week) {
   purrr::map2(
     tall_deaths,
-    rsamples_ape,
+    rsamples_ape[[as.character(proj_week)]],
     function(df, rt) {
-      message("Projecting from: ", proj_date)
-      df <- subset(df, to = as.Date(proj_date))
+      message("Projecting from: ", proj_week)
+      df <- subset(df, to = as.Date(proj_week))
+      if(is.null(rt)) {
+        out <- NULL
+      } else {
       out <- map(
         seq_len(sims_per_rt),
         function(i) {
@@ -162,27 +207,48 @@ ape_projections <- purrr::map(date_to_project_from, function(proj_date) {
             as.matrix() %>% t
           }
         )
+      }
+      if(!is.null(out)) {
       do.call(what = "rbind", args = out)
       }
+      }
     )
-  }) %>% set_names(as.character(date_to_project_from))
+  }) %>% set_names(as.character(projection_week))
 
 
 saveRDS(ape_projections, file = "ape_projections.rds")
 
 ## Sample 10,000 values for consistent output with other models
-ape_projections <- purrr::map(ape_projections, function(state_projections) {
-  purrr::map(state_projections, function(projections) {
-    apply(projections, 2, function(y) sample(y, size = 1e4))
-    })
-  })
+ape_projections <- purrr::map(
+  ape_projections,
+  function(proj_week) {
+    purrr::map(
+      proj_week,
+      function(projections) {
+        # Handle empty projections for some states
+        if (is.null(projections)) {
+          return(NULL)
+        } else {
+          # 10,000 samples from each column (each projected day)
+          apply(projections, 2, function(y) sample(y, size = 1e4))
+        }
+      }
+    )
+  }
+)
+
 
 ## 75% and 95% Quantiles
 pred_qntls <- purrr::map(
   ape_projections,
   function(proj_date) {
   # Iterate over each state within the current projection date
-  purrr::map(proj_date, function(pred) {
+  purrr::map(
+    proj_date,
+    function(pred) {
+      if (is.null(pred)) {
+        return(NULL)
+      } else {
     pred <- data.frame(pred, check.names = FALSE)
     pred <- tidyr::gather(pred, dates, val)
     
@@ -191,24 +257,40 @@ pred_qntls <- purrr::map(
     
     qntls$dates <- as.Date(qntls$dates)
     qntls
-  })
-})
+      }
+    }
+  )
+    }
+)
 
 ## Plots
+if (reconstructed) {
+  input_data <- "reconstructed"
+} else {
+  input_data <- "reported"
+}
+
+dir.create("figures")
 purrr::iwalk(
   pred_qntls,
   function(week_pred, week) {
     purrr::iwalk(
       week_pred,
       function(pred, location) {
+        if (is.null(pred)) {
+          message("No projections available for ", location, " in week ", week)
+          return(NULL)
+        }
         obs <- deaths_to_use[, c("dates", location)]
         obs$deaths <- obs[[location]]
-        p <- rincewind::plot_projections(obs, pred)
+        p <- rincewind::plot_projections(obs, pred) +
+          # to make it clearer over the longer time period
+          scale_x_date(limits = c(as.Date(week) - 30, as.Date(week) + 30))
         p <- p +
           ggtitle(
-            glue::glue("Projections for {location} for week ending {week}")
+            glue::glue("Projections for {location} for week ending {week} - {input_data}")
           )
-        ggsave(glue::glue("figures/projections_{location}_{week}.png"), p)
+        ggsave(glue::glue("figures/projections_{location}_{week}_{input_data}.png"), p)
       }
     )
   }
@@ -222,10 +304,9 @@ out <- saveRDS(
     D_active_transmission = model_input[["D_active_transmission"]],
     State = location,
     R_last = rsamples_ape,
-    Predictions = ape_projections
+    Predictions = ape_projections,
+    Input = input_data
   ),
   file = "apeestim_model_outputs.rds"
 )
-
-saveRDS(object = r_apeestim, file = "r_apeestim.rds")
 
