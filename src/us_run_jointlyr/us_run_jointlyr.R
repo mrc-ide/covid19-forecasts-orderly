@@ -5,7 +5,10 @@ orderly_parameters(week_ending = NULL,
                    short_run = NULL,
                    reconstructed = NULL)
 
-packages <- c("purrr", "jointlyr", "rstan")
+# To use version of jointlyr that can project ahead 28 days:
+#remotes::install_github("mrc-ide/jointlyr@project28")
+
+packages <- c("purrr", "jointlyr", "rstan", "tidyr", "dplyr")
 lapply(packages, require, character.only = TRUE)
 
 orderly_artefact(
@@ -70,55 +73,83 @@ if (short_run) {
   chains <- 2
 }
 
+## Sliding window of four-week ahead projections
+projection_week <- seq(from = as.Date(week_ending) - (7 * 4),
+                       to = as.Date("2020-03-15"), by = -7)
+
 ## Generate stan fit
 # Joint estimation of incidence and reproduction number
-fit <- purrr::imap(
+all_samples <- purrr::map(
+  set_names(projection_week),
+  function(proj_week) {
+    message("Projection week: ", proj_week)
+    purrr::imap(
   tall_deaths,
   function(death_data, location){
     print(location)
+    death_data <- death_data %>% filter(dates <= as.Date(proj_week))
     incid <- tail(death_data$deaths, 10) # Take last 10 days of death data
-    jointlyr::jointly_estimate(window = 10, # window of data used for estimation
+    fit <- jointlyr::jointly_estimate(window = 10, # window of data used for estimation
                                window_back = 100, # length of time incidence should be estimated
                                incid, # numeric vector of length matching window
                                si_distr = si_distr, seed = 42, iter = iter,
                                chains = chains)
+    rstan::extract(fit)
+  }
+    )
   }
 )
 
-## Extract values from stan fit
-all_samples <- map(fit, rstan::extract)
-
-
 ## Take 1000 samples of foi and draw 10 samples from Poisson distribution
-projections <- map(
+projections <- imap(
   all_samples,
-  function(samples) {
-    foi <- samples[["incid_est"]][, 111:117]
+  function(samples_by_state, proj_week) {
+    message("Processing projection week: ", proj_week)
+    purrr::map(
+      samples_by_state,
+      function(samples) {
+        if (is.null(samples)) {
+          return(NULL)
+        } else {
+    foi <- samples[["incid_est"]][, 111:138] # foi for latest 28 days
     if (short_run){
       index <- sample(nrow(foi), nrow(foi), replace = FALSE)
     } else {
       index <- sample(nrow(foi), 1000, replace = FALSE)
     }
     foi <- foi[index, ]
-    projections <- matrix(NA, nrow = 10000, ncol = 7)
-    for (day in 1:7) {
+    projections <- matrix(NA, nrow = 10000, ncol = 28)
+    for (day in 1:28) {
       projections[, day] <- rep(foi[, day], each = 10)
     }
     projections <- apply(projections, c(1, 2), function(x) rpois(1, x))
+        }
+      }
+    )
   }
 )
 
 
 ## Take 10000 samples from r_est estimates to be consistent with other model outputs
-r_est <- map(
+r_est <- imap(
   all_samples,
-  function(samples) {
+  function(samples_by_state, proj_week) {
+    message("Processing projection week: ", proj_week)
+    purrr::map(
+      samples_by_state,
+      function(samples) {
+        if (is.null(samples)) {
+          return(NULL)
+        } else {
     r_est <- samples[['rt_est']]
     if (short_run){ 
       sample(r_est, length(r_est), replace = FALSE)
     } else {
       sample(r_est, 10000, replace = FALSE)
     }
+        }
+      }
+    )
   }
 )
 
