@@ -4,11 +4,15 @@ reconstruct_incid <- function(incidence_data, time_window, location,
                               si_mean, si_sd) {
   
   incid <- incidence_data[incidence_data$dates %in% time_window, c("dates", location)]
-  incid$week_starting <- cut(incid$dates, "week")
+  
+  incid$week_starting <- rep(
+    seq(from = min(analysis_period), to = max(analysis_period), by = 7), each = 7
+    )
+  
   location_colname <- sym(location)
   
   incid <- incid %>% 
-    rename(daily_incidence = all_of(location_colname)) %>% # change the column heading from state name to something more generic
+    rename(daily_incidence = all_of(location_colname)) %>%
     group_by(week_starting) %>%
     mutate(weekly_incidence = sum(daily_incidence))
   
@@ -26,7 +30,6 @@ reconstruct_incid <- function(incidence_data, time_window, location,
   
   
   # use EpiEstim to get the reconstructed incidence
-  
   res <- estimate_R(incid = weekly_dat,
                         dt = 7L, # aggregation window
                         dt_out = 7L, # length of sliding window used
