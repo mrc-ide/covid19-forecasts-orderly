@@ -20,7 +20,7 @@ orderly_artefact(
 
 orderly_dependency(
   "prepare_jhu_data",
-  "latest",
+  paste0("latest(parameter:week_ending == '", as.character(week_ending), "')"),
   c(
     "model_input.rds" = "latest_model_input.rds"
   )
@@ -54,21 +54,42 @@ cases_to_use <- model_input$I_active_transmission
 
 si_distrs <- readRDS("si_distrs.rds")
 
-# Find first Monday in dataset
-start <- model_input$I_active_transmission$dates[
-  which(wday(model_input$I_active_transmission$dates, week_start = 1) == 1)[1]
-  ]
+# Aggregate by week before projection day e.g. if Sunday projections, aggregate Monday to Sunday
+# 22nd Jan 2020 (Wednesday) is the earliest date in dataset
+week_day_map <- list(
+  "2022-02-21" = 2,  # Monday --> find first Tuesday (2) in dataset (28th Jan 2020)
+  "2022-02-22" = 3,  # Tuesday --> find first Wednesday (3) in dataset (22nd Jan 2020)
+  "2022-02-23" = 4,  # etc...
+  "2022-02-24" = 5,  # 
+  "2022-02-25" = 6,  # 
+  "2022-02-26" = 7,  # 
+  "2022-02-27" = 1   # 
+)
 
-end <- as.Date(week_ending) # including final forecast week (22nd - 28th March)
+# check that the input week_ending is valid
+if (!week_ending %in% names(week_day_map)) {
+  stop("Unrecognised week_ending date")
+}
+
+# Find first day to start aggregations
+target_day <- week_day_map[[week_ending]]
+start <- model_input$I_active_transmission$dates[
+  which(wday(model_input$I_active_transmission$dates, week_start = 1) == target_day)[1]
+]
+
+# Date to stop aggregations
+end <- as.Date(week_ending) # including final forecast
 
 dates <- seq(from = start, to = end, by = 1)
 analysis_period <- seq.Date(from = as.Date(start),
                               to = as.Date(end),
                               by = 1)
 
+deaths_to_use <- model_input$D_active_transmission %>% filter(dates %in% analysis_period)
+cases_to_use <- model_input$I_active_transmission %>% filter(dates %in% analysis_period)
+
 si_mean <- 4.80
 si_std <- 2.70
-
 
 # Daily cases and deaths reconstructed from aggregated data
 recon_daily_deaths <- lapply(location, function(loc) {
@@ -113,8 +134,8 @@ for (loc in names(recon_daily_deaths)) {
 
 x <- list(
   date_week_ending = week_ending,
-  I_active_transmission = deaths_tibble,
-  D_active_transmission = cases_tibble,
+  I_active_transmission = cases_tibble,
+  D_active_transmission = deaths_tibble,
   State = location,
   si_mean = si_mean,
   si_std = si_std
