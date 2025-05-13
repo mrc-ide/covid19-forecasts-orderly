@@ -3,7 +3,8 @@
 orderly_parameters(week_ending = NULL,
                    location = NULL,
                    short_run = NULL,
-                   reconstructed = NULL)
+                   reconstructed = NULL,
+                   incidence_type = NULL)
 
 # To use version of jointlyr that can project ahead 28 days:
 #remotes::install_github("mrc-ide/jointlyr@project28")
@@ -14,19 +15,18 @@ lapply(packages, require, character.only = TRUE)
 orderly_artefact(
   "Model outputs",
   c(
-    "rti0_model_outputs.rds",
-    "r_rti0.rds"
+    "rti0_model_outputs.rds"
   )
 )
 
 orderly_dependency(
   "prepare_jhu_data",
-  "latest",
+  paste0("latest(parameter:week_ending == '", as.character(week_ending), "')"),
   c("model_input.rds" = "latest_model_input.rds")
 )
 orderly_dependency(
   "reconstruct_daily_incidence",
-  "latest",
+  paste0("latest(parameter:week_ending == '", as.character(week_ending), "')"),
   c("model_input_reconstructed.rds" = "latest_model_input.rds")
 )
 orderly_dependency(
@@ -56,10 +56,15 @@ if(location == "all") {
   )
 }
 
-deaths_to_use <- model_input$D_active_transmission %>% filter(dates <= week_ending)
 
-tall_deaths <- gather(
-  deaths_to_use[,c("dates", location)], key = province_state, value = deaths, -dates
+if (incidence_type == "deaths") {
+  inc_to_use <- model_input$D_active_transmission %>% filter(dates <= week_ending)
+} else if (incidence_type == "cases") {
+  inc_to_use <- model_input$I_active_transmission %>% filter(dates <= week_ending)
+}
+
+tall_inc <- gather(
+  inc_to_use[,c("dates", location)], key = province_state, value = inc, -dates
 ) %>%
   split(.$province_state)
 
@@ -73,9 +78,23 @@ if (short_run) {
   chains <- 2
 }
 
+# Map week_ending to the first projection week
+first_proj_map <- c(
+  "2022-02-21" = "2020-03-09",
+  "2022-02-22" = "2020-03-10",
+  "2022-02-23" = "2020-03-11",
+  "2022-02-24" = "2020-03-12",
+  "2022-02-25" = "2020-03-13",
+  "2022-02-26" = "2020-03-14",
+  "2022-02-27" = "2020-03-15"
+)
+
+# Get first projection week
+first_proj_week <- first_proj_map[[week_ending]]
+
 ## Sliding window of four-week ahead projections
 projection_week <- seq(from = as.Date(week_ending) - (7 * 4),
-                       to = as.Date("2020-03-15"), by = -7)
+                       to = as.Date(first_proj_week), by = -7)
 
 ## Generate stan fit
 # Joint estimation of incidence and reproduction number
@@ -84,16 +103,18 @@ all_samples <- purrr::map(
   function(proj_week) {
     message("Projection week: ", proj_week)
     purrr::imap(
-  tall_deaths,
-  function(death_data, location){
+  tall_inc,
+  function(inc_data, location){
     print(location)
-    death_data <- death_data %>% filter(dates <= as.Date(proj_week))
-    incid <- tail(death_data$deaths, 10) # Take last 10 days of death data
-    fit <- jointlyr::jointly_estimate(window = 10, # window of data used for estimation
-                               window_back = 100, # length of time incidence should be estimated
-                               incid, # numeric vector of length matching window
-                               si_distr = si_distr, seed = 42, iter = iter,
-                               chains = chains)
+    inc_data <- inc_data %>% filter(dates <= as.Date(proj_week))
+    incid <- tail(inc_data$inc, 10) # Take last 10 days of death data
+    fit <- suppressWarnings(
+      jointlyr::jointly_estimate(window = 10, # window of data used for estimation
+                                 window_back = 100, # length of time incidence should be estimated
+                                 incid, # numeric vector of length matching window
+                                 si_distr = si_distr, seed = 42, iter = iter,
+                                 chains = chains)
+    )
     rstan::extract(fit)
   }
     )
@@ -164,8 +185,4 @@ out <- saveRDS(
   ),
   file = "rti0_model_outputs.rds"
 )
-
-saveRDS(object = r_est, file = "r_rti0.rds")
-
-
 
