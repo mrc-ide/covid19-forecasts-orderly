@@ -6,6 +6,16 @@ packages <- c("dplyr", "tidyr", "glue", "ggplot2", "gridExtra", "hrbrthemes",
 
 lapply(packages, require, character.only = TRUE)
 
+orderly_artefact(
+  "Manuscript figures",
+  c(
+    "figures/manuscript_figure_2.pdf",
+    "figures/manuscript_figure_3.pdf",
+    "figures/manuscript_figure_4.pdf",
+    "figures/manuscript_figure_5.pdf"
+  )
+)
+
 # True reported incidence (entire period - including forecast period)
 orderly_dependency(
   "prepare_jhu_data",
@@ -181,6 +191,8 @@ orderly_dependency(
 )
 
 ####################################
+
+dir.create("figures")
 
 all_files <- list.files(pattern = "\\.rds$", full.names = TRUE)
 for (x in all_files) {
