@@ -36,13 +36,9 @@ orderly_dependency(
 probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 
 rti0_outputs <- readRDS("rti0_model_outputs.rds")
-
 rti0_predictions <- rti0_outputs[['Predictions']]
 
-## For coverage probability we want to know the proportion of the 10,000 simulations where
-# the credible interval contains the true value e.g. for a well calibrated model
-# the 95% coverage probability should be 95% and the 50% coverage probability should be 50%
-
+# Quantiles
 rti0_qntls <- extract_predictions_qntls_multi(rti0_predictions, probs)
 rti0_qntls_weekly <- daily_to_weekly_multi(rti0_predictions, probs)
 
