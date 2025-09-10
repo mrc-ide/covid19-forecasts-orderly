@@ -1,4 +1,5 @@
-orderly_parameters(incidence_type = "cases")
+pars <- orderly_parameters(incidence_type = "cases")
+list2env(pars, environment())
 
 packages <- c("dplyr", "tidyr", "glue", "ggplot2", "gridExtra", "hrbrthemes",
               "ggforce", "gdata", "tibble", "scoringutils", "knitr", "lubridate",
@@ -273,7 +274,9 @@ rm_weeks <- comp_weeks %>%
 #####################################################################################
 ## Percentage of cases overall
 
-dow_perc_inc <- true_reported$SUN %>%
+# Boxplot
+
+dow_perc_inc_box <- true_reported$SUN %>%
   anti_join(rm_weeks, by = "week") %>%
   group_by(week) %>%
   mutate(total_weekly_cases = sum(incidence, na.rm = TRUE)) %>%
@@ -283,67 +286,19 @@ dow_perc_inc <- true_reported$SUN %>%
     total_weekly_cases = first(total_weekly_cases),
     .groups = "drop"
   ) %>%
-  mutate(percentage = (total_daily_cases / total_weekly_cases) * 100) %>%
-  group_by(day) %>%
-  summarise(
-    mean_percentage = mean(percentage, na.rm = TRUE),
-    sd_percentage   = sd(percentage, na.rm = TRUE),
-    n               = n(),
-    se_percentage   = sd_percentage / sqrt(n),
-    ci_lower        = mean_percentage - 1.96 * se_percentage,
-    ci_upper        = mean_percentage + 1.96 * se_percentage,
-    .groups         = "drop"
-  ) %>%
-  mutate(state = "All States")
-
-ggplot(dow_perc_inc, aes(x = day, y = mean_percentage, fill = day)) +
-  geom_bar(stat = "identity", alpha = 0.7) +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2) +
-  labs(
-    x = "Weekday",
-    y = "Mean Percentage of Weekly Cases Reported"
-  ) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
-  geom_hline(yintercept = 100 / 7, linetype = 2) +
-  theme_minimal() +
-  theme(legend.position = "none")
-
-################################################################################
-# By state
-
-dow_perc_inc_state <- true_reported$SUN %>%
-  anti_join(rm_weeks, by = "week") %>%
-  group_by(week, state) %>%
-  mutate(total_cases = sum(incidence, na.rm = TRUE)) %>%
-  ungroup() %>%
-  mutate(percentage = (incidence / total_cases) * 100) %>%
-  group_by(day, state) %>%
-  summarise(
-    mean_percentage = mean(percentage, na.rm = TRUE),
-    sd_percentage   = sd(percentage, na.rm = TRUE),
-    n               = n(),
-    se_percentage   = sd_percentage / sqrt(n),
-    ci_lower        = mean_percentage - 1.96 * se_percentage,
-    ci_upper        = mean_percentage + 1.96 * se_percentage,
-    .groups         = "drop"
-  )
-
-# Add "All States" summary (dow_perc_inc) and format days
-dow_perc_inc_state <- bind_rows(dow_perc_inc, dow_perc_inc_state) %>%
   mutate(
-    day = factor(substr(day, 1, 3), levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
+    percentage = (total_daily_cases / total_weekly_cases) * 100,
+    state = "All States"
   )
 
-# Plot figure 2
-dow_perc_plot <- ggplot(dow_perc_inc_state, aes(x = day, y = mean_percentage, fill = day)) +
-  geom_bar(stat = "identity", alpha = 0.6) +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2) +
+ggplot(dow_perc_inc_box, aes(x = day, y = percentage, fill = day)) +
+  geom_boxplot(outliers = FALSE, alpha = 0.6) +
+  geom_hline(yintercept = 100 / 7, linetype = 2) +
   labs(
-    x = "Day of the week",
-    y = "Mean Percentage of Weekly Cases Reported"
+    x = "Day of the Week",
+    y = "Percentage of Weekly Cases Reported"
   ) +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +
-  geom_hline(yintercept = 100/7, linetype = 2) +
   theme_minimal() +
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1, size = 15),
@@ -354,16 +309,76 @@ dow_perc_plot <- ggplot(dow_perc_inc_state, aes(x = day, y = mean_percentage, fi
         axis.title.y = element_text(margin = margin(r = 10), size = 17),
         axis.title.x = element_text(margin = margin(t = 10), size = 17),
         legend.title = element_blank(),
-        legend.text = element_text(size = 15)) +
-  facet_wrap(~ state, ncol = 4)
+        legend.text = element_text(size = 15))
 
-ggsave("figures/manuscript_figure_2.pdf", dow_perc_plot,
+
+################################################################################
+# By state
+
+# Boxplots
+
+dow_perc_inc_state <- true_reported$SUN %>%
+  anti_join(rm_weeks, by = "week") %>%
+  group_by(week, state) %>%
+  mutate(total_cases = sum(incidence, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(
+    percentage = (incidence / total_cases) * 100,
+    day = factor(substr(day, 1, 3),
+                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
+  )
+
+dow_perc_inc_state <- bind_rows(dow_perc_inc_box, dow_perc_inc_state) %>%
+  mutate(
+    day = factor(substr(day, 1, 3),
+                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
+  )
+
+dow_perc_boxplot <- ggplot(dow_perc_inc_state,
+                           aes(x = day, y = percentage, fill = day)) +
+  geom_boxplot(outliers = FALSE, alpha = 0.6) +
+  geom_hline(yintercept = 100 / 7, linetype = 2) +
+  facet_wrap(~ state, ncol = 4) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 15),
+        axis.text.y = element_text(size = 15),
+        strip.text = element_text(size = 17),
+        panel.spacing = unit(1, "lines"),
+        panel.border = element_rect(color = "grey", fill = NA, linewidth = 0.5),
+        axis.title.y = element_text(margin = margin(r = 20), size = 19),
+        axis.title.x = element_text(margin = margin(t = 20), size = 19),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 15)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  labs(
+    x = "Day of the Week",
+    y = "Percentage of Weekly Cases Reported"
+  )
+
+ggsave("figures/manuscript_figure_2_boxplot.pdf", dow_perc_boxplot,
        width = 17, height = 15)
 
 ################################################################################
 # By outbreak phase
 
-dow_perc_inc_phase <- true_reported$SUN %>%
+# Boxplot
+dow_perc_inc_box <- true_reported$SUN %>%
+  anti_join(rm_weeks, by = "week") %>%
+  group_by(week) %>%
+  mutate(total_weekly_cases = sum(incidence, na.rm = TRUE)) %>%
+  group_by(week, day) %>%
+  summarise(
+    total_daily_cases = sum(incidence, na.rm = TRUE),
+    total_weekly_cases = first(total_weekly_cases),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    percentage = (total_daily_cases / total_weekly_cases) * 100,
+    outbreak_phase = "All Phases"
+  )
+
+dow_perc_inc_phase_box <- true_reported$SUN %>%
   anti_join(rm_weeks, by = "week") %>%
   mutate(
     outbreak_phase = case_when(
@@ -374,70 +389,60 @@ dow_perc_inc_phase <- true_reported$SUN %>%
       dates >= as.Date("2021-07-01") & dates <= as.Date("2021-11-30") ~ "Delta Wave",
       dates >= as.Date("2021-12-01") & dates <= as.Date("2022-02-27") ~ "Omicron Wave",
       TRUE ~ NA_character_
-    ),
-    outbreak_phase = factor(
-      outbreak_phase,
-      levels = c("Early Pandemic", "Summer Surge", "Winter Surge",
-                 "Vaccine Rollout", "Delta Wave", "Omicron Wave")
     )
   ) %>%
-  group_by(week) %>%
+  filter(!is.na(outbreak_phase)) %>%
+  group_by(week, outbreak_phase) %>%
   mutate(total_weekly_cases = sum(incidence, na.rm = TRUE)) %>%
-  ungroup() %>%
-  group_by(week, day) %>%
-  mutate(total_daily_cases = sum(incidence, na.rm = TRUE),
-         percentage = (total_daily_cases / total_weekly_cases) * 100) %>%
-  ungroup() %>%
-  group_by(day, outbreak_phase) %>%
+  group_by(week, day, outbreak_phase) %>%
   summarise(
-    mean_percentage = mean(percentage, na.rm = TRUE),
-    sd_percentage   = sd(percentage, na.rm = TRUE),
-    n               = n(),
-    se_percentage   = sd_percentage / sqrt(n),
-    ci_lower        = mean_percentage - 1.96 * se_percentage,
-    ci_upper        = mean_percentage + 1.96 * se_percentage,
-    .groups         = "drop"
-  ) %>%
-  bind_rows(
-    dow_perc_inc %>%
-      mutate(outbreak_phase = "All Phases")
-  ) %>%
+    total_daily_cases = sum(incidence, na.rm = TRUE),
+    total_weekly_cases = first(total_weekly_cases),
+    percentage = (total_daily_cases / total_weekly_cases) * 100,
+    .groups = "drop"
+  )
+
+dow_perc_inc_phase_box <- bind_rows(
+  dow_perc_inc_box,
+  dow_perc_inc_phase_box
+) %>%
   mutate(
+    day = factor(substr(day, 1, 3),
+                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")),
     outbreak_phase = factor(
       outbreak_phase,
       levels = c("All Phases", "Early Pandemic", "Summer Surge", "Winter Surge",
                  "Vaccine Rollout", "Delta Wave", "Omicron Wave")
-    ),
-    day = factor(substr(day, 1, 3),
-                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
+    )
   )
 
-
-# Plot figure 3
-dow_perc_plot_phase <- ggplot(dow_perc_inc_phase, aes(x = day, y = mean_percentage, fill = day)) +
-  geom_bar(stat = "identity", alpha = 0.6) +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2) +
-  labs(
-    x = "Day of the week",
-    y = "Mean Percentage of Weekly Cases Reported"
-  ) +
+dow_perc_plot_phase_box <- ggplot(dow_perc_inc_phase_box, aes(x = day, y = percentage, fill = day)) +
+  geom_boxplot(outliers = FALSE, alpha = 0.6) +
+  geom_hline(yintercept = 100 / 7, linetype = 2) +
+  facet_wrap(~ outbreak_phase, ncol = 4) +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +
-  geom_hline(yintercept = 100/7, linetype = 2) +
+  labs(
+    x = "Day of the Week",
+    y = "Percentage of Weekly Cases Reported"
+  ) +
   theme_minimal() +
-  theme(legend.position = "none",
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
-        axis.text.y = element_text(size = 14),
-        strip.text = element_text(size = 15),
-        panel.spacing = unit(1, "lines"),
-        panel.border = element_rect(color = "grey", fill = NA, linewidth = 0.5),
-        axis.title.y = element_text(margin = margin(r = 10), size = 15),
-        axis.title.x = element_text(margin = margin(t = 10), size = 15),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 15)) +
-  facet_wrap(~ outbreak_phase, ncol = 4)
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
+    axis.text.y = element_text(size = 14),
+    strip.text = element_text(size = 15),
+    panel.spacing = unit(1, "lines"),
+    panel.border = element_rect(color = "grey", fill = NA, linewidth = 0.5),
+    axis.title.y = element_text(margin = margin(r = 20), size = 15),
+    axis.title.x = element_text(margin = margin(t = 20), size = 15),
+    legend.title = element_blank(),
+    legend.text = element_text(size = 15)
+  )
 
-ggsave("figures/manuscript_figure_3.pdf", dow_perc_plot_phase,
-       width = 14, height = 7)
+# Save plot
+ggsave("figures/manuscript_figure_3_boxplot.pdf", dow_perc_plot_phase_box,
+       width = 17, height = 8)
+
 
 ####################################################################################
 ## Categorise
@@ -610,7 +615,7 @@ violin_jointlyr_state_plot <- ggplot(
   scale_linetype_manual(
     "",
     breaks = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
-    values = c(1, 1, 1, 1, 1, 1, 1)
+    values = c(rep(1, 7))
   ) +
   labs(
     x = "Forecast Week",
