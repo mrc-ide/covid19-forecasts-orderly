@@ -5,17 +5,13 @@ packages <- c("dplyr", "tidyr", "glue", "ggplot2", "gridExtra", "hrbrthemes",
               "ggforce", "gdata", "tibble", "scoringutils", "knitr", "lubridate",
               "cowplot", "purrr")
 
-lapply(packages, require, character.only = TRUE)
+suppressPackageStartupMessages(lapply(packages, require, character.only = TRUE))
 
-orderly_artefact(
-  "Manuscript figures",
-  c(
-    "figures/manuscript_figure_2.pdf",
-    "figures/manuscript_figure_3.pdf",
-    "figures/manuscript_figure_4.pdf",
-    "figures/manuscript_figure_5.pdf"
-  )
-)
+orderly_artefact(description = "Manuscript figures",
+                 c("figures/Fig2.pdf", "figures/Fig3.pdf",
+                   "figures/Fig4.pdf", "figures/Fig5.pdf",
+                   "figures/Fig6.pdf", "figures/S1_fig.pdf",
+                   "figures/S2_fig.pdf","figures/S3_fig.pdf"))
 
 # True reported incidence (entire period - including forecast period)
 orderly_dependency(
@@ -92,49 +88,49 @@ orderly_dependency(
 
 # CRPS values - reconstructed
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-21' && parameter:reconstructed == TRUE) && parameter:incidence_type == '", incidence_type, "'"),
   c("recon_rti0_crps_MON.rds" = "rti0_crps.rds",
     "recon_rti0_crps_weekly_MON.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-22' && parameter:reconstructed == TRUE) && parameter:incidence_type == '", incidence_type, "'"),
   c("recon_rti0_crps_TUE.rds" = "rti0_crps.rds",
     "recon_rti0_crps_weekly_TUE.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-23' && parameter:reconstructed == TRUE) && parameter:incidence_type == '", incidence_type, "'"),
   c("recon_rti0_crps_WED.rds" = "rti0_crps.rds",
     "recon_rti0_crps_weekly_WED.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-24' && parameter:reconstructed == TRUE) && parameter:incidence_type == '", incidence_type, "'"),
   c("recon_rti0_crps_THU.rds" = "rti0_crps.rds",
     "recon_rti0_crps_weekly_THU.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-25' && parameter:reconstructed == TRUE) && parameter:incidence_type == '", incidence_type, "'"),
   c("recon_rti0_crps_FRI.rds" = "rti0_crps.rds",
     "recon_rti0_crps_weekly_FRI.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-26' && parameter:reconstructed == TRUE) && parameter:incidence_type == '", incidence_type, "'"),
   c("recon_rti0_crps_SAT.rds" = "rti0_crps.rds",
     "recon_rti0_crps_weekly_SAT.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-27' && parameter:reconstructed == TRUE) && parameter:incidence_type == '", incidence_type, "'"),
   c("recon_rti0_crps_SUN.rds" = "rti0_crps.rds",
     "recon_rti0_crps_weekly_SUN.rds" = "rti0_crps_weekly.rds"
@@ -142,49 +138,49 @@ orderly_dependency(
 )
 # CRPS values - reported
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-21' && parameter:reconstructed == FALSE) && parameter:incidence_type == '", incidence_type, "'"),
   c("rep_rti0_crps_MON.rds" = "rti0_crps.rds",
     "rep_rti0_crps_weekly_MON.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-22' && parameter:reconstructed == FALSE) && parameter:incidence_type == '", incidence_type, "'"),
   c("rep_rti0_crps_TUE.rds" = "rti0_crps.rds",
     "rep_rti0_crps_weekly_TUE.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-23' && parameter:reconstructed == FALSE) && parameter:incidence_type == '", incidence_type, "'"),
   c("rep_rti0_crps_WED.rds" = "rti0_crps.rds",
     "rep_rti0_crps_weekly_WED.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-24' && parameter:reconstructed == FALSE) && parameter:incidence_type == '", incidence_type, "'"),
   c("rep_rti0_crps_THU.rds" = "rti0_crps.rds",
     "rep_rti0_crps_weekly_THU.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-25' && parameter:reconstructed == FALSE) && parameter:incidence_type == '", incidence_type, "'"),
   c("rep_rti0_crps_FRI.rds" = "rti0_crps.rds",
     "rep_rti0_crps_weekly_FRI.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-26' && parameter:reconstructed == FALSE) && parameter:incidence_type == '", incidence_type, "'"),
   c("rep_rti0_crps_SAT.rds" = "rti0_crps.rds",
     "rep_rti0_crps_weekly_SAT.rds" = "rti0_crps_weekly.rds"
   )
 )
 orderly_dependency(
-  "us_summarise_jointlyr",
+  "us_collate_weekly_outputs",
   paste0("latest(parameter:week_ending == '2022-02-27' && parameter:reconstructed == FALSE) && parameter:incidence_type == '", incidence_type, "'"),
   c("rep_rti0_crps_SUN.rds" = "rti0_crps.rds",
     "rep_rti0_crps_weekly_SUN.rds" = "rti0_crps_weekly.rds"
@@ -193,7 +189,7 @@ orderly_dependency(
 
 ####################################
 
-dir.create("figures")
+dir.create("figures", showWarnings = FALSE)
 
 all_files <- list.files(pattern = "\\.rds$", full.names = TRUE)
 for (x in all_files) {
@@ -207,22 +203,16 @@ states <- unique(rep_rti0_crps_WED$state)
 
 # True reported incidence
 rep_inputs <- list(
-  MON = reported_model_input_MON,
-  TUE = reported_model_input_TUE,
-  WED = reported_model_input_WED,
-  THU = reported_model_input_THU,
-  FRI = reported_model_input_FRI,
-  SAT = reported_model_input_SAT,
+  MON = reported_model_input_MON, TUE = reported_model_input_TUE,
+  WED = reported_model_input_WED, THU = reported_model_input_THU,
+  FRI = reported_model_input_FRI, SAT = reported_model_input_SAT,
   SUN = reported_model_input_SUN
 )
 
 start_dates <- as.Date(c(
-  MON = "2020-03-09",
-  TUE = "2020-03-10",
-  WED = "2020-03-11",
-  THU = "2020-03-12",
-  FRI = "2020-03-13",
-  SAT = "2020-03-14",
+  MON = "2020-03-09", TUE = "2020-03-10",
+  WED = "2020-03-11", THU = "2020-03-12",
+  FRI = "2020-03-13", SAT = "2020-03-14",
   SUN = "2020-03-15"
 ))
 
@@ -236,12 +226,9 @@ true_reported <- mapply(function(input, start_date) {
 
 # True reconstructed incidence
 recon_inputs <- list(
-  MON = reconstructed_model_input_MON,
-  TUE = reconstructed_model_input_TUE,
-  WED = reconstructed_model_input_WED,
-  THU = reconstructed_model_input_THU,
-  FRI = reconstructed_model_input_FRI,
-  SAT = reconstructed_model_input_SAT,
+  MON = reconstructed_model_input_MON, TUE = reconstructed_model_input_TUE,
+  WED = reconstructed_model_input_WED, THU = reconstructed_model_input_THU,
+  FRI = reconstructed_model_input_FRI, SAT = reconstructed_model_input_SAT,
   SUN = reconstructed_model_input_SUN
 )
 
@@ -256,7 +243,8 @@ true_reconstructed <- mapply(function(input, start_date) {
 # Visualise reported data
 true_reported$SUN$day <- factor(
   weekdays(as.Date(true_reported$SUN$dates, format="%d/%m/%Y")),
-  levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
+  levels = c("Monday", "Tuesday", "Wednesday", "Thursday",
+             "Friday", "Saturday", "Sunday"))
 
 true_reported$SUN$week <- paste0(
   format(as.Date(true_reported$SUN$dates, format = "%d/%m/%Y"), "%Y"), "-",
@@ -270,34 +258,24 @@ comp_weeks <- true_reported$SUN %>%
 rm_weeks <- comp_weeks %>%
   filter(count != 91)
 
-
 #####################################################################################
-## Percentage of cases overall
-
-# Boxplot
+## Percentage of cases reported on each day of the week overall
 
 dow_perc_inc_box <- true_reported$SUN %>%
   anti_join(rm_weeks, by = "week") %>%
   group_by(week) %>%
   mutate(total_weekly_cases = sum(incidence, na.rm = TRUE)) %>%
   group_by(week, day) %>%
-  summarise(
-    total_daily_cases = sum(incidence, na.rm = TRUE),
-    total_weekly_cases = first(total_weekly_cases),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    percentage = (total_daily_cases / total_weekly_cases) * 100,
-    state = "All States"
-  )
+  summarise(total_daily_cases = sum(incidence, na.rm = TRUE),
+            total_weekly_cases = first(total_weekly_cases),
+            .groups = "drop") %>%
+  mutate(percentage = (total_daily_cases / total_weekly_cases) * 100,
+         state = "All States")
 
-ggplot(dow_perc_inc_box, aes(x = day, y = percentage, fill = day)) +
-  geom_boxplot(outliers = FALSE, alpha = 0.6) +
+ggplot(dow_perc_inc_box, aes(x = day, y = percentage)) +
+  geom_boxplot(outliers = FALSE, fill = "dodgerblue", alpha = 0.3) +
   geom_hline(yintercept = 100 / 7, linetype = 2) +
-  labs(
-    x = "Day of the Week",
-    y = "Percentage of Weekly Cases Reported"
-  ) +
+  labs(x = "Day of the Week", y = "Percentage of Weekly Cases Reported") +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +
   theme_minimal() +
   theme(legend.position = "none",
@@ -305,7 +283,8 @@ ggplot(dow_perc_inc_box, aes(x = day, y = percentage, fill = day)) +
         axis.text.y = element_text(size = 15),
         strip.text = element_text(size = 17),
         panel.spacing = unit(1, "lines"),
-        panel.border = element_rect(color = "grey", fill = NA, linewidth = 0.5),
+        panel.border = element_rect(colour = "grey", fill = NA,
+                                    linewidth = 0.5),
         axis.title.y = element_text(margin = margin(r = 10), size = 17),
         axis.title.x = element_text(margin = margin(t = 10), size = 17),
         legend.title = element_blank(),
@@ -313,30 +292,23 @@ ggplot(dow_perc_inc_box, aes(x = day, y = percentage, fill = day)) +
 
 
 ################################################################################
-# By state
-
-# Boxplots
+# Percentage of cases reported on each day of the week by state
 
 dow_perc_inc_state <- true_reported$SUN %>%
   anti_join(rm_weeks, by = "week") %>%
   group_by(week, state) %>%
   mutate(total_cases = sum(incidence, na.rm = TRUE)) %>%
   ungroup() %>%
-  mutate(
-    percentage = (incidence / total_cases) * 100,
-    day = factor(substr(day, 1, 3),
-                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
-  )
+  mutate(percentage = (incidence / total_cases) * 100,
+         day = factor(substr(day, 1, 3), levels = c("Mon", "Tue", "Wed", "Thu",
+                                                    "Fri", "Sat", "Sun")))
 
 dow_perc_inc_state <- bind_rows(dow_perc_inc_box, dow_perc_inc_state) %>%
-  mutate(
-    day = factor(substr(day, 1, 3),
-                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
-  )
+  mutate(day = factor(substr(day, 1, 3), levels = c("Mon", "Tue", "Wed", "Thu",
+                                                    "Fri", "Sat", "Sun")))
 
-dow_perc_boxplot <- ggplot(dow_perc_inc_state,
-                           aes(x = day, y = percentage, fill = day)) +
-  geom_boxplot(outliers = FALSE, alpha = 0.6) +
+fig2 <- ggplot(dow_perc_inc_state, aes(x = day, y = percentage)) +
+  geom_boxplot(outliers = FALSE, alpha = 0.3, fill = "dodgerblue") +
   geom_hline(yintercept = 100 / 7, linetype = 2) +
   facet_wrap(~ state, ncol = 4) +
   theme_minimal() +
@@ -345,86 +317,72 @@ dow_perc_boxplot <- ggplot(dow_perc_inc_state,
         axis.text.y = element_text(size = 15),
         strip.text = element_text(size = 17),
         panel.spacing = unit(1, "lines"),
-        panel.border = element_rect(color = "grey", fill = NA, linewidth = 0.5),
+        panel.border = element_rect(colour = "grey", fill = NA,
+                                    linewidth = 0.5),
         axis.title.y = element_text(margin = margin(r = 20), size = 19),
         axis.title.x = element_text(margin = margin(t = 20), size = 19),
         legend.title = element_blank(),
         legend.text = element_text(size = 15)) +
   scale_y_continuous(expand = c(0, 0)) +
-  labs(
-    x = "Day of the Week",
-    y = "Percentage of Weekly Cases Reported"
-  )
+  labs(x = "Day of the Week", y = "Percentage of Weekly Cases Reported")
 
-ggsave("figures/manuscript_figure_2_boxplot.pdf", dow_perc_boxplot,
-       width = 17, height = 15)
+ggsave("figures/Fig2.pdf", fig2, width = 17, height = 15)
 
 ################################################################################
-# By outbreak phase
+# Percentage of cases reported on each day of the week by outbreak phase
 
-# Boxplot
 dow_perc_inc_box <- true_reported$SUN %>%
   anti_join(rm_weeks, by = "week") %>%
   group_by(week) %>%
   mutate(total_weekly_cases = sum(incidence, na.rm = TRUE)) %>%
   group_by(week, day) %>%
-  summarise(
-    total_daily_cases = sum(incidence, na.rm = TRUE),
-    total_weekly_cases = first(total_weekly_cases),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    percentage = (total_daily_cases / total_weekly_cases) * 100,
-    outbreak_phase = "All Phases"
-  )
+  summarise(total_daily_cases = sum(incidence, na.rm = TRUE),
+            total_weekly_cases = first(total_weekly_cases),
+            .groups = "drop") %>%
+  mutate(percentage = (total_daily_cases / total_weekly_cases) * 100,
+         outbreak_phase = "All Phases")
 
 dow_perc_inc_phase_box <- true_reported$SUN %>%
   anti_join(rm_weeks, by = "week") %>%
-  mutate(
-    outbreak_phase = case_when(
-      dates >= as.Date("2020-03-01") & dates <= as.Date("2020-05-31") ~ "Early Pandemic",
-      dates >= as.Date("2020-06-01") & dates <= as.Date("2020-09-30") ~ "Summer Surge",
-      dates >= as.Date("2020-10-01") & dates <= as.Date("2020-12-31") ~ "Winter Surge",
-      dates >= as.Date("2021-01-01") & dates <= as.Date("2021-06-30") ~ "Vaccine Rollout",
-      dates >= as.Date("2021-07-01") & dates <= as.Date("2021-11-30") ~ "Delta Wave",
-      dates >= as.Date("2021-12-01") & dates <= as.Date("2022-02-27") ~ "Omicron Wave",
-      TRUE ~ NA_character_
-    )
-  ) %>%
+  mutate(outbreak_phase = case_when(
+    dates >= as.Date("2020-03-01") & dates <=
+      as.Date("2020-05-31") ~ "Early Pandemic",
+    dates >= as.Date("2020-06-01") & dates <=
+      as.Date("2020-09-30") ~ "Summer Surge",
+    dates >= as.Date("2020-10-01") & dates <=
+      as.Date("2020-12-31") ~ "Winter Surge",
+    dates >= as.Date("2021-01-01") & dates <=
+      as.Date("2021-06-30") ~ "Vaccine Rollout",
+    dates >= as.Date("2021-07-01") & dates <=
+      as.Date("2021-11-30") ~ "Delta Wave",
+    dates >= as.Date("2021-12-01") & dates <=
+      as.Date("2022-02-27") ~ "Omicron Wave",
+    TRUE ~ NA_character_)) %>%
   filter(!is.na(outbreak_phase)) %>%
   group_by(week, outbreak_phase) %>%
   mutate(total_weekly_cases = sum(incidence, na.rm = TRUE)) %>%
   group_by(week, day, outbreak_phase) %>%
-  summarise(
-    total_daily_cases = sum(incidence, na.rm = TRUE),
-    total_weekly_cases = first(total_weekly_cases),
-    percentage = (total_daily_cases / total_weekly_cases) * 100,
-    .groups = "drop"
-  )
+  summarise(total_daily_cases = sum(incidence, na.rm = TRUE),
+            total_weekly_cases = first(total_weekly_cases),
+            percentage = (total_daily_cases / total_weekly_cases) * 100,
+            .groups = "drop")
 
-dow_perc_inc_phase_box <- bind_rows(
-  dow_perc_inc_box,
-  dow_perc_inc_phase_box
-) %>%
-  mutate(
-    day = factor(substr(day, 1, 3),
-                 levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")),
-    outbreak_phase = factor(
-      outbreak_phase,
-      levels = c("All Phases", "Early Pandemic", "Summer Surge", "Winter Surge",
-                 "Vaccine Rollout", "Delta Wave", "Omicron Wave")
-    )
-  )
+dow_perc_inc_phase_box <- bind_rows(dow_perc_inc_box,
+                                    dow_perc_inc_phase_box) %>%
+  mutate(day = factor(substr(day, 1, 3), levels = c("Mon", "Tue", "Wed", "Thu",
+                                                    "Fri", "Sat", "Sun")),
+         outbreak_phase = factor(outbreak_phase,
+                                 levels = c("All Phases", "Early Pandemic",
+                                            "Summer Surge", "Winter Surge",
+                                            "Vaccine Rollout", "Delta Wave",
+                                            "Omicron Wave")))
 
-dow_perc_plot_phase_box <- ggplot(dow_perc_inc_phase_box, aes(x = day, y = percentage, fill = day)) +
-  geom_boxplot(outliers = FALSE, alpha = 0.6) +
+fig3 <- ggplot(dow_perc_inc_phase_box, aes(x = day, y = percentage)) +
+  geom_boxplot(outliers = FALSE, alpha = 0.3, fill = "dodgerblue") +
   geom_hline(yintercept = 100 / 7, linetype = 2) +
   facet_wrap(~ outbreak_phase, ncol = 4) +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +
-  labs(
-    x = "Day of the Week",
-    y = "Percentage of Weekly Cases Reported"
-  ) +
+  labs(x = "Day of the Week", y = "Percentage of Weekly Cases Reported") +
   theme_minimal() +
   theme(
     legend.position = "none",
@@ -432,16 +390,14 @@ dow_perc_plot_phase_box <- ggplot(dow_perc_inc_phase_box, aes(x = day, y = perce
     axis.text.y = element_text(size = 14),
     strip.text = element_text(size = 15),
     panel.spacing = unit(1, "lines"),
-    panel.border = element_rect(color = "grey", fill = NA, linewidth = 0.5),
+    panel.border = element_rect(colour = "grey", fill = NA, linewidth = 0.5),
     axis.title.y = element_text(margin = margin(r = 20), size = 15),
     axis.title.x = element_text(margin = margin(t = 20), size = 15),
     legend.title = element_blank(),
     legend.text = element_text(size = 15)
   )
 
-# Save plot
-ggsave("figures/manuscript_figure_3_boxplot.pdf", dow_perc_plot_phase_box,
-       width = 17, height = 8)
+ggsave("figures/Fig3.pdf", fig3, width = 17, height = 8)
 
 
 ####################################################################################
@@ -505,11 +461,13 @@ low_or_nonweekly <- purrr::map_dfr(proj_days, function(dow) {
 # Remove projection weeks with zero inc in past week and likely non-weekly reporting
 remove_low_or_nonweekly <- function(dow) {
   rep_data <- get(paste0("rep_rti0_crps_weekly_", dow)) %>%
-    anti_join(low_or_nonweekly %>% filter(proj_dow == dow), by = c("projection_week", "state")) %>%
+    anti_join(low_or_nonweekly %>% filter(proj_dow == dow),
+              by = c("projection_week", "state")) %>%
     mutate(dataset = "Reported", proj_dow = dow, model = "jointlyr")
   
   recon_data <- get(paste0("recon_rti0_crps_weekly_", dow)) %>%
-    anti_join(low_or_nonweekly %>% filter(proj_dow == dow), by = c("projection_week", "state")) %>%
+    anti_join(low_or_nonweekly %>% filter(proj_dow == dow),
+              by = c("projection_week", "state")) %>%
     mutate(dataset = "Reconstructed", proj_dow = dow, model = "jointlyr")
   
   return(list(rep_data, recon_data))
@@ -522,250 +480,387 @@ jointlyr_crps_weekly <- purrr::map_dfr(proj_days, function(dow) {
 
 jointlyr_crps_weekly <- jointlyr_crps_weekly %>% select(-starts_with("true"))
 
-
 ################################################################################
-## Violin plot of CRPS by state
+## Data for CRPS violin plots
  
 violin_data <- jointlyr_crps_weekly %>%
-  mutate(
-    log10_crps = log10(crps),
-    proj_dow = stringr::str_to_title(tolower(proj_dow)),
-    proj_dow = factor(proj_dow,
-                      levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
-  )
+  mutate(log10_crps = log10(crps),
+         proj_dow = stringr::str_to_title(tolower(proj_dow)),
+         proj_dow = factor(proj_dow, levels = c("Mon", "Tue", "Wed", "Thu",
+                                                "Fri", "Sat", "Sun")))
 
-violin_allstates_jointlyr <- violin_data %>%
-  mutate(state = "All States")
+violin_allstates_jointlyr <- violin_data %>% mutate(state = "All States")
 
 violin_jointlyr_combined <- bind_rows(violin_allstates_jointlyr, violin_data)
-
-# Get medians
-compute_medians <- function(data) {
-  data %>%
-    group_by(state, forecast_week, dataset, proj_dow) %>%
-    summarise(
-      median_crps = median(log10_crps),
-      n = n(),
-      sd_crps = sd(log10_crps),
-      se_crps = sd_crps / sqrt(n),
-      lower_ci = median_crps - qt(0.975, df = n - 1) * se_crps,
-      upper_ci = median_crps + qt(0.975, df = n - 1) * se_crps,
-      .groups = "drop"
-    )
-}
-
-violin_allstates_median <- compute_medians(violin_allstates_jointlyr)
-violin_groupedstates_median <- compute_medians(violin_data)
-violin_medians_combined <- bind_rows(violin_allstates_median, violin_groupedstates_median)
-
-week_line_data <- violin_medians_combined %>%
-  group_by(forecast_week, state) %>%
-  summarise(week_crps = median(median_crps), .groups = "drop")
- 
-
-violin_jointlyr_state_plot <- ggplot(
-  violin_jointlyr_combined,
-  aes(x = as.numeric(forecast_week), y = log10_crps)
-  ) +
-  geom_segment(
-    data = week_line_data,
-    aes(
-      x = as.numeric(forecast_week) - 0.5,
-      xend = as.numeric(forecast_week) + 0.5,
-      y = week_crps,
-      yend = week_crps
-      ),
-    col = "black"
-    ) +
-  geom_vline(
-    data = week_line_data,
-    aes(xintercept = as.numeric(forecast_week) + 0.5),
-    linetype = "dashed",
-    color = "black"
-    ) +
-  geom_violin(
-    aes(fill = dataset,
-        group = interaction(forecast_week, dataset, proj_dow)
-    ),
-    position = position_dodge(width = 1),
-    alpha = 0.6,
-    size = 0.5
-    ) +
-  geom_point(
-    data = violin_medians_combined,
-    aes(y = median_crps, shape = proj_dow, colour = dataset),
-    size = 3.5,
-    position = position_dodge(width = 1)
-    ) +
-  scale_color_manual(
-    "",
-    breaks = c("Reconstructed", "Reported"),
-    values = c("#1f5b3a", "#363636")
-  ) +
-  scale_fill_manual(
-    "",
-    breaks = c("Reconstructed", "Reported"),
-    values = c("#297a4d", "darkgrey")
-  ) +
-  scale_shape_manual(
-    "",
-    breaks = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
-    values = c(9, 8, 18, 16, 17, 15, 7)
-  ) +
-  scale_linetype_manual(
-    "",
-    breaks = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
-    values = c(rep(1, 7))
-  ) +
-  labs(
-    x = "Forecast Week",
-    y = "log10(CRPS)"
-  ) +
-  facet_wrap(~ state, ncol = 2) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(hjust = 1, size = 17),
-        axis.text.y = element_text(size = 17),
-        strip.text = element_text(size = 21),
-        panel.spacing = unit(0.5, "lines"),
-        panel.border = element_rect(color = "grey", fill = NA, size = 0.5),
-        axis.title.y = element_text(margin = margin(r = 10), size = 19),
-        axis.title.x = element_text(margin = margin(t = 10), size = 19),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 21),
-        legend.position = "top",
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank()) +
-  scale_y_continuous(expand = c(0, 0.01)) +
-  scale_x_continuous(expand = c(0.005, 0)) +
-  guides(shape = guide_legend(nrow = 1))
-violin_jointlyr_state_plot
-
-ggsave("figures/manuscript_figure_4.pdf", violin_jointlyr_state_plot,
-       width = 14.5, height = 19)
-
-################################################################################
-# By Outbreak phase
 
 # Violin plots by phase
 violin10_jointlyr_phase <- jointlyr_crps_weekly %>%
   mutate(
     outbreak_phase = case_when(
-      week_ending >= as.Date("2020-03-01") & week_ending <= as.Date("2020-05-31") ~ "Early Pandemic",
-      week_ending >= as.Date("2020-06-01") & week_ending <= as.Date("2020-09-30") ~ "Summer Surge",
-      week_ending >= as.Date("2020-10-01") & week_ending <= as.Date("2020-12-31") ~ "Winter Surge",
-      week_ending >= as.Date("2021-01-01") & week_ending <= as.Date("2021-06-30") ~ "Vaccine Rollout",
-      week_ending >= as.Date("2021-07-01") & week_ending <= as.Date("2021-11-30") ~ "Delta Wave",
-      week_ending >= as.Date("2021-12-01") & week_ending <= as.Date("2022-02-27") ~ "Omicron Wave",
-      TRUE ~ NA_character_
-    ),
-    outbreak_phase = factor(
-      outbreak_phase,
-      levels = c("Early Pandemic", "Summer Surge", "Winter Surge",
-                 "Vaccine Rollout", "Delta Wave", "Omicron Wave")
-    ),
+      week_ending >= as.Date("2020-03-01") &
+        week_ending <= as.Date("2020-05-31") ~ "Early Pandemic",
+      week_ending >= as.Date("2020-06-01") &
+        week_ending <= as.Date("2020-09-30") ~ "Summer Surge",
+      week_ending >= as.Date("2020-10-01") &
+        week_ending <= as.Date("2020-12-31") ~ "Winter Surge",
+      week_ending >= as.Date("2021-01-01") &
+        week_ending <= as.Date("2021-06-30") ~ "Vaccine Rollout",
+      week_ending >= as.Date("2021-07-01") &
+        week_ending <= as.Date("2021-11-30") ~ "Delta Wave",
+      week_ending >= as.Date("2021-12-01") &
+        week_ending <= as.Date("2022-02-27") ~ "Omicron Wave",
+      TRUE ~ NA_character_),
+    outbreak_phase = factor(outbreak_phase,
+                            levels = c("Early Pandemic", "Summer Surge",
+                                       "Winter Surge", "Vaccine Rollout",
+                                       "Delta Wave", "Omicron Wave")),
     log10_crps = log10(crps),
     proj_dow = stringr::str_to_title(tolower(proj_dow)),
-    proj_dow = factor(proj_dow, levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
+    proj_dow = factor(proj_dow, levels = c("Mon", "Tue", "Wed", "Thu",
+                                           "Fri", "Sat", "Sun"))
   )
  
 violin10_jointlyr_median <- violin10_jointlyr_phase %>%
   group_by(outbreak_phase, forecast_week, dataset, model, proj_dow) %>%
-  summarise(median_crps = median(log10_crps),
-            n           = n(),
-            sd_crps     = sd(log10_crps),
-            se_crps     = sd_crps / sqrt(n),
-            lower_ci    = median_crps - qt(0.975, df = n - 1) * se_crps,
-            upper_ci    = median_crps + qt(0.975, df = n - 1) * se_crps
+  summarise(median_crps = median(log10_crps), .groups = "drop")
+
+###############################################################################
+## Supplementary figure 1 (compare reconstructed and reported incidence)
+combined_inc_data <- bind_rows(
+  mutate(true_reported$SUN, dataset = "Reported"),
+  mutate(true_reconstructed$SUN, dataset = "Reconstructed")
   ) %>%
-  ungroup()
+  mutate(dates = as.Date(dates))
 
-week_line_data <- violin10_jointlyr_median %>%
-  group_by(forecast_week, outbreak_phase) %>%
-  summarise(week_crps = median(median_crps))
+combined_inc_data <- combined_inc_data %>%
+  group_by(dates, dataset) %>%
+  summarise(incidence = sum(incidence, na.rm = TRUE), .groups = "drop") %>%
+  mutate(state = "All States") %>%
+  bind_rows(combined_inc_data)
 
-violin10_jointlyr_phase_plot <- ggplot(
-  violin10_jointlyr_phase,
-  aes(x = as.numeric(forecast_week), y = log10_crps)
-  ) +
-  geom_segment(
-    data = week_line_data,
-    aes(
-      x = as.numeric(forecast_week) - 0.5,
-      xend = as.numeric(forecast_week) + 0.5,
-      y = week_crps,
-      yend = week_crps
-      ),
-    col = "black"
-    ) +
-  geom_vline(
-    data = week_line_data,
-    aes(xintercept = as.numeric(forecast_week) + 0.5),
-    linetype = "dashed",
-    color = "black"
-    ) +
-  geom_violin(
-    aes(
-      fill = dataset,
-      group = interaction(forecast_week, dataset, proj_dow)
-    ),
-    position = position_dodge(width = 1),
-    alpha = 0.6,
-    size = 0.5
-  ) +
-  geom_point(
-    data = violin10_jointlyr_median,
-    aes(
-      y = median_crps,
-      shape = proj_dow,
-      colour = dataset
-      ),
-    size = 3.5,
-    position = position_dodge(width = 1)
-    ) +
-  labs(
-    x = "Forecast Week",
-    y = "log10(CRPS)"
-  ) +
-  facet_wrap(~ outbreak_phase, ncol = 2) +
-  scale_color_manual(
-    "",
-    breaks = c("Reconstructed", "Reported"),
-    values = c("#1f5b3a", "#363636")
-  ) +
-  scale_fill_manual(
-    "",
-    breaks = c("Reconstructed", "Reported"),
-    values = c("#297a4d", "darkgrey")
-  ) +
-  scale_shape_manual(
-    "",
-    breaks = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
-    values = c(9, 8, 18, 16, 17, 15, 7)
-  ) +
-  scale_linetype_manual(
-    "",
-    breaks = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
-    values = c(1, 1, 1, 1, 1, 1, 1)
-  ) +
-  theme_minimal() +
+incidence_diff_data <- combined_inc_data %>%
+  pivot_wider(id_cols = c(dates, state),
+              names_from = dataset, 
+              values_from = incidence) %>%
+  mutate(inc_difference = Reported - Reconstructed)
+
+dataset_cols_inc <- c("Reconstructed" = "#297a4d", "Reported" = "grey65")
+
+state_list <- c("All States", sort(unique(combined_inc_data$state[combined_inc_data$state != "All States"])))
+
+# stack incidence and reported-reconstructed panels for each state
+build_state_plot <- function(target_state) {
+  
+  state_inc <- combined_inc_data %>% filter(state == target_state)
+  state_diff <- incidence_diff_data %>% filter(state == target_state)
+  
+  # incidence panel
+  p_inc <- ggplot(state_inc, aes(x = dates, y = incidence, colour = dataset)) +
+    geom_line(data = state_inc %>% filter(dataset == "Reported"),
+              linetype = "solid", linewidth = 0.5, alpha = 0.7) +
+    geom_line(data = state_inc %>% filter(dataset == "Reconstructed"),
+              linetype = "solid", linewidth = 0.5, alpha = 0.8) +
+    scale_colour_manual(values = dataset_cols_inc) +
+    facet_wrap(~ state) +
+    labs(x = NULL, y = "Incidence") +
+    theme_minimal(base_size = 11) +
+    theme(legend.position = "none",
+          strip.background = element_rect(fill = "grey90", colour = "grey80"),
+          strip.text = element_text(size = 12, face = "bold",
+                                    margin = margin(t = 5, b = 5)),
+          axis.text.x = element_blank(),
+          axis.title.x = element_blank(),
+          axis.title.y = element_text(size = 11, margin = margin(r = 5)),
+          panel.grid.minor = element_blank(),
+          panel.border = element_rect(colour = "grey80", fill = NA),
+          plot.margin = margin(t = 15, r = 5, b = 3, l = 5))
+  
+  # difference panel
+  p_diff <- ggplot(state_diff, aes(x = dates, y = inc_difference)) +
+    geom_hline(yintercept = 0, linetype = "dashed",
+               colour = "black", linewidth = 0.5) +
+    geom_line(colour = "black", linewidth = 0.4, alpha = 0.6) +
+    labs(x = NULL, y = "Reported\n - Reconstructed") +
+    theme_minimal(base_size = 11) +
+    theme(
+      legend.position = "none",
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 11),
+      axis.title.y = element_text(size = 11, margin = margin(r = 5)),
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(colour = "grey80", fill = NA),
+      plot.margin = margin(t = 3, r = 5, b = 15, l = 5)
+    )
+  
+  # combine incidence and difference panels vertically
+  cowplot::plot_grid(
+    p_inc, p_diff, 
+    ncol = 1, align = "v",
+    rel_heights = c(1.25, 1)
+  )
+}
+
+# map function across all states to generate a list of combined plots
+all_state_plots <- purrr::map(state_list, build_state_plot)
+
+# extract single shared legend
+legend_plot <- ggplot(combined_inc_data,
+                      aes(x = dates, y = incidence, colour = dataset)) +
+  geom_line(linewidth = 1) +
+  scale_colour_manual(name = NULL, values = dataset_cols_inc) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom", legend.direction = "vertical")
+
+shared_legend <- cowplot::get_legend(legend_plot)
+
+# arrange state blocks into a grid
+master_grid <- cowplot::plot_grid(plotlist = all_state_plots, ncol = 3)
+
+s1_fig <- cowplot::ggdraw(master_grid) +
+  cowplot::draw_plot(shared_legend, 
+                     x = 0.72, y = 0.05,
+                     width = 0.2, height = 0.1)
+
+ggsave("figures/S1_fig.pdf", s1_fig, width = 16, height = 24)
+
+###############################################################################
+## Supplementary figure 2 (all states and all forecast weeks)
+violin_jointlyr_combined <- violin_jointlyr_combined %>%
+  mutate(
+    state = factor(state, levels = c("All States", unique(violin_data$state))),
+    week_label = paste("Forecast Week", forecast_week)
+  )
+
+violin_medians_combined <- violin_jointlyr_combined %>%
+  group_by(state, week_label, dataset, proj_dow) %>%
+  summarise(median_crps = median(log10_crps), .groups = "drop")
+
+panel_reference_lines <- violin_medians_combined %>%
+  group_by(state, week_label) %>%
+  summarise(week_state_median = median(median_crps), .groups = "drop")
+
+dataset_fill <- c("Reconstructed" = "#297a4d", "Reported" = "darkgrey")
+dataset_cols <- c("Reconstructed" = "#297a4d", "Reported" = "grey30")
+dataset_line <- c("Reconstructed" = "solid", "Reported" = "dotted")
+
+s2_fig <- ggplot(violin_jointlyr_combined,
+                 aes(x = proj_dow, y = log10_crps, fill = dataset)) +
+  geom_hline(data = panel_reference_lines,
+             aes(yintercept = week_state_median),
+             linetype = "dashed",
+             colour = "black",
+             linewidth = 0.4,
+             alpha = 0.7) +
+  geom_violin(aes(linetype = dataset, group = interaction(dataset, proj_dow)),
+              position = position_dodge(width = 0.8),
+              linewidth = 0.2,
+              alpha = 0.4) +
+  geom_point(data = violin_medians_combined,
+             aes(y = median_crps, colour = dataset, shape = dataset,
+                 group = interaction(dataset, proj_dow)),
+             position = position_dodge(width = 0.8), 
+             size = 1.2) +
+  facet_grid(week_label ~ state, scales = "free_y") +
+  scale_fill_manual(name = NULL, values = dataset_fill) +
+  scale_colour_manual(name = NULL, values = dataset_cols) +
+  scale_shape_manual(name = NULL, values = c("Reconstructed" = 16,
+                                             "Reported" = 1)) +
+  scale_linetype_manual(name = NULL, values = dataset_line) +
+  labs(x = "Day of Projection", y = "log10(CRPS)") +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "top",
+        panel.border = element_rect(colour = "grey80", fill = NA),
+        strip.background = element_rect(fill = "grey95", colour = NA),
+        strip.text = element_text(size = 10, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title = element_text(size = 11),
+        legend.text = element_text(size = 11),
+        panel.grid.major.x = element_blank(),
+        panel.spacing = unit(0.2, "lines"))
+
+ggsave("figures/S2_fig.pdf", s2_fig, width = 19, height = 10)
+
+###############################################################################
+# Main paper figure 4 (all states combined faceted by forecast week)
+main_fig_4_data <- violin_jointlyr_combined %>%
+  filter(state == "All States")
+
+main_medians_data <- violin_medians_combined %>%
+  filter(state == "All States")
+
+main_reference_lines <- panel_reference_lines %>%
+  filter(state == "All States")
+
+fig4 <- ggplot(main_fig_4_data, aes(x = proj_dow, y = log10_crps,
+                                    fill = dataset)) +
+  geom_hline(data = main_reference_lines, aes(yintercept = week_state_median),
+             linetype = "dashed", colour = "black",
+             linewidth = 0.4, alpha = 0.7) +
+  geom_violin(aes(linetype = dataset, group = interaction(dataset, proj_dow)),
+              position = position_dodge(width = 0.8),
+              linewidth = 0.2, alpha = 0.4) +
+  geom_point(data = main_medians_data,
+             aes(y = median_crps, colour = dataset, shape = dataset,
+                 group = interaction(dataset, proj_dow)),
+             position = position_dodge(width = 0.8), size = 1.2) +
+  facet_wrap(~ week_label, ncol = 4) +
+  scale_fill_manual(name = NULL, values = dataset_fill) +
+  scale_colour_manual(name = NULL, values = dataset_cols) +
+  scale_shape_manual(name = NULL, values = c("Reconstructed" = 16,
+                                             "Reported" = 1)) +
+  scale_linetype_manual(name = NULL, values = dataset_line) +
+  labs(x = "Day of Projection", y = "log10(CRPS)") +
+  theme_minimal(base_size = 11) +
   theme(
-    axis.text.x = element_text(hjust = 1, size = 14),
-    axis.text.y = element_text(size = 14),
-    strip.text = element_text(size = 17),
-    panel.spacing = unit(0.5, "lines"),
-    panel.border = element_rect(color = "grey", fill = NA, size = 0.5),
-    axis.title.y = element_text(margin = margin(r = 10), size = 16),
-    axis.title.x = element_text(margin = margin(t = 10), size = 16),
-    legend.title = element_blank(),
-    legend.text = element_text(size = 17),
     legend.position = "top",
+    panel.border = element_rect(colour = "grey80", fill = NA),
+    strip.background = element_rect(fill = "grey95", colour = NA),
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title = element_text(size = 11),
+    legend.text = element_text(size = 11),
     panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank()
-    ) +
-  scale_x_continuous(expand = c(0.005, 0)) +
-  guides(shape = guide_legend(nrow = 1))
-violin10_jointlyr_phase_plot
+    panel.spacing = unit(0.2, "lines"),
+    axis.title.y = element_text(size = 11, margin = margin(r = 15)),
+    axis.title.x = element_text(size = 11, margin = margin(t = 15))
+  )
 
-ggsave("figures/manuscript_figure_5.pdf", violin10_jointlyr_phase_plot,
-       width = 14, height = 9)
+ggsave("figures/Fig4.pdf", fig4, width = 10, height = 4)
+
+###############################################################################
+## Main paper Figure 5 (state by state for forecast week 1)
+fig_week1_data <- violin_jointlyr_combined %>%
+  filter(forecast_week == 1)
+
+fig_week1_medians <- violin_medians_combined %>%
+  filter(week_label == "Forecast Week 1")
+
+fig_week1_ref_lines <- panel_reference_lines %>%
+  filter(week_label == "Forecast Week 1")
+
+fig5 <- ggplot(fig_week1_data,
+               aes(x = proj_dow, y = log10_crps, fill = dataset)) +
+  geom_hline(data = fig_week1_ref_lines, aes(yintercept = week_state_median),
+             linetype = "dashed",
+             colour = "black",
+             linewidth = 0.4,
+             alpha = 0.7) +
+  geom_violin(aes(linetype = dataset, group = interaction(dataset, proj_dow)),
+              position = position_dodge(width = 0.8), 
+              linewidth = 0.2, alpha = 0.4) +
+  geom_point(data = fig_week1_medians,
+             aes(y = median_crps, colour = dataset, shape = dataset,
+                 group = interaction(dataset, proj_dow)),
+             position = position_dodge(width = 0.8), size = 1.5) +
+  facet_wrap(~ state, nrow = 2) +
+  scale_fill_manual(name = NULL, values = dataset_fill) +
+  scale_colour_manual(name = NULL, values = dataset_cols) +
+  scale_shape_manual(name = NULL, values = c("Reconstructed" = 16,
+                                             "Reported" = 1)) +
+  scale_linetype_manual(name = NULL, values = dataset_line) +
+  labs(x = "Day of Projection", y = "log10(CRPS)") +
+  theme_minimal(base_size = 11) +
+  theme(
+    legend.position = "top",
+    panel.border = element_rect(colour = "grey80", fill = NA),
+    strip.background = element_rect(fill = "grey95", colour = NA),
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title.y = element_text(size = 11, margin = margin(r = 15)),
+    axis.title.x = element_text(size = 11, margin = margin(t = 15)),
+    panel.grid.major.x = element_blank(),
+    panel.spacing = unit(0.3, "lines")
+  )
+
+ggsave("figures/Fig5.pdf", fig5, width = 11, height = 7)
+
+###############################################################################
+## Supplementary figure 3 (all phases faceted by forecast weeks 1-4)
+violin_phase_subset <- violin10_jointlyr_phase %>%
+  mutate(week_label = paste("Forecast Week", forecast_week))
+
+panel_ref_s3 <- violin10_jointlyr_median %>%
+  group_by(outbreak_phase, forecast_week) %>%
+  summarise(week_state_median = median(median_crps), .groups = "drop") %>%
+  mutate(week_label = paste("Forecast Week", forecast_week))
+
+s3_fig <- ggplot(violin_phase_subset,
+                 aes(x = proj_dow, y = log10_crps, fill = dataset)) +
+  geom_hline(data = panel_ref_s3, aes(yintercept = week_state_median),
+             linetype = "dashed", colour = "black",
+             linewidth = 0.4, alpha = 0.7) +
+  geom_violin(aes(linetype = dataset, group = interaction(dataset, proj_dow)),
+              position = position_dodge(width = 0.8),
+              linewidth = 0.2, alpha = 0.4) +
+  geom_point(data = violin10_jointlyr_median %>%
+               mutate(week_label = paste("Forecast Week", forecast_week)),
+             aes(y = median_crps, colour = dataset, shape = dataset,
+                 group = interaction(dataset, proj_dow)),
+             position = position_dodge(width = 0.8), size = 1.5) +
+  facet_grid(week_label ~ outbreak_phase, scales = "free_y") +
+  scale_fill_manual(name = NULL, values = dataset_fill) +
+  scale_colour_manual(name = NULL, values = dataset_cols) +
+  scale_shape_manual(name = NULL, values = c("Reconstructed" = 16,
+                                             "Reported" = 1)) +
+  scale_linetype_manual(name = NULL, values = dataset_line) +
+  labs(x = "Day of Projection", y = "log10(CRPS)") +
+  theme_minimal(base_size = 11) +
+  theme(
+    legend.position = "top",
+    panel.border = element_rect(colour = "grey80", fill = NA),
+    strip.background = element_rect(fill = "grey95", colour = NA),
+    strip.text = element_text(size = 9, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    panel.spacing = unit(0.3, "lines")
+  )
+
+ggsave("figures/S3_fig.pdf", s3_fig, width = 13, height = 9)
+
+###############################################################################
+# Main paper figure 6 (phases by forecast week 1 only)
+violin_phase_week1 <- violin10_jointlyr_phase %>%
+  filter(forecast_week == 1)
+
+panel_ref_week1 <- violin10_jointlyr_median %>%
+  filter(forecast_week == 1) %>%
+  group_by(outbreak_phase) %>%
+  summarise(week_state_median = median(median_crps), .groups = "drop")
+
+median_points_week1 <- violin10_jointlyr_median %>%
+  filter(forecast_week == 1)
+
+fig_6 <- ggplot(violin_phase_week1,
+                aes(x = proj_dow, y = log10_crps, fill = dataset)) +
+  geom_hline(data = panel_ref_week1,
+             aes(yintercept = week_state_median),
+             linetype = "dashed", colour = "black",
+             linewidth = 0.4, alpha = 0.7) +
+  geom_violin(aes(linetype = dataset, group = interaction(dataset, proj_dow)),
+              position = position_dodge(width = 0.8),
+              linewidth = 0.2, alpha = 0.4) +
+  geom_point(data = median_points_week1,
+             aes(y = median_crps, colour = dataset, shape = dataset, 
+                 group = interaction(dataset, proj_dow)),
+             position = position_dodge(width = 0.8), size = 1.5) +
+  facet_wrap(~ outbreak_phase, ncol = 6) +
+  scale_fill_manual(name = NULL, values = dataset_fill) +
+  scale_colour_manual(name = NULL, values = dataset_cols) +
+  scale_shape_manual(name = NULL, values = c("Reconstructed" = 16,
+                                             "Reported" = 1)) +
+  scale_linetype_manual(name = NULL, values = dataset_line) +
+  labs(x = "Day of Projection", y = "log10(CRPS)") +
+  theme_minimal(base_size = 11) +
+  theme(
+    legend.position = "top",
+    panel.border = element_rect(colour = "grey80", fill = NA),
+    strip.background = element_rect(fill = "grey95", colour = NA),
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    panel.spacing = unit(0.3, "lines"),
+    axis.title.y = element_text(size = 11, margin = margin(r = 15)),
+    axis.title.x = element_text(size = 11, margin = margin(t = 15))
+  )
+
+ggsave("figures/Fig6.pdf", fig_6, width = 11, height = 3.5)
 
