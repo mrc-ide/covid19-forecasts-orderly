@@ -1,8 +1,8 @@
 pars <- orderly_parameters(incidence_type = "cases")
 list2env(pars, environment())
 
-packages <- c("dplyr", "tidyr", "glue", "ggplot2", "gridExtra", "hrbrthemes",
-              "ggforce", "gdata", "tibble", "scoringutils", "knitr", "lubridate",
+packages <- c("dplyr", "tidyr", "glue", "ggplot2", "gridExtra", "ggforce",
+              "gdata", "tibble", "scoringutils", "knitr", "lubridate",
               "cowplot", "purrr")
 
 suppressPackageStartupMessages(lapply(packages, require, character.only = TRUE))
