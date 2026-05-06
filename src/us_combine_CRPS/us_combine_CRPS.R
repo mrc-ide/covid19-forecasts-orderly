@@ -680,7 +680,7 @@ s2_fig <- ggplot(violin_jointlyr_combined,
         panel.spacing = unit(0.2, "lines"))
 
 ggsave("figures/S2_fig.tif", s2_fig, width = 19, height = 10,
-       units = "in", dpi = 600, compression = "lzw", bg = "white")
+       units = "in", dpi = 575, compression = "lzw", bg = "white")
 
 ###############################################################################
 # Main paper figure 4 (all states combined faceted by forecast week)
