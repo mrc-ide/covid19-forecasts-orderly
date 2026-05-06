@@ -8,10 +8,10 @@ packages <- c("dplyr", "tidyr", "glue", "ggplot2", "gridExtra", "ggforce",
 suppressPackageStartupMessages(lapply(packages, require, character.only = TRUE))
 
 orderly_artefact(description = "Manuscript figures",
-                 c("figures/Fig2.pdf", "figures/Fig3.pdf",
-                   "figures/Fig4.pdf", "figures/Fig5.pdf",
-                   "figures/Fig6.pdf", "figures/S1_fig.pdf",
-                   "figures/S2_fig.pdf","figures/S3_fig.pdf"))
+                 c("figures/Fig2.tif", "figures/Fig3.tif",
+                   "figures/Fig4.tif", "figures/Fig5.tif",
+                   "figures/Fig6.tif", "figures/S1_fig.tif",
+                   "figures/S2_fig.tif","figures/S3_fig.tif"))
 
 # True reported incidence (entire period - including forecast period)
 orderly_dependency(
@@ -326,7 +326,8 @@ fig2 <- ggplot(dow_perc_inc_state, aes(x = day, y = percentage)) +
   scale_y_continuous(expand = c(0, 0)) +
   labs(x = "Day of the Week", y = "Percentage of Weekly Cases Reported")
 
-ggsave("figures/Fig2.pdf", fig2, width = 17, height = 15)
+ggsave("figures/Fig2.tif", fig2, width = 17, height = 15,
+       units = "in", dpi = 600, compression = "lzw", bg = "white")
 
 ################################################################################
 # Percentage of cases reported on each day of the week by outbreak phase
@@ -397,8 +398,8 @@ fig3 <- ggplot(dow_perc_inc_phase_box, aes(x = day, y = percentage)) +
     legend.text = element_text(size = 15)
   )
 
-ggsave("figures/Fig3.pdf", fig3, width = 17, height = 8)
-
+ggsave("figures/Fig3.tif", fig3, width = 17, height = 8,
+       units = "in", dpi = 600, compression = "lzw", bg = "white")
 
 ####################################################################################
 ## Categorise
@@ -620,7 +621,8 @@ s1_fig <- cowplot::ggdraw(master_grid) +
                      x = 0.72, y = 0.05,
                      width = 0.2, height = 0.1)
 
-ggsave("figures/S1_fig.pdf", s1_fig, width = 16, height = 24)
+ggsave("figures/S1_fig.tif", s1_fig, width = 16, height = 24,
+       units = "in", dpi = 600, compression = "lzw", bg = "white")
 
 ###############################################################################
 ## Supplementary figure 2 (all states and all forecast weeks)
@@ -677,7 +679,8 @@ s2_fig <- ggplot(violin_jointlyr_combined,
         panel.grid.major.x = element_blank(),
         panel.spacing = unit(0.2, "lines"))
 
-ggsave("figures/S2_fig.pdf", s2_fig, width = 19, height = 10)
+ggsave("figures/S2_fig.tif", s2_fig, width = 19, height = 10,
+       units = "in", dpi = 600, compression = "lzw", bg = "white")
 
 ###############################################################################
 # Main paper figure 4 (all states combined faceted by forecast week)
@@ -724,7 +727,8 @@ fig4 <- ggplot(main_fig_4_data, aes(x = proj_dow, y = log10_crps,
     axis.title.x = element_text(size = 11, margin = margin(t = 15))
   )
 
-ggsave("figures/Fig4.pdf", fig4, width = 10, height = 4)
+ggsave("figures/Fig4.tif", fig4, width = 10, height = 4,
+       units = "in", dpi = 600, compression = "lzw", bg = "white")
 
 ###############################################################################
 ## Main paper Figure 5 (state by state for forecast week 1)
@@ -771,7 +775,8 @@ fig5 <- ggplot(fig_week1_data,
     panel.spacing = unit(0.3, "lines")
   )
 
-ggsave("figures/Fig5.pdf", fig5, width = 11, height = 7)
+ggsave("figures/Fig5.tif", fig5, width = 11, height = 7,
+       units = "in", dpi = 600, compression = "lzw", bg = "white")
 
 ###############################################################################
 ## Supplementary figure 3 (all phases faceted by forecast weeks 1-4)
@@ -814,7 +819,8 @@ s3_fig <- ggplot(violin_phase_subset,
     panel.spacing = unit(0.3, "lines")
   )
 
-ggsave("figures/S3_fig.pdf", s3_fig, width = 13, height = 9)
+ggsave("figures/S3_fig.tif", s3_fig, width = 13, height = 9,
+       units = "in", dpi = 600, compression = "lzw", bg = "white")
 
 ###############################################################################
 # Main paper figure 6 (phases by forecast week 1 only)
@@ -862,5 +868,6 @@ fig_6 <- ggplot(violin_phase_week1,
     axis.title.x = element_text(size = 11, margin = margin(t = 15))
   )
 
-ggsave("figures/Fig6.pdf", fig_6, width = 11, height = 3.5)
+ggsave("figures/Fig6.tif", fig_6, width = 11, height = 3.5,
+       units = "in", dpi = 600, compression = "lzw", bg = "white")
 
