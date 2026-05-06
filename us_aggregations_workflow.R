@@ -21,7 +21,20 @@
 #     Produces the figures for publication
 
 
-library(orderly2)
+# Check if orderly is missing or if the version doesn't match
+orderly_version <- "2.0.3"
+if (!requireNamespace("orderly", quietly = TRUE) ||
+    packageVersion("orderly") != orderly_version) {
+  message(sprintf("Installing required version of orderly (%s).",
+                  orderly_version))
+  if (!requireNamespace("remotes", quietly = TRUE)) {
+    install.packages("remotes", repos = "http://cran.us.r-project.org")
+  }
+  remotes::install_version("orderly", version = orderly_version,
+                           repos = "http://cran.us.r-project.org")
+  }
+
+library(orderly)
 setwd("~/covid19-forecasts-orderly")
 
 # Select whether reported or reconstructed data are used
